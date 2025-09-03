@@ -11,7 +11,13 @@
                             <v-text-field :label="$t('hostname')" v-model="settingsSystem.hostname"></v-text-field>
                             <v-select :items="keymaps" :label="$t('keymap')" v-model="settingsSystem.keymap"
                                 item-title="keymap" item-value="keymap"></v-select>
-                            <v-text-field :label="$t('timezone')" v-model="settingsSystem.timezone"></v-text-field>
+                            <v-select
+                                :items="timezones"
+                                :label="$t('timezone')"
+                                v-model="settingsSystem.timezone"
+                                item-title="timezone"
+                                item-value="timezone"
+                            ></v-select>
                             <v-text-field :label="$t('global spindown (min)')" type="number"
                                 v-model="settingsSystem.global_spindown"></v-text-field>
                             <v-divider class="my-2"></v-divider>
@@ -57,12 +63,14 @@ const settingsSystem = ref(
         global_spindown: 0
     });
 const keymaps = ref([]);
+const timezones = ref([]);
 const overlay = ref(false);
 const { t } = useI18n();
 
 onMounted(() => {
     getSystemSettings();
     getKeymaps();
+    getTimezones();
 });
 
 const getSystemSettings = async () => {
@@ -112,6 +120,22 @@ const getKeymaps = async () => {
 
         if (!res.ok) throw new Error(t('keymaps could not be loaded'));
         keymaps.value = await res.json();
+
+    } catch (e) {
+        showSnackbarError(e.message);
+    }
+};
+
+const getTimezones = async () => {
+    try {
+        const res = await fetch('/api/v1/mos/settings/system/timezones', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+            }
+        });
+
+        if (!res.ok) throw new Error(t('timezones could not be loaded'));
+        timezones.value = await res.json();
 
     } catch (e) {
         showSnackbarError(e.message);

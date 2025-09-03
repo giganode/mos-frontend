@@ -8,6 +8,7 @@ import Docker from "../views/docker.vue";
 import LXC from "../views/lxc.vue";
 import Vm from "../views/vm.vue";
 import Login from "../views/login.vue";
+import FirstSetup from "../views/firstSetup.vue";
 import DockerCreate from "../views/docker/dockerCreate.vue";
 import DockerChange from "../views/docker/dockerChange.vue";
 import profile from "../views/profile.vue";
@@ -16,12 +17,13 @@ import mosSettingsDocker from "../views/mosSettings/dockerService.vue";
 import mosSettingsLXC from "../views/mosSettings/lxcService.vue";
 import mosSettingsVm from "../views/mosSettings/vmService.vue";
 import mosSettingsNetwork from "../views/mosSettings/network.vue";
-import mosSettingsSstem from '../views/mosSettings/system.vue';
+import mosSettingsSstem from "../views/mosSettings/system.vue";
 import webterminal from "../views/webterminal.vue";
 import webterminalPopup from "../views/webterminalPopup.vue";
 
 const routes = [
   { path: "/login", component: Login },
+  { path: "/firstSetup", component: FirstSetup, props: true },
   { path: "", component: Dashboard },
   { path: "/dashboard", component: Dashboard },
   { path: "/users", component: Users },

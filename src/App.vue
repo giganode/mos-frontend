@@ -3,10 +3,13 @@
     <template v-if="!loginChecked">
       <v-progress-circular indeterminate color="primary" class="ma-5"></v-progress-circular>
     </template>
-    <template v-if="loginChecked && !loggedIn">
+    <template v-if="loginChecked && !loggedIn && !token">
       <Login @login-success="handleLoginSuccess" />
     </template>
-    <template v-else-if="loginChecked && loggedIn">
+    <template v-if="loginChecked && !loggedIn && token">
+      <FirstSetup @setup-complete="handleSetupComplete" :token="token" />
+    </template>
+    <template v-else-if="loginChecked && loggedIn && !token">
       <v-app-bar v-if="!$route.meta.hideAppBar" :color="appBarColor" app>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-img :src="logoSrc" alt="MOS Logo" max-width="50" class="ml-3 mr-3" contain />
@@ -88,6 +91,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import Login from './views/login.vue'
+import FirstSetup from './views/firstSetup.vue'
 import { useSnackbar, showSnackbarError, showSnackbarSuccess } from './composables/snackbar'
 import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
@@ -99,6 +103,7 @@ const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
 const loggedIn = ref(false);
+const token = ref('');
 const logoutDialog = ref(false);
 const loginChecked = ref(false);
 const mosServices = ref({});
@@ -136,6 +141,7 @@ const checkLoggedIn = async () => {
       loggedIn.value = false;
     }
   } else {
+    token.value = await checkFirstSetup();
     loggedIn.value = false;
   }
   loginChecked.value = true;
@@ -188,6 +194,11 @@ const getUserProfile = async () => {
 function handleLoginSuccess() {
   loggedIn.value = true
   getMosServices();
+}
+
+function handleSetupComplete() {
+  loggedIn.value = false;
+  token.value = '';
 }
 
 function doLogout() {
@@ -248,6 +259,22 @@ const getMosServices = async () => {
 
   } catch (e) {
     showSnackbarError(e.message);
+  }
+}
+
+const checkFirstSetup = async () => {
+  try {
+    const res = await fetch('/api/v1/auth/firstsetup', {
+      method: 'GET'
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+
+    const result = await res.json();
+    return result.firstsetup;
+
+  } catch (e) {
+    return false;
   }
 }
 

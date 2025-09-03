@@ -52,6 +52,7 @@
   "docker": "Docker",
   "overview": "Übersicht",
   "adduser": "Benutzer anlegen",
+  "create user": "Benutzer erstellen",
   "newuser": "Neuer Benutzer",
   "edituser": "Benutzer ändern",
   "deleteuser": "Benutzer löschen",
@@ -323,5 +324,6 @@
   "docker container changed successfully": "Docker Container wurde erfolgreich geändert",
   "template": "Vorlage",
   "remove port": "Port entfernen",
-  "remove path": "Pfad entfernen"
+  "remove path": "Pfad entfernen",
+  "first setup": "Ersteinrichtung"
 }

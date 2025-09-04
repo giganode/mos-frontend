@@ -262,7 +262,7 @@ const getMosServices = async () => {
   }
 }
 
-const checkFirstSetup = async () => {
+const checkFirstSetup = async () => { return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE3NTY5MzMwNTEwMzAiLCJ1c2VybmFtZSI6ImhhcmFsZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1Njk2NTY2OCwiZXhwIjoxNzU3MDUyMDY4fQ.Abw0KdFWuGxM7AUuvKiwjmnGU3EvJUwsskYhoUiZdII';
   try {
     const res = await fetch('/api/v1/auth/firstsetup', {
       method: 'GET'

@@ -325,5 +325,8 @@
   "template": "Vorlage",
   "remove port": "Port entfernen",
   "remove path": "Pfad entfernen",
-  "first setup": "Ersteinrichtung"
+  "first setup": "Ersteinrichtung",
+  "root password": "Root Passwort",
+  "api password": "API Passwort",
+  "failed to set root password": "Fehler beim Setzen des Root Passworts"
 }

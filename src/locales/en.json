@@ -325,5 +325,8 @@
   "template": "Template",
   "remove port": "Remove Port",
   "remove path": "Remove Path",
-  "first setup": "First Setup"
+  "first setup": "First Setup",
+  "root password": "Root Password",
+  "api password": "API Password",
+  "failed to set root password": "Failed to set root password"
 }

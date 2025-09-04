@@ -42,7 +42,7 @@ jobs:
           MINOR=${BASH_REMATCH[2]}
           PATCH=${BASH_REMATCH[3]}
           NEXT_PATCH=$((PATCH + 1))
-          NEXT_TAG="v${MAJOR}.${MINOR}.${NEXT_PATCH}"
+          NEXT_TAG="${MAJOR}.${MINOR}.${NEXT_PATCH}"
         else
           NEXT_TAG="0.0.1"
         fi

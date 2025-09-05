@@ -327,6 +327,20 @@
   "remove path": "Pfad entfernen",
   "first setup": "Ersteinrichtung",
   "root password": "Root Passwort",
+  "confirm root password": "Root Passwort bestätigen",
   "api password": "API Passwort",
-  "failed to set root password": "Fehler beim Setzen des Root Passworts"
+  "confirm api password": "API Passwort bestätigen",
+  "failed to set root password": "Fehler beim Setzen des Root Passworts",
+  "web password": "Web Passwort",
+  "confirm web password": "Web Passwort bestätigen",
+  "finish": "Fertig",
+  "next": "Weiter",
+  "back": "Zurück",
+  "step": "Schritt",
+  "this field is required": "Dieses Feld ist erforderlich",
+  "password is not the same": "Passwort ist nicht identisch",
+  "username is required": "Benutzername ist erforderlich",
+  "web login": "Web Login",
+  "first setup successfully completed": "Ersteinrichtung erfolgreich abgeschlossen",
+  "failed to create web user": "Fehler beim Erstellen des Web-Benutzers"
 }

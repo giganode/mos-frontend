@@ -1,24 +1,45 @@
 <template>
     <v-container>
-        <v-row>
-            <v-col>
-                <v-card variant="tonal" fluid>
-                    <v-card-title>{{ $t('first setup') }}</v-card-title>
+        <v-stepper :items="[$t('root password'), $t('web login')]" v-model="step" hide-actions>
+            <template v-slot:item.1>
+                <v-card :title="$t('root password')" flat>
                     <v-card-text>
-                        <form @submit.prevent="doFirstSetup">
-                            <v-text-field v-model="form.username" :label="$t('username')" required></v-text-field>
-                            <v-text-field v-model="form.rootpwd" :label="$t('root password')" type="password" required></v-text-field>
-                            <v-text-field v-model="form.password" :label="$t('api password')" type="password" required></v-text-field>
-                            <button type="submit" style="display:none"></button>
-                        </form>
+                        <v-text-field v-model="rootpwd" :label="$t('root password')" required type="password"
+                            :error="rootpwd === '' && step1Error"
+                            :error-messages="rootpwd === '' && step1Error ? [$t('this field is required')] : []"></v-text-field>
+                        <v-text-field v-model="rootpwd2" :label="$t('confirm root password')" required type="password"
+                            :error="rootpwd2 === '' && step1Error" :error-messages="rootpwd2 === '' && step1Error
+                                ? [$t('this field is required')]
+                                : (rootpwd2 !== rootpwd && step1Error
+                                    ? [$t('password is not the same')]
+                                    : [])"></v-text-field>
                     </v-card-text>
-                    <v-card-actions class="justify-center">
-                        <v-btn color="primary" variant="outlined" @click="doFirstSetup" style="min-width: 200px;">{{
-                            $t('create user') }}</v-btn>
-                    </v-card-actions>
                 </v-card>
-            </v-col>
-        </v-row>
+            </template>
+
+            <template v-slot:item.2>
+                <v-card :title="$t('web login')" flat>
+                    <v-card-text>
+                        <v-text-field v-model="username" :label="$t('username')" required
+                            :error="username === '' && step1Error"
+                            :error-messages="username === '' && step2Error ? [$t('this field is required')] : []"></v-text-field>
+                        <v-text-field v-model="password" :label="$t('web password')" required type="password"
+                            :error="password === '' && step2Error"
+                            :error-messages="password === '' && step2Error ? [$t('this field is required')] : []"></v-text-field>
+                        <v-text-field v-model="password2" :label="$t('web password')" required type="password"
+                            :error="password2 === '' && step2Error" :error-messages="password2 === '' && step2Error
+                                ? [$t('this field is required')]
+                                : (password2 !== password && step2Error
+                                    ? [$t('password is not the same')]
+                                    : [])"></v-text-field>
+                    </v-card-text>
+                </v-card>
+            </template>
+
+            <v-stepper-actions :disabled="false" :next-text="step > 1 ? 'finish' : 'next'"
+                :prev-text="step > 1 ? 'back' : ''" @click:next="nextStep()"
+                @click:prev="step = step - 1"></v-stepper-actions>
+        </v-stepper>
     </v-container>
 </template>
 
@@ -35,39 +56,19 @@ const emit = defineEmits(['setup-complete']);
 const props = defineProps({
     token: String
 });
-const form = reactive({
-    username: '',
-    rootpwd: '',
-    password: ''
-});
-
-const doFirstSetup = async () => {
-    if (form.username === '' || form.rootpwd === '' || form.password === '') {
-        showSnackbarError(t('All fields are required'));
-        return;
-    }
-
-    overlay.value = true;
-    const successRoot = await setRootPassword();
-    if (!successRoot) {
-        overlay.value = false;
-        showSnackbarError(t('Failed to set root password'));
-        return;
-    }
-    const successUser = await addUser();
-    if (!successUser) {
-        overlay.value = false;
-        showSnackbarError(t('Failed to create user'));
-        return;
-    }
-    overlay.value = false;
-    emit('setup-complete');
-};
+const username = ref('');
+const rootpwd = ref('');
+const rootpwd2 = ref('');
+const password = ref('');
+const password2 = ref('');
+let step = ref(1);
+const step1Error = ref(false);
+const step2Error = ref(false);
 
 const addUser = async () => {
     const newUser = {
-        username: form.username,
-        password: form.password,
+        username: username.value,
+        password: password.value,
         role: 'admin'
     };
 
@@ -87,17 +88,16 @@ const addUser = async () => {
             const error = await res.json();
             throw new Error(error.error || t('Failed to create user'));
         }
-
         return true;
 
     } catch (e) {
-        return false;
+        throw e;
     }
 };
 
 const setRootPassword = async () => {
     const newRootPwd = {
-        password: form.rootpwd
+        password: rootpwd.value
     };
 
     try {
@@ -117,8 +117,55 @@ const setRootPassword = async () => {
         return true;
 
     } catch (e) {
-        return false;
+        throw e;
     }
 };
+
+async function nextStep() {
+
+    // Root password step
+    if (step.value === 1 && (rootpwd.value === '' || rootpwd2.value === '' || rootpwd.value !== rootpwd2.value)) {
+        step1Error.value = true;
+        return;
+    } else {
+        if (step.value === 1) {
+            overlay.value = true;
+            try {
+                await setRootPassword();
+                overlay.value = false;
+            } catch (e) {
+                overlay.value = false;
+                showSnackbarError(e.message);
+                step1Error.value = true;
+                return;
+            }
+        }
+        step1Error.value = false;
+    }
+
+    // Web user step
+    if (step.value === 2 && (username.value === '' || password.value === '' || password.value !== password2.value)) {
+        step2Error.value = true;
+        return;
+    } else {
+        step2Error.value = false;
+        if (step.value === 2) {
+            overlay.value = true;
+            try {
+                await addUser();
+            } catch (e) {
+                overlay.value = false;
+                showSnackbarError(e.message);
+                step2Error.value = true;
+                return;
+            }
+            showSnackbarSuccess(t('first setup successfully completed'));
+            emit('setup-complete');
+        }
+    }
+
+    step.value = step.value + 1;
+
+}
 
 </script>

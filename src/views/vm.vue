@@ -10,14 +10,37 @@
             <v-card variant="tonal" fluid>
               <v-card-title>{{ $t('overview') }}</v-card-title>
               <v-card-text class="pa-0">
-                <v-list>
-                  <v-list-item v-for="vm in vms">
-                    <v-list-item-title>{{ vm.name }}</v-list-item-title>
-                    <v-list-item-subtitle :style="{ color: vm.state === 'started' ? 'green' : 'red' }">
-                      {{ vm.state }}
-                    </v-list-item-subtitle>
-                  </v-list-item>
-                </v-list>
+                <draggable v-model="vms" item-key="Id">
+                  <template #item="{ element: vm, index }">
+                    <div>
+                      <v-list-item :id="vm.Id">
+                        <template v-slot:prepend>
+                          <v-menu>
+                            <template #activator="{ props }">
+                              <v-icon v-bind="props">mdi-server-outline</v-icon>
+                            </template>
+                            <v-list>
+                              <v-list-item v-if="vm.state !== 'started'" @click="startVM(vm.name)">
+                                <v-list-item-title>{{ $t('start') }}</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item v-if="vm.state === 'started'" @click="stopVM(vm.name)">
+                                <v-list-item-title>{{ $t('stop') }}</v-list-item-title>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
+                        </template>
+                        <v-list-item-title>{{ vm.name }}</v-list-item-title>
+                        <v-list-item-subtitle :style="{ color: vm.state === 'started' ? 'green' : 'red' }">
+                          {{ vm.state }}
+                        </v-list-item-subtitle>
+                        <template v-slot:append>
+                          <v-switch v-model="vm.autostart" color="primary" hide-details inset density="compact" />
+                        </template>
+                      </v-list-item>
+                      <v-divider v-if="index < vms.length - 1" />
+                    </div>
+                  </template>
+                </draggable>
               </v-card-text>
             </v-card>
           </v-col>
@@ -26,14 +49,23 @@
     </v-container>
   </v-container>
 
+  <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+  </v-overlay>
+
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 
+
 const emit = defineEmits(['refresh-drawer']);
 const vms = ref([]);
+const overlay = ref(false);
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+import draggable from 'vuedraggable';
 
 onMounted(() => {
   fetchVMs();
@@ -53,5 +85,47 @@ const fetchVMs = async () => {
     showSnackbarError(e.message);
   }
 };
+
+const stopVM = async (name) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/vm/containers/${name}/stop`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+    overlay.value = false;
+
+    if (!res.ok) throw new Error(t('vm container could not be stopped'));
+    showSnackbarSuccess(t('vm container stopped successfully'));
+    getVMs();
+
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+}
+
+const startVM = async (name) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/vm/containers/${name}/start`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+    overlay.value = false;
+
+    if (!res.ok) throw new Error(t('vm container could not be started'));
+    showSnackbarSuccess(t('vm container started successfully'));
+    getVMs();
+
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+}
 
 </script>

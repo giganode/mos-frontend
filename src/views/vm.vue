@@ -89,7 +89,7 @@ const fetchVMs = async () => {
 const stopVM = async (name) => {
   try {
     overlay.value = true;
-    const res = await fetch(`/api/v1/vm/containers/${name}/stop`, {
+    const res = await fetch(`/api/v1/vm/machines/${name}/stop`, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
@@ -110,7 +110,7 @@ const stopVM = async (name) => {
 const startVM = async (name) => {
   try {
     overlay.value = true;
-    const res = await fetch(`/api/v1/vm/containers/${name}/start`, {
+    const res = await fetch(`/api/v1/vm/machines/${name}/start`, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),

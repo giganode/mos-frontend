@@ -5,30 +5,45 @@
         <h2>{{ $t('user profile') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-text-field :label="$t('api token')" v-model="authToken" readonly></v-text-field>
         <v-select v-model="selectedLanguage" :items="languages" item-title="name" item-value="name"
           :label="$t('language')" required @update:modelValue="changeLanguage()" />
         <v-text-field :label="$t('uicolor')" v-model="color" @update:modelValue="changePrimaryColor(color)" type="color"
           hide-details prepend-inner-icon="mdi-palette" />
-        <h3 class="mt-4">{{ $t('admin api tokens') }}</h3>
-        <v-list>
-          <v-list-item v-for="token in adminTokens" :key="token.id">
-            <template v-slot:append>
-              <v-icon @click="deleteAdminToken(token.id)" color="red">mdi-delete</v-icon>
-            </template>
-            <v-list-item-title>{{ token.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ token.token }}</v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-        <div v-if="adminTokens.length === 0">{{ $t('no admin api tokens found') }}</div>
-        <v-btn color="primary" class="mt-4" @click="openAdminTokenDialog()">
-          {{ $t('create admin api token') }}
-        </v-btn>
+        <h3 class="mt-4 d-flex align-center">
+          {{ $t('admin api tokens') }}
+          <v-btn icon size="small" class="ml-2" @click="openAdminTokenDialog()" color="primary" variant="tonal">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </h3>
+        <v-card v-for="token in adminTokens" :key="token.id" class="mt-4" variant="tonal">
+          <v-card-title class="d-flex justify-space-between align-center">
+            <div>
+              {{ token.name }}
+              <v-chip v-if="token.description" class="ml-2" size="small">{{ token.description }}</v-chip>
+            </div>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="token.token" :type="showPassword ? 'text' : 'password'" readonly label="Token"
+              hide-details :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword = !showPassword" />
+          </v-card-text>
+          <v-card-actions>
+            <v-row class="d-flex justify-end">
+              <v-btn variant="text" @click="copyAuthToken(token.token)" class="mr-4">
+                {{ $t('copy') }}
+              </v-btn>
+              <v-btn color="red" @click="deleteAdminToken(token.id)" class="mr-4">
+                {{ $t('delete') }}
+              </v-btn>
+            </v-row>
+          </v-card-actions>
+        </v-card>
+        <div class="mt-4" v-if="adminTokens.length === 0">{{ $t('no admin api tokens created') }}</div>
       </v-container>
     </v-container>
   </v-container>
 
-  <v-dialog v-model="createAdminTokenDialog.value" max-width="500">
+  <v-dialog v-model="createAdminTokenDialog.value" max-width="600">
     <v-card>
       <v-card-title>{{ $t('create admin api token') }}</v-card-title>
       <v-card-text>
@@ -37,8 +52,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="createAdminToken()">{{ $t('create') }}</v-btn>
         <v-btn variant="text" @click="createAdminTokenDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="createAdminToken()">{{ $t('create') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -69,11 +84,12 @@ const createAdminTokenDialog = reactive({
   name: '',
   description: ''
 });
+const showPassword = ref(false);
 
 onMounted(() => {
   getAdminTokens();
 });
-  
+
 const openAdminTokenDialog = () => {
   createAdminTokenDialog.value = true;
   createAdminTokenDialog.name = '';
@@ -188,8 +204,8 @@ const changeLanguage = async () => {
   }
 };
 
-const copyAuthToken = () => {
-  navigator.clipboard.writeText(authToken.value)
+const copyAuthToken = (token) => {
+  navigator.clipboard.writeText(token)
     .then(() => showSnackbarSuccess(t('api token copied to clipboard')))
     .catch(err => showSnackbarError(t('failed to copy api token')));
 };

@@ -13,14 +13,27 @@
                 <v-card-title class="d-flex align-center">
                   <span>{{ pool.name }}</span>
                 </v-card-title>
-                <v-card-subtitle>{{ $t('type') }}: {{ pool.type }}</v-card-subtitle>
+                <v-card-subtitle>{{ $t('type') }}: {{ pool.type }}
+                  <v-progress-linear :model-value="pool.status.usagePercent" height="8"
+                    :color="getUsageColor(pool.status.usagePercent)" rounded class="mt-2"
+                    :label="`${pool.status.usagePercent}%`" style="min-width: 120px;" />
+                  {{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}
+                </v-card-subtitle>
                 <v-card-text>
                   <v-list class="pa-0">
                     <v-list-item-title>{{ $t('disks') }}</v-list-item-title>
                     <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id"
                       @click="selectedDisk = data_device">
                       <v-list-item-title>{{ data_device.device }}</v-list-item-title>
-                      <v-list-item-subtitle>{{ data_device.filesystem }}</v-list-item-subtitle>
+                      <v-list-item-subtitle>
+                        {{ data_device.filesystem }}
+                      </v-list-item-subtitle>
+                      <v-progress-linear :model-value="data_device.storage.usagePercent" height="8"
+                        :color="getUsageColor(data_device.storage.usagePercent)" rounded class="mt-2"
+                        :label="`${data_device.storage.usagePercent}%`" style="min-width: 120px;" />
+                      <v-list-item-subtitle class="mt-2">
+                        {{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}
+                      </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
                   <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0">
@@ -28,6 +41,12 @@
                     <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
                       <v-list-item-title>{{ parity_device.device }}</v-list-item-title>
                       <v-list-item-subtitle>{{ parity_device.filesystem }}</v-list-item-subtitle>
+                      <v-progress-linear :model-value="parity_device.storage.usagePercent" height="8"
+                        :color="getUsageColor(parity_device.storage.usagePercent)" rounded class="mt-2"
+                        :label="`${parity_device.storage.usagePercent}%`" style="min-width: 120px;" />
+                      <v-list-item-subtitle class="mt-2">
+                        {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
+                      </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
@@ -154,9 +173,10 @@
             :label="$t('comment')" />
           <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.mergerfsOptions"
             :label="$t('mergerfs options')" />
-          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="primary" inset />
-          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="primary"
-            inset />
+          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact"
+            color="primary" inset />
+          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact"
+            color="primary" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -513,6 +533,16 @@ const clearFormatDialog = () => {
 const clearDeletePoolDialog = () => {
   deletePoolDialog.value = false;
   deletePoolDialog.pool = null;
+};
+
+const getUsageColor = (usagePercent) => {
+  if (usagePercent < 70) {
+    return 'green';
+  } else if (usagePercent < 90) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
 };
 
 </script>

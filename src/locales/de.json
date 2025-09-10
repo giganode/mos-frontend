@@ -344,7 +344,7 @@
   "first setup successfully completed": "Ersteinrichtung erfolgreich abgeschlossen",
   "failed to create web user": "Fehler beim Erstellen des Web-Benutzers",
   "admin api tokens": "Admin API Tokens",
-  "no admin api tokens found": "Keine Admin API Tokens gefunden",
+  "no admin api tokens created": "Noch keine Admin API Tokens erstellt",
   "admin api token created": "Admin API Token erstellt",
   "admin api token deleted": "Admin API Token gelöscht",
   "description": "Beschreibung",

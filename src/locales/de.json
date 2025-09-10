@@ -342,5 +342,11 @@
   "username is required": "Benutzername ist erforderlich",
   "web login": "Web Login",
   "first setup successfully completed": "Ersteinrichtung erfolgreich abgeschlossen",
-  "failed to create web user": "Fehler beim Erstellen des Web-Benutzers"
+  "failed to create web user": "Fehler beim Erstellen des Web-Benutzers",
+  "admin api tokens": "Admin API Tokens",
+  "no admin api tokens found": "Keine Admin API Tokens gefunden",
+  "admin api token created": "Admin API Token erstellt",
+  "admin api token deleted": "Admin API Token gelöscht",
+  "description": "Beschreibung",
+  "create admin api token": "Admin API Token erstellen"
 }

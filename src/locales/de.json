@@ -353,5 +353,7 @@
   "mos channel": "MOS Kanal",
   "mos build": "MOS Build",
   "mos kernel": "MOS Kernel",
-  "check for updates": "Nach Updates suchen"
+  "check for updates": "Nach Updates suchen",
+  "update api": "API aktualisieren",
+  "update ui": "UI aktualisieren"
 }

@@ -41,6 +41,15 @@
             <v-btn width="250px" to="/mosSettings/system">{{ $t('system') }}</v-btn>
           </v-col>
         </v-row>
+        <v-divider class="mb-4 mt-4"></v-divider>
+        <v-row>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn width="250px" @click="updateAPI()">{{ $t('update api') }}</v-btn>
+          </v-col>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn width="250px" @click="updateUI()">{{ $t('update ui') }}</v-btn>
+          </v-col>
+        </v-row>        
       </v-container>
     </v-container>
   </v-container>
@@ -221,6 +230,44 @@ const shutdownOS = async () => {
     showSnackbarSuccess(t('shutdown initiated successfully'));
   } catch (e) {
     showSnackbarError(e.message);
+  }
+};
+
+const updateAPI = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/update_api', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      }
+    });
+
+    if (!res.ok) throw new Error(t('update api could not be initiated'));
+    showSnackbarSuccess(t('update api initiated successfully'));
+  } catch (e) {
+    showSnackbarError(e.message);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateUI = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/update_ui', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      }
+    });
+
+    if (!res.ok) throw new Error(t('update api could not be initiated'));
+    showSnackbarSuccess(t('update api initiated successfully'));
+  } catch (e) {
+    showSnackbarError(e.message);
+  } finally {
+    overlay.value = false;
   }
 };
 

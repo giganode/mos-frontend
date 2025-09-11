@@ -12,7 +12,7 @@
         <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos version') }}:</b> {{ osInfo.mos.version }}</p>
         <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos channel') }}:</b> {{ osInfo.mos.channel }}</p>
         <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos build') }}:</b> {{ osInfo.mos.build }}</p>
-        <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos kernel') }}:</b> {{ osInfo.mos.recommended_kernel }}</p>
+        <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos kernel') }}:</b> {{ osInfo.mos.running_kernel }}</p>
       </div>
     </v-card-text>
   </v-card>

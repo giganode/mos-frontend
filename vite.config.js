@@ -9,6 +9,7 @@ export default defineConfig({
     port: 80,
     proxy: {
       "/api": "http://192.168.1.194",
+      "/ws": "ws://192.168.1.194"
     },
   },
   resolve: {

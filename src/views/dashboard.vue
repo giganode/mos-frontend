@@ -56,8 +56,31 @@ const getLoad = async () => {
   }
 }
 
+/*const getLoadWS = () => {
+  const ws = new WebSocket('/api/v1/system/websocket/stats?token=' + localStorage.getItem('authToken'));
+
+  ws.onmessage = (event) => { 
+    console.log(event.data);
+    const result = JSON.parse(event.data);
+    network.value = result.network;
+    cpu.value = result.cpu;
+    memory.value = result.memory;
+  };
+
+  ws.onerror = (error) => {
+    console.log('WebSocket error:', error);
+    ws.close();
+  };
+
+  ws.onclose = () => {
+    console.log('WebSocket connection closed. Reconnecting in 5 seconds...');
+    setTimeout(getLoadWS, 5000);
+  };
+}*/
+
 onMounted(() => {
   getLoad();
+  //getLoadWS();
   timer = setInterval(getLoad, 2000);
 })
 

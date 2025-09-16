@@ -361,5 +361,6 @@
   "remove variable": "Remove Variable",
   "variable": "Variable",
   "add device": "Add Device",
-  "remove device": "Remove Device"
+  "remove device": "Remove Device",
+  "no pools have been created yet": "No pools have been created yet"
 }

@@ -16,7 +16,27 @@
                     <v-card-text>
                         <v-text-field :label="$t('name')" v-model="form.name" readonly></v-text-field>
                         <v-text-field :label="$t('repository')" v-model="form.repo" required></v-text-field>
-                        <v-text-field :label="$t('network')" v-model="form.network"></v-text-field>
+                                                                        <v-select
+                            :label="$t('network')"
+                            v-model="networkMode"
+                            :items="networkOptions"
+                            item-title="name"
+                            item-value="name"
+                            :loading="loadingNetworks"
+                            clearable
+                            @update:model-value="onNetworkChange"
+                        ></v-select>
+                        <v-select
+                            v-if="networkMode === 'container-network'"
+                            :label="$t('container')"
+                            v-model="selectedContainer"
+                            :items="containerOptions"
+                            item-title="name"
+                            item-value="name"
+                            :loading="loadingContainers"
+                            clearable
+                            @update:model-value="onContainerChange"
+                        ></v-select>
                         <v-text-field :label="$t('custom ip')" v-model="form.custom_ip"></v-text-field>
                         <v-text-field :label="$t('default shell')" v-model="form.default_shell"></v-text-field>
                         <v-switch :label="$t('privileged')" v-model="form.privileged" inset color="primary"
@@ -26,79 +46,112 @@
                         <v-text-field :label="$t('icon')" v-model="form.icon"></v-text-field>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-8">{{ $t('paths') }}</v-card-subtitle>
-                        <v-row v-for="(path, i) in form.paths" :key="i">
+                        <div v-for="(path, i) in form.paths" :key="i" class="mb-5">
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('name')" v-model="path.name" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('mode')" v-model="path.mode" class="mr-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('host')" v-model="path.host" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('container')" v-model="path.container" class="mr-3"></v-text-field>
-                            </v-col>
-                        </v-row>
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('name')" v-model="path.name"></v-text-field>
+                                </v-col>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('mode')" v-model="path.mode"></v-text-field>
+                                </v-col>
+                                <v-col cols="2" class="d-flex align-center justify-center">
+                                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="removePath(i)"></v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row class="mt-n8">
+                                <v-col cols="6">
+                                    <v-text-field :label="$t('host')" v-model="path.host"></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-text-field :label="$t('container')" v-model="path.container"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </div>
                         <v-btn class="mb-2" @click="form.paths.push({ host: '', container: '' })">{{ $t('add path')
-                        }}</v-btn>
-                        <v-btn class="mb-2 ml-2" @click="form.paths.pop()">{{ $t('remove path')
                         }}</v-btn>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-8">{{ $t('ports') }}</v-card-subtitle>
-                        <v-row v-for="(port, i) in form.ports" :key="i">
+                        <div v-for="(port, i) in form.ports" :key="i" class="mb-4">
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('name')" v-model="port.name" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('protocol')" v-model="port.protocol" class="mr-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('host')" v-model="port.host" type="number" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('container')" v-model="port.container"
-                                    type="number" class="mr-3"></v-text-field>
-                            </v-col>
-                        </v-row>
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('name')" v-model="port.name"></v-text-field>
+                                </v-col>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('protocol')" v-model="port.protocol"></v-text-field>
+                                </v-col>
+                                <v-col cols="2" class="d-flex align-center justify-center">
+                                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="removePort(i)"></v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row class="mt-n8">
+                                <v-col cols="6">
+                                    <v-text-field :label="$t('host')" v-model="port.host" type="number"></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-text-field :label="$t('container')" v-model="port.container" type="number"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </div>
                         <v-btn class="mb-2" @click="form.ports.push({ host: '', container: '' })">{{ $t('add port')
-                        }}</v-btn>
-                        <v-btn class="mb-2 ml-2" @click="form.ports.pop()">{{ $t('remove port')
                         }}</v-btn>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-8">{{ $t('devices') }}</v-card-subtitle>
-                        <v-row v-for="(device, i) in form.devices" :key="i">
+                        <div v-for="(device, i) in form.devices" :key="i" class="mb-4">
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('name')" v-model="device.name" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('host')" v-model="device.host" class="mr-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('container')" v-model="device.container" class="mr-3"></v-text-field>
-                            </v-col>
-                        </v-row>
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('name')" v-model="device.name"></v-text-field>
+                                </v-col>
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('host')" v-model="device.host"></v-text-field>
+                                </v-col>
+                                <v-col cols="2" class="d-flex align-center justify-center">
+                                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="removeDevice(i)"></v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row class="mt-n8">
+                                <v-col cols="12">
+                                    <v-text-field :label="$t('container')" v-model="device.container"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </div>
                         <v-btn class="mb-2" @click="form.devices.push({ name: '', host: '', container: '' })">{{ $t('add device') }}</v-btn>
-                        <v-btn class="mb-2 ml-2" @click="form.devices.pop()">{{ $t('remove device') }}</v-btn>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-8">{{ $t('variables') }}</v-card-subtitle>
-                        <v-row v-for="(variable, i) in form.variables" :key="i">
+                        <div v-for="(variable, i) in form.variables" :key="i" class="mb-4">
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('name')" v-model="variable.name" class="mr-3 ml-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('key')" v-model="variable.key" class="mr-3"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="ma-0 pa-0">
-                                <v-text-field :label="$t('value')" v-model="variable.value" class="mr-3"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-btn class="mb-2" @click="form.variables.push({ name: '', key: '', value: '' })">{{ $t('add variable') }}</v-btn>
-                        <v-btn class="mb-2 ml-2" @click="form.variables.pop()">{{ $t('remove variable') }}</v-btn>
+                            <v-row>
+                                <v-col cols="10">
+                                    <v-text-field :label="$t('name')" v-model="variable.name"></v-text-field>
+                                </v-col>
+                                <v-col cols="2" class="d-flex align-center justify-center">
+                                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="removeVariable(i)"></v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row class="mt-n8">
+                                <v-col cols="5">
+                                    <v-text-field :label="$t('key')" v-model="variable.key"></v-text-field>
+                                </v-col>
+                                <v-col cols="5">
+                                    <v-text-field
+                                        :label="$t('value')"
+                                        v-model="variable.value"
+                                        :type="variable.mask ? 'password' : 'text'">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="2" class="d-flex align-center">
+                                    <v-checkbox
+                                        v-model="variable.mask"
+                                        :label="$t('hide')"
+                                        density="compact"
+                                        hide-details>
+                                    </v-checkbox>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <v-btn class="mb-2" @click="form.variables.push({ name: '', key: '', value: '', mask: false })">{{ $t('add variable') }}</v-btn>
                     </v-card-text>
                 </v-card>
                 <v-row class="mt-4">
@@ -129,6 +182,12 @@ const emit = defineEmits(['refresh-drawer']);
 const { t } = useI18n();
 const overlay = ref(false);
 const getDocker = ref({});
+const networkOptions = ref([]);
+const loadingNetworks = ref(false);
+const containerOptions = ref([]);
+const loadingContainers = ref(false);
+const selectedContainer = ref('');
+const networkMode = ref('');
 const form = reactive({
     name: '',
     repo: '',
@@ -149,7 +208,11 @@ const props = defineProps({
 });
 
 onMounted(() => {
+    window.scrollTo(0, 0);
+
     getDockerTemplate();
+    getDockerNetworks();
+    getDockerContainers();
 });
 
 const getDockerTemplate = async () => {
@@ -170,7 +233,21 @@ const getDockerTemplate = async () => {
 
         form.name = getDocker.value.name;
         form.repo = getDocker.value.repo;
-        form.network = getDocker.value.network;
+
+        if (getDocker.value.network && getDocker.value.network.startsWith('container:')) {
+            networkMode.value = 'container-network';
+            form.network = getDocker.value.network;
+            const containerName = getDocker.value.network.replace('container:', '');
+            selectedContainer.value = containerName;
+            setTimeout(() => {
+                validateContainerExists(containerName);
+            }, 1000);
+        } else {
+            networkMode.value = getDocker.value.network;
+            form.network = getDocker.value.network;
+            selectedContainer.value = '';
+        }
+
         form.custom_ip = getDocker.value.custom_ip;
         form.default_shell = getDocker.value.default_shell;
         form.privileged = getDocker.value.privileged;
@@ -197,7 +274,8 @@ const getDockerTemplate = async () => {
             ? getDocker.value.variables.map(variable => ({
             name: variable.name,
             key: variable.key,
-            value: variable.value
+            value: variable.value,
+            mask: variable.mask || false
             }))
             : [];
         form.devices = Array.isArray(getDocker.value.devices)
@@ -210,6 +288,82 @@ const getDockerTemplate = async () => {
     } catch (e) {
         overlay.value = false;
         showSnackbarError(e.message);
+    }
+};
+
+
+const getDockerNetworks = async () => {
+    try {
+        loadingNetworks.value = true;
+        const res = await fetch('/api/v1/docker/networks', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            }
+        });
+
+        if (res.ok) {
+            const networks = await res.json();
+            networkOptions.value = networks.map(network => ({
+                name: network.Name,
+                id: network.Id
+            }));
+
+            networkOptions.value.sort((a, b) => {
+                const nameA = a.name.toLowerCase();
+                const nameB = b.name.toLowerCase();
+
+                if (nameA === 'bridge') return -1;
+                if (nameB === 'bridge') return 1;
+
+                const isEthBrA = nameA.startsWith('eth') || nameA.startsWith('br');
+                const isEthBrB = nameB.startsWith('eth') || nameB.startsWith('br');
+
+                if (isEthBrA && !isEthBrB) return -1;
+                if (!isEthBrA && isEthBrB) return 1;
+
+                return nameA.localeCompare(nameB);
+            });
+
+            networkOptions.value.push({ name: 'container-network', id: 'container-network' });
+            networkOptions.value.push({ name: 'none', id: 'none' });
+
+            if (networkOptions.value.length === 1) {
+            }
+        } else {
+            networkOptions.value = [{ name: 'container-network', id: 'container-network' }, { name: 'none', id: 'none' }];
+        }
+    } catch (e) {
+        networkOptions.value = [{ name: 'container-network', id: 'container-network' }, { name: 'none', id: 'none' }];
+    } finally {
+        loadingNetworks.value = false;
+    }
+};
+
+const getDockerContainers = async () => {
+    try {
+        loadingContainers.value = true;
+
+        const res = await fetch('/api/v1/docker/containers/json?all=true', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            }
+        });
+
+        if (res.ok) {
+            const containers = await res.json();
+            containerOptions.value = containers.map(container => ({
+                name: container.Names[0].startsWith('/') ? container.Names[0].slice(1) : container.Names[0],
+                id: container.Id
+            }));
+
+                        containerOptions.value.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+            containerOptions.value = [];
+        }
+    } catch (e) {
+        containerOptions.value = [];
+    } finally {
+        loadingContainers.value = false;
     }
 };
 
@@ -245,7 +399,8 @@ const updateDocker = async () => {
     changeDocker.variables = form.variables.map(variable => ({
         name: variable.name,
         key: variable.key,
-        value: variable.value
+        value: variable.value,
+        mask: variable.mask
     }));
 
     try {
@@ -263,10 +418,52 @@ const updateDocker = async () => {
         if (!res.ok) throw new Error(t('docker container could not be changed'));
         router.back();
         showSnackbarSuccess(t('docker container changed successfully'));
-        
+
     } catch (e) {
         overlay.value = false;
         showSnackbarError(e.message);
+    }
+};
+
+const removePath = (index) => {
+    form.paths.splice(index, 1);
+};
+
+const removePort = (index) => {
+    form.ports.splice(index, 1);
+};
+
+const removeDevice = (index) => {
+    form.devices.splice(index, 1);
+};
+
+const removeVariable = (index) => {
+    form.variables.splice(index, 1);
+};
+
+const onNetworkChange = (value) => {
+    if (value !== 'container-network') {
+        selectedContainer.value = '';
+        form.network = value;
+    } else {
+        form.network = 'container-network';
+    }
+};
+
+const onContainerChange = (containerName) => {
+    if (containerName) {
+        form.network = `container:${containerName}`;
+    } else {
+        form.network = 'container-network';
+    }
+};
+
+const validateContainerExists = (containerName) => {
+    const containerExists = containerOptions.value.some(container => container.name === containerName);
+
+    if (!containerExists) {
+        selectedContainer.value = '';
+        form.network = 'container-network';
     }
 };
 

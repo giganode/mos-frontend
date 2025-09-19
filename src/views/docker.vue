@@ -120,14 +120,15 @@
         </v-row>
         <v-row class="mt-4">
           <v-col class="d-flex justify-end">
+            <v-btn color="primary" @click="checkForUpdates()" class="ml-2">
+              <v-icon left>mdi-update</v-icon>
+              {{ $t('check for updates') }}
+            </v-btn>
             <v-btn color="primary" @click="updateAll()" class="ml-2">
               <v-icon left>mdi-autorenew</v-icon>
               {{ $t('update all') }}
             </v-btn>
-            <v-btn color="primary" @click="createDialog = true" class="ml-2">
-              <v-icon left>mdi-plus</v-icon>
-              {{ $t('create (json)') }}
-            </v-btn>
+
           </v-col>
         </v-row>
       </v-container>
@@ -140,34 +141,7 @@
     <v-icon>mdi-plus</v-icon>
   </v-btn>
 
-  <v-dialog v-model="createDialog" max-width="700">
-    <v-card>
-      <v-card-title>{{ $t('create docker') }}</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col cols="9" class="d-flex align-center">
-            <v-text-field v-model="newDockerUrl" :label="$t('load from url')" type="url" class="mb-0"
-              style="margin-bottom: 0;" />
-          </v-col>
-          <v-col cols="3" class="d-flex align-center justify-center">
-            <v-btn color="primary" @click="fetchDockerTemplateUrl()" :disabled="!newDockerUrl"
-              style="margin-bottom: 20px;">
-              {{ $t('fetch') }}
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-textarea v-model="newDockerText" :label="$t('paste json template here')" rows="5" required>
-        </v-textarea>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text @click="createDialog = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createDocker" :disabled="!newDockerText">
-          {{ $t('create') }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+
 
   <v-dialog v-model="deleteDialog.value" max-width="500">
     <v-card>
@@ -236,9 +210,6 @@ const { t } = useI18n();
 const dockers = ref([]);
 const mosDockers = ref([]);
 const overlay = ref(false);
-const createDialog = ref(false);
-const newDockerUrl = ref('');
-const newDockerText = ref('');
 const deleteDialog = reactive({
   value: false,
   docker: null
@@ -395,33 +366,7 @@ const killDocker = async (name) => {
   }
 };
 
-const createDocker = async () => {
-  createDialog.value = false;
 
-  try {
-    overlay.value = true;
-
-    const res = await fetch('/api/v1/docker/mos/create', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
-      },
-      body: newDockerText.value
-    });
-
-    overlay.value = false;
-
-    if (!res.ok) throw new Error(t('docker container could not be created'));
-    showSnackbarSuccess(t('docker container created successfully'));
-    getDockers();
-    newDockerText.value = '';
-
-  } catch (e) {
-    overlay.value = false;
-    showSnackbarError(e.message);
-  }
-};
 
 const removeDocker = async (name) => {
   deleteDialog.value = false;
@@ -471,24 +416,36 @@ const updateDocker = async (name) => {
   }
 };
 
-const updateAll = async () => {
+const checkForUpdates = async () => {
   try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/upgrade`, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
-      }
-    });
-    overlay.value = false;
+    showSnackbarSuccess(t('update check started'));
 
-    if (!res.ok) throw new Error(t('docker containers could not be updated'));
-    showSnackbarSuccess(t('docker containers updated successfully'));
-    getDockers();
+         fetch('/api/v1/docker/mos/update_check', {
+       method: 'POST',
+       headers: {
+         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+         'Content-Type': 'application/json'
+       }
+     }).catch(() => {});
 
   } catch (e) {
-    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+};
+
+const updateAll = async () => {
+  try {
+    showSnackbarSuccess(t('update started'));
+
+         fetch(`/api/v1/docker/mos/upgrade`, {
+       method: 'POST',
+       headers: {
+         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+         'Content-Type': 'application/json'
+       }
+     }).catch(() => {});
+
+  } catch (e) {
     showSnackbarError(e.message);
   }
 };
@@ -576,28 +533,7 @@ const checkWebui = (docker) => {
   return false;
 };
 
-const fetchDockerTemplateUrl = async () => {
-  const dockerTemplate = { url: newDockerUrl.value };
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/xml_convert`, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dockerTemplate)
-    });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker template could not be fetched'));
-    newDockerText.value = JSON.stringify(await res.json(), null, 2);
-
-  } catch (e) {
-    overlay.value = false;
-    showSnackbarError(e.message);
-  }
-};
 
 const openTerminal = async (dockerName) => {
   const sessionId = await createDockerTerminalSession(dockerName);

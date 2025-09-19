@@ -70,11 +70,21 @@
     <v-card>
       <v-card-title>{{ $t('add user') }}</v-card-title>
       <v-card-text>
-        <form @submit.prevent="addUser">
-          <v-text-field v-model="addDialog.username" :label="$t('username')" required />
-          <v-text-field v-model="addDialog.password" :type="showPassword ? 'text' : 'password'"
-            :label="$t('password')" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            @click:append-inner="showPassword = !showPassword" required />
+        <form @submit.prevent="addUser()">
+          <v-text-field v-model="addDialog.username" :label="$t('username')" :error="addDialog.submitted && addDialog.username === ''" :error-messages="addDialog.submitted && addDialog.username === '' ? [$t('this field is required')] : []" required />
+          <v-text-field v-model="addDialog.password" :type="showPassword ? 'text' : 'password'" :label="$t('password')"
+            :error="addDialog.submitted && addDialog.password === ''"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showPassword = !showPassword" :error-messages="addDialog.submitted && addDialog.password === '' ? [$t('this field is required')] : []" required />
+          <v-text-field v-model="addDialog.password2" :label="$t('confirm password')" required
+            :type="showPassword ? 'text' : 'password'" :error="addDialog.submitted && addDialog.password2 === ''"
+            :error-messages="addDialog.submitted
+              ? (addDialog.password2 === ''
+                ? [$t('this field is required')]
+                : (addDialog.password2 !== addDialog.password
+                  ? [$t('password is not the same')]
+                  : []))
+              : []" />
           <v-select v-model="addDialog.role" :items="['admin', 'user', 'samba_only']" :label="$t('role')" required
             @update:modelValue="val => { addDialog.role = val; if (val === 'samba_only') addDialog.samba_user = true; }" />
           <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="primary" />
@@ -83,9 +93,9 @@
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-btn text @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="primary" @click="addUser()">
-            {{ $t('save') }}
-          </v-btn>
+            <v-btn color="primary" @click="onAddSubmit">
+              {{ $t('save') }}
+            </v-btn>
         </v-row>
       </v-card-actions>
     </v-card>
@@ -99,7 +109,7 @@
           <v-text-field v-model="changeDialog.user.username" :label="$t('username')" readonly />
           <v-text-field v-model="changeDialog.password" :type="showPassword ? 'text' : 'password'"
             :label="$t('password')" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            @click:append-inner="showPassword = !showPassword" required />
+            @click:append-inner="showPassword = !showPassword" :required="changeDialog.samba_user" />
           <v-select v-model="changeDialog.role" :items="['admin', 'user', 'samba_only']" :label="$t('role')" required />
           <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="primary" />
         </form>
@@ -116,14 +126,8 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-btn
-    color="primary"
-    class="fab"
-    style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
-    size="large"
-    icon
-    @click="openAddDialog()"
-  >
+  <v-btn color="primary" class="fab" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large"
+    icon @click="openAddDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-btn>
 
@@ -155,8 +159,10 @@ const changeDialog = reactive({
 });
 const addDialog = reactive({
   value: false,
+  submitted: false,
   username: '',
   password: '',
+  password2: '',
   role: '',
   samba_user: false
 });
@@ -178,6 +184,7 @@ const openAddDialog = () => {
   addDialog.password = '';
   addDialog.role = 'user';
   addDialog.samba_user = false;
+  addDialog.submitted = false;
 };
 
 const getUsers = async () => {
@@ -202,6 +209,7 @@ const getUsers = async () => {
 
 const addUser = async () => {
   addDialog.value = false;
+  addDialog.submitted = false;
 
   const newUser = {
     username: addDialog.username,
@@ -229,7 +237,6 @@ const addUser = async () => {
     }
 
     showSnackbarSuccess(t('User successfully created'));
-
     getUsers();
 
   } catch (e) {
@@ -295,6 +302,17 @@ const changeUser = async () => {
     showSnackbarError(e.message);
   }
 
+};
+
+const onAddSubmit = () => {
+  addDialog.submitted = true;
+  if (addDialog.username === '' || addDialog.password === '' || addDialog.password2 === '' || addDialog.role === '') {
+    return;
+  }
+  if (addDialog.password !== addDialog.password2) {
+    return;
+  }
+  addUser();
 };
 
 onMounted(() => {

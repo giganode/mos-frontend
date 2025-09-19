@@ -40,14 +40,6 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row class="mt-4">
-          <v-col class="d-flex justify-end">
-            <v-btn color="primary" @click="openCreatePoolDialog()" class="ml-2">
-              <v-icon left>mdi-plus</v-icon>
-              {{ $t('create') }}
-            </v-btn>
-          </v-col>
-        </v-row>
       </v-container>
     </v-container>
   </v-container>
@@ -122,32 +114,32 @@
       <v-card-title>{{ $t('edit share') }}</v-card-title>
       <v-card-text>
         <v-form>
-            <v-text-field v-model="editDialog.name" :label="$t('share name')" readonly />
-            <v-text-field v-model="editDialog.path" :label="$t('path')" readonly />
-            <v-text-field v-model="editDialog.comment" :label="$t('comment')" clearable />
-            <v-select v-model="editDialog.write_list"
-              :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []"
-              :label="$t('write list')" multiple/>
-            <v-select v-model="editDialog.valid_users"
-              :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []"
-              :label="$t('valid users')" multiple/>
-            <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact"
+          <v-text-field v-model="editDialog.name" :label="$t('share name')" readonly />
+          <v-text-field v-model="editDialog.path" :label="$t('path')" readonly />
+          <v-text-field v-model="editDialog.comment" :label="$t('comment')" clearable />
+          <v-select v-model="editDialog.write_list"
+            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('write list')"
+            multiple />
+          <v-select v-model="editDialog.valid_users"
+            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('valid users')"
+            multiple />
+          <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact"
             class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.browseable" :label="$t('browseable')" inset hide-details density="compact"
+          <v-switch v-model="editDialog.browseable" :label="$t('browseable')" inset hide-details density="compact"
             class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.read_only" :label="$t('read only')" inset hide-details density="compact"
+          <v-switch v-model="editDialog.read_only" :label="$t('read only')" inset hide-details density="compact"
             class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact"
+          <v-switch v-model="editDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact"
             class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.force_root" :label="$t('force root')" inset hide-details density="compact"
+          <v-switch v-model="editDialog.force_root" :label="$t('force root')" inset hide-details density="compact"
             class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details
+          <v-switch v-model="editDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details
             density="compact" class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details
+          <v-switch v-model="editDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details
             density="compact" class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.preserve_case" :label="$t('preserve case')" inset hide-details
-            density="compact" class="ml-4" color="primary" />
-            <v-switch v-model="editDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details
+          <v-switch v-model="editDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact"
+            class="ml-4" color="primary" />
+          <v-switch v-model="editDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details
             density="compact" class="ml-4" color="primary" />
         </v-form>
       </v-card-text>
@@ -162,6 +154,12 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Floating Action Button -->
+  <v-btn color="primary" class="fab" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large"
+    icon @click="openCreatePoolDialog()">
+    <v-icon>mdi-plus</v-icon>
+  </v-btn>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
@@ -403,7 +401,7 @@ const updateShare = async (shareDialog) => {
 const deleteShare = async () => {
   deleteDialog.value = false;
   const delShare = deleteDialog.deleteDirectory ? { deleteDirectory: true } : {};
-  
+
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/shares/smb/${encodeURIComponent(deleteDialog.share.id)}`, {

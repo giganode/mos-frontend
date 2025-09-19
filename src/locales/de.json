@@ -359,7 +359,6 @@
   "mos channel": "MOS Kanal",
   "mos build": "MOS Build",
   "mos kernel": "MOS Kernel",
-  "check for updates": "Nach Updates suchen",
   "update api": "API aktualisieren",
   "update ui": "UI aktualisieren",
   "variables": "Variablen",
@@ -371,5 +370,8 @@
   "no pools have been created yet": "Es wurden noch keine Pools erstellt",
   "actual usage": "Genutzt",
   "reserved": "Reserviert",
-  "dirty caches": "Dirty Caches"
+  "dirty caches": "Dirty Caches",
+  "password is required": "Passwort ist erforderlich",
+  "add user": "Benutzer anlegen",
+  "confirm password": "Passwort bestätigen"
 }

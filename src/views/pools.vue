@@ -53,7 +53,7 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-        <v-card v-if="pools.length === 0" variant="tonal" fluid class="mb-4 ml-4 mr-4 pa-0">
+        <v-card v-if="pools.length === 0" variant="tonal" fluid class="mb-4 ml-0 mr-0 pa-0">
           <v-card-text class="pa-4">
             {{ $t('no pools have been created yet') }}
           </v-card-text>

@@ -43,11 +43,19 @@
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
-                                    <v-btn icon="mdi-delete" size="x-small" color="error" class="ma-1 pa-0"
-                                        style="width:24px; height:24px; min-width:24px;" @click="removePath(i)"
-                                        title="Remove path" aria-label="remove path">
-                                        <v-icon size="18">mdi-delete</v-icon>
-                                    </v-btn>
+                                    <div class="d-flex flex-column align-center">
+                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
+                                            @click="form.paths.splice(i + 1, 0, { name: '', mode: '', host: '', container: '' })"
+                                            title="Add path" aria-label="add path">
+                                            <v-icon size="18">mdi-plus</v-icon>
+                                        </v-btn>
+                                        <v-btn icon size="x-small" color="error" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px;" @click="removePath(i)"
+                                            title="Remove path" aria-label="remove path">
+                                            <v-icon size="18">mdi-delete</v-icon>
+                                        </v-btn>
+                                    </div>
                                 </v-col>
                                 <v-col cols="11">
                                     <v-row>
@@ -87,11 +95,19 @@
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
-                                    <v-btn icon="mdi-delete" size="x-small" color="error" class="ma-1 pa-0"
-                                        style="width:24px; height:24px; min-width:24px;" @click="removePort(i)"
-                                        title="Remove port" aria-label="remove port">
-                                        <v-icon size="18">mdi-delete</v-icon>
-                                    </v-btn>
+                                    <div class="d-flex flex-column align-center">
+                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
+                                            @click="form.ports.splice(i + 1, 0, { name: '', protocol: '', host: '', container: '' })"
+                                            title="Add port" aria-label="add port">
+                                            <v-icon size="18">mdi-plus</v-icon>
+                                        </v-btn>
+                                        <v-btn icon size="x-small" color="error" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px;" @click="removePort(i)"
+                                            title="Remove port" aria-label="remove port">
+                                            <v-icon size="18">mdi-delete</v-icon>
+                                        </v-btn>
+                                    </div>
                                 </v-col>
                                 <v-col cols="11">
                                     <v-row>
@@ -131,11 +147,19 @@
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
-                                    <v-btn icon="mdi-delete" size="x-small" color="error" class="ma-1 pa-0"
-                                        style="width:24px; height:24px; min-width:24px;" @click="removeDevice(i)"
-                                        title="Remove device" aria-label="remove device">
-                                        <v-icon size="18">mdi-delete</v-icon>
-                                    </v-btn>
+                                    <div class="d-flex flex-column align-center">
+                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
+                                            @click="form.devices.splice(i + 1, 0, { name: '', host: '', container: '' })"
+                                            title="Add device" aria-label="add device">
+                                            <v-icon size="18">mdi-plus</v-icon>
+                                        </v-btn>
+                                        <v-btn icon size="x-small" color="error" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px;" @click="removeDevice(i)"
+                                            title="Remove device" aria-label="remove device">
+                                            <v-icon size="18">mdi-delete</v-icon>
+                                        </v-btn>
+                                    </div>
                                 </v-col>
                                 <v-col cols="11">
                                     <v-row>
@@ -171,11 +195,19 @@
                             <v-divider v-if="i > 0" class="my-2"></v-divider>
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
-                                    <v-btn icon="mdi-delete" size="x-small" color="error" class="ma-1 pa-0"
-                                        style="width:24px; height:24px; min-width:24px;" @click="removeVariable(i)"
-                                        title="Remove variable" aria-label="remove variable">
-                                        <v-icon size="18">mdi-delete</v-icon>
-                                    </v-btn>
+                                    <div class="d-flex flex-column align-center">
+                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
+                                            @click="form.variables.splice(i + 1, 0, { name: '', key: '', value: '', mask: false })"
+                                            title="Add variable" aria-label="add variable">
+                                            <v-icon size="18">mdi-plus</v-icon>
+                                        </v-btn>
+                                        <v-btn icon size="x-small" color="error" class="pa-0"
+                                            style="width:24px; height:24px; min-width:24px;" @click="removeVariable(i)"
+                                            title="Remove variable" aria-label="remove variable">
+                                            <v-icon size="18">mdi-delete</v-icon>
+                                        </v-btn>
+                                    </div>
                                 </v-col>
                                 <v-col cols="11">
                                     <v-row>
@@ -195,7 +227,8 @@
                                         </v-col>
                                         <v-col cols="6">
                                             <v-text-field :label="$t('value')" v-model="variable.value"
-                                                density="compact" :type="variable.mask ? 'password' : 'text'"></v-text-field>
+                                                density="compact"
+                                                :type="variable.mask ? 'password' : 'text'"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-col>

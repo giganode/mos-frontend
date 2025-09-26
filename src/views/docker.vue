@@ -40,7 +40,7 @@
                           </template>
                           <v-list-item-title>{{ group.name }}</v-list-item-title>
                           <v-list-item-subtitle>
-                            {{ group.containers.length }} {{ $t('containers') }}
+                            {{ group.runningCount }}/{{ group.count }} {{ $t('started') }}
                           </v-list-item-subtitle>
                         </v-list-item>
                         <v-expand-transition>

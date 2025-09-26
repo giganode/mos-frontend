@@ -262,8 +262,8 @@ const updateUI = async () => {
       }
     });
 
-    if (!res.ok) throw new Error(t('update api could not be initiated'));
-    showSnackbarSuccess(t('update api initiated successfully'));
+    if (!res.ok) throw new Error(t('update ui could not be initiated'));
+    showSnackbarSuccess(t('update ui initiated successfully'));
   } catch (e) {
     showSnackbarError(e.message);
   } finally {

@@ -117,11 +117,11 @@
           <v-text-field v-model="editDialog.name" :label="$t('share name')" readonly />
           <v-text-field v-model="editDialog.path" :label="$t('path')" readonly />
           <v-text-field v-model="editDialog.comment" :label="$t('comment')" clearable />
-          <v-select v-model="editDialog.write_list"
-            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('write list')"
-            multiple />
           <v-select v-model="editDialog.valid_users"
-            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('valid users')"
+            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('read rights')"
+            multiple />
+          <v-select v-model="editDialog.write_list"
+            :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('write rights')"
             multiple />
           <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact"
             class="ml-4" color="primary" />

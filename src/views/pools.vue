@@ -8,6 +8,8 @@
         <v-card variant="tonal" v-for="pool in pools" :key="pool.id" fluid class="mb-4 pa-0">
           <v-card-title class="d-flex align-center">
             <span>{{ pool.name }}</span>
+            <v-spacer />
+            <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1" aria-label="locked">mdi-lock</v-icon>
           </v-card-title>
           <v-card-subtitle>{{ $t('type') }}: {{ pool.type }}
             <v-progress-linear :model-value="pool.status.usagePercent" height="8"
@@ -49,7 +51,7 @@
           <v-card-actions class="justify-space-between">
             <v-switch v-model="pool.automount" label="Automount" inset hide-details density="compact" color="primary" />
             <v-btn icon @click="openDeletePoolDialog(pool)">
-              <v-icon>mdi-delete</v-icon>
+              <v-icon color="red">mdi-delete</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>

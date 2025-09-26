@@ -401,5 +401,13 @@
   "at least one container must be selected": "At least one container must be selected",
   "docker group could not be updated": "Docker group could not be updated",
   "docker group updated successfully": "Docker group updated successfully",
-  "edit docker group": "Edit Docker group"
+  "edit docker group": "Edit Docker group",
+  "running": "running",
+  "stopped": "stopped",
+  "paused": "paused",
+  "started": "started",
+  "update ui could not be initiated": "Update UI could not be initiated",
+  "update ui initiated successfully": "Update UI initiated successfully",
+  "read rights": "Read rights",
+  "write rights": "Write rights"
 }

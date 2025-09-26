@@ -31,7 +31,9 @@
                                 ? [$t('this field is required')]
                                 : (password2 !== password && step2Error
                                     ? [$t('password is not the same')]
-                                    : [])"></v-text-field>
+                                    : [])">
+                        </v-text-field>
+                        <v-switch v-model="sambaUser" :label="$t('samba user')" inset color="primary" />
                     </v-card-text>
                 </v-card>
             </template>
@@ -61,6 +63,7 @@ const rootpwd = ref('');
 const rootpwd2 = ref('');
 const password = ref('');
 const password2 = ref('');
+const sambaUser = ref(true);
 let step = ref(1);
 const step1Error = ref(false);
 const step2Error = ref(false);
@@ -69,6 +72,7 @@ const addUser = async () => {
     const newUser = {
         username: username.value,
         password: password.value,
+        samba_user: sambaUser.value,
         role: 'admin'
     };
 

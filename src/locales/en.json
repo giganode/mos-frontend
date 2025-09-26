@@ -409,5 +409,6 @@
   "update ui could not be initiated": "Update UI could not be initiated",
   "update ui initiated successfully": "Update UI initiated successfully",
   "read rights": "Read rights",
-  "write rights": "Write rights"
+  "write rights": "Write rights",
+  "update system": "Update system"
 }

@@ -8,7 +8,7 @@
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
             <v-btn color="primary" width="250px" @click="updateOsDialog.value = true">
-              {{ $t('firmware') }}
+              {{ $t('update system') }}
             </v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">

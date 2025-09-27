@@ -727,7 +727,31 @@ const switchAutostart = async (docker) => {
 };
 
 const onDragEndGrp = async () => {
+  const newOrder = JSON.stringify(
+    dockerGroups.value.map((group, idx) => {
+      const obj = {
+        id: group.id,
+        index: idx + 1,
+      };
+      return obj;
+    })
+  );
 
+  try {
+  const res = await fetch('/api/v1/docker/mos/groups/order', {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      'Content-Type': 'application/json'
+    },
+    body: newOrder
+  });
+
+  if (!res.ok) throw new Error(t('docker group order could not be saved'));
+    showSnackbarSuccess(t('docker group order saved successfully'));
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
 }
 
 const onDragEnd = async () => {

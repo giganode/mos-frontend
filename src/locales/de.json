@@ -203,7 +203,7 @@
   "tailscale": "Tailscale",
   "tailscale enabled": "Tailscale aktiviert",
   "tailscale update check": "Tailscale Update prüfen",
-  "tailscaled params": "Tailscaled Parameter",
+  "tailscale params": "Tailscale Parameter",
   "netbird": "Netbird",
   "netbird enabled": "Netbird aktiviert",
   "netbird update check": "Netbird Update prüfen",
@@ -416,5 +416,13 @@
   "docker group order could not be saved": "Docker Gruppen Reihenfolge konnte nicht gespeichert werden",
   "docker group order saved successfully": "Docker Gruppen Reihenfolge erfolgreich gespeichert",
   "encrypt": "Verschlüsseln",
-  "passphrase": "Passphrase"
+  "passphrase": "Passphrase",
+  "unmount pool": "Pool aushängen",
+  "mount pool": "Pool einhängen",
+  "pool could not be unmounted": "Pool konnte nicht aushängt werden",
+  "pool unmounted successfully": "Pool erfolgreich ausgehängt",
+  "pool could not be mounted": "Pool konnte nicht eingehängt werden",
+  "pool mounted successfully": "Pool erfolgreich eingehängt",
+  "mounted": "eingehängt",
+  "unmounted": "ausgehängt"
 }

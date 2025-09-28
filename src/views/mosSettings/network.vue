@@ -80,7 +80,7 @@
                                 v-model="settingsNetwork.services.tailscale.enabled"></v-switch>
                             <v-switch :label="$t('tailscale update check')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.tailscale.update_check"></v-switch>
-                            <v-text-field :label="$t('tailscaled params')"
+                            <v-text-field :label="$t('tailscale params')"
                                 v-model="settingsNetwork.services.tailscale.tailscaled_params"></v-text-field>
                             <v-divider class="my-2"></v-divider>
                             <h3 class="mb-2">{{ $t('netbird') }}</h3>

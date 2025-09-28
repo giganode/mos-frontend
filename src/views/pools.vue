@@ -9,10 +9,12 @@
           <v-card-title class="d-flex align-center">
             <span>{{ pool.name }}</span>
             <v-spacer />
+            <v-chip v-if="pool.status.mounted" size="small">{{ $t('mounted') }}</v-chip>
+            <v-chip v-else size="small">{{ $t('unmounted') }}</v-chip>
             <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1"
               aria-label="locked">mdi-lock</v-icon>
           </v-card-title>
-          <v-card-subtitle>{{ $t('type') }}: {{ pool.type }}
+          <v-card-subtitle v-if="pool.status">{{ $t('type') }}: {{ pool.type }}
             <v-progress-linear :model-value="pool.status.usagePercent" height="8"
               :color="getUsageColor(pool.status.usagePercent)" rounded class="mt-2"
               :label="`${pool.status.usagePercent}%`" style="min-width: 120px;" />
@@ -27,10 +29,10 @@
                 <v-list-item-subtitle>
                   {{ data_device.filesystem }}
                 </v-list-item-subtitle>
-                <v-progress-linear :model-value="data_device.storage.usagePercent" height="8"
+                <v-progress-linear v-if="data_device.storage" :model-value="data_device.storage.usagePercent" height="8"
                   :color="getUsageColor(data_device.storage.usagePercent)" rounded class="mt-2"
                   :label="`${data_device.storage.usagePercent}%`" style="min-width: 120px;" />
-                <v-list-item-subtitle class="mt-2">
+                <v-list-item-subtitle v-if="data_device.storage" class="mt-2">
                   {{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}
                 </v-list-item-subtitle>
               </v-list-item>
@@ -50,12 +52,28 @@
               </v-list-item>
             </v-list>
           </v-card-text>
-          <v-card-actions class="justify-space-between">
-            <v-switch v-model="pool.automount" label="Automount" inset hide-details density="compact" color="primary"
-              @change="switchAutomount(pool)" />
+          <v-card-actions>
+            <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact"
+              color="primary" @change="switchAutomount(pool)" />
+            <v-spacer />
             <v-btn icon @click="openDeletePoolDialog(pool)">
               <v-icon color="red">mdi-delete</v-icon>
             </v-btn>
+            <v-menu>
+              <template #activator="{ props }">
+                <v-btn variant="text" icon v-bind="props">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item v-if="!pool.status.mounted" @click="mountPool(pool)">
+                  <v-list-item-title>{{ $t('mount pool') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-if="pool.status.mounted" @click="unmountPool(pool)">
+                  <v-list-item-title>{{ $t('unmount pool') }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-card-actions>
         </v-card>
         <v-card v-if="pools.length === 0" variant="tonal" fluid class="mb-4 ml-0 mr-0 pa-0">
@@ -73,13 +91,13 @@
                 </v-list-item>
               </template>
               <v-list-item v-for="unassignedDisk in unassignedDisks" :key="unassignedDisk.name">
-                <v-list-item-title>{{ unassignedDisk.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ unassignedDisk.type }} ({{ unassignedDisk.size_human }})</v-list-item-subtitle>
                 <template v-slot:prepend>
                   <v-icon class="cursor-pointer">
                     {{ getDiskIcon(unassignedDisk.type) }}
                   </v-icon>
                 </template>
+                <v-list-item-title>{{ unassignedDisk.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ unassignedDisk.type }} ({{ unassignedDisk.size_human }})</v-list-item-subtitle>
                 <template v-slot:append>
                   <v-menu>
                     <template #activator="{ props }">
@@ -104,12 +122,6 @@
       </v-container>
     </v-container>
   </v-container>
-
-  <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon
-    @click="openCreatePoolDialog()">
-    <v-icon>mdi-plus</v-icon>
-  </v-fab>
 
   <v-dialog v-model="formatDialog.value" max-width="400">
     <v-card>
@@ -197,6 +209,12 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Floating Action Button -->
+  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon
+    @click="openCreatePoolDialog()">
+    <v-icon>mdi-plus</v-icon>
+  </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
@@ -536,6 +554,47 @@ const switchAutomount = async (pool) => {
     overlay.value = false;
     if (!res.ok) throw new Error(t('could not change automount setting'));
     showSnackbarSuccess(t('automount setting changed successfully'));
+
+    getPools();
+
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+};
+
+const unmountPool = async (pool) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/pools/${pool.id}/unmount`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+    overlay.value = false;
+    if (!res.ok) throw new Error(t('pool could not be unmounted'));
+    showSnackbarSuccess(t('pool unmounted successfully'));
+    getPools();
+
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+};
+
+const mountPool = async (pool) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/pools/${pool.id}/mount`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+    overlay.value = false;
+    if (!res.ok) throw new Error(t('pool could not be mounted'));
+    showSnackbarSuccess(t('pool mounted successfully'));
 
     getPools();
 

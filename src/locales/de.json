@@ -424,5 +424,12 @@
   "pool could not be mounted": "Pool konnte nicht eingehängt werden",
   "pool mounted successfully": "Pool erfolgreich eingehängt",
   "mounted": "eingehängt",
-  "unmounted": "ausgehängt"
+  "unmounted": "ausgehängt",
+  "docker groups could not be loaded": "Docker Gruppen konnten nicht geladen werden",
+  "update api initiated successfully": "API-Aktualisierung erfolgreich gestartet",
+  "update api could not be initiated": "API-Aktualisierung konnte nicht gestartet werden",
+  "update kernel initiated successfully": "Kernel-Aktualisierung erfolgreich gestartet",
+  "update kernel could not be initiated": "Kernel-Aktualisierung konnte nicht gestartet werden",
+  "pool could not be changed": "Pool konnte nicht geändert werden",
+  "pool changed successfully": "Pool erfolgreich geändert"
 }

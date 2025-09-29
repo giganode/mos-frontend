@@ -14,17 +14,18 @@
             <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1"
               aria-label="locked">mdi-lock</v-icon>
           </v-card-title>
-          <v-card-subtitle v-if="pool.status">{{ $t('type') }}: {{ pool.type }}
-            <v-progress-linear :model-value="pool.status.usagePercent" height="8"
-              :color="getUsageColor(pool.status.usagePercent)" rounded class="mt-2"
-              :label="`${pool.status.usagePercent}%`" style="min-width: 120px;" />
-            {{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}
-          </v-card-subtitle>
+          <v-card-subtitle v-if="pool.status">{{ $t('type') }}: {{ pool.type }}</v-card-subtitle>
+          <div v-if="pool.status" class="mt-2 mr-4 ml-4">
+            <v-progress-linear :model-value="pool.status.usagePercent" height="8" class="mb-2"
+              :color="getUsageColor(pool.status.usagePercent)" rounded :label="`${pool.status.usagePercent}%`"
+              style="min-width: 120px;" bg-opacity="0.35"/>
+            <span style="font-size: 0.875rem;">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human
+              }}</span>
+          </div>
           <v-card-text>
-            <v-list class="pa-0" style="background-color: transparent;">
+            <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent;">
               <v-list-item-title>{{ $t('disks') }}</v-list-item-title>
-              <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id"
-                @click="selectedDisk = data_device">
+              <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id">
                 <v-list-item-title>{{ data_device.device }}</v-list-item-title>
                 <v-list-item-subtitle>
                   {{ data_device.filesystem }}
@@ -37,16 +38,15 @@
                 </v-list-item-subtitle>
               </v-list-item>
             </v-list>
-            <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0"
-              style="background-color: transparent;">
+            <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent;">
               <v-list-item-title>{{ $t('parities') }}</v-list-item-title>
               <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
                 <v-list-item-title>{{ parity_device.device }}</v-list-item-title>
                 <v-list-item-subtitle>{{ parity_device.filesystem }}</v-list-item-subtitle>
-                <v-progress-linear :model-value="parity_device.storage.usagePercent" height="8"
-                  :color="getUsageColor(parity_device.storage.usagePercent)" rounded class="mt-2"
+                <v-progress-linear v-if="parity_device.storage" :model-value="parity_device.storage.usagePercent"
+                  height="8" color="grey darken-1" rounded class="mt-2"
                   :label="`${parity_device.storage.usagePercent}%`" style="min-width: 120px;" />
-                <v-list-item-subtitle class="mt-2">
+                <v-list-item-subtitle v-if="parity_device.storage" class="mt-2">
                   {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
                 </v-list-item-subtitle>
               </v-list-item>
@@ -277,7 +277,7 @@ const openCreatePoolDialog = (disk) => {
   createPoolDialog.value = true;
   createPoolDialog.disk = disk;
   createPoolDialog.single = 'single';
-  createPoolDialog.devices = [disk.device];
+  createPoolDialog.devices = disk && disk.device ? [disk.device] : [];
   createPoolDialog.name = '';
   createPoolDialog.format = false;
   createPoolDialog.automount = true;

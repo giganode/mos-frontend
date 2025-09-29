@@ -417,10 +417,19 @@
   "docker group order saved successfully": "Docker group order saved successfully",
   "encrypt": "Encrypt",
   "passphrase": "Passphrase",
+  "unmount pool": "Unmount Pool",
+  "mount pool": "Mount Pool",
   "pool could not be unmounted": "Pool could not be unmounted",
   "pool unmounted successfully": "Pool unmounted successfully",
   "pool could not be mounted": "Pool could not be mounted",
   "pool mounted successfully": "Pool mounted successfully",
   "mounted": "mounted",
-  "unmounted": "unmounted"
+  "unmounted": "unmounted",
+  "docker groups could not be loaded": "Docker groups could not be loaded",
+  "update api initiated successfully": "API update initiated successfully",
+  "update api could not be initiated": "API update could not be initiated",
+  "update kernel initiated successfully": "Kernel update initiated successfully",
+  "update kernel could not be initiated": "Kernel update could not be initiated",
+  "pool could not be changed": "Pool could not be changed",
+  "pool changed successfully": "Pool changed successfully"
 }

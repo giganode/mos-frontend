@@ -7,6 +7,8 @@
       <v-container fluid class="pa-0">
         <v-select v-model="selectedLanguage" :items="languages" item-title="name" item-value="name"
           :label="$t('language')" required @update:modelValue="changeLanguage()" />
+        <v-select v-model="selectedByteFormat" :items="byte_format" item-title="name" item-value="name"
+          :label="$t('byte unit')" required @update:modelValue="changeByteUnit()" />
         <v-text-field :label="$t('uicolor')" v-model="color" @update:modelValue="changePrimaryColor(color)" type="color"
           hide-details prepend-inner-icon="mdi-palette" />
         <h3 class="mt-4 d-flex align-center">
@@ -76,6 +78,8 @@ const authToken = ref(localStorage.getItem('authToken'));
 const overlay = ref(false);
 const selectedLanguage = ref(locale.value);
 const languages = ref(availableLocales);
+const selectedByteFormat = ref('');
+const byte_format = ref(['binary', 'decimal']);
 const theme = useTheme();
 const color = ref(theme.themes.value[theme.global.name.value].colors.primary || '#1976D2');
 const adminTokens = ref([]);
@@ -87,6 +91,7 @@ const createAdminTokenDialog = reactive({
 const showPassword = ref(false);
 
 onMounted(() => {
+  getUser();
   getAdminTokens();
 });
 
@@ -94,6 +99,24 @@ const openAdminTokenDialog = () => {
   createAdminTokenDialog.value = true;
   createAdminTokenDialog.name = '';
   createAdminTokenDialog.description = '';
+};
+
+const getUser = async () => {
+  try {
+    const res = await fetch(`/api/v1/auth/profile`, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      }
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+    const user = await res.json();
+    selectedByteFormat.value = user.byte_format || 'binary';
+
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
 };
 
 const getAdminTokens = async () => {
@@ -198,6 +221,26 @@ const changeLanguage = async () => {
 
     if (!res.ok) throw new Error('API-Error');
     locale.value = selectedLanguage.value;
+    showSnackbarSuccess(t('language changed'));
+
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
+};
+
+const changeByteUnit = async () => {
+  try {
+    const res = await fetch(`/api/v1/auth/users/${localStorage.getItem('userid')}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'byte_format': selectedByteFormat.value })
+    })
+
+    if (!res.ok) throw new Error('API-Error');
+    showSnackbarSuccess(t('byte unit changed'));
 
   } catch (e) {
     showSnackbarError(e.message);
@@ -207,7 +250,7 @@ const changeLanguage = async () => {
 const copyAuthToken = (token) => {
   navigator.clipboard.writeText(token)
     .then(() => showSnackbarSuccess(t('api token copied to clipboard')))
-    .catch(err => showSnackbarError(t('failed to copy api token')));
+    .catch(() => showSnackbarError(t('failed to copy api token')));
 };
 
 </script>

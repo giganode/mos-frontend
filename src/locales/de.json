@@ -431,5 +431,8 @@
   "update kernel initiated successfully": "Kernel-Aktualisierung erfolgreich gestartet",
   "update kernel could not be initiated": "Kernel-Aktualisierung konnte nicht gestartet werden",
   "pool could not be changed": "Pool konnte nicht geändert werden",
-  "pool changed successfully": "Pool erfolgreich geändert"
+  "pool changed successfully": "Pool erfolgreich geändert",
+  "byte unit changed": "Byte Einheit geändert",
+  "byte unit": "Byte Einheit",
+  "copy": "Kopieren"
 }

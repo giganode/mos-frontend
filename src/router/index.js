@@ -20,6 +20,7 @@ import mosSettingsNetwork from "../views/mosSettings/network.vue";
 import mosSettingsSstem from "../views/mosSettings/system.vue";
 import webterminal from "../views/webterminal.vue";
 import webterminalPopup from "../views/webterminalPopup.vue";
+import Notifications from "../views/notifications.vue";
 
 const routes = [
   { path: "/login", component: Login, meta: { title: "MOS Login", description: "Login to your account" } },
@@ -43,13 +44,8 @@ const routes = [
   { path: "/mosSettings/system", component: mosSettingsSstem, meta: { title: "MOS Settings - System", description: "Manage System settings" } },
   { path: "/profile", component: profile, meta: { title: "Profile", description: "Manage your profile" } },
   { path: "/webTerminal", component: webterminal, meta: { title: "Web Terminal", description: "Access the web terminal" } },
-  {
-    path: "/webTerminalPopup",
-    component: webterminalPopup,
-    children: [
-      { path: "", component: webterminalPopup, meta: { hideAppBar: true, title: "Web Terminal", description: "Access the web terminal" } },
-    ],
-  },
+  { path: "/webTerminalPopup", component: webterminalPopup, children: [ { path: "", component: webterminalPopup, meta: { hideAppBar: true, title: "Web Terminal", description: "Access the web terminal" } } ] },
+  { path: "/notifications", component: Notifications, meta: { title: "Notifications", description: "View your notifications" } }
 ];
 
 const router = createRouter({

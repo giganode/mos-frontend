@@ -434,5 +434,6 @@
   "pool changed successfully": "Pool erfolgreich geändert",
   "byte unit changed": "Byte Einheit geändert",
   "byte unit": "Byte Einheit",
-  "copy": "Kopieren"
+  "copy": "Kopieren",
+  "no notifications available": "Keine Benachrichtigungen verfügbar"
 }

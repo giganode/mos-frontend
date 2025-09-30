@@ -14,7 +14,10 @@
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-img :src="logoSrc" alt="MOS Logo" max-width="50" class="ml-3 mr-3" contain />
         <v-toolbar-title>{{ $t('mos') }}</v-toolbar-title>
-        <v-btn icon variant="text" class="ml-4" @click="changeDarkMode()">
+        <v-btn icon to="/notifications" variant="text">
+          <v-icon>mdi-bell</v-icon>
+        </v-btn>
+        <v-btn icon variant="text" @click="changeDarkMode()">
           <v-icon>
             {{ theme.global.name.value === 'dark' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}
           </v-icon>

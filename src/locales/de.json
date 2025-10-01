@@ -435,5 +435,7 @@
   "byte unit changed": "Byte Einheit geändert",
   "byte unit": "Byte Einheit",
   "copy": "Kopieren",
-  "no notifications available": "Keine Benachrichtigungen verfügbar"
+  "no notifications available": "Keine Benachrichtigungen verfügbar",
+  "older": "Älter",
+  "newer": "Neuer"
 }

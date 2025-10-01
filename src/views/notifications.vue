@@ -6,7 +6,7 @@
           <h2>{{ $t('notifications') }}</h2>
           <v-btn text class="d-flex align-center" density="compact"
             @click="switchNotificationsOrder()">
-            <v-icon small class="mr-1">mdi-sort</v-icon>
+            <v-icon small class="mr-1">{{ notificationsOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending' }}</v-icon>
             {{ notificationsOrder === 'asc' ? $t('older') : $t('newer') }}
           </v-btn>
         </div>

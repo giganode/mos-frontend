@@ -437,5 +437,14 @@
   "copy": "Kopieren",
   "no notifications available": "Keine Benachrichtigungen verfügbar",
   "older": "Älter",
-  "newer": "Neuer"
+  "newer": "Neuer",
+  "proxies could not be loaded": "Proxies konnten nicht geladen werden",
+  "proxies": "Proxies",
+  "proxy": "Proxy",
+  "http proxy": "HTTP Proxy",
+  "https proxy": "HTTPS Proxy",
+  "ftp proxy": "FTP Proxy",
+  "no proxy": "Kein Proxy",
+  "ntp": "NTP",
+  "proxies could not be changed": "Proxies konnten nicht geändert werden"
 }

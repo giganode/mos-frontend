@@ -7,26 +7,29 @@
             <v-container fluid class="pa-0">
                 <v-card variant="tonal">
                     <v-card-text>
-                        <v-form>
-                            <v-text-field :label="$t('hostname')" v-model="settingsSystem.hostname"></v-text-field>
-                            <v-select :items="keymaps" :label="$t('keymap')" v-model="settingsSystem.keymap"
-                                item-title="keymap" item-value="keymap"></v-select>
-                            <v-select
-                                :items="timezones"
-                                :label="$t('timezone')"
-                                v-model="settingsSystem.timezone"
-                                item-title="timezone"
-                                item-value="timezone"
-                            ></v-select>
-                            <v-text-field :label="$t('global spindown (min)')" type="number"
-                                v-model="settingsSystem.global_spindown"></v-text-field>
-                            <v-divider class="my-2"></v-divider>
-                            <v-switch :label="$t('ntp enabled')" color="primary" inset density="compact"
-                                v-model="settingsSystem.ntp.enabled"></v-switch>
-                            <v-text-field :label="$t('ntp mode')" v-model="settingsSystem.ntp.mode"></v-text-field>
-                            <v-text-field :label="$t('ntp servers')" v-model="settingsSystem.ntp.servers[0]"
-                                hint="First NTP server"></v-text-field>
-                        </v-form>
+                        <v-text-field :label="$t('hostname')" v-model="settingsSystem.hostname"></v-text-field>
+                        <v-select :items="keymaps" :label="$t('keymap')" v-model="settingsSystem.keymap"
+                            item-title="keymap" item-value="keymap"></v-select>
+                        <v-select :items="timezones" :label="$t('timezone')" v-model="settingsSystem.timezone"
+                            item-title="timezone" item-value="timezone"></v-select>
+                        <v-text-field :label="$t('global spindown (min)')" type="number"
+                            v-model="settingsSystem.global_spindown"></v-text-field>
+                        <v-divider class="my-2"></v-divider>
+                        <h3 class="mb-2">{{ $t('ntp') }}</h3>
+                        <v-switch :label="$t('ntp enabled')" color="primary" inset density="compact"
+                            v-model="settingsSystem.ntp.enabled"></v-switch>
+                        <v-text-field :label="$t('ntp mode')" v-model="settingsSystem.ntp.mode"></v-text-field>
+                        <v-text-field :label="$t('ntp servers')" v-model="settingsSystem.ntp.servers[0]"
+                            hint="First NTP server"></v-text-field>
+                        <h3 class="mb-2">{{ $t('proxy') }}</h3>
+                        <v-text-field :label="$t('http proxy')" v-model="proxies.http_proxy"
+                            :placeholder="proxies.http_proxy"></v-text-field>
+                        <v-text-field :label="$t('https proxy')" v-model="proxies.https_proxy"
+                            :placeholder="proxies.https_proxy"></v-text-field>
+                        <v-text-field :label="$t('ftp proxy')" v-model="proxies.ftp_proxy"
+                            :placeholder="proxies.ftp_proxy"></v-text-field>
+                        <v-text-field :label="$t('no proxy')" v-model="proxies.no_proxy"
+                            :placeholder="proxies.no_proxy"></v-text-field>
                     </v-card-text>
                 </v-card>
             </v-container>
@@ -50,20 +53,25 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits(['refresh-drawer']);
-const settingsSystem = ref(
-    {
-        hostname: "",
-        keymap: "",
-        timezone: "",
-        ntp: {
-            enabled: false,
-            mode: "",
-            servers: []
-        },
-        global_spindown: 0
-    });
+const settingsSystem = ref({
+    hostname: "",
+    keymap: "",
+    timezone: "",
+    ntp: {
+        enabled: false,
+        mode: "",
+        servers: []
+    },
+    global_spindown: 0
+});
 const keymaps = ref([]);
 const timezones = ref([]);
+const proxies = ref({
+    http_proxy: "",
+    https_proxy: "",
+    ftp_proxy: "",
+    no_proxy: ""
+});
 const overlay = ref(false);
 const { t } = useI18n();
 
@@ -71,6 +79,7 @@ onMounted(() => {
     getSystemSettings();
     getKeymaps();
     getTimezones();
+    getProxies();
 });
 
 const getSystemSettings = async () => {
@@ -100,9 +109,18 @@ const setSystemSettings = async () => {
             },
             body: JSON.stringify(settingsSystem.value)
         });
+        const resProxy = await fetch('/api/v1/system/proxy', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(proxies.value)
+        });
         overlay.value = false;
 
         if (!res.ok) throw new Error(t('system settings could not be changed'));
+        if (!resProxy.ok) throw new Error(t('proxies could not be changed'));
         showSnackbarSuccess(t('system settings changed successfully'));
     } catch (e) {
         overlay.value = false;
@@ -136,6 +154,22 @@ const getTimezones = async () => {
 
         if (!res.ok) throw new Error(t('timezones could not be loaded'));
         timezones.value = await res.json();
+
+    } catch (e) {
+        showSnackbarError(e.message);
+    }
+};
+
+const getProxies = async () => {
+    try {
+        const res = await fetch('/api/v1/system/proxy', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+            }
+        });
+
+        if (!res.ok) throw new Error(t('proxies could not be loaded'));
+        proxies.value = await res.json();
 
     } catch (e) {
         showSnackbarError(e.message);

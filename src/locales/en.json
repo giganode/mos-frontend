@@ -437,5 +437,14 @@
   "copy": "Copy",
   "no notifications available": "No notifications available",
   "older": "Older",
-  "newer": "Newer"
+  "newer": "Newer",
+  "proxies could not be loaded": "Proxies could not be loaded",
+  "proxies": "Proxies",
+  "proxy": "Proxy",
+    "http proxy": "HTTP Proxy",
+  "https proxy": "HTTPS Proxy",
+  "ftp proxy": "FTP Proxy",
+  "no proxy": "No Proxy",
+  "ntp": "NTP",
+  "proxies could not be changed": "Proxies could not be changed"
 }

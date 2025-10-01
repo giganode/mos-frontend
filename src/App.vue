@@ -16,6 +16,7 @@
         <v-toolbar-title>{{ $t('mos') }}</v-toolbar-title>
         <v-btn icon to="/notifications" variant="text">
           <v-icon>mdi-bell</v-icon>
+          <v-badge v-if="notificationsBadge" color="green" dot></v-badge>
         </v-btn>
         <v-btn icon variant="text" @click="changeDarkMode()">
           <v-icon>
@@ -107,8 +108,10 @@ const logoutDialog = ref(false);
 const loginChecked = ref(false);
 const mosServices = ref({});
 const appBarColor = 'primary';
+const notificationsBadge = ref(false);
 
 onMounted(async () => {
+  getNotificationsBadge();
   if (tab.value === '') {
     tab.value = 'dashboard'
   }
@@ -276,5 +279,27 @@ const checkFirstSetup = async () => {
     return false;
   }
 }
+
+const getNotificationsBadge = async () => {
+  try {
+    const res = await fetch('/api/v1/notifications', {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+    let notification = await res.json();
+
+    notification = notification.map(notification => {
+      if (!notification.read) {
+        notificationsBadge.value = true;
+      }
+    });
+
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
+};
 
 </script>

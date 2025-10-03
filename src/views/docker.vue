@@ -50,8 +50,12 @@
                                     <v-menu>
                                       <template #activator="{ props }">
                                         <v-img class="drag-handle mr-4" v-bind="props"
-                                          :src="dockerImageExists(containerName) ? `/docker_icons/${containerName}.png` : '/docker_icons/placeholder.png'"
-                                          alt="docker image" width="30" height="30" style="cursor: pointer" />
+                                          src="/docker_icons/${containerName}.png"
+                                          alt="docker image" width="30" height="30" style="cursor: pointer" >
+                                          <template v-slot:error>
+                                            <v-icon>mdi-image-off</v-icon>
+                                          </template>
+                                        </v-img>
                                       </template>
                                       <v-list>
                                         <v-list-item
@@ -182,8 +186,12 @@
                               <template #activator="{ props }">
                                 <v-img v-if="docker.Names && docker.Names.length > 0" class="drag-handle mr-4"
                                   v-bind="props"
-                                  :src="dockerImageExists(docker.Names[0]) ? `/docker_icons/${docker.Names[0]}.png` : '/docker_icons/placeholder.png'"
-                                  alt="docker image" width="30" height="30" style="cursor: pointer" />
+                                  src="/docker_icons/${docker.Names[0]}.png"
+                                  alt="docker image" width="30" height="30" style="cursor: pointer">
+                                  <template v-slot:error>
+                                    <v-icon>mdi-image-off</v-icon>
+                                  </template>
+                                </v-img>
                               </template>
                               <v-list>
                                 <v-list-item v-if="checkWebui(docker)" @click="showWebui(docker)">
@@ -1030,12 +1038,6 @@ const updateDockerGroup = async () => {
     overlay.value = false;
     showSnackbarError(e.message);
   }
-};
-
-const dockerImageExists = (name) => {
-  const img = new Image();
-  img.src = `/docker_icons/${name}.png`;
-  return img.complete && img.naturalWidth !== 0;
 };
 
 const showWebui = (docker) => {

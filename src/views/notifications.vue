@@ -5,9 +5,9 @@
         <div class="d-flex align-center justify-space-between">
           <h2>{{ $t('notifications') }}</h2>
           <v-btn text class="d-flex align-center" density="compact" @click="switchNotificationsOrder()">
-            <v-icon small class="mr-1">{{ notificationsOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'
+            <v-icon small class="mr-1">{{ notificationsOrder === 'desc' ? 'mdi-sort-descending' : 'mdi-sort-ascending'
             }}</v-icon>
-            {{ notificationsOrder === 'asc' ? $t('older') : $t('newer') }}
+            {{ notificationsOrder === 'desc' ? $t('newer') : $t('older') }}
           </v-btn>
         </div>
       </v-container>
@@ -82,7 +82,7 @@ import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits(['refresh-drawer']);
 const notifications = ref([]);
-const notificationsOrder = ref('asc');
+const notificationsOrder = ref('desc');
 const overlay = ref(false);
 const notificationDialog = reactive({
   value: false,

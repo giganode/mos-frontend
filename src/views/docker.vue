@@ -50,7 +50,7 @@
                                     <v-menu>
                                       <template #activator="{ props }">
                                         <v-img class="drag-handle mr-4" v-bind="props"
-                                          src="/docker_icons/${containerName}.png"
+                                          :src="`/docker_icons/${containerName}.png`"
                                           alt="docker image" width="30" height="30" style="cursor: pointer" >
                                           <template v-slot:error>
                                             <v-icon>mdi-image-off</v-icon>
@@ -186,7 +186,7 @@
                               <template #activator="{ props }">
                                 <v-img v-if="docker.Names && docker.Names.length > 0" class="drag-handle mr-4"
                                   v-bind="props"
-                                  src="/docker_icons/${docker.Names[0]}.png"
+                                  :src="`/docker_icons/${docker.Names[0]}.png`"
                                   alt="docker image" width="30" height="30" style="cursor: pointer">
                                   <template v-slot:error>
                                     <v-icon>mdi-image-off</v-icon>

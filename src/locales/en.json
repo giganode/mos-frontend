@@ -465,7 +465,14 @@
   "change cron job": "Change cron job",
   "are you sure you want to delete this cron job?": "Are you sure you want to delete this cron job?",
   "invalid schedule format": "Invalid schedule format",
-  "cron jobs changed successfully": "Cron jobs changed successfully",
-  "all cron jobs changed successfully": "All cron jobs changed successfully",
-  "some cron jobs could not be changed": "Some cron jobs could not be changed"
+  "cron job changed successfully": "Cron job changed successfully",
+  "all cron job changed successfully": "All cron job changed successfully",
+  "some cron job could not be changed": "Some cron job could not be changed",
+  "are you sure you want to delete the cron job": "Are you sure you want to delete the cron job",
+  "delete cron job": "Delete cron job",
+  "change script": "Change script",
+  "script": "Script",
+  "script could not be loaded": "Script could not be loaded",
+  "script could not be changed": "Script could not be changed",
+  "script changed successfully": "Script changed successfully"
 }

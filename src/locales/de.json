@@ -465,7 +465,14 @@
   "change cron job": "Cron Job ändern",
   "are you sure you want to delete this cron job?": "Bist du sicher, dass du diesen Cron Job löschen möchtest?",
   "invalid schedule format": "Ungültiges Zeitplan Format",
-  "cron jobs changed successfully": "Cron Jobs erfolgreich geändert",
-  "all cron jobs changed successfully": "Alle Cron Jobs erfolgreich geändert",
-  "some cron jobs could not be changed": "Einige Cron Jobs konnten nicht geändert werden"
+  "cron job changed successfully": "Cron Job erfolgreich geändert",
+  "all cron job changed successfully": "Alle Cron Jobs erfolgreich geändert",
+  "some cron job could not be changed": "Einige Cron Jobs konnten nicht geändert werden",
+  "are you sure you want to delete the cron job": "Bist du sicher, dass du den Cron Job löschen möchtest",
+  "delete cron job": "Cron Job löschen",
+  "change script": "Skript ändern",
+  "script": "Skript",
+  "script could not be loaded": "Skript konnte nicht geladen werden",
+  "script could not be changed": "Skript konnte nicht geändert werden",
+  "script changed successfully": "Skript erfolgreich geändert"
 }

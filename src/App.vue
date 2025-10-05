@@ -27,7 +27,7 @@
         </v-btn>
         <v-btn icon="mdi-account-circle" variant="text" to="/profile"></v-btn>
       </v-app-bar>
-      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" sticky="true" app>
+      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" sticky app>
         <v-list>
           <v-list-item to="/dashboard" prepend-icon="mdi-view-dashboard">
             <v-list-item-title>{{ $t('dashboard') }}</v-list-item-title>

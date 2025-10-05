@@ -4,22 +4,20 @@
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
         <h2>{{ $t('dashboard') }}</h2>
       </v-container>
-      <v-row>
-        <v-col cols="12" md="6">
+      <div class="masonry">
+        <div class="masonry-item">
           <OS />
-        </v-col>
-        <v-col cols="12" md="6">
-          <Network v-if="network" :network="network" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="6">
+        </div>
+        <div class="masonry-item">
           <Processor v-if="cpu" :cpu="cpu" />
-        </v-col>
-        <v-col cols="12" md="6">
+        </div>
+        <div class="masonry-item">
+          <Network v-if="network" :network="network" />
+        </div>
+        <div class="masonry-item">
           <Memory v-if="memory" :memory="memory" />
-        </v-col>
-      </v-row>
+        </div>
+      </div>
     </v-container>
   </v-container>
 </template>
@@ -133,3 +131,26 @@ onUnmounted(() => {
 });
 
 </script>
+
+<style scoped>
+.masonry {
+  column-gap: 16px;
+  column-width: 640px;
+}
+.masonry-item {
+  break-inside: avoid;
+  margin: 0 0 16px;
+}
+
+.dash-card {
+  border: none !important;
+}
+
+/* Responsive Feintuning */
+@media (max-width: 1280px) {
+  .masonry { column-width: 520px; }
+}
+@media (max-width: 768px) {
+  .masonry { column-width: 100%; }
+}
+</style>

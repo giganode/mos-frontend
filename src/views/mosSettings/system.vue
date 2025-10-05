@@ -12,6 +12,8 @@
                             item-title="keymap" item-value="keymap"></v-select>
                         <v-select :items="timezones" :label="$t('timezone')" v-model="settingsSystem.timezone"
                             item-title="timezone" item-value="timezone"></v-select>
+                        <v-select :items="governors" :label="$t('cpu governor')" v-model="settingsSystem.cpufreq.governor"
+                            item-title="governor" item-value="governor"></v-select>
                         <v-text-field :label="$t('global spindown (min)')" type="number"
                             v-model="settingsSystem.global_spindown"></v-text-field>
                         <v-divider class="my-2"></v-divider>
@@ -62,7 +64,10 @@ const settingsSystem = ref({
         mode: "",
         servers: []
     },
-    global_spindown: 0
+    global_spindown: 0,
+    cpufreq: {
+        governor: ""
+    }
 });
 const keymaps = ref([]);
 const timezones = ref([]);
@@ -72,6 +77,7 @@ const proxies = ref({
     ftp_proxy: "",
     no_proxy: ""
 });
+const governors = ref([]);
 const overlay = ref(false);
 const { t } = useI18n();
 
@@ -80,6 +86,7 @@ onMounted(() => {
     getKeymaps();
     getTimezones();
     getProxies();
+    getGovernors();
 });
 
 const getSystemSettings = async () => {
@@ -170,6 +177,22 @@ const getProxies = async () => {
 
         if (!res.ok) throw new Error(t('proxies could not be loaded'));
         proxies.value = await res.json();
+
+    } catch (e) {
+        showSnackbarError(e.message);
+    }
+};
+
+const getGovernors = async () => {
+    try {
+        const res = await fetch('/api/v1/mos/settings/system/governors', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+            }
+        });
+
+        if (!res.ok) throw new Error(t('governors could not be loaded'));
+        governors.value = await res.json();
 
     } catch (e) {
         showSnackbarError(e.message);

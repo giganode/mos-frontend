@@ -480,5 +480,8 @@
   "select all": "Select all",
   "deselect all": "Deselect all",
   "no containers found": "No containers found",
-  "select": "Select"
+  "select": "Select",
+  "cpu governor": "CPU Governor",
+  "governor": "Governor",
+  "cpufreq": "CPU Frequency"
 }

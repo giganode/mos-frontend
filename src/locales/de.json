@@ -480,5 +480,8 @@
   "select all": "Alle auswählen",
   "deselect all": "Alle abwählen",
   "no containers found": "Keine Container gefunden",
-  "select": "Auswählen"
+  "select": "Auswählen",
+  "cpu governor": "CPU Regler",
+  "governor": "Regler",
+  "cpufreq": "CPU Frequenz"
 }

@@ -19,7 +19,13 @@
                             <v-menu>
                               <template #activator="{ props }">
                                 <v-img class="drag-handle mr-4" v-bind="props" :src="getLxcIconSrc(lxc)" alt="lxc image"
-                                  width="30" height="30" style="cursor: pointer" />
+                                  width="30" height="30" style="cursor: pointer">
+                                  <template v-slot:error>
+                                    <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                      <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                                    </v-sheet>
+                                  </template>
+                                </v-img>
                               </template>
                               <v-list>
                                 <v-list-item v-if="lxc.state !== 'running'" @click="startLXC(lxc.name)">
@@ -98,7 +104,7 @@
   <v-dialog v-model="deleteDialog.value" max-width="500">
     <v-card>
       <v-card-title class="text-h6">{{ $t('delete') }} {{ deleteDialog.lxc.name
-        }}</v-card-title>
+      }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this lxc container?') }}
       </v-card-text>

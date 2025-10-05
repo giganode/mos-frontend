@@ -11,7 +11,7 @@
     </template>
     <template v-else-if="loginChecked && loggedIn && !token">
       <v-app-bar v-if="!$route.meta.hideAppBar" :color="appBarColor" app>
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon variant="text" @click.stop="toggleDrawer"></v-app-bar-nav-icon>
         <v-img :src="logoSrc" alt="MOS Logo" max-width="50" class="ml-3 mr-3" contain />
         <v-toolbar-title>{{ $t('mos') }}</v-toolbar-title>
         <v-badge :model-value="notificationsBadge" color="green" dot floating bordered location="bottom end"
@@ -27,7 +27,7 @@
         </v-btn>
         <v-btn icon="mdi-account-circle" variant="text" to="/profile"></v-btn>
       </v-app-bar>
-      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer">
+      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" sticky="true" app>
         <v-list>
           <v-list-item to="/dashboard" prepend-icon="mdi-view-dashboard">
             <v-list-item-title>{{ $t('dashboard') }}</v-list-item-title>
@@ -120,6 +120,7 @@ onMounted(async () => {
   if (loggedIn.value) {
     getNotificationsBadge();
     await getMosServices();
+    getDrawerState();
   }
 })
 
@@ -299,6 +300,23 @@ const getNotificationsBadge = async () => {
 
   } catch (e) {
     showSnackbarError(e.message);
+  }
+};
+
+const toggleDrawer = () => {
+  drawer.value = !drawer.value;
+  localStorage.setItem('drawer', drawer.value);
+};
+
+const getDrawerState = () => {
+  if (localStorage.getItem('drawer')) {
+    if (localStorage.getItem('drawer') === 'true' && window.innerWidth > 600) {
+      drawer.value = true;
+    } else {
+      drawer.value = false;
+    }
+  } else {
+    drawer.value = true;
   }
 };
 

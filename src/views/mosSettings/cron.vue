@@ -24,11 +24,11 @@
                           </v-btn>
                         </template>
                         <v-list>
-                          <v-list-item @click="openDeleteCronJobDialog(cronJob)">
-                            <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                          </v-list-item>
                           <v-list-item @click="openChangeCronJobDialog(cronJob)">
                             <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="openDeleteCronJobDialog(cronJob)">
+                            <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                           </v-list-item>
                           <v-list-item @click="openChangeScriptDialog(cronJob)">
                             <v-list-item-title>{{ $t('change script') }}</v-list-item-title>

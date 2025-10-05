@@ -53,7 +53,8 @@
                                           :src="`/docker_icons/${containerName}.png`" alt="docker image" width="30"
                                           height="30" style="cursor: pointer">
                                           <template v-slot:error>
-                                            <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                            <v-sheet class="d-flex align-center justify-center" height="100%"
+                                              width="100%">
                                               <v-icon color="grey-darken-1">mdi-image-off</v-icon>
                                             </v-sheet>
                                           </template>
@@ -123,10 +124,9 @@
                                         {{ $t('ports') }}:
                                         {{
                                           dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports &&
-                                            dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.some(port =>
-                                              port.PublicPort)
+                                            dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.some(port => port.PublicPort)
                                             ? dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.filter(port => port.PublicPort).map(port => port.PublicPort).join(', ')
-                                        : '-'
+                                            : '-'
                                         }}
                                       </p>
                                       <v-divider vertical class="mx-2" />
@@ -292,24 +292,6 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row class="mt-4">
-          <v-col class="d-flex justify-end">
-            <div class="d-flex flex-column flex-sm-row">
-              <v-btn color="primary" @click="openCreateGroupDialog()">
-                <v-icon left>mdi-folder-plus</v-icon>
-                &nbsp;{{ $t('create docker group') }}
-              </v-btn>
-              <v-btn color="primary" @click="checkForUpdates()" class="mt-2 mt-sm-0 ml-sm-2">
-                <v-icon left>mdi-update</v-icon>
-                &nbsp;{{ $t('check for updates') }}
-              </v-btn>
-              <v-btn color="primary" @click="updateAll()" class="mt-2 mt-sm-0 ml-sm-2">
-                <v-icon left>mdi-autorenew</v-icon>
-                &nbsp;{{ $t('update all') }}
-              </v-btn>
-            </div>
-          </v-col>
-        </v-row>
       </v-container>
     </v-container>
   </v-container>
@@ -317,7 +299,7 @@
   <v-dialog v-model="deleteDialog.value" max-width="500">
     <v-card>
       <v-card-title class="text-h6" v-if="deleteDialog.docker">{{ $t('delete') }} {{ deleteDialog.docker.Names[0]
-        }}</v-card-title>
+      }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this docker container?') }}
       </v-card-text>
@@ -418,9 +400,22 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab to="/docker/create" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
-    size="large" icon>
-    <v-icon>mdi-plus</v-icon>
+  <v-fab color="primary" style="position: fixed;bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+    <v-icon>mdi-dots-vertical</v-icon>
+    <v-speed-dial v-model="menu" location="top" transition="slide-y-reverse-transition" activator="parent">
+      <v-btn key="1" color="primary" prepend-icon="mdi-plus" @click="$router.push('/docker/create')">
+        {{ $t('create docker container') }}
+      </v-btn>
+      <v-btn key="2" color="primary" prepend-icon="mdi-folder-plus" @click="openCreateGroupDialog()">
+        {{ $t('create docker group') }}
+      </v-btn>
+      <v-btn key="3" color="primary" prepend-icon="mdi-update" @click="checkForUpdates()">
+        {{ $t('check for updates') }}
+      </v-btn>
+      <v-btn key="4" color="primary" prepend-icon="mdi-autorenew" @click="checkForUpdates()">
+        {{ $t('check for updates') }}
+      </v-btn>
+    </v-speed-dial>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
@@ -441,6 +436,7 @@ const dockers = ref([]);
 const dockerGroups = ref([]);
 const mosDockers = ref([]);
 const overlay = ref(false);
+const menu = ref(false);
 const deleteDialog = reactive({
   value: false,
   docker: null

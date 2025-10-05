@@ -146,7 +146,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="formatDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="red" :disabled="!formatDialog.filesystem" @click="formatDisk(formatDialog.disk)">
+        <v-btn color="red" :disabled="!formatDialog.filesystem" @click="formatDisk()">
           {{ $t('format') }}
         </v-btn>
       </v-card-actions>
@@ -342,7 +342,7 @@ const getFilesystems = async () => {
   }
 };
 
-const formatDisk = async (disk) => {
+const formatDisk = async () => {
   formatDialog.value = false;
 
   const formatDiskData = {

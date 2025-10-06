@@ -97,7 +97,6 @@ const getLoadWS = () => {
 
   // Initial data received
   socket.on('get-load', (data) => {
-    console.log('Initial system data received:', data)
     if (data.cpu) cpu.value = data.cpu
     if (data.memory) memory.value = data.memory
     if (data.network) network.value = data.network
@@ -105,7 +104,6 @@ const getLoadWS = () => {
 
   // Live updates received
   socket.on('load-update', (data) => {
-    console.log('System data update received:', data)
     if (data.cpu) cpu.value = data.cpu
     if (data.memory) memory.value = data.memory
     if (data.network) network.value = data.network

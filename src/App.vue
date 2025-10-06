@@ -27,7 +27,11 @@
         </v-btn>
         <v-btn icon="mdi-account-circle" variant="text" to="/profile"></v-btn>
       </v-app-bar>
-      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" app>
+      <v-navigation-drawer 
+        v-if="!$route.meta.hideAppBar" 
+        v-model="drawer" 
+        :rail="isWideScreen" 
+        expand-on-hover>
         <v-list>
           <v-list-item to="/dashboard" prepend-icon="mdi-view-dashboard">
             <v-list-item-title>{{ $t('dashboard') }}</v-list-item-title>
@@ -104,6 +108,7 @@ const theme = useTheme();
 const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
+const isWideScreen = computed(() => typeof window !== 'undefined' && window.innerWidth > 600);
 const loggedIn = ref(false);
 const token = ref('');
 const logoutDialog = ref(false);
@@ -310,7 +315,7 @@ const toggleDrawer = () => {
 
 const getDrawerState = () => {
   if (localStorage.getItem('drawer')) {
-    if (localStorage.getItem('drawer') === 'true' && window.innerWidth > 600) {
+    if (localStorage.getItem('drawer') === 'true' || isWideScreen.value) {
       drawer.value = true;
     } else {
       drawer.value = false;

@@ -58,7 +58,7 @@
   </v-container>
 
   <v-dialog v-model="updateOsDialog.value" width="auto">
-    <v-card max-width="600" prepend-icon="mdi-update":title="t('update firmware')">
+    <v-card max-width="600" prepend-icon="mdi-update":title="t('update system')">
       <v-card-text>
         <p class="mb-4">{{ t('please select your target firmware!') }}</p>
         <p v-if="osInfo && osInfo.mos"><b>{{ $t('mos version') }}:</b> {{ osInfo.mos.version }}</p>

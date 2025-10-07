@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <div>
-        <p v-if="osInfo.cpu?.manufacturer && osInfo.cpu?.brand">
+        <p v-if="osInfo && osInfo.cpu">
           <b>{{ osInfo.cpu.manufacturer }}, {{ osInfo.cpu.brand }}</b>
         </p>
         <p v-if="osInfo.cpu?.cores !== undefined">
@@ -14,6 +14,10 @@
         <p v-if="osInfo.cpu?.physicalCores !== undefined">
           <b>{{ $t('physicalcores') }}:</b> {{ osInfo.cpu.physicalCores }}
         </p>
+        <p v-if="temp">
+          <b>{{ $t('temperature') }}:</b> {{ temp.main }}°C / {{ temp.min }} °C / {{ temp.max }} °C
+        </p>
+        <v-divider class="mt-2 mb-2"></v-divider>
         <v-row class="align-center">
           <v-col cols="auto" class="d-flex align-center" style="width: 60px;">
             <b>{{ $t('load') }}:</b>
@@ -54,12 +58,14 @@
 import { ref, onMounted } from 'vue'
 import { toRefs, computed } from 'vue'
 
-const props = defineProps({
-  cpu: { type: Object, default: () => ({ load: 0 }) }
-})
-const { cpu } = toRefs(props)
-const processor = computed(() => cpu.value ?? { load: 0 })
 const osInfo = ref({});
+const props = defineProps({
+  cpu: { type: Object, default: () => ({ load: 0 }) },
+  temperature: { type: Object, default: () => ({}) }
+})
+const { cpu, temperature } = toRefs(props)
+const processor = computed(() => cpu.value ?? { load: 0 })
+const temp = computed(() => temperature.value ?? {})
 
 onMounted(() => {
   getOsInfo();

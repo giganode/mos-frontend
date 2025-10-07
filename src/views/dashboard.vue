@@ -9,7 +9,7 @@
           <OS />
         </div>
         <div class="masonry-item">
-          <Processor v-if="cpu" :cpu="cpu" />
+          <Processor v-if="cpu" :cpu="cpu" :temperature="temperature" />
         </div>
         <div class="masonry-item">
           <Network v-if="network" :network="network" />
@@ -34,6 +34,7 @@ const cpu = ref(null);
 const network = ref(null);
 const error = ref(null);
 const memory = ref(null);
+const temperature = ref(null);
 const isConnected = ref(false);
 let socket = null;
 
@@ -50,6 +51,7 @@ const getLoad = async () => {
     network.value = result.network;
     cpu.value = result.cpu;
     memory.value = result.memory;
+    temperature.value = result.temperature;
 
   } catch (e) {
     error.value = e.message;
@@ -100,6 +102,7 @@ const getLoadWS = () => {
     if (data.cpu) cpu.value = data.cpu
     if (data.memory) memory.value = data.memory
     if (data.network) network.value = data.network
+    if (data.temperature) temperature.value = data.temperature
   })
 
   // Live updates received
@@ -107,6 +110,7 @@ const getLoadWS = () => {
     if (data.cpu) cpu.value = data.cpu
     if (data.memory) memory.value = data.memory
     if (data.network) network.value = data.network
+    if (data.temperature) temperature.value = data.temperature
   })
 
   // Error handling

@@ -429,8 +429,8 @@
           </v-btn>
         </div>
         <div class="d-flex align-center justify-end ga-2" key="4">
-          <span class="me-2">{{ $t('check for updates') }}</span>
-          <v-btn icon color="primary" @click="checkForUpdates()">
+          <span class="me-2">{{ $t('update all') }}</span>
+          <v-btn icon color="primary" @click="updateAllDockers()">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </div>
@@ -673,7 +673,7 @@ const removeDocker = async (name) => {
 };
 
 const updateDocker = async (name, force_update = false) => {
-  updateBody = force_update ? { name: name, force_update: true } : { name: name };
+  const updateBody = force_update ? { name: name, force_update: true } : { name: name };
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/docker/mos/upgrade`, {

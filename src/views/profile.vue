@@ -5,8 +5,15 @@
         <h2>{{ $t('user profile') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-select v-model="selectedLanguage" :items="languages" item-title="name" item-value="name"
-          :label="$t('language')" required @update:modelValue="changeLanguage()" />
+        <v-select 
+          v-model="selectedLanguage" 
+          :items="languages" 
+          :item-title="(lang) => $t(lang)" 
+          :item-value="(lang) => lang" 
+          :label="$t('language')"
+          required 
+          @update:modelValue="changeLanguage()" 
+        />
         <v-select v-model="selectedByteFormat" :items="byte_format" item-title="name" item-value="name"
           :label="$t('byte unit')" required @update:modelValue="changeByteUnit()" />
         <v-text-field :label="$t('uicolor')" v-model="color" @update:modelValue="changePrimaryColor(color)" type="color"

@@ -486,5 +486,8 @@
   "cpufreq": "CPU Frequency",
   "force update": "Force Update",
   "show advanced options": "Show advanced options",
-  "hide advanced options": "Hide advanced options"
+  "hide advanced options": "Hide advanced options",
+  "de": "German",
+  "en": "English",
+  "language changed": "Language changed"
 }

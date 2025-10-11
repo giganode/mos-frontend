@@ -486,5 +486,8 @@
   "cpufreq": "CPU Frequenz",
   "force update": "Erzwinge Update",
   "show advanced options": "Erweiterte Optionen anzeigen",
-  "hide advanced options": "Erweiterte Optionen ausblenden"
+  "hide advanced options": "Erweiterte Optionen ausblenden",
+  "de": "Deutsch",
+  "en": "Englisch",
+  "language changed": "Sprache geändert"
 }

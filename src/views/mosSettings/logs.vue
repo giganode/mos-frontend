@@ -1,0 +1,93 @@
+<template>
+  <v-container fluid class="d-flex justify-center">
+    <v-container style="width: 100%; max-width: 1920px;" class="pa-0">
+      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
+        <h2>{{ $t('logs') }}</h2>
+      </v-container>
+      <v-container fluid class="pa-0">
+        <v-card variant="tonal">
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-select v-model="selectedLog" :items="logs" :label="$t('select log file')" outlined dense
+                hide-details @update:modelValue="getLogFileContent(selectedLog, lines)" />
+              </v-col>
+              <v-col cols="12" md="6">
+              <v-text-field v-model="lines" :label="$t('lines')" type="number" outlined dense
+                @keyup.enter="getLogFileContent(selectedLog)" />
+              </v-col>
+            </v-row>
+            <v-textarea 
+              v-model="logFileContent" 
+              :label="$t('log content')" 
+              outlined 
+              readonly 
+              style="flex-grow: 1; height: calc(100vh - 340px);" 
+            />
+          </v-card-text>
+        </v-card>
+      </v-container>
+    </v-container>
+  </v-container>
+
+  <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+  </v-overlay>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
+import { useI18n } from 'vue-i18n';
+
+const emit = defineEmits(['refresh-drawer']);
+const logs = ref([]);
+const selectedLog = ref('');
+const logFileContent = ref([]);
+const lines = ref(100);
+const overlay = ref(false);
+const { t } = useI18n();
+
+onMounted(() => {
+  getLogFiles();
+});
+
+const getLogFiles = async () => {
+  try {
+    const res = await fetch('/api/v1/system/logs', {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+
+    if (!res.ok) throw new Error(t('log files could not be loaded'));
+    logs.value = await res.json();
+
+  } catch (error) {
+    showSnackbarError(error.message);
+  }
+};
+
+const getLogFileContent = async (logFile) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/system/logs/content?path=${logFile}&tail=true&lines=${lines.value}`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+
+    if (!res.ok) throw new Error(t('log files could not be loaded'));
+    const result = await res.json();
+    logFileContent.value = result.content.join('\n');
+    logFileContent.value = logFileContent.value.split('\n').reverse().join('\n');
+
+    overlay.value = false;
+
+  } catch (error) {
+    overlay.value = false;
+    showSnackbarError(error.message);
+  }
+};
+
+</script>

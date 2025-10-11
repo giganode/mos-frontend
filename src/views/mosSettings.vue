@@ -41,9 +41,21 @@
             <v-btn width="250px" to="/mosSettings/system">{{ $t('system') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/cron">{{ $t('cron jobs') }}</v-btn>
+
           </v-col>
         </v-row>
+        <v-divider class="mb-4 mt-4"></v-divider>
+        <v-row>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn width="250px" to="/mosSettings/cron">{{ $t('cron jobs') }}</v-btn>
+          </v-col>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn width="250px" to="/mosSettings/logs">{{ $t('logs') }}</v-btn>
+          </v-col>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            
+          </v-col>
+        </v-row>        
         <v-divider class="mb-4 mt-4"></v-divider>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">

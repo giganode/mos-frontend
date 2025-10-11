@@ -19,6 +19,7 @@ import mosSettingsVm from "../views/mosSettings/vmService.vue";
 import mosSettingsNetwork from "../views/mosSettings/network.vue";
 import mosSettingsSstem from "../views/mosSettings/system.vue";
 import mosSettingsCron from "../views/mosSettings/cron.vue";
+import mosSettingsLogs from "../views/mosSettings/logs.vue";
 import webterminal from "../views/webterminal.vue";
 import webterminalPopup from "../views/webterminalPopup.vue";
 import Notifications from "../views/notifications.vue";
@@ -44,6 +45,7 @@ const routes = [
   { path: "/mosSettings/network", component: mosSettingsNetwork, meta: { title: "MOS Settings - Network", description: "Manage Network settings" } },
   { path: "/mosSettings/system", component: mosSettingsSstem, meta: { title: "MOS Settings - System", description: "Manage System settings" } },
   { path: "/mosSettings/cron", component: mosSettingsCron, meta: { title: "MOS Settings - Cron", description: "Manage Cron jobs" } },
+  { path: "/mosSettings/logs", component: mosSettingsLogs, meta: { title: "MOS Settings - Logs", description: "View system logs" } },
   { path: "/profile", component: profile, meta: { title: "Profile", description: "Manage your profile" } },
   { path: "/webTerminal", component: webterminal, meta: { title: "Web Terminal", description: "Access the web terminal" } },
   { path: "/webTerminalPopup", component: webterminalPopup, children: [ { path: "", component: webterminalPopup, meta: { hideAppBar: true, title: "Web Terminal", description: "Access the web terminal" } } ] },

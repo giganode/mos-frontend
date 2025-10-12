@@ -23,6 +23,7 @@ import mosSettingsLogs from "../views/mosSettings/logs.vue";
 import webterminal from "../views/webterminal.vue";
 import webterminalPopup from "../views/webterminalPopup.vue";
 import Notifications from "../views/notifications.vue";
+import RemoteMounting from "../views/remoteMounting.vue";
 
 const routes = [
   { path: "/login", component: Login, meta: { title: "MOS Login", description: "Login to your account" } },
@@ -33,6 +34,7 @@ const routes = [
   { path: "/pools", component: Pools, meta: { title: "Pools", description: "Manage storage pools" } },
   { path: "/disks", component: Disks, meta: { title: "Disks", description: "Manage disks in your account" } },
   { path: "/shares", component: Shares, meta: { title: "Shares", description: "Manage shares in your account" } },
+  { path: "/remoteMounting", component: RemoteMounting, meta: { title: "Remote Mounting", description: "Manage remote mounting" } },
   { path: "/docker", component: Docker, meta: { title: "Docker", description: "Manage Docker containers" } },
   { path: "/docker/create", component: DockerCreate, meta: { title: "Create Docker", description: "Create a new Docker container" } },
   { path: "/docker/change/:docker", component: DockerChange, props: true, meta: { title: "Change Docker", description: "Change Docker container settings" } },

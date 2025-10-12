@@ -35,14 +35,14 @@
                     </v-card-text>
                 </v-card>
             </v-container>
-            <v-col class="d-flex justify-end">
-                <v-btn color="primary" @click="setSystemSettings()" class="ml-2">
-                    <v-icon left>mdi-content-save</v-icon>
-                    {{ $t('save') }}
-                </v-btn>
-            </v-col>
         </v-container>
     </v-container>
+
+    <!-- Floating Action Button -->
+    <v-fab @click="setSystemSettings()" color="primary"
+        style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+        <v-icon>mdi-content-save</v-icon>
+    </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
         <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
@@ -137,7 +137,7 @@ const setSystemSettings = async () => {
 
 const getKeymaps = async () => {
     try {
-        const res = await fetch('/api/v1/mos/settings/keymap', {
+        const res = await fetch('/api/v1/system/keymaps', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
             }
@@ -153,7 +153,7 @@ const getKeymaps = async () => {
 
 const getTimezones = async () => {
     try {
-        const res = await fetch('/api/v1/mos/settings/timezones', {
+        const res = await fetch('/api/v1/system/timezones', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
             }
@@ -185,7 +185,7 @@ const getProxies = async () => {
 
 const getGovernors = async () => {
     try {
-        const res = await fetch('/api/v1/mos/settings/governors', {
+        const res = await fetch('/api/v1/system/governors', {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
             }

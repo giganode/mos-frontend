@@ -8,7 +8,7 @@
                 <v-card variant="tonal">
                     <v-card-text>
                         <v-form>
-                            <v-switch :label="$t('docker service enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('docker service')" color="primary" inset density="compact"
                                 v-model="settingsDocker.enabled"></v-switch>
                             <v-text-field v-model="settingsDocker.directory" :label="$t('directory')"
                                 required></v-text-field>
@@ -20,14 +20,14 @@
                     </v-card-text>
                 </v-card>
             </v-container>
-            <v-col class="d-flex justify-end">
-                <v-btn color="primary" @click="setDockerService()" class="ml-2">
-                    <v-icon left>mdi-content-save</v-icon>
-                    {{ $t('save') }}
-                </v-btn>
-            </v-col>
         </v-container>
     </v-container>
+
+    <!-- Floating Action Button -->
+    <v-fab @click="setDockerService()" color="primary"
+        style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+        <v-icon>mdi-content-save</v-icon>
+    </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
         <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>

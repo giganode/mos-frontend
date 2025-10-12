@@ -41,6 +41,9 @@
           <v-list-item to="/shares" prepend-icon="mdi-share">
             <v-list-item-title>{{ $t('shares') }}</v-list-item-title>
           </v-list-item>
+          <v-list-item v-if="mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync">
+            <v-list-item-title>{{ $t('remote mounting') }}</v-list-item-title>
+          </v-list-item>
           <v-list-item v-if="mosServices.docker?.enabled" to="/docker" prepend-icon="mdi-docker">
             <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
           </v-list-item>
@@ -237,7 +240,6 @@ const changeDarkMode = async () => {
 
     if (!res.ok) throw new Error('API-Error');
 
-    // Response in JSON umwandeln
     const result = await res.json();
 
     theme.global.name.value = result.darkmode ? 'dark' : 'light';

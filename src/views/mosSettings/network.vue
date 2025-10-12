@@ -64,19 +64,21 @@
                             </v-row>
                             <v-divider class="my-2"></v-divider>
                             <h3 class="mb-2">{{ $t('services') }}</h3>
-                            <v-switch :label="$t('ssh enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('ssh')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.ssh.enabled"></v-switch>
-                            <v-switch :label="$t('samba enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('samba')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.samba.enabled"></v-switch>
-                            <v-switch :label="$t('nmbd enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('nmbd')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.nmbd.enabled"></v-switch>
-                            <v-switch :label="$t('nfs enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('nfs')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.nfs.enabled"></v-switch>
-                            <v-switch :label="$t('nut enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('nut')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.nut.enabled"></v-switch>
+                            <v-switch :label="$t('remote mounting')" color="primary" inset density="compact"
+                                v-model="settingsNetwork.services.remote_mounting.enabled"></v-switch>                                
                             <v-divider class="my-2"></v-divider>
                             <h3 class="mb-2">{{ $t('tailscale') }}</h3>
-                            <v-switch :label="$t('tailscale enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('tailscale')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.tailscale.enabled"></v-switch>
                             <v-switch :label="$t('tailscale update check')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.tailscale.update_check"></v-switch>
@@ -84,7 +86,7 @@
                                 v-model="settingsNetwork.services.tailscale.tailscaled_params"></v-text-field>
                             <v-divider class="my-2"></v-divider>
                             <h3 class="mb-2">{{ $t('netbird') }}</h3>
-                            <v-switch :label="$t('netbird enabled')" color="primary" inset density="compact"
+                            <v-switch :label="$t('netbird')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.netbird.enabled"></v-switch>
                             <v-switch :label="$t('netbird update check')" color="primary" inset density="compact"
                                 v-model="settingsNetwork.services.netbird.update_check"></v-switch>
@@ -94,14 +96,14 @@
                     </v-card-text>
                 </v-card>
             </v-container>
-            <v-col class="d-flex justify-end">
-                <v-btn color="primary" @click="setNetworkSettings()" class="ml-2">
-                    <v-icon left>mdi-content-save</v-icon>
-                    {{ $t('save') }}
-                </v-btn>
-            </v-col>
         </v-container>
     </v-container>
+
+    <!-- Floating Action Button -->
+    <v-fab @click="setNetworkSettings()" color="primary"
+        style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+        <v-icon>mdi-content-save</v-icon>
+    </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
         <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
@@ -165,6 +167,9 @@ const settingsNetwork = ref({
             enabled: false,
             update_check: false,
             netbird_service_params: null
+        },
+        remote_mounting: {
+            enabled: false
         }
     }
 });

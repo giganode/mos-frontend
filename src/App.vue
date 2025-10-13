@@ -84,11 +84,18 @@
     </v-card>
   </v-dialog>
 
-  <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
+  <v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="showErrorDetails ? -1 : 3000">
     <template #actions>
       <v-icon v-if="snackbarIcon" class="me-2">{{ snackbarIcon }}</v-icon>
+      <v-btn v-if="snackbarApiError != ''" text @click="showErrorDetails = !showErrorDetails" color="white">{{
+        showErrorDetails ? $t('less details') : $t('details') }}</v-btn>
     </template>
     {{ snackbarText }}
+    <v-expand-transition>
+      <div v-if="showErrorDetails != ''" class="mt-2">
+        {{ snackbarApiError }}
+      </div>
+    </v-expand-transition>
   </v-snackbar>
 
 </template>
@@ -102,7 +109,7 @@ import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { getContrast } from 'vuetify/lib/util/colorUtils';
 
-const { snackbar, snackbarText, snackbarColor, snackbarIcon } = useSnackbar()
+const { snackbar, snackbarText, snackbarColor, snackbarIcon, snackbarApiError, snackbarShowErrorDetails } = useSnackbar()
 const theme = useTheme();
 const { locale, t } = useI18n();
 const tab = ref('');
@@ -115,6 +122,7 @@ const loginChecked = ref(false);
 const mosServices = ref({});
 const appBarColor = 'primary';
 const notificationsBadge = ref(false);
+const showErrorDetails = ref(false);
 
 onMounted(async () => {
   if (tab.value === '') {

@@ -489,5 +489,6 @@
   "log files could not be loaded": "Protokolldateien konnten nicht geladen werden",
   "select log file": "Protokolldatei auswählen",
   "log content": "Protokollinhalt",
-  "lines": "Zeilen"
+  "lines": "Zeilen",
+  "update check could not be performed": "Update-Prüfung konnte nicht durchgeführt werden"
 }

@@ -125,34 +125,24 @@
                                     <template v-if="$vuetify.display.mdAndUp">
                                       <p style="min-width:150px; max-width: 150px;">
                                         {{ $t('ports') }}:
-                                        {{
-                                          dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports &&
-                                            dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.some(port => port.PublicPort)
-                                            ? dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.filter(port => port.PublicPort).map(port => port.PublicPort).join(', ')
-                                        : '-'
-                                        }}
+                                        {{ dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports && dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.some(port => port.PublicPort) ? dockers.find(d => d.Names && d.Names[0] === containerName)?.Ports.filter(port => port.PublicPort).map(port => port.PublicPort).join(', '): '-'}}
                                       </p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
                                     <template
                                       v-if="$vuetify.display.mdAndUp && dockers.find(d => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
-                                      <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: {{
-                                        dockers.find(d => d.Names && d.Names[0] ===
-                                          containerName)?.NetworkSettings.Networks.bridge.IPAddress || '-'}}</p>
+                                      <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: {{ dockers.find(d => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.bridge.IPAddress || '-'}}</p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
                                     <template
                                       v-if="$vuetify.display.smAndUp && dockers.find(d => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'host'">
-                                      <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: {{
-                                        dockers.find(d => d.Names && d.Names[0] ===
-                                          containerName)?.NetworkSettings.Networks.host.IPAddress || '-'}}</p>
+                                      <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: {{ dockers.find(d => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.host.IPAddress || '-'}}</p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
                                     <template v-if="$vuetify.display.smAndUp">
                                       <p v-if="!dockers.find(d => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode.startsWith('container:')"
                                         style="min-width:150px; max-width: 150px;">
-                                        {{ $t('network') }}: {{dockers.find(d => d.Names && d.Names[0] ===
-                                          containerName)?.HostConfig.NetworkMode}}
+                                        {{ $t('network') }}: {{dockers.find(d => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode}}
                                       </p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
@@ -409,7 +399,7 @@
   <v-fab color="primary" style="position: fixed;bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
     <v-icon>mdi-dots-vertical</v-icon>
     <v-speed-dial v-model="menu" location="top right" activator="parent" :itemTransition="false" transition="false">
-      <v-sheet class="bg-surface elevation-8 rounded-xl pa-2 d-flex flex-column align-end" style="max-width: 250px;" >
+      <v-sheet key="speed-dial-panel" class="bg-surface elevation-8 rounded-xl pa-2 d-flex flex-column align-end" style="max-width: 250px;" >
         <div class="d-flex align-center justify-end ga-2" key="1">
           <span class="me-2">{{ $t('add container') }}</span>
           <v-btn icon color="primary" @click="$router.push('/docker/create')">
@@ -430,7 +420,7 @@
         </div>
         <div class="d-flex align-center justify-end ga-2" key="4">
           <span class="me-2">{{ $t('update all') }}</span>
-          <v-btn icon color="primary" @click="updateAllDockers()">
+          <v-btn icon color="primary" @click="updateAll()">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </div>
@@ -501,8 +491,14 @@ const getDockers = async () => {
       })
     ]);
 
-    if (!res.ok) throw new Error(t('docker containers could not be loaded'));
-    if (!mosRes.ok) throw new Error(t('docker containers could not be loaded'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker containers could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+    if (!mosRes.ok) {
+      const error = await mosRes.json();
+      throw new Error(`${t('docker containers could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
 
     const result = await res.json();
     const mosResult = await mosRes.json();
@@ -539,7 +535,8 @@ const getDockers = async () => {
     mosDockers.value = mosResult;
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -551,13 +548,16 @@ const getDockerGroups = async () => {
       }
     });
 
-    if (!res.ok) throw new Error(t('docker groups could not be loaded'));
-
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker groups could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
     const result = await res.json();
     dockerGroups.value = result || [];
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -572,13 +572,18 @@ const stopDocker = async (name) => {
     });
     overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be stopped'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be stopped')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker container stopped successfully'));
     getDockers();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 }
 
@@ -591,15 +596,19 @@ const startDocker = async (name) => {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
       }
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be started'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be started')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker container started successfully'));
     getDockers();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 }
 
@@ -614,15 +623,19 @@ const restartDocker = async (name) => {
       },
       body: JSON.stringify({ name: name })
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be restarted'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be restarted')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker container restarted successfully'));
     getDockers();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -635,15 +648,19 @@ const killDocker = async (name) => {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
       }
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be stopped'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be stopped')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker container stopped successfully'));
     getDockers();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -659,16 +676,21 @@ const removeDocker = async (name) => {
       },
       body: JSON.stringify({ name: name })
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be removed'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be removed')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('docker container removed successfully'));
     getDockers();
     clearDeleteDialog();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -684,15 +706,19 @@ const updateDocker = async (name, force_update = false) => {
       },
       body: JSON.stringify(updateBody)
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker container could not be updated'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container could not be updated')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker container updated successfully'));
     getDockers();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -700,16 +726,27 @@ const checkForUpdates = async () => {
   try {
     showSnackbarSuccess(t('update check started'));
 
-    fetch('/api/v1/docker/mos/update_check', {
+    const res = await fetch('/api/v1/docker/mos/update_check', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json'
       }
-    }).catch(() => { });
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update check could not be performed')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('update check finished'));
+    getDockers();
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -717,16 +754,28 @@ const updateAll = async () => {
   try {
     showSnackbarSuccess(t('update started'));
 
-    fetch(`/api/v1/docker/mos/upgrade`, {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/docker/mos/upgrade`, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json'
       }
-    }).catch(() => { });
+    })
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker containers could not be updated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('docker containers updated successfully'));
+    getDockers();
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -743,14 +792,18 @@ const switchAutostart = async (docker) => {
       },
       body: JSON.stringify(autostart)
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('autostart setting could not be saved'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('autostart setting could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }    
     showSnackbarSuccess(t('autostart setting saved successfully'));
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -775,10 +828,14 @@ const onDragEndGrp = async () => {
       body: newOrder
     });
 
-    if (!res.ok) throw new Error(t('docker group order could not be saved'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker group order could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker group order saved successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 }
 
@@ -805,10 +862,14 @@ const onDragEnd = async () => {
       body: newOrder
     });
 
-    if (!res.ok) throw new Error(t('docker container order could not be saved'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker container order could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }    
     showSnackbarSuccess(t('docker container order saved successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -877,7 +938,7 @@ const createDockerTerminalSession = async (dockerName) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to create terminal session'));
+      throw new Error(`${t('failed to create terminal session')}|$| ${error.error || t('unknown error')}`);
     }
 
     const Result = await res.json();
@@ -906,14 +967,15 @@ const createLogsTerminalSession = async (dockerName) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to create terminal log session'));
+      throw new Error(`${t('failed to create terminal log session')}|$| ${error.error || t('unknown error')}`);
     }
 
     const Result = await res.json();
     return Result.sessionId;
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 }
 
@@ -928,7 +990,7 @@ const checkExistingTerminal = async (command, arg, dockerName) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('failed to retrieve terminal sessions'));
+      throw new Error(`${t('failed to retrieve terminal sessions')}|$| ${error.error || t('unknown error')}`);
     }
 
     const Result = await res.json();
@@ -949,7 +1011,8 @@ const checkExistingTerminal = async (command, arg, dockerName) => {
     }
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 }
 
@@ -980,14 +1043,19 @@ const createDockerGroup = async () => {
     });
     overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker group could not be created'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker group could not be created')}|$| ${error.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('docker group created successfully'));
     getDockerGroups();
     clearCreateGroupDialog();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -1006,16 +1074,22 @@ const deleteDockerGroup = async () => {
         'Content-Type': 'application/json'
       }
     });
-    overlay.value = false;
+    
 
-    if (!res.ok) throw new Error(t('docker group could not be deleted'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker group could not be deleted')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('docker group deleted successfully'));
     getDockerGroups();
     clearDeleteGroupDialog();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -1048,16 +1122,21 @@ const updateDockerGroup = async () => {
       },
       body: JSON.stringify(updatedGroup)
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker group could not be updated'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker group could not be updated')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('docker group updated successfully'));
     getDockerGroups();
     clearChangeGroupDialog();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 

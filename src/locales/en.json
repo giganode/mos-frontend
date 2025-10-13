@@ -489,5 +489,6 @@
   "log files could not be loaded": "Log files could not be loaded",
   "select log file": "Select log file",
   "log content": "Log content",
-  "lines": "Lines"
+  "lines": "Lines",
+  "update check could not be performed": "Update check could not be performed"
 }

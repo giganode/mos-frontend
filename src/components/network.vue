@@ -4,7 +4,6 @@
       <span>{{ $t('network') }}</span>
       <v-chip size="small" v-if="nic?.interface">{{ nic.interface }}</v-chip>
     </v-card-title>
-
     <v-card-text>
       <template v-if="nic">
         <p v-if="nic.type"><b>{{ $t('type') }}:</b> {{ nic.type }}</p>

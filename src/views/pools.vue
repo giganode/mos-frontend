@@ -236,6 +236,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
+import { errorMessages } from 'vue/compiler-sfc';
 
 const emit = defineEmits(['refresh-drawer']);
 const pools = ref([]);
@@ -311,11 +312,15 @@ const getPools = async () => {
       }
     });
 
-    if (!res.ok) throw new Error(t('pools could not be loaded'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pools could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     pools.value = await res.json();
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -327,12 +332,16 @@ const getUnassignedDisks = async () => {
       }
     });
 
-    if (!res.ok) throw new Error(t('unassigned disks could not be loaded'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('unassigned disks could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     const Result = await res.json();
     unassignedDisks.value = Result.unassignedDisks || [];
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -344,12 +353,16 @@ const getFilesystems = async () => {
       }
     });
 
-    if (!res.ok) throw new Error(t('filesystems could not be loaded'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('filesystems could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     const Result = await res.json();
     filesystems.value = Result || [];
 
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -373,8 +386,11 @@ const formatDisk = async () => {
       },
       body: JSON.stringify(formatDiskData)
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('disk could not be formatted'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be formatted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('disk formatted successfully'));
 
     clearFormatDialog();
@@ -382,8 +398,10 @@ const formatDisk = async () => {
     getUnassignedDisks();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -430,8 +448,11 @@ const createPoolMergerfs = async () => {
       },
       body: JSON.stringify(createPoolData)
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be created'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be created')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('pool created successfully'));
 
     clearCreatePoolDialog();
@@ -439,8 +460,10 @@ const createPoolMergerfs = async () => {
     getUnassignedDisks();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 
 }
@@ -472,8 +495,11 @@ const createPoolMulti = async () => {
       },
       body: JSON.stringify(createPoolData)
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be created'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be created')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('pool created successfully'));
 
     clearCreatePoolDialog();
@@ -481,8 +507,10 @@ const createPoolMulti = async () => {
     getUnassignedDisks();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -513,8 +541,11 @@ const createPoolSingle = async () => {
       },
       body: JSON.stringify(createPoolData)
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be created'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be created')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('pool created successfully'));
 
     clearCreatePoolDialog();
@@ -522,8 +553,10 @@ const createPoolSingle = async () => {
     getUnassignedDisks();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -537,8 +570,11 @@ const deletePool = async (poolId) => {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
       }
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be deleted'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be deleted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('pool deleted successfully'));
 
     clearDeletePoolDialog();
@@ -546,8 +582,10 @@ const deletePool = async (poolId) => {
     getUnassignedDisks();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -562,15 +600,20 @@ const switchAutomount = async (pool) => {
       },
       body: JSON.stringify({ enabled: pool.automount })
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('could not change automount setting'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('could not change automount setting')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('automount setting changed successfully'));
 
     getPools();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -583,14 +626,20 @@ const unmountPool = async (pool) => {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
       }
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be unmounted'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be unmounted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('pool unmounted successfully'));
     getPools();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -603,15 +652,19 @@ const mountPool = async (pool) => {
         'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
       }
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('pool could not be mounted'));
-    showSnackbarSuccess(t('pool mounted successfully'));
 
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool could not be mounted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('pool mounted successfully'));
     getPools();
 
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 

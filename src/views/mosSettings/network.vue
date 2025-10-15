@@ -9,55 +9,92 @@
           <v-card-text>
             <v-form>
               <h3 class="mb-2 pb-4">{{ $t('interfaces') }}</h3>
-              <v-row v-for="(iface, idx) in settingsNetwork.interfaces" :key="idx">
+              <v-row v-for="(iface, idx) in settingsNetwork.interfaces.filter((i) => ['ethernet', 'bridged', 'bond'].includes(i.type))" :key="idx">
                 <v-col cols="12" class="pt-0 pb-0">
                   <v-text-field :label="$t('interface')" v-model="iface.name"></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pt-0 pb-0">
-                  <v-text-field :label="$t('type')" v-model="iface.type"></v-text-field>
+                  <v-select
+                    :label="$t('type')"
+                    v-model="iface.type"
+                    :items="['ethernet', 'bridged', 'bond']"
+                    item-title="type"
+                    item-value="type"
+                    dense
+                    @update:model-value="changeInterfaceType(iface)"
+                  ></v-select>
                 </v-col>
-                <v-col cols="12" class="pt-0 pb-0">
-                  <v-text-field
-                    :label="$t('sub-interfaces (comma separated)')"
-                    :value="iface.interfaces && iface.interfaces.length ? iface.interfaces.join(', ') : ''"
-                    @change="iface.interfaces = $event.target.value ? $event.target.value.split(',').map((i) => i.trim()) : []"
-                  ></v-text-field>
-                </v-col>
-                <v-col v-if="iface.ipv4.length > 0" cols="12" class="pt-0 pb-0">
-                  <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="primary"></v-switch>
-                </v-col>
-                <template v-if="iface.ipv4.length > 0 && !iface.ipv4[0].dhcp">
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
-                    <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address"></v-text-field>
+                <template v-if="iface.type === 'ethernet'">
+                  <v-col v-if="iface.ipv4.length > 0" cols="12" class="pt-0 pb-0">
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="primary"></v-switch>
                   </v-col>
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
-                    <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway"></v-text-field>
+                  <template v-if="iface.ipv4.length > 0 && !iface.ipv4[0].dhcp">
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field
+                        :label="$t('ipv4 dns (comma separated)')"
+                        :value="iface.ipv4[0].dns && iface.ipv4[0].dns.length ? iface.ipv4[0].dns.join(', ') : ''"
+                        @change="iface.ipv4[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
+                      ></v-text-field>
+                    </v-col>
+                  </template>
+                  <v-col v-if="iface.ipv6.length > 0" cols="12" class="pt-0 pb-0">
+                    <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="primary"></v-switch>
                   </v-col>
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
-                    <v-text-field
-                      :label="$t('ipv4 dns (comma separated)')"
-                      :value="iface.ipv4[0].dns && iface.ipv4[0].dns.length ? iface.ipv4[0].dns.join(', ') : ''"
-                      @change="iface.ipv4[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
-                    ></v-text-field>
-                  </v-col>
+                  <template v-if="iface.ipv6.length > 0 && !iface.ipv6[0].dhcp">
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
+                      <v-text-field :label="$t('ipv6 address')" v-model="iface.ipv6[0].address"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
+                      <v-text-field :label="$t('ipv6 gateway')" v-model="iface.ipv6[0].gateway"></v-text-field>
+                    </v-col>
+                  </template>
                 </template>
-                <v-col  v-if="iface.ipv6.length > 0" cols="12" class="pt-0 pb-0">
-                  <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="primary"></v-switch>
-                </v-col>
-                <template v-if="iface.ipv6.length > 0 &&!iface.ipv6[0].dhcp">
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
-                    <v-text-field :label="$t('ipv6 address')" v-model="iface.ipv6[0].address"></v-text-field>
+                <template v-else-if="iface.type === 'bridged'" v-for="(bridge, idx) in settingsNetwork.interfaces.filter((i) => ['bridge'].includes(i.type))" :key="idx">
+                  <v-col cols="12" class="pt-0 pb-0">
+                    <v-text-field :label="$t('bridge')" v-model="bridge.name"></v-text-field>
                   </v-col>
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
-                    <v-text-field :label="$t('ipv6 gateway')" v-model="iface.ipv6[0].gateway"></v-text-field>
+                  <v-col v-if="bridge.ipv4.length > 0" cols="12" class="pt-0 pb-0">
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="primary"></v-switch>
                   </v-col>
-                  <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
-                    <v-text-field
-                      :label="$t('ipv6 dns (comma separated)')"
-                      :value="iface.ipv6[0].dns && iface.ipv6[0].dns.length ? iface.ipv6[0].dns.join(', ') : ''"
-                      @change="iface.ipv6[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
-                    ></v-text-field>
+                  <template v-if="bridge.ipv4.length > 0 && !bridge.ipv4[0].dhcp">
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 address')" v-model="bridge.ipv4[0].address"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 gateway')" v-model="bridge.ipv4[0].gateway"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field
+                        :label="$t('ipv4 dns (comma separated)')"
+                        :value="bridge.ipv4[0].dns && bridge.ipv4[0].dns.length ? bridge.ipv4[0].dns.join(', ') : ''"
+                        @change="bridge.ipv4[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
+                      ></v-text-field>
+                    </v-col>
+                  </template>
+                  <v-col v-if="bridge.ipv6.length > 0" cols="12" class="pt-0 pb-0">
+                    <v-switch :label="$t('ipv6 dhcp')" v-model="bridge.ipv6[0].dhcp" inset density="compact" color="primary"></v-switch>
                   </v-col>
+                  <template v-if="bridge.ipv6.length > 0 && !bridge.ipv6[0].dhcp">
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv6[0].dhcp">
+                      <v-text-field :label="$t('ipv6 address')" v-model="bridge.ipv6[0].address"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv6[0].dhcp">
+                      <v-text-field :label="$t('ipv6 gateway')" v-model="bridge.ipv6[0].gateway"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv6[0].dhcp">
+                      <v-text-field
+                        :label="$t('ipv6 dns (comma separated)')"
+                        :value="bridge.ipv6[0].dns && bridge.ipv6[0].dns.length ? bridge.ipv6[0].dns.join(', ') : ''"
+                        @change="bridge.ipv6[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
+                      ></v-text-field>
+                    </v-col>
+                  </template>
                 </template>
               </v-row>
               <v-divider class="my-2"></v-divider>
@@ -178,10 +215,10 @@ const getNetworkSettings = async () => {
       throw new Error(`${t('network settings could not be loaded')}|$| ${error.error || t('unknown error')}`);
     }
 
-    settingsNetwork.value = await res.json(); console.log(settingsNetwork.value);
+    settingsNetwork.value = await res.json();
+    console.log(settingsNetwork.value);
     if (settingsNetwork.value.interfaces[0].ipv4.length === 0) settingsNetwork.value.interfaces[0].ipv4 = [{ dhcp: false, address: null, gateway: null, dns: [] }];
     if (settingsNetwork.value.interfaces[0].ipv6.length === 0) settingsNetwork.value.interfaces[0].ipv6 = [{ dhcp: false, address: null, gateway: null, dns: [] }];
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -211,6 +248,35 @@ const setNetworkSettings = async () => {
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
+  }
+};
+
+const changeInterfaceType = (iface) => {
+  const hasBridge = settingsNetwork.value.interfaces.some((iface) => iface.type === 'bridge');
+  const bridgeName = 'br' + iface.name.slice(3);
+  if (!hasBridge) {
+    settingsNetwork.value.interfaces.push({
+      name: bridgeName,
+      type: 'bridge',
+      mode: null,
+      ipv4: [
+        {
+          dhcp: false,
+          address: null,
+          gateway: null,
+          dns: [],
+        },
+      ],
+      ipv6: [
+        {
+          dhcp: false,
+          address: null,
+          gateway: null,
+          dns: [],
+        },
+      ],
+      interfaces: [iface.name],
+    });
   }
 };
 </script>

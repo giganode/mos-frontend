@@ -492,5 +492,21 @@
   "lines": "Zeilen",
   "update check could not be performed": "Update-Prüfung konnte nicht durchgeführt werden",
   "ipv4": "IPv4",
-  "ipv6": "IPv6"
+  "ipv6": "IPv6",
+  "remote mounts could not be fetched": "Remote Mounts konnten nicht abgerufen werden",
+  "remote mount could not be created": "Remote Mount konnte nicht erstellt werden",
+  "remote mount created successfully": "Remote Mount erfolgreich erstellt",
+  "create remote mount": "Remote Mount erstellen",
+  "type is required": "Typ ist erforderlich",
+  "host is required": "Host ist erforderlich",
+  "share name is required": "Freigabename ist erforderlich",
+  "mount point is required": "Mount-Punkt ist erforderlich",
+  "remote mount could not be deleted": "Remote Mount konnte nicht gelöscht werden",
+  "remote mount deleted successfully": "Remote Mount erfolgreich gelöscht",
+  "are you sure you want to delete this remote mount?": "Bist du sicher, dass du diesen Remote Mount löschen möchtest?",
+  "ip": "IP",
+  "domain": "Domain",
+  "gid": "GID",
+  "uid": "UID",
+  "details": "Details"
 }

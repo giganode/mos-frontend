@@ -23,7 +23,12 @@
             <b>{{ $t('load') }}:</b>
           </v-col>
           <v-col class="d-flex align-center" style="height: 14px">
-            <v-progress-linear :model-value="processor.load" height="14" color="primary" style="margin-top: 0; border-radius: 7px; overflow: hidden">
+            <v-progress-linear
+              :model-value="processor.load"
+              height="14"
+              :color="processor.load >= 90 ? 'red' : processor.load >= 60 ? 'orange' : 'green'"
+              style="margin-top: 0; border-radius: 7px; overflow: hidden"
+            >
               <template #default>
                 <span>{{ processor.load.toFixed(2) }}%</span>
               </template>
@@ -34,14 +39,19 @@
           <details class="mt-2 pa-0">
             <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline">{{ $t('cores') }}</summary>
             <v-row dense class="mt-2 pa-0">
-              <v-col v-for="(core, i) in processor.cores" :key="i" cols="12" sm="6" class="d-flex align-center pa-0" style="margin-top: 6px">
+              <v-col v-for="(core, i) in processor.cores" :key="i" cols="12" xs="6" sm="6" md="6" lg="6" xl="6" class="d-flex align-center pa-0" style="margin-top: 6px">
                 <div style="width: 48px; display: flex; align-items: center">
                   <small>
                     <b>CPU {{ i }}</b>
                   </small>
                 </div>
-                <div style="flex: 1; display: flex; align-items: center; height: 12px" class="mr-4">
-                  <v-progress-linear :model-value="core.load?.total ?? 0" height="12" color="primary" style="margin-top: 2px; border-radius: 6px; overflow: hidden; width: 100%">
+                <div style="flex: 1; display: flex; align-items: center; height: 12px" class="pr-4">
+                  <v-progress-linear
+                    :model-value="core.load?.total ?? 0"
+                    height="12"
+                    :color="core.load?.total >= 90 ? 'red' : core.load?.total >= 75 ? 'orange' : 'green'"
+                    style="margin-top: 2px; border-radius: 6px; overflow: hidden; width: 100%"
+                  >
                     <template #default>
                       <span>{{ Number(core.load?.total ?? 0).toFixed(2) }}%</span>
                     </template>

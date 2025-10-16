@@ -9,7 +9,7 @@
           <v-card-text>
             <v-form>
               <h3 class="mb-2 pb-4">{{ $t('interfaces') }}</h3>
-              <v-row v-for="(iface, idx) in settingsNetwork.interfaces.filter((i) => ['ethernet', 'bridged', 'bond'].includes(i.type))" :key="idx">
+              <v-row v-for="(iface, idx) in settingsNetwork.interfaces.filter((i) => ['ethernet', 'bridged'].includes(i.type))" :key="idx">
                 <v-col cols="12" class="pt-0 pb-0">
                   <v-text-field :label="$t('interface')" v-model="iface.name"></v-text-field>
                 </v-col>
@@ -36,11 +36,7 @@
                       <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway"></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
-                      <v-text-field
-                        :label="$t('ipv4 dns (comma separated)')"
-                        :value="iface.ipv4[0].dns && iface.ipv4[0].dns.length ? iface.ipv4[0].dns.join(', ') : ''"
-                        @change="iface.ipv4[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
-                      ></v-text-field>
+                      <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value"></v-text-field>
                     </v-col>
                   </template>
                   <v-col v-if="iface.ipv6.length > 0" cols="12" class="pt-0 pb-0">
@@ -51,7 +47,7 @@
                       <v-text-field :label="$t('ipv6 address')" v-model="iface.ipv6[0].address"></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
-                      <v-text-field :label="$t('ipv6 gateway')" v-model="iface.ipv6[0].gateway"></v-text-field>
+                      <v-text-field :label="$t('ipv6 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv6').value"></v-text-field>
                     </v-col>
                   </template>
                 </template>
@@ -70,11 +66,7 @@
                       <v-text-field :label="$t('ipv4 gateway')" v-model="bridge.ipv4[0].gateway"></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv4[0].dhcp">
-                      <v-text-field
-                        :label="$t('ipv4 dns (comma separated)')"
-                        :value="bridge.ipv4[0].dns && bridge.ipv4[0].dns.length ? bridge.ipv4[0].dns.join(', ') : ''"
-                        @change="bridge.ipv4[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
-                      ></v-text-field>
+                      <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(bridge, 'ipv4').value"></v-text-field>
                     </v-col>
                   </template>
                   <v-col v-if="bridge.ipv6.length > 0" cols="12" class="pt-0 pb-0">
@@ -88,11 +80,7 @@
                       <v-text-field :label="$t('ipv6 gateway')" v-model="bridge.ipv6[0].gateway"></v-text-field>
                     </v-col>
                     <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv6[0].dhcp">
-                      <v-text-field
-                        :label="$t('ipv6 dns (comma separated)')"
-                        :value="bridge.ipv6[0].dns && bridge.ipv6[0].dns.length ? bridge.ipv6[0].dns.join(', ') : ''"
-                        @change="bridge.ipv6[0].dns = $event.target.value ? $event.target.value.split(',').map((ip) => ip.trim()) : []"
-                      ></v-text-field>
+                      <v-text-field :label="$t('ipv6 dns (comma separated)')" v-model="getIfaceIpDnsString(bridge, 'ipv6').value"></v-text-field>
                     </v-col>
                   </template>
                 </template>
@@ -133,7 +121,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
@@ -197,6 +185,20 @@ const settingsNetwork = ref({
 });
 const overlay = ref(false);
 const { t } = useI18n();
+
+const getIfaceIpDnsString = (iface, type) => {
+  return computed({
+    get() {
+      return iface[type][0].dns && iface[type][0].dns.length ? iface[type][0].dns.join(', ') : '';
+    },
+    set(val) {
+      iface[type][0].dns = val
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+    },
+  });
+};
 
 onMounted(() => {
   getNetworkSettings();

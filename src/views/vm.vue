@@ -34,7 +34,7 @@
                           {{ vm.state }}
                         </v-list-item-subtitle>
                         <template v-slot:append>
-                          <v-switch v-model="vm.autostart" color="primary" hide-details inset density="compact" />
+                          <v-switch v-model="vm.autostart" color="onPrimary" hide-details inset density="compact" />
                         </template>
                       </v-list-item>
                       <v-divider v-if="index < vms.length - 1" />
@@ -50,7 +50,7 @@
   </v-container>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 
 </template>

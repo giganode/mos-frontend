@@ -8,9 +8,9 @@
         <v-card variant="tonal">
           <v-card-text>
             <v-form>
-              <v-switch :label="$t('lxc service')" color="primary" inset density="compact"
+              <v-switch :label="$t('lxc service')" color="onPrimary" inset density="compact"
                 v-model="settingsLXC.enabled"></v-switch>
-              <v-switch :label="$t('bridge')" color="primary" inset density="compact"
+              <v-switch :label="$t('bridge')" color="onPrimary" inset density="compact"
                 v-model="settingsLXC.bridge"></v-switch>
               <v-text-field :label="$t('directory')" v-model="settingsLXC.directory" density="compact"></v-text-field>
             </v-form>
@@ -21,13 +21,13 @@
   </v-container>
 
   <!-- Floating Action Button -->
-  <v-fab @click="setLXCService()" color="primary"
+  <v-fab @click="setLXCService()" color="onPrimary"
     style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

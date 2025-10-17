@@ -7,56 +7,56 @@
       <v-container fluid>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn color="primary" width="250px" @click="updateOsDialog.value = true">
+            <v-btn color="onPrimary" width="250px" @click="updateOsDialog.value = true">
               {{ $t('update system') }}
             </v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn color="primary" width="250px" @click="rebootDialog = true">{{
+            <v-btn color="onPrimary" width="250px" @click="rebootDialog = true">{{
               $t('reboot') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn color="primary" width="250px" @click="shutdownDialog = true">{{
+            <v-btn color="onPrimary" width="250px" @click="shutdownDialog = true">{{
               $t('shutdown') }}</v-btn>
           </v-col>
         </v-row>
         <v-divider class="mb-4 mt-4"></v-divider>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/docker">{{ $t('docker service') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" to="/mosSettings/docker">{{ $t('docker service') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/lxc">{{ $t('lxc service') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" to="/mosSettings/lxc">{{ $t('lxc service') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/vm">{{ $t('vm service') }}</v-btn>
-          </v-col>
-        </v-row>
-        <v-divider class="mb-4 mt-4"></v-divider>
-        <v-row>
-          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/network">{{ $t('network') }}</v-btn>
-          </v-col>
-          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/system">{{ $t('system') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" to="/mosSettings/vm">{{ $t('vm service') }}</v-btn>
           </v-col>
         </v-row>
         <v-divider class="mb-4 mt-4"></v-divider>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/cron">{{ $t('cron jobs') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" to="/mosSettings/network">{{ $t('network') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" to="/mosSettings/logs">{{ $t('logs') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" to="/mosSettings/system">{{ $t('system') }}</v-btn>
+          </v-col>
+        </v-row>
+        <v-divider class="mb-4 mt-4"></v-divider>
+        <v-row>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn color="onPrimary"width="250px" to="/mosSettings/cron">{{ $t('cron jobs') }}</v-btn>
+          </v-col>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn color="onPrimary"width="250px" to="/mosSettings/logs">{{ $t('logs') }}</v-btn>
           </v-col>
         </v-row>        
         <v-divider class="mb-4 mt-4"></v-divider>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" @click="updateAPI()">{{ $t('update api') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" @click="updateAPI()">{{ $t('update api') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn width="250px" @click="updateUI()">{{ $t('update ui') }}</v-btn>
+            <v-btn color="onPrimary" width="250px" @click="updateUI()">{{ $t('update ui') }}</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -73,7 +73,7 @@
         <v-select v-model="updateOsDialog.channel" :items="getMosChannels()" :label="t('channel')"></v-select>
         <v-select v-model="updateOsDialog.release" :items="getMosReleasesOfChannel()" :label="t('release')"></v-select>
         <v-switch v-model="updateOsDialog.update_kernel" :label="t('update kernel')" inset density="compact"
-          color="primary" />
+          color="onPrimary" />
       </v-card-text>
       <template v-slot:actions>
         <v-btn class="ms-auto" :text="t('cancel')" @click="updateOsDialog.value = false"></v-btn>
@@ -103,7 +103,7 @@
   </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 
 </template>

@@ -19,7 +19,7 @@
                             v-model="settingsSystem.global_spindown"></v-text-field>
                         <v-divider class="my-2"></v-divider>
                         <h3 class="mb-2">{{ $t('ntp') }}</h3>
-                        <v-switch :label="$t('ntp enabled')" color="primary" inset density="compact"
+                        <v-switch :label="$t('ntp enabled')" color="onPrimary" inset density="compact"
                             v-model="settingsSystem.ntp.enabled"></v-switch>
                         <v-text-field :label="$t('ntp mode')" v-model="settingsSystem.ntp.mode"></v-text-field>
                         <v-row>
@@ -32,7 +32,7 @@
                             <v-col cols="12" class="py-0 mb-6">
                                 <div class="d-flex align-center my-2">
                                     <v-divider class="flex-grow-1"></v-divider>
-                                    <v-btn class="mx-4" icon="mdi-plus" color="primary" size="small" density="compact"
+                                    <v-btn class="mx-4" icon="mdi-plus" color="onPrimary" size="small" density="compact"
                                         @click="settingsSystem.ntp.servers.push('')"
                                         aria-label="Add NTP server"></v-btn>
                                     <v-divider class="flex-grow-1"></v-divider>
@@ -55,13 +55,13 @@
     </v-container>
 
     <!-- Floating Action Button -->
-    <v-fab @click="setSystemSettings()" color="primary"
+    <v-fab @click="setSystemSettings()" color="onPrimary"
         style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
         <v-icon>mdi-content-save</v-icon>
     </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
-        <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+        <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
     </v-overlay>
 </template>
 

@@ -28,13 +28,13 @@ const vuetify = createVuetify({
       light: {
         dark: false,
         colors: {
-          primary: '#1976D2',
+          primary: '#1976D2'
         }
       },
       dark: {
         dark: true,
         colors: {
-          primary: '#1976D2',
+          primary: '#1976D2'
         }
       }
     }

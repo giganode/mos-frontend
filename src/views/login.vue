@@ -18,7 +18,7 @@
                         </form>
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn color="primary" variant="outlined" @click="login" style="min-width: 200px;">{{
+                        <v-btn color="onPrimary" variant="outlined" @click="login" style="min-width: 200px;">{{
                             $t('login') }}</v-btn>
                     </v-card-actions>
                 </v-card>

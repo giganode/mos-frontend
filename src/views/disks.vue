@@ -29,7 +29,7 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
@@ -74,11 +74,11 @@
           </v-col>
           <v-col cols="12">
             <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details
-              density="compact" color="primary" />
+              density="compact" color="onPrimary" />
           </v-col>
           <v-col cols="12">
             <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details
-              density="compact" color="primary" />
+              density="compact" color="onPrimary" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -95,7 +95,7 @@
   </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

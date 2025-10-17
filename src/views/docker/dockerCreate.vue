@@ -23,7 +23,7 @@
                                     style="margin-bottom: 0;" />
                             </v-col>
                             <v-col cols="3" class="d-flex align-center justify-center">
-                                <v-btn color="primary" @click="fetchDockerTemplateUrl()" :disabled="!dockerUrl"
+                                <v-btn color="onPrimary" @click="fetchDockerTemplateUrl()" :disabled="!dockerUrl"
                                     style="margin-bottom: 20px;" hide-details>
                                     {{ $t('fetch') }}
                                 </v-btn>
@@ -40,14 +40,14 @@
                             :loading="loadingContainers" clearable @update:model-value="onContainerChange"></v-select>
                         <v-text-field :label="$t('custom ip')" v-model="form.custom_ip"></v-text-field>
                         <v-text-field :label="$t('default shell')" v-model="form.default_shell"></v-text-field>
-                        <v-switch :label="$t('privileged')" v-model="form.privileged" inset color="primary"
+                        <v-switch :label="$t('privileged')" v-model="form.privileged" inset color="onPrimary"
                             density="compact"></v-switch>
                         <v-text-field :label="$t('extra parameters')" v-model="form.extra_parameters"></v-text-field>
                         <v-text-field :label="$t('web ui url')" v-model="form.web_ui_url"></v-text-field>
                         <v-text-field :label="$t('icon')" v-model="form.icon"></v-text-field>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-2">
-                            <v-btn icon size="x-small" color="primary" class="ma-1 pa-0"
+                            <v-btn icon size="x-small" color="onPrimary" class="ma-1 pa-0"
                                 style="width:24px; height:24px; min-width:24px;"
                                 @click="form.paths.push({ name: '', mode: '', host: '', container: '' })"
                                 title="Add path" aria-label="add path">
@@ -60,7 +60,7 @@
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
                                     <div class="d-flex flex-column align-center">
-                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                        <v-btn icon size="x-small" color="onPrimary" class="pa-0"
                                             style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
                                             @click="form.paths.splice(i + 1, 0, { name: '', mode: '', host: '', container: '' })"
                                             title="Add path" aria-label="add path">
@@ -99,7 +99,7 @@
                         </div>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-2">
-                            <v-btn icon size="x-small" color="primary" class="ma-1 pa-0"
+                            <v-btn icon size="x-small" color="onPrimary" class="ma-1 pa-0"
                                 style="width:24px; height:24px; min-width:24px;"
                                 @click="form.ports.push({ name: '', protocol: '', host: '', container: '' })"
                                 title="Add port" aria-label="add port">
@@ -112,7 +112,7 @@
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
                                     <div class="d-flex flex-column align-center">
-                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                        <v-btn icon size="x-small" color="onPrimary" class="pa-0"
                                             style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
                                             @click="form.ports.splice(i + 1, 0, { name: '', protocol: '', host: '', container: '' })"
                                             title="Add port" aria-label="add port">
@@ -147,7 +147,7 @@
                         </div>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-2">
-                            <v-btn icon size="x-small" color="primary" class="ma-1 pa-0"
+                            <v-btn icon size="x-small" color="onPrimary" class="ma-1 pa-0"
                                 style="width:24px; height:24px; min-width:24px;"
                                 @click="form.devices.push({ name: '', host: '', container: '' })" title="Add device"
                                 aria-label="add device">
@@ -160,7 +160,7 @@
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
                                     <div class="d-flex flex-column align-center">
-                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                        <v-btn icon size="x-small" color="onPrimary" class="pa-0"
                                             style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
                                             @click="form.devices.splice(i + 1, 0, { name: '', host: '', container: '' })"
                                             title="Add device" aria-label="add device">
@@ -194,7 +194,7 @@
                         </div>
                         <v-divider class="my-2"></v-divider>
                         <v-card-subtitle class="mb-2">
-                            <v-btn icon size="x-small" color="primary" class="ma-1 pa-0"
+                            <v-btn icon size="x-small" color="onPrimary" class="ma-1 pa-0"
                                 style="width:24px; height:24px; min-width:24px;"
                                 @click="form.variables.push({ name: '', key: '', value: '', mask: false })"
                                 title="Add variable" aria-label="add variable">
@@ -207,7 +207,7 @@
                             <v-row>
                                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
                                     <div class="d-flex flex-column align-center">
-                                        <v-btn icon size="x-small" color="primary" class="pa-0"
+                                        <v-btn icon size="x-small" color="onPrimary" class="pa-0"
                                             style="width:24px; height:24px; min-width:24px; margin-bottom:6px;"
                                             @click="form.variables.splice(i + 1, 0, { name: '', key: '', value: '', mask: false })"
                                             title="Add variable" aria-label="add variable">
@@ -228,7 +228,7 @@
                                         </v-col>
                                         <v-col cols="6">
                                             <v-switch :label="$t('masked')" v-model="variable.mask" inset
-                                                color="primary" density="compact" hide-details class="mb-4"></v-switch>
+                                                color="onPrimary" density="compact" hide-details class="mb-4"></v-switch>
                                         </v-col>
                                     </v-row>
                                     <v-row class="mt-n8">
@@ -253,13 +253,13 @@
     </v-container>
 
     <!-- Floating Action Button -->
-    <v-fab color="primary" @click="createDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
+    <v-fab color="onPrimary" @click="createDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
         size="large" icon>
         <v-icon>mdi-content-save</v-icon>
     </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
-        <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+        <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
     </v-overlay>
 </template>
 

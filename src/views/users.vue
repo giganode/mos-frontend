@@ -14,7 +14,7 @@
                   <v-list-item v-for="user in users" :key="user.id">
                     <v-list-item-title>
                       {{ user.username }}
-                      <v-chip v-if="user.samba_user" color="primary" size="small" class="ml-2" label>
+                      <v-chip v-if="user.samba_user" color="onPrimary" size="small" class="ml-2" label>
                         {{ $t('samba') }}
                       </v-chip>
                     </v-list-item-title>
@@ -25,7 +25,7 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
@@ -87,13 +87,13 @@
               : []" />
           <v-select v-model="addDialog.role" :items="['admin', 'user', 'samba_only']" :label="$t('role')" required
             @update:modelValue="val => { addDialog.role = val; if (val === 'samba_only') addDialog.samba_user = true; }" />
-          <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="primary" />
+          <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="onPrimary" />
         </form>
       </v-card-text>
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-btn text @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
-            <v-btn color="primary" @click="onAddSubmit">
+            <v-btn color="onPrimary" @click="onAddSubmit">
               {{ $t('save') }}
             </v-btn>
         </v-row>
@@ -111,13 +111,13 @@
             :label="$t('password')" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword" :required="changeDialog.samba_user" />
           <v-select v-model="changeDialog.role" :items="['admin', 'user', 'samba_only']" :label="$t('role')" required />
-          <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="primary" />
+          <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="onPrimary" />
         </form>
       </v-card-text>
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-btn text @click="changeDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="primary" @click="changeUser(changeDialog.user)">
+          <v-btn color="onPrimary" @click="changeUser(changeDialog.user)">
             {{ $t('save') }}
           </v-btn>
         </v-row>
@@ -126,13 +126,13 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large"
+  <v-fab color="onPrimary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large"
     icon @click="openAddDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

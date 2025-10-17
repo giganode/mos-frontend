@@ -79,14 +79,14 @@
               </v-list>
             </v-card-text>
             <v-card-actions>
-              <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="primary" @change="switchAutomount(pool)" />
+              <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="onPrimary" @change="switchAutomount(pool)" />
               <v-spacer />
               <v-btn icon @click="openDeletePoolDialog(pool)">
                 <v-icon color="red">mdi-delete</v-icon>
               </v-btn>
               <v-menu>
                 <template #activator="{ props }">
-                  <v-btn variant="text" icon v-bind="props">
+                  <v-btn variant="text" icon v-bind="props" color="onPrimary">
                     <v-icon>mdi-dots-vertical</v-icon>
                   </v-btn>
                 </template>
@@ -127,7 +127,7 @@
                 <template v-slot:append>
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-btn variant="text" icon v-bind="props">
+                      <v-btn variant="text" icon v-bind="props" color="onPrimary">
                         <v-icon>mdi-dots-vertical</v-icon>
                       </v-btn>
                     </template>
@@ -159,10 +159,10 @@
             <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="primary" />
+            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="onPrimary" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="primary" />
+            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="onPrimary" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -227,16 +227,16 @@
               </div>
             </v-slide-y-transition>
           </div>
-          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="primary" inset />
-          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="primary" inset />
-          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" hide-details density="compact" color="primary" inset />
+          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" hide-details density="compact" color="onPrimary" inset />
           <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="createPoolDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createPool()">
+        <v-btn @click="createPoolDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+        <v-btn @click="createPool()" color="onPrimary">
           {{ $t('create') }}
         </v-btn>
       </v-card-actions>
@@ -244,12 +244,12 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
+  <v-fab color="onPrimary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

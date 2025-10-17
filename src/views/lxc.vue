@@ -51,7 +51,7 @@
                             {{ lxc.state }}
                           </v-list-item-subtitle>
                           <template v-slot:append>
-                            <v-switch v-model="lxc.autostart" color="primary" hide-details
+                            <v-switch v-model="lxc.autostart" color="onPrimary" hide-details
                               @change="switchAutostart(lxc)" inset density="compact" />
                           </template>
                         </v-list-item>
@@ -66,7 +66,7 @@
         </v-row>
         <v-row class="mt-4">
           <v-col class="d-flex justify-end">
-            <v-btn color="primary" @click="openCreateDialog()" class="ml-2">
+            <v-btn color="onPrimary" @click="openCreateDialog()" class="ml-2">
               <v-icon left>mdi-plus</v-icon>
               {{ $t('create') }}
             </v-btn>
@@ -94,7 +94,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createLXC()">
+        <v-btn color="onPrimary" @click="createLXC()">
           {{ $t('create') }}
         </v-btn>
       </v-card-actions>
@@ -119,7 +119,7 @@
   </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

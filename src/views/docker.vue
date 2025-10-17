@@ -156,7 +156,7 @@
                                     </template>
                                     <v-switch
                                       :model-value="(dockers.find(d => d.Names && d.Names[0] === containerName)?.autostart) ?? false"
-                                      color="primary" hide-details
+                                      color="onPrimary" hide-details
                                       @update:model-value="val => { const d = dockers.find(d => d.Names && d.Names[0] === containerName); if (d) { d.autostart = val; switchAutostart(d); } }"
                                       inset density="compact" />
                                     <v-divider vertical class="mx-2" />
@@ -274,7 +274,7 @@
                               </v-icon>
                               <v-divider vertical class="mx-2" />
                             </template>
-                            <v-switch v-model="docker.autostart" color="primary" hide-details
+                            <v-switch v-model="docker.autostart" color="onPrimary" hide-details
                               @change="switchAutostart(docker)" inset density="compact" />
                             <v-divider vertical class="mx-2" />
                             <v-icon class="drag-handle" @click="openInfoDialog(docker)">mdi-information-outline</v-icon>
@@ -353,7 +353,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="clearCreateGroupDialog()">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createDockerGroup()">
+        <v-btn color="onPrimary" @click="createDockerGroup()">
           {{ $t('create') }}
         </v-btn>
       </v-card-actions>
@@ -371,7 +371,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="clearChangeGroupDialog()">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="updateDockerGroup()">
+        <v-btn color="onPrimary" @click="updateDockerGroup()">
           {{ $t('save') }}
         </v-btn>
       </v-card-actions>
@@ -396,31 +396,31 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed;bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+  <v-fab color="onPrimary" style="position: fixed;bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
     <v-icon>mdi-dots-vertical</v-icon>
     <v-speed-dial v-model="menu" location="top right" activator="parent" :itemTransition="false" transition="false">
       <v-sheet key="speed-dial-panel" class="bg-surface elevation-8 rounded-xl pa-2 d-flex flex-column align-end" style="max-width: 250px;" >
         <div class="d-flex align-center justify-end ga-2" key="1">
           <span class="me-2">{{ $t('add container') }}</span>
-          <v-btn icon color="primary" @click="$router.push('/docker/create')">
+          <v-btn icon color="onPrimary" @click="$router.push('/docker/create')">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
         <div class="d-flex align-center justify-end ga-2" key="2">
           <span class="me-2">{{ $t('create docker group') }}</span>
-          <v-btn icon color="primary" @click="openCreateGroupDialog()">
+          <v-btn icon color="onPrimary" @click="openCreateGroupDialog()">
             <v-icon>mdi-folder-plus</v-icon>
           </v-btn>
         </div>
         <div class="d-flex align-center justify-end ga-2" key="3">
           <span class="me-2">{{ $t('check for updates') }}</span>
-          <v-btn icon color="primary" @click="checkForUpdates()">
+          <v-btn icon color="onPrimary" @click="checkForUpdates()">
             <v-icon>mdi-update</v-icon>
           </v-btn>
         </div>
         <div class="d-flex align-center justify-end ga-2" key="4">
           <span class="me-2">{{ $t('update all') }}</span>
-          <v-btn icon color="primary" @click="updateAll()">
+          <v-btn icon color="onPrimary" @click="updateAll()">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </div>
@@ -429,7 +429,7 @@
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

@@ -26,7 +26,7 @@
                 </v-col>
                 <template v-if="iface.type === 'ethernet'">
                   <v-col v-if="iface.ipv4.length > 0" cols="12" class="pt-0 pb-0">
-                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="primary"></v-switch>
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="onPrimary"></v-switch>
                   </v-col>
                   <template v-if="iface.ipv4.length > 0 && !iface.ipv4[0].dhcp">
                     <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv4[0].dhcp">
@@ -40,7 +40,7 @@
                     </v-col>
                   </template>
                   <v-col v-if="iface.ipv6.length > 0" cols="12" class="pt-0 pb-0">
-                    <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="primary"></v-switch>
+                    <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="onPrimary"></v-switch>
                   </v-col>
                   <template v-if="iface.ipv6.length > 0 && !iface.ipv6[0].dhcp">
                     <v-col cols="12" class="pt-0 pb-0" v-if="!iface.ipv6[0].dhcp">
@@ -56,7 +56,7 @@
                     <v-text-field :label="$t('bridge')" v-model="bridge.name"></v-text-field>
                   </v-col>
                   <v-col v-if="bridge.ipv4.length > 0" cols="12" class="pt-0 pb-0">
-                    <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="primary"></v-switch>
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="onPrimary"></v-switch>
                   </v-col>
                   <template v-if="bridge.ipv4.length > 0 && !bridge.ipv4[0].dhcp">
                     <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv4[0].dhcp">
@@ -70,7 +70,7 @@
                     </v-col>
                   </template>
                   <v-col v-if="bridge.ipv6.length > 0" cols="12" class="pt-0 pb-0">
-                    <v-switch :label="$t('ipv6 dhcp')" v-model="bridge.ipv6[0].dhcp" inset density="compact" color="primary"></v-switch>
+                    <v-switch :label="$t('ipv6 dhcp')" v-model="bridge.ipv6[0].dhcp" inset density="compact" color="onPrimary"></v-switch>
                   </v-col>
                   <template v-if="bridge.ipv6.length > 0 && !bridge.ipv6[0].dhcp">
                     <v-col cols="12" class="pt-0 pb-0" v-if="!bridge.ipv6[0].dhcp">
@@ -87,21 +87,21 @@
               </v-row>
               <v-divider class="my-2"></v-divider>
               <h3 class="mb-2">{{ $t('services') }}</h3>
-              <v-switch :label="$t('ssh')" color="primary" inset density="compact" v-model="settingsNetwork.services.ssh.enabled"></v-switch>
-              <v-switch :label="$t('samba')" color="primary" inset density="compact" v-model="settingsNetwork.services.samba.enabled"></v-switch>
-              <v-switch :label="$t('nmbd')" color="primary" inset density="compact" v-model="settingsNetwork.services.nmbd.enabled"></v-switch>
-              <v-switch :label="$t('nfs')" color="primary" inset density="compact" v-model="settingsNetwork.services.nfs.enabled"></v-switch>
-              <v-switch :label="$t('nut')" color="primary" inset density="compact" v-model="settingsNetwork.services.nut.enabled"></v-switch>
-              <v-switch :label="$t('remote mounting')" color="primary" inset density="compact" v-model="settingsNetwork.services.remote_mounting.enabled"></v-switch>
+              <v-switch :label="$t('ssh')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.ssh.enabled"></v-switch>
+              <v-switch :label="$t('samba')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.samba.enabled"></v-switch>
+              <v-switch :label="$t('nmbd')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.nmbd.enabled"></v-switch>
+              <v-switch :label="$t('nfs')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.nfs.enabled"></v-switch>
+              <v-switch :label="$t('nut')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.nut.enabled"></v-switch>
+              <v-switch :label="$t('remote mounting')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.remote_mounting.enabled"></v-switch>
               <v-divider class="my-2"></v-divider>
               <h3 class="mb-2">{{ $t('tailscale') }}</h3>
-              <v-switch :label="$t('tailscale')" color="primary" inset density="compact" v-model="settingsNetwork.services.tailscale.enabled"></v-switch>
-              <v-switch :label="$t('tailscale update check')" color="primary" inset density="compact" v-model="settingsNetwork.services.tailscale.update_check"></v-switch>
+              <v-switch :label="$t('tailscale')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.tailscale.enabled"></v-switch>
+              <v-switch :label="$t('tailscale update check')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.tailscale.update_check"></v-switch>
               <v-text-field :label="$t('tailscale params')" v-model="settingsNetwork.services.tailscale.tailscaled_params"></v-text-field>
               <v-divider class="my-2"></v-divider>
               <h3 class="mb-2">{{ $t('netbird') }}</h3>
-              <v-switch :label="$t('netbird')" color="primary" inset density="compact" v-model="settingsNetwork.services.netbird.enabled"></v-switch>
-              <v-switch :label="$t('netbird update check')" color="primary" inset density="compact" v-model="settingsNetwork.services.netbird.update_check"></v-switch>
+              <v-switch :label="$t('netbird')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.netbird.enabled"></v-switch>
+              <v-switch :label="$t('netbird update check')" color="onPrimary" inset density="compact" v-model="settingsNetwork.services.netbird.update_check"></v-switch>
               <v-text-field :label="$t('netbird service params')" v-model="settingsNetwork.services.netbird.netbird_service_params"></v-text-field>
             </v-form>
           </v-card-text>
@@ -111,12 +111,12 @@
   </v-container>
 
   <!-- Floating Action Button -->
-  <v-fab @click="setNetworkSettings()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+  <v-fab @click="setNetworkSettings()" color="onPrimary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

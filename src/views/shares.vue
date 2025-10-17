@@ -20,7 +20,7 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
@@ -65,32 +65,32 @@
               <v-text-field v-model="createDialog.create_mask" :label="$t('create mask')" required />
               <v-text-field v-model="createDialog.directory_mask" :label="$t('directory mask')" required />
               <v-switch v-model="createDialog.force_root" :label="$t('force root')" inset hide-details density="compact"
-                class="ml-4" color="primary" />
+                class="ml-4" color="onPrimary" />
               <v-switch v-model="createDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details
-                density="compact" class="ml-4" color="primary" />
+                density="compact" class="ml-4" color="onPrimary" />
               <v-switch v-model="createDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details
-                density="compact" class="ml-4" color="primary" />
+                density="compact" class="ml-4" color="onPrimary" />
               <v-switch v-model="createDialog.preserve_case" :label="$t('preserve case')" inset hide-details
-                density="compact" class="ml-4" color="primary" />
+                density="compact" class="ml-4" color="onPrimary" />
               <v-switch v-model="createDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details
-                density="compact" class="ml-4" color="primary" />
+                density="compact" class="ml-4" color="onPrimary" />
             </div>
           </v-slide-y-transition>
           <v-switch v-model="createDialog.enabled" :label="$t('enabled')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="createDialog.browseable" :label="$t('browseable')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="createDialog.read_only" :label="$t('read only')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="createDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-spacer />
           <v-btn @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="primary" @click="createShare">
+          <v-btn color="onPrimary" @click="createShare">
             {{ $t('create') }}
           </v-btn>
         </v-row>
@@ -132,30 +132,30 @@
             :items="Array.isArray(smbUsers) ? smbUsers.map(user => user.username) : []" :label="$t('write rights')"
             multiple />
           <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.browseable" :label="$t('browseable')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.read_only" :label="$t('read only')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.force_root" :label="$t('force root')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details
-            density="compact" class="ml-4" color="primary" />
+            density="compact" class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details
-            density="compact" class="ml-4" color="primary" />
+            density="compact" class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact"
-            class="ml-4" color="primary" />
+            class="ml-4" color="onPrimary" />
           <v-switch v-model="editDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details
-            density="compact" class="ml-4" color="primary" />
+            density="compact" class="ml-4" color="onPrimary" />
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-spacer />
           <v-btn @click="editDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="primary" @click="updateShare(editDialog)">
+          <v-btn color="onPrimary" @click="updateShare(editDialog)">
             {{ $t('save') }}
           </v-btn>
         </v-row>
@@ -164,13 +164,13 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon
+  <v-fab color="onPrimary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon
     @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

@@ -8,7 +8,7 @@
         <v-card variant="tonal">
           <v-card-text>
             <v-form>
-              <v-switch :label="$t('enabled')" color="primary" inset density="compact" v-model="vmSettings.enabled">
+              <v-switch :label="$t('enabled')" color="onPrimary" inset density="compact" v-model="vmSettings.enabled">
               </v-switch>
               <v-text-field :label="$t('directory')" v-model="vmSettings.directory"></v-text-field>
               <v-text-field :label="$t('vdisk directory')" v-model="vmSettings.vdisk_directory"></v-text-field>
@@ -17,7 +17,7 @@
         </v-card>
       </v-container>
       <v-col class="d-flex justify-end">
-        <v-btn color="primary" @click="setVMService()" class="ml-2">
+        <v-btn color="onPrimary" @click="setVMService()" class="ml-2">
           <v-icon left>mdi-content-save</v-icon>
           {{ $t('save') }}
         </v-btn>
@@ -26,7 +26,7 @@
   </v-container>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

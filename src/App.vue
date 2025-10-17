@@ -1,7 +1,7 @@
 <template>
   <v-app id="app">
     <template v-if="!loginChecked">
-      <v-progress-circular indeterminate color="primary" class="ma-5"></v-progress-circular>
+      <v-progress-circular indeterminate color="onPrimary" class="ma-5"></v-progress-circular>
     </template>
     <template v-if="loginChecked && !loggedIn && !token">
       <Login @login-success="handleLoginSuccess" />

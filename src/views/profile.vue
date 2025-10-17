@@ -20,7 +20,7 @@
           hide-details prepend-inner-icon="mdi-palette" />
         <h3 class="mt-4 d-flex align-center">
           {{ $t('admin api tokens') }}
-          <v-btn icon size="small" class="ml-2" @click="openAdminTokenDialog()" color="primary" variant="tonal">
+          <v-btn icon size="small" class="ml-2" @click="openAdminTokenDialog()" color="onPrimary" variant="tonal">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </h3>
@@ -62,13 +62,13 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="createAdminTokenDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createAdminToken()">{{ $t('create') }}</v-btn>
+        <v-btn color="onPrimary" @click="createAdminToken()">{{ $t('create') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 
 </template>

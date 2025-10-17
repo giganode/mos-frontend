@@ -22,7 +22,7 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
@@ -61,7 +61,7 @@
           <v-select v-model="newRemoteDialog.version" :items="['1.0', '2.0', '2.1', '3.0', '3.02', '3.1.1', '3.2']" :label="$t('version')" required></v-select>
           <!--<v-text-field v-model.number="newRemoteDialog.uid" :label="$t('uid')" type="number" required></v-text-field>
           <v-text-field v-model.number="newRemoteDialog.gid" :label="$t('gid')" type="number" required></v-text-field>-->
-          <v-switch v-model="newRemoteDialog.auto_mount" :label="$t('automount')" inset color="primary"></v-switch>
+          <v-switch v-model="newRemoteDialog.auto_mount" :label="$t('automount')" inset color="onPrimary"></v-switch>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -90,12 +90,12 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreateMountDialog()">
+  <v-fab color="onPrimary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreateMountDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

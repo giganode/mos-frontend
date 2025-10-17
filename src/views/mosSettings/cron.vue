@@ -19,7 +19,7 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
@@ -50,7 +50,7 @@
       <v-card-title>{{ $t('create cron job') }}</v-card-title>
       <v-card-text>
         <v-form>
-          <v-switch v-model="createCronJobDialog.enabled" :label="$t('enabled')" inset color="primary"></v-switch>
+          <v-switch v-model="createCronJobDialog.enabled" :label="$t('enabled')" inset color="onPrimary"></v-switch>
           <v-text-field v-model="createCronJobDialog.name" :label="$t('name')" required></v-text-field>
           <v-text-field v-model="createCronJobDialog.schedule" :label="$t('schedule')" required></v-text-field>
           <v-text-field v-model="createCronJobDialog.command" :label="$t('command')" required></v-text-field>
@@ -71,7 +71,7 @@
       <v-card-title>{{ $t('change cron job') }}</v-card-title>
       <v-card-text>
         <v-form>
-          <v-switch v-model="changeCronJobDialog.enabled" :label="$t('enabled')" inset color="primary"></v-switch>
+          <v-switch v-model="changeCronJobDialog.enabled" :label="$t('enabled')" inset color="onPrimary"></v-switch>
           <v-text-field v-model="changeCronJobDialog.name" :label="$t('name')" required></v-text-field>
           <v-text-field v-model="changeCronJobDialog.schedule" :label="$t('schedule')" required></v-text-field>
           <v-text-field v-model="changeCronJobDialog.command" :label="$t('command')" required></v-text-field>
@@ -120,13 +120,13 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab @click="openCreateCronJobDialog()" color="primary"
+  <v-fab @click="openCreateCronJobDialog()" color="onPrimary"
     style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+    <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
 </template>
 

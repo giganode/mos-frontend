@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="d-flex justify-center">
-    <v-container style="width: 100%; max-width: 1920px;" class="pa-0">
+    <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
         <h2>{{ $t('pools') }}</h2>
       </v-container>
@@ -11,50 +11,74 @@
             <v-spacer />
             <v-chip v-if="pool.status.mounted" size="small">{{ $t('mounted') }}</v-chip>
             <v-chip v-else size="small">{{ $t('unmounted') }}</v-chip>
-            <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1"
-              aria-label="locked">mdi-lock</v-icon>
+            <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1" aria-label="locked">mdi-lock</v-icon>
           </v-card-title>
           <v-card-subtitle v-if="pool.status">{{ $t('type') }}: {{ pool.type }}</v-card-subtitle>
           <div v-if="pool.status" class="mt-2 mr-4 ml-4">
-            <v-progress-linear :model-value="pool.status.usagePercent" height="8" class="mb-2"
-              :color="getUsageColor(pool.status.usagePercent)" rounded :label="`${pool.status.usagePercent}%`"
-              style="min-width: 120px;" bg-opacity="0.35"/>
-            <span style="font-size: 0.875rem;">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human
-              }}</span>
+            <v-progress-linear
+              :model-value="pool.status.usagePercent"
+              height="8"
+              class="mb-2"
+              :color="getUsageColor(pool.status.usagePercent)"
+              rounded
+              :label="`${pool.status.usagePercent}%`"
+              style="min-width: 120px"
+              bg-opacity="0.35"
+            />
+            <span style="font-size: 0.875rem">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}</span>
           </div>
           <v-card-text>
-            <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent;">
+            <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent">
               <v-list-item-title>{{ $t('disks') }}</v-list-item-title>
               <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id">
+                <template v-slot:prepend>
+                  <v-icon class="cursor-pointer" :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'">
+                    {{ getDiskIcon(data_device.diskType.type) }}
+                  </v-icon>
+                </template>
                 <v-list-item-title>{{ data_device.device }}</v-list-item-title>
                 <v-list-item-subtitle>
                   {{ data_device.filesystem }}
                 </v-list-item-subtitle>
-                <v-progress-linear v-if="data_device.storage" :model-value="data_device.storage.usagePercent" height="8"
-                  :color="getUsageColor(data_device.storage.usagePercent)" rounded class="mt-2"
-                  :label="`${data_device.storage.usagePercent}%`" style="min-width: 120px;" />
-                <v-list-item-subtitle v-if="data_device.storage" class="mt-2">
-                  {{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}
-                </v-list-item-subtitle>
+                <v-progress-linear
+                  v-if="data_device.storage"
+                  :model-value="data_device.storage.usagePercent"
+                  height="8"
+                  :color="getUsageColor(data_device.storage.usagePercent)"
+                  rounded
+                  class="mt-2"
+                  :label="`${data_device.storage.usagePercent}%`"
+                  style="min-width: 120px"
+                />
+                <v-list-item-subtitle v-if="data_device.storage" class="mt-2">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</v-list-item-subtitle>
               </v-list-item>
             </v-list>
-            <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent;">
+            <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent">
               <v-list-item-title>{{ $t('parities') }}</v-list-item-title>
               <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
+                <template v-slot:prepend>
+                  <v-icon class="cursor-pointer" :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'">
+                    {{ getDiskIcon(parity_device.diskType.type) }}
+                  </v-icon>
+                </template>
                 <v-list-item-title>{{ parity_device.device }}</v-list-item-title>
                 <v-list-item-subtitle>{{ parity_device.filesystem }}</v-list-item-subtitle>
-                <v-progress-linear v-if="parity_device.storage" :model-value="parity_device.storage.usagePercent"
-                  height="8" color="grey darken-1" rounded class="mt-2"
-                  :label="`${parity_device.storage.usagePercent}%`" style="min-width: 120px;" />
-                <v-list-item-subtitle v-if="parity_device.storage" class="mt-2">
-                  {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
-                </v-list-item-subtitle>
+                <v-progress-linear
+                  v-if="parity_device.storage"
+                  :model-value="parity_device.storage.usagePercent"
+                  height="8"
+                  color="grey darken-1"
+                  rounded
+                  class="mt-2"
+                  :label="`${parity_device.storage.usagePercent}%`"
+                  style="min-width: 120px"
+                />
+                <v-list-item-subtitle v-if="parity_device.storage" class="mt-2">{{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}</v-list-item-subtitle>
               </v-list-item>
             </v-list>
           </v-card-text>
           <v-card-actions>
-            <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact"
-              color="primary" @change="switchAutomount(pool)" />
+            <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="primary" @change="switchAutomount(pool)" />
             <v-spacer />
             <v-btn icon @click="openDeletePoolDialog(pool)">
               <v-icon color="red">mdi-delete</v-icon>
@@ -84,7 +108,7 @@
         <v-card variant="tonal" fluid>
           <v-card-title>{{ $t('unassigned disks') }}</v-card-title>
           <v-card-text class="pa-0">
-            <v-list class="pa-0" style="background-color: transparent;">
+            <v-list class="pa-0" style="background-color: transparent">
               <template v-if="unassignedDisks.length === 0">
                 <v-list-item>
                   <v-list-item-title>{{ $t('no unassigned disks found') }}</v-list-item-title>
@@ -92,7 +116,7 @@
               </template>
               <v-list-item v-for="unassignedDisk in unassignedDisks" :key="unassignedDisk.name">
                 <template v-slot:prepend>
-                  <v-icon class="cursor-pointer">
+                  <v-icon class="cursor-pointer" :color="unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? 'blue' : 'red'">
                     {{ getDiskIcon(unassignedDisk.type) }}
                   </v-icon>
                 </template>
@@ -130,16 +154,13 @@
         {{ $t('are you sure you want to format this disk?') }}
         <v-row class="mt-4">
           <v-col cols="12">
-            <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense
-              :rules="[v => !!v || $t('filesystem is required')]" />
+            <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details
-              density="compact" color="primary" />
+            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="primary" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details
-              density="compact" color="primary" />
+            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="primary" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -174,20 +195,25 @@
       <v-card-title>{{ $t('create pool') }}</v-card-title>
       <v-card-text>
         <v-form>
-          <v-select v-model="createPoolDialog.type" :items="['single', 'mergerfs', 'multi']" :label="$t('type')"
-            dense @update:model-value="switchPoolType()" />
+          <v-select v-model="createPoolDialog.type" :items="['single', 'mergerfs', 'multi']" :label="$t('type')" dense @update:model-value="switchPoolType()" />
           <v-text-field v-model="createPoolDialog.name" :label="$t('name')" />
-          <v-select v-model="createPoolDialog.devices"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map(disk => disk.device) : []"
-            :label="$t('devices')" :multiple="createPoolDialog.type !== 'single'" dense />
-          <v-select v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.snapraidDevice"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map(disk => disk.device) : []"
-            :label="$t('snapraid device')" dense />
-            <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel"
-            :items="['raid0', 'raid1', 'raid5']" :label="$t('raid level')" dense />
+          <v-select
+            v-model="createPoolDialog.devices"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('devices')"
+            :multiple="createPoolDialog.type !== 'single'"
+            dense
+          />
+          <v-select
+            v-if="createPoolDialog.type === 'mergerfs'"
+            v-model="createPoolDialog.snapraidDevice"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('snapraid device')"
+            dense
+          />
+          <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="['raid0', 'raid1', 'raid5']" :label="$t('raid level')" dense />
           <v-select v-model="createPoolDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense />
-          <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.comment"
-            :label="$t('comment')" />
+          <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.comment" :label="$t('comment')" />
           <div v-if="createPoolDialog.type === 'mergerfs'">
             <v-divider></v-divider>
             <v-btn variant="text" @click="createPoolDialog.showAdvanced = !createPoolDialog.showAdvanced" class="mb-4">
@@ -195,19 +221,14 @@
             </v-btn>
             <v-slide-y-transition>
               <div v-if="createPoolDialog.showAdvanced">
-                  <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.mergerfsOptions"
-                    :label="$t('mergerfs options')" />
+                <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.mergerfsOptions" :label="$t('mergerfs options')" />
               </div>
             </v-slide-y-transition>
           </div>
-          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact"
-            color="primary" inset />
-          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact"
-            color="primary" inset />
-          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" hide-details density="compact"
-            color="primary" inset />
-          <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase"
-            :label="$t('passphrase')" type="password" :rules="[v => !!v || $t('passphrase is required')]" />
+          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="primary" inset />
+          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="primary" inset />
+          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" hide-details density="compact" color="primary" inset />
+          <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -221,15 +242,13 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon
-    @click="openCreatePoolDialog()">
+  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
-
 </template>
 
 <script setup>
@@ -249,7 +268,7 @@ const formatDialog = reactive({
   disk: null,
   filesystem: '',
   partition: true,
-  wipeExisting: true
+  wipeExisting: true,
 });
 const createPoolDialog = reactive({
   value: false,
@@ -261,17 +280,17 @@ const createPoolDialog = reactive({
   format: false,
   automount: true,
   comment: '',
-  mergerfsOptions: "defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs",
-  snapraidDevice: "",
-  raidLevel: "",
+  mergerfsOptions: 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs',
+  snapraidDevice: '',
+  raidLevel: '',
   encrypted: false,
   passphrase: '',
-  showAdvanced: false
+  showAdvanced: false,
 });
 const deletePoolDialog = reactive({
   value: false,
   pool: null,
-  filesystem: ''
+  filesystem: '',
 });
 
 onMounted(async () => {
@@ -294,9 +313,9 @@ const openCreatePoolDialog = (disk) => {
   createPoolDialog.format = false;
   createPoolDialog.automount = true;
   createPoolDialog.comment = '';
-  createPoolDialog.mergerfsOptions = "defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs";
-  createPoolDialog.snapraidDevice = "";
-  createPoolDialog.raidLevel = "raid1";
+  createPoolDialog.mergerfsOptions = 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs';
+  createPoolDialog.snapraidDevice = '';
+  createPoolDialog.raidLevel = 'raid1';
 };
 
 const openDeletePoolDialog = (pool) => {
@@ -308,8 +327,8 @@ const getPools = async () => {
   try {
     const res = await fetch('/api/v1/pools', {
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -317,7 +336,6 @@ const getPools = async () => {
       throw new Error(`${t('pools could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
     }
     pools.value = await res.json();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -328,8 +346,8 @@ const getUnassignedDisks = async () => {
   try {
     const res = await fetch('/api/v1/disks/unassigned', {
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -338,7 +356,6 @@ const getUnassignedDisks = async () => {
     }
     const Result = await res.json();
     unassignedDisks.value = Result.unassignedDisks || [];
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -349,8 +366,8 @@ const getFilesystems = async () => {
   try {
     const res = await fetch('/api/v1/disks/availablefilesystems', {
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -359,7 +376,6 @@ const getFilesystems = async () => {
     }
     const Result = await res.json();
     filesystems.value = Result || [];
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -373,7 +389,7 @@ const formatDisk = async () => {
     device: formatDialog.disk.name,
     filesystem: formatDialog.filesystem,
     partition: formatDialog.partition,
-    wipeExisting: formatDialog.wipeExisting
+    wipeExisting: formatDialog.wipeExisting,
   };
 
   try {
@@ -381,10 +397,10 @@ const formatDisk = async () => {
     const res = await fetch(`/api/v1/disks/format`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formatDiskData)
+      body: JSON.stringify(formatDiskData),
     });
 
     if (!res.ok) {
@@ -396,7 +412,6 @@ const formatDisk = async () => {
     clearFormatDialog();
     getPools();
     getUnassignedDisks();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -415,11 +430,9 @@ const createPool = async () => {
   } else if (createPoolDialog.type === 'multi') {
     createPoolMulti();
   }
-
-}
+};
 
 const createPoolMergerfs = async () => {
-
   const createPoolData = {
     name: createPoolDialog.name,
     devices: createPoolDialog.devices,
@@ -429,13 +442,13 @@ const createPoolMergerfs = async () => {
       automount: createPoolDialog.automount,
       comment: createPoolDialog.comment,
       mergerfsOptions: createPoolDialog.mergerfsOptions,
-      snapraid: { device: createPoolDialog.snapraidDevice }
+      snapraid: { device: createPoolDialog.snapraidDevice },
     },
     config: {
       encrypted: createPoolDialog.encrypted,
-      create_keyfile: createPoolDialog.encrypted
+      create_keyfile: createPoolDialog.encrypted,
     },
-    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null
+    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null,
   };
 
   try {
@@ -443,10 +456,10 @@ const createPoolMergerfs = async () => {
     const res = await fetch(`/api/v1/pools/mergerfs`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(createPoolData)
+      body: JSON.stringify(createPoolData),
     });
 
     if (!res.ok) {
@@ -458,18 +471,15 @@ const createPoolMergerfs = async () => {
     clearCreatePoolDialog();
     getPools();
     getUnassignedDisks();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }
-
-}
+};
 
 const createPoolMulti = async () => {
-
   const createPoolData = {
     name: createPoolDialog.name,
     devices: createPoolDialog.devices,
@@ -480,9 +490,9 @@ const createPoolMulti = async () => {
     },
     config: {
       encrypted: createPoolDialog.encrypted,
-      create_keyfile: createPoolDialog.encrypted
+      create_keyfile: createPoolDialog.encrypted,
     },
-    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null
+    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null,
   };
 
   try {
@@ -490,10 +500,10 @@ const createPoolMulti = async () => {
     const res = await fetch(`/api/v1/pools/multi`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(createPoolData)
+      body: JSON.stringify(createPoolData),
     });
 
     if (!res.ok) {
@@ -505,7 +515,6 @@ const createPoolMulti = async () => {
     clearCreatePoolDialog();
     getPools();
     getUnassignedDisks();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -515,20 +524,19 @@ const createPoolMulti = async () => {
 };
 
 const createPoolSingle = async () => {
-
   const createPoolData = {
     name: createPoolDialog.name,
     device: createPoolDialog.devices,
     filesystem: createPoolDialog.filesystem,
     format: createPoolDialog.format,
     options: {
-      automount: createPoolDialog.automount
+      automount: createPoolDialog.automount,
     },
     config: {
       encrypted: createPoolDialog.encrypted,
-      create_keyfile: createPoolDialog.encrypted
+      create_keyfile: createPoolDialog.encrypted,
     },
-    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null
+    passphrase: createPoolDialog.encrypted ? createPoolDialog.passphrase : null,
   };
 
   try {
@@ -536,10 +544,10 @@ const createPoolSingle = async () => {
     const res = await fetch(`/api/v1/pools/single`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(createPoolData)
+      body: JSON.stringify(createPoolData),
     });
 
     if (!res.ok) {
@@ -551,7 +559,6 @@ const createPoolSingle = async () => {
     clearCreatePoolDialog();
     getPools();
     getUnassignedDisks();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -567,8 +574,8 @@ const deletePool = async (poolId) => {
     const res = await fetch(`/api/v1/pools/${poolId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -580,7 +587,6 @@ const deletePool = async (poolId) => {
     clearDeletePoolDialog();
     getPools();
     getUnassignedDisks();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -595,10 +601,10 @@ const switchAutomount = async (pool) => {
     const res = await fetch(`/api/v1/pools/${pool.id}/automount`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ enabled: pool.automount })
+      body: JSON.stringify({ enabled: pool.automount }),
     });
 
     if (!res.ok) {
@@ -608,7 +614,6 @@ const switchAutomount = async (pool) => {
     showSnackbarSuccess(t('automount setting changed successfully'));
 
     getPools();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -623,8 +628,8 @@ const unmountPool = async (pool) => {
     const res = await fetch(`/api/v1/pools/${pool.id}/unmount`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -634,7 +639,6 @@ const unmountPool = async (pool) => {
 
     showSnackbarSuccess(t('pool unmounted successfully'));
     getPools();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -649,8 +653,8 @@ const mountPool = async (pool) => {
     const res = await fetch(`/api/v1/pools/${pool.id}/mount`, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) {
@@ -659,7 +663,6 @@ const mountPool = async (pool) => {
     }
     showSnackbarSuccess(t('pool mounted successfully'));
     getPools();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -669,7 +672,7 @@ const mountPool = async (pool) => {
 };
 
 const switchPoolType = () => {
-  if (createPoolDialog.type === 'single' || createPoolDialog.type === 'mergerfs' ) {
+  if (createPoolDialog.type === 'single' || createPoolDialog.type === 'mergerfs') {
     createPoolDialog.filesystem = 'xfs';
   } else {
     createPoolDialog.filesystem = 'btrfs';
@@ -699,10 +702,10 @@ const clearCreatePoolDialog = () => {
   createPoolDialog.devices = [];
   createPoolDialog.filesystem = '';
   createPoolDialog.automount = true;
-  createPoolDialog.raidLevel = "";
+  createPoolDialog.raidLevel = '';
   createPoolDialog.comment = '';
-  createPoolDialog.mergerfsOptions = "defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs";
-  createPoolDialog.snapraidDevice = "";
+  createPoolDialog.mergerfsOptions = 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs';
+  createPoolDialog.snapraidDevice = '';
   createPoolDialog.format = false;
   createPoolDialog.encrypted = false;
   createPoolDialog.passphrase = '';
@@ -730,5 +733,4 @@ const getUsageColor = (usagePercent) => {
     return 'red';
   }
 };
-
 </script>

@@ -27,10 +27,10 @@
                           </v-btn>
                         </template>
                         <v-list>
-                          <v-list-item @click="openChangeDialog(user)">
+                          <v-list-item @click="openChangeDialog(remote)">
                             <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                           </v-list-item>
-                          <v-list-item @click="openDeleteDialog(user)">
+                          <v-list-item @click="openDeleteDialog(remote)">
                             <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                           </v-list-item>
                         </v-list>
@@ -72,6 +72,23 @@
     </v-card>
   </v-dialog>
 
+  <v-dialog v-model="deleteDialog.value" max-width="400">
+    <v-card>
+      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
+      <v-card-text>
+        {{ $t('are you sure you want to delete this remote mount?') }}
+      </v-card-text>
+      <v-card-actions>
+        <v-row class="d-flex justify-end">
+          <v-btn text @click="deleteDialog.value = false">{{ $t('cancel') }}</v-btn>
+          <v-btn color="red" @click="deleteRemote(deleteDialog.remote)">
+            {{ $t('delete') }}
+          </v-btn>
+        </v-row>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreateMountDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -94,7 +111,7 @@ const remotes = ref([]);
 const newRemoteDialog = reactive({
   value: false,
   name: '',
-  type: '',
+  type: 'smb',
   server: '',
   share: '',
   username: '',
@@ -105,6 +122,15 @@ const newRemoteDialog = reactive({
   gid: 500,
   auto_mount: true,
 });
+const deleteDialog = reactive({
+  value: false,
+  remote: null
+});
+const changeDialog = reactive({
+  value: false,
+  remote: null,
+  auto_mount: true,
+});
 
 onMounted(() => {
   getRemotes();
@@ -112,6 +138,16 @@ onMounted(() => {
 
 const openCreateMountDialog = () => {
   newRemoteDialog.value = true;
+};
+
+const openDeleteDialog = (remote) => {
+  deleteDialog.remote = remote;
+  deleteDialog.value = true;
+};
+
+const openChangeDialog = (remote) => {
+  deleteDialog.remote = remote;
+  deleteDialog.value = true;
 };
 
 const clearRemoteDialog = () => {
@@ -126,6 +162,19 @@ const clearRemoteDialog = () => {
   //newRemoteDialog.uid = 500;
   //newRemoteDialog.gid = 500;
   newRemoteDialog.auto_mount = true;
+};
+const clearChangeDialog = () => {
+  changeDialog.name = '';
+  changeDialog.type = '';
+  changeDialog.server = '';
+  changeDialog.share = '';
+  changeDialog.username = '';
+  changeDialog.password = '';
+  changeDialog.domain = '';
+  changeDialog.version = '3.0';
+  //changeDialog.uid = 500;
+  //changeDialog.gid = 500;
+  changeDialog.auto_mount = true;
 };
 
 const getRemotes = async () => {
@@ -181,6 +230,32 @@ const createRemote = async () => {
     getRemotes();
     newRemoteDialog.value = false;
     clearRemoteDialog();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const deleteRemote = async (remote) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/remotes/${remote.id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('remote mount could not be deleted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('remote mount deleted successfully'));
+    getRemotes();
+    deleteDialog.value = false;
+    deleteDialog.remote = null;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

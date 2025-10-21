@@ -106,7 +106,7 @@
             {{ $t('no pools have been created yet') }}
           </v-card-text>
         </v-card>
-        <v-card variant="tonal" fluid>
+        <v-card variant="tonal" fluid style="margin-bottom: 80px">
           <v-card-title>{{ $t('unassigned disks') }}</v-card-title>
           <v-skeleton-loader v-if="unassignedDisksLoading" type="list-item" />
           <v-card-text class="pa-0">

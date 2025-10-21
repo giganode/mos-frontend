@@ -235,9 +235,9 @@
     </v-container>
 
     <!-- Floating Action Button -->
-    <v-fab color="onPrimary" @click="updateDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
+    <v-fab color="primary" @click="updateDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;"
         size="large" icon>
-        <v-icon>mdi-content-save</v-icon>
+        <v-icon color="onPrimary">mdi-content-save</v-icon>
     </v-fab>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">

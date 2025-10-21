@@ -435,31 +435,31 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab color="Primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-icon>mdi-dots-vertical</v-icon>
+  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+    <v-icon color="onPrimary">mdi-dots-vertical</v-icon>
     <v-speed-dial v-model="menu" location="top right" activator="parent" :itemTransition="false" transition="false">
       <v-sheet key="speed-dial-panel" class="bg-surface elevation-8 rounded-xl pa-2 d-flex flex-column align-end" style="max-width: 250px">
-        <div class="d-flex align-center justify-end ga-2" key="1">
+        <div class="d-flex align-center justify-end ga-2 mb-1" key="1" @click="$router.push('/docker/create')" style="cursor: pointer">
           <span class="me-2">{{ $t('add container') }}</span>
-          <v-btn icon color="onPrimary" @click="$router.push('/docker/create')">
+          <v-btn icon color="onPrimary" density="comfortable">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
-        <div class="d-flex align-center justify-end ga-2" key="2">
+        <div class="d-flex align-center justify-end ga-2 mb-1" key="2" @click="openCreateGroupDialog()" style="cursor: pointer">
           <span class="me-2">{{ $t('create docker group') }}</span>
-          <v-btn icon color="onPrimary" @click="openCreateGroupDialog()">
+          <v-btn icon color="onPrimary" density="comfortable">
             <v-icon>mdi-folder-plus</v-icon>
           </v-btn>
         </div>
-        <div class="d-flex align-center justify-end ga-2" key="3">
+        <div class="d-flex align-center justify-end ga-2 mb-1" key="3" @click="checkForUpdates()" style="cursor: pointer">
           <span class="me-2">{{ $t('check for updates') }}</span>
-          <v-btn icon color="onPrimary" @click="checkForUpdates()">
+          <v-btn icon color="onPrimary" density="comfortable">
             <v-icon>mdi-update</v-icon>
           </v-btn>
         </div>
-        <div class="d-flex align-center justify-end ga-2" key="4">
+        <div class="d-flex align-center justify-end ga-2 mb-1" key="4" @click="updateAll()" style="cursor: pointer">
           <span class="me-2">{{ $t('update all') }}</span>
-          <v-btn icon color="onPrimary" @click="updateAll()">
+          <v-btn icon color="onPrimary" density="comfortable">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </div>

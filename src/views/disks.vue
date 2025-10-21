@@ -29,10 +29,10 @@
                     <template v-slot:append>
                       <v-menu>
                         <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                          <v-btn variant="text" icon v-bind="props" color="onPrimary" >
                             <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
-                        </template>
+                        </template>                        
                         <v-list>
                           <v-list-item>
                             <v-list-item-title @click="spinDownDisk(disk)">

@@ -139,6 +139,10 @@
                                       <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: {{ dockers.find(d => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.host.IPAddress || '-'}}</p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
+                                    <template v-else>
+                                      <p style="min-width:150px; max-width: 150px;">{{ $t('ip address') }}: -</p>
+                                      <v-divider vertical class="mx-2" />
+                                    </template>
                                     <template v-if="$vuetify.display.smAndUp">
                                       <p v-if="!dockers.find(d => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode.startsWith('container:')"
                                         style="min-width:150px; max-width: 150px;">

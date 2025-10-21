@@ -526,5 +526,7 @@
   "could not load shares": "Freigaben konnten nicht geladen werden",
   "please enter type and server ip first": "Bitte geben Sie zuerst den Typ und die Server-IP ein",
   "available shares": "Verfügbare Freigaben",
-  "no shares found": "Keine Freigaben gefunden"
+  "no shares found": "Keine Freigaben gefunden",
+  "disk successfully put to sleep": "Festplatte erfolgreich in den Ruhezustand versetzt",
+  "failed to put disk to sleep": "Festplatte konnte nicht in den Ruhezustand versetzt werden"
 }

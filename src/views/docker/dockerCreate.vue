@@ -668,8 +668,8 @@ const getDockerTemplate = async (docker, installed) => {
             form.value.devices = Array.isArray(result.devices)
                 ? result.devices.map(device => ({
                     name: device.name,
-                    path: device.path,
-                    type: device.type
+                    host: device.host,
+                    container: device.container
                 })) : [];
         } else {
             form.value.name = '';

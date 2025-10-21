@@ -101,7 +101,7 @@
             </v-menu>
           </v-card-actions>
         </v-card>
-        <v-card v-if="pools.length === 0" variant="tonal" fluid class="mb-4 ml-0 mr-0 pa-0">
+        <v-card v-if="pools.length === 0 && !poolsLoading" variant="tonal" fluid class="mb-4 ml-0 mr-0 pa-0">
           <v-card-text class="pa-4">
             {{ $t('no pools have been created yet') }}
           </v-card-text>
@@ -111,7 +111,7 @@
           <v-skeleton-loader v-if="unassignedDisksLoading" type="list-item" />
           <v-card-text class="pa-0">
             <v-list class="pa-0" style="background-color: transparent">
-              <template v-if="unassignedDisks.length === 0">
+              <template v-if="unassignedDisks.length === 0 && !unassignedDisksLoading">
                 <v-list-item>
                   <v-list-item-title>{{ $t('no unassigned disks found') }}</v-list-item-title>
                 </v-list-item>

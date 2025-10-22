@@ -141,7 +141,7 @@
                                       <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode }}</p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
-                                    <template v-else>
+                                    <template v-else-if="$vuetify.display.smAndUp">
                                       <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                                       <v-divider vertical class="mx-2" />
                                     </template>
@@ -159,7 +159,7 @@
                                     </template>
                                     <v-switch
                                       :model-value="dockers.find((d) => d.Names && d.Names[0] === containerName)?.autostart ?? false"
-                                      color="onPrimary"
+                                      color="green"
                                       hide-details
                                       @update:model-value="
                                         (val) => {
@@ -286,7 +286,7 @@
                               <p v-if="!docker.HostConfig.NetworkMode.startsWith('container:')" style="min-width: 150px; max-width: 150px">{{ $t('network') }}: {{ docker.HostConfig.NetworkMode }}</p>
                               <v-divider vertical class="mx-2" />
                             </template>
-                            <template v-else>
+                            <template v-else-if="$vuetify.display.smAndUp">
                               <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                               <v-divider vertical class="mx-2" />
                             </template>
@@ -294,7 +294,7 @@
                               <v-icon tooltip="$t('update available')" color="green" @click="updateDocker(docker.Names[0])">mdi-autorenew</v-icon>
                               <v-divider vertical class="mx-2" />
                             </template>
-                            <v-switch v-model="docker.autostart" color="onPrimary" hide-details @change="switchAutostart(docker)" inset density="compact" />
+                            <v-switch v-model="docker.autostart" color="green" hide-details @change="switchAutostart(docker)" inset density="compact" />
                             <v-divider vertical class="mx-2" />
                             <v-icon class="drag-handle" @click="openInfoDialog(docker)">mdi-information-outline</v-icon>
                           </template>

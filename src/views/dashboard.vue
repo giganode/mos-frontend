@@ -12,6 +12,9 @@
           <Processor v-if="cpu" :cpu="cpu" :temperature="temperature" />
         </div>
         <div class="masonry-item">
+          <Pools />
+        </div>
+        <div class="masonry-item">
           <Network v-if="network" :network="network" />
         </div>
         <div class="masonry-item">
@@ -29,6 +32,7 @@ import Processor from '../components/processor.vue'
 import Memory from '../components/memory.vue'
 import OS from '../components/os.vue'
 import Network from '../components/network.vue'
+import Pools from '../components/pools.vue'
 
 const cpu = ref(null);
 const network = ref(null);

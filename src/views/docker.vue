@@ -406,7 +406,24 @@
       <v-card-title class="text-h6">{{ $t('edit docker group') }} - {{ changeGroupDialog.name }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="changeGroupDialog.name" :label="$t('group name')" required></v-text-field>
-        <v-select v-model="changeGroupDialog.containers" :items="dockers.map((d) => d.Names[0])" :label="$t('select containers')" multiple chips></v-select>
+        <v-combobox
+          v-model="changeGroupDialog.containers"
+          :items="dockers.map((d) => d.Names[0])"
+          :label="$t('select containers')"
+          multiple
+          chips
+          clearable
+        ></v-combobox>
+
+        <!-- draggable Darstellung der ausgewählten Chips zum Umordnen -->
+        <draggable v-model="changeGroupDialog.containers" class="d-flex flex-wrap mt-2" :component="'div'">
+          <template #item="{ element, index }">
+            <v-chip class="ma-1" closable @click:close="changeGroupDialog.containers.splice(index, 1)">
+              <v-icon left class="drag-handle" style="cursor:grab">mdi-drag</v-icon>
+              {{ element }}
+            </v-chip>
+          </template>
+        </draggable>
       </v-card-text>
       <v-card-actions>
         <v-spacer />

@@ -784,7 +784,7 @@ const getGPUs = async () => {
         const name = gpu.name;
         if (!pci || seen.has(pci)) return;
         seen.add(pci);
-        gpuIds.value.push({ key: pci, value: name });
+        gpuIds.value.push({ key: pci, value: pci + ' | ' + name });
       });
     });
   } catch (e) {

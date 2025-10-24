@@ -544,5 +544,10 @@
   "script could not be stopped": "Script could not be stopped",
   "script stopped successfully": "Script stopped successfully",
   "start script": "Start script",
-  "stop script": "Stop script"
+  "stop script": "Stop script",
+  "update check": "Update check",
+  "update check interval": "Update check interval",
+  "interval": "Interval",
+  "auto update": "Auto update",
+  "auto update schedule": "Auto update schedule"
 }

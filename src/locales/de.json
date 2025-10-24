@@ -544,5 +544,13 @@
   "script could not be stopped": "Skript konnte nicht gestoppt werden",
   "script stopped successfully": "Skript erfolgreich gestoppt",
   "start script": "Skript starten",
-  "stop script": "Skript stoppen"
+  "stop script": "Skript stoppen",
+  "start wait": "Start-Wartezeit",
+  "update check": "Update Prüfung",
+  "update check interval": "Update Prüfintervall",
+  "interval": "Intervall",
+  "auto update": "Automatische Updates",
+  "update check schedule": "Automatischer Updatesintervall",
+  "docker network mode": "Docker Netzwerkmodus",
+  "docker network config": "Docker Netzwerkkonfiguration"
 }

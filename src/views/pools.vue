@@ -226,7 +226,7 @@
             v-model="createPoolDialog.snapraidDevice"
             :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
             :label="$t('snapraid device')"
-            dense
+            dense multiple="true"
           />
           <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="['raid0', 'raid1', 'raid5']" :label="$t('raid level')" dense />
           <v-select v-model="createPoolDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense />
@@ -369,7 +369,7 @@ const createPoolDialog = reactive({
   automount: true,
   comment: '',
   mergerfsOptions: 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs',
-  snapraidDevice: '',
+  snapraidDevice: [],
   raidLevel: '',
   encrypted: false,
   create_keyfile: false,
@@ -424,7 +424,7 @@ const openCreatePoolDialog = (disk) => {
   createPoolDialog.automount = true;
   createPoolDialog.comment = '';
   createPoolDialog.mergerfsOptions = 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs';
-  createPoolDialog.snapraidDevice = '';
+  createPoolDialog.snapraidDevice = [];
   createPoolDialog.encrypted = false;
   createPoolDialog.passphrase = '';
   createPoolDialog.create_keyfile = true;
@@ -930,7 +930,7 @@ const clearCreatePoolDialog = () => {
   createPoolDialog.raidLevel = '';
   createPoolDialog.comment = '';
   createPoolDialog.mergerfsOptions = 'defaults,allow_other,use_ino,cache.files=partial,dropcacheonclose=true,category.create=mfs';
-  createPoolDialog.snapraidDevice = '';
+  createPoolDialog.snapraidDevice = [];
   createPoolDialog.format = false;
   createPoolDialog.encrypted = false;
   createPoolDialog.create_keyfile = true;

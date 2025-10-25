@@ -37,8 +37,9 @@
                     {{ getDiskIcon(data_device.diskType.type) }}
                   </v-icon>
                 </template>
-                <v-list-item-title>
+                <v-list-item-title class="d-flex align-center">
                   {{ data_device.device }}
+                  <v-spacer />
                   <v-chip color="onPrimary" size="small" class="ml-2" label>
                     {{ data_device.filesystem }}
                   </v-chip>
@@ -65,8 +66,10 @@
                     {{ getDiskIcon(parity_device.diskType.type) }}
                   </v-icon>
                 </template>
-                <v-list-item-title>
+                <v-list-item-title class="d-flex align-center">
                   {{ parity_device.device }}
+                  <v-chip v-if="pool.status.parity_operation" color="green" size="small" class="ml-2" label>{{ $t('operation running') }}</v-chip>
+                  <v-spacer />
                   <v-chip color="onPrimary" size="small" class="ml-2" label>
                     {{ parity_device.filesystem }}
                   </v-chip>
@@ -105,11 +108,15 @@
                 <v-list-item v-if="pool.status.mounted" @click="unmountPool(pool)">
                   <v-list-item-title>{{ $t('unmount pool') }}</v-list-item-title>
                 </v-list-item>
+                <v-divider></v-divider>
                 <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddParityDevicesDialog(pool)">
                   <v-list-item-title>{{ $t('add parity devices') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openRemoveParityDevicesDialog(pool)">
                   <v-list-item-title>{{ $t('remove parity devices') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
+                  <v-list-item-title>{{ $t('parity operation') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -226,7 +233,8 @@
             v-model="createPoolDialog.snapraidDevice"
             :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
             :label="$t('snapraid device')"
-            dense multiple="true"
+            dense
+            multiple="true"
           />
           <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="['raid0', 'raid1', 'raid5']" :label="$t('raid level')" dense />
           <v-select v-model="createPoolDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense />
@@ -283,13 +291,7 @@
       <v-card-text>
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
-          <v-select
-            v-model="addParityDevicesDialog.devices"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
-            :label="$t('devices')"
-            :multiple="true"
-            dense
-          />
+          <v-select v-model="addParityDevicesDialog.devices" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('devices')" :multiple="true" dense />
           <v-switch v-model="addParityDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
         </v-form>
       </v-card-text>
@@ -323,6 +325,30 @@
         <v-btn @click="removeParityDevicesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="removeMergerfsParityDevice(removeParityDevicesDialog.pool.id, removeParityDevicesDialog.devices, removeParityDevicesDialog.unmount)" color="onPrimary">
           {{ $t('remove') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- SnapRAID Operation Dialog -->
+  <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
+    <v-card>
+      <v-card-title>{{ $t('parity operations') }}</v-card-title>
+      <v-card-text>
+        <p class="mb-4">{{ $t('select the operation to perform on the parity devices of pool') }}</p>
+        <v-form>
+          <v-select
+            v-model="snapraidOperationDialog.operation"
+            :items="(snapraidOperationDialog.pool && snapraidOperationDialog.pool.status && snapraidOperationDialog.pool.status.parity_operation) ? ['sync','check','scrub','fix','status','force_stop'] : ['sync','check','scrub','fix','status']"
+            :label="$t('operation')"
+            dense
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="snapraidOperationDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+        <v-btn @click="performSnapraidOperation(snapraidOperationDialog.pool.id, snapraidOperationDialog.operation)" color="onPrimary">
+          {{ $t('perform') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -390,13 +416,18 @@ const addParityDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
-  format: false
+  format: false,
 });
 const removeParityDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
-  unmount: true
+  unmount: true,
+});
+const snapraidOperationDialog = reactive({
+  value: false,
+  pool: null,
+  operation: '',
 });
 
 onMounted(async () => {
@@ -405,6 +436,11 @@ onMounted(async () => {
   getFilesystems();
 });
 
+const openSnapraidOperationDialog = (pool) => {
+  snapraidOperationDialog.value = true;
+  snapraidOperationDialog.pool = pool;
+  snapraidOperationDialog.operation = '';
+};
 const openPassphraseDialog = (pool) => {
   passphraseDialog.value = true;
   passphraseDialog.pool = pool;
@@ -769,6 +805,7 @@ const unmountPool = async (pool) => {
 
     showSnackbarSuccess(t('pool unmounted successfully'));
     getPools();
+    getUnassignedDisks();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -794,6 +831,7 @@ const mountPool = async (pool) => {
     }
     showSnackbarSuccess(t('pool mounted successfully'));
     getPools();
+    getUnassignedDisks();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -822,6 +860,7 @@ const mountPoolWithPassphrase = async (pool, passphrase) => {
     }
     showSnackbarSuccess(t('pool mounted successfully'));
     getPools();
+    getUnassignedDisks();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -853,8 +892,8 @@ const addMergerfsParityDevice = async (poolId, devices, format) => {
     }
     showSnackbarSuccess(t('parity device added successfully'));
     getPools();
+    getUnassignedDisks();
     addParityDevicesDialog.value = false;
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -886,8 +925,8 @@ const removeMergerfsParityDevice = async (poolId, devices, unmount) => {
     }
     showSnackbarSuccess(t('parity device removed successfully'));
     getPools();
+    getUnassignedDisks();
     removeParityDevicesDialog.value = false;
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -901,6 +940,38 @@ const switchPoolType = () => {
     createPoolDialog.filesystem = 'xfs';
   } else {
     createPoolDialog.filesystem = 'btrfs';
+  }
+};
+
+const performSnapraidOperation = async (poolId, operation) => {
+  overlay.value = true;
+  snapraidOperationDialog.value = false;
+  const commandData = {
+    operation: operation,
+  };
+
+  try {
+    const res = await fetch(`/api/v1/pools/${poolId}/parity`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(commandData),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('snapraid operation could not be executed')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('snapraid operation executed successfully'));
+    getPools();
+    getUnassignedDisks();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 

@@ -565,5 +565,10 @@
   "parity device removed successfully": "Parity device removed successfully",
   "select parity devices to remove": "Select parity devices to remove",
   "unmount": "Unmount",
-  "remove": "Remove"
+  "remove": "Remove",
+  "parity operations": "Parity operations",
+  "select the operation to perform on the parity devices of pool": "Select the operation to perform on the parity devices of pool",
+  "parity operation": "Parity operation",
+  "operation": "Operation",
+  "perform": "Perform"
 }

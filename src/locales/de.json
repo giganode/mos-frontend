@@ -565,5 +565,10 @@
   "parity device removed successfully": "Paritätsgerät erfolgreich entfernt",
   "select parity devices to remove": "Wähle Paritätsgeräte zum Entfernen aus",
   "unmount": "Aushängen",
-  "remove": "Entfernen"
+  "remove": "Entfernen",
+  "parity operations": "Paritätsoperationen",
+  "select the operation to perform on the parity devices of pool": "Wähle die Operation aus, die auf die Paritätsgeräte des Pools angewendet werden soll",
+  "parity operation": "Paritätsoperation",
+  "operation": "Operation",
+  "perform": "Ausführen"
 }

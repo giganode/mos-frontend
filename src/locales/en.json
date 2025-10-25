@@ -566,9 +566,10 @@
   "select parity devices to remove": "Select parity devices to remove",
   "unmount": "Unmount",
   "remove": "Remove",
-  "parity operations": "Parity operations",
-  "select the operation to perform on the parity devices of pool": "Select the operation to perform on the parity devices of pool",
-  "parity operation": "Parity operation",
+  "snapraid operations": "SnapRAID operations",
+  "select the snapraid operation to be performed": "Select the SnapRAID operation to be performed",
+  "snapraid operation": "SnapRAID operation",
   "operation": "Operation",
-  "perform": "Perform"
+  "perform": "Perform",
+  "operation running": "Operation running"
 }

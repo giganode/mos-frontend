@@ -116,7 +116,7 @@
                   <v-list-item-title>{{ $t('remove parity devices') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
-                  <v-list-item-title>{{ $t('parity operation') }}</v-list-item-title>
+                  <v-list-item-title>{{ $t('snapraid operation') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -333,9 +333,9 @@
   <!-- SnapRAID Operation Dialog -->
   <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
     <v-card>
-      <v-card-title>{{ $t('parity operations') }}</v-card-title>
+      <v-card-title>{{ $t('snapraid operations') }}</v-card-title>
       <v-card-text>
-        <p class="mb-4">{{ $t('select the operation to perform on the parity devices of pool') }}</p>
+        <p class="mb-4">{{ $t('select the snapraid operation to be performed') }}</p>
         <v-form>
           <v-select
             v-model="snapraidOperationDialog.operation"

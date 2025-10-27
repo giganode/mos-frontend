@@ -27,7 +27,7 @@
                           </v-btn>
                         </template>
                         <v-list>
-                          <v-list-item @click="openChangeDialog(remote)">
+                          <v-list-item v-if="remote.status !== 'mounted'" @click="openChangeDialog(remote)">
                             <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                           </v-list-item>
                           <v-list-item @click="openDeleteDialog(remote)">
@@ -36,7 +36,7 @@
                           <v-list-item v-if="remote.status === 'mounted'" @click="unmountRemote(remote)">
                             <v-list-item-title>{{ $t('unmount remote') }}</v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="remote.status !== 'mounted'" @click="mountRemote(remote)">
+                          <v-list-item v-if="remote.status !== 'mounted' && remote.status !== 'unavailable'" @click="mountRemote(remote)">
                             <v-list-item-title>{{ $t('mount remote') }}</v-list-item-title>
                           </v-list-item>
                         </v-list>

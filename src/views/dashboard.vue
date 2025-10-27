@@ -236,12 +236,13 @@ onUnmounted(() => {
 }
 
 .card {
-  background: var(--v-theme-surface);
+  background: rgb(var(--v-theme-background));
   border-radius: 12px;
   padding: 8px 12px 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-  border: 1px solid var(--v-theme-outline, rgba(0, 0, 0, 0.15));
+  border: 1px solid color-mix(in srgb, rgb(var(--v-theme-on-surface)) 15%, transparent);
 }
+
 .card-head {
   display: flex;
   align-items: center;
@@ -250,24 +251,22 @@ onUnmounted(() => {
   opacity: 0.9;
   margin-bottom: 6px;
 }
-.drag-handle {
-  cursor: grab;
-  user-select: none;
-}
+.drag-handle { cursor: grab; user-select: none; }
 
-.ghost {
-  opacity: 0.5;
-  transform: scale(0.98);
-}
+.ghost { opacity: 0.5; transform: scale(0.98); }
 
-:deep(.v-theme--dark) .card {
-  border-color: var(--v-theme-outline, rgba(255, 255, 255, 0.25));
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+@supports not (color: color-mix(in srgb, #000 50%, #fff)) {
+  .card {
+    /* ≈ 15% von on-surface */
+    border-color: rgba(0,0,0,0.15); /* für Light ok */
+  }
+  /* Dark: hellere Linie */
+  :global(.v-theme--dark) .card {
+    border-color: rgba(255,255,255,0.28);
+  }
 }
 
 @media (max-width: 800px) {
-  .masonry-grid {
-    flex-direction: column;
-  }
+  .masonry-grid { flex-direction: column; }
 }
 </style>

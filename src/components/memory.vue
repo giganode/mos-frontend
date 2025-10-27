@@ -1,5 +1,5 @@
 <template>
-  <row dense>
+  <v-row dense>
     <v-col cols="6" sm="6" md="4" xl="3" v-if="mem.total_human">
       <div class="text-caption text-medium-emphasis">
         <strong>{{ $t('total') }}</strong>
@@ -9,6 +9,7 @@
       </div>
     </v-col>
     <v-divider class="my-2"></v-divider>
+    <v-col cols="12">
     <div class="memory-bar-container">
       <div class="memory-segment actual-used" :style="{ width: getMemUsedPercentage() + '%' }" :title="`Used: ${mem.used_human || 0}`">
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%">
@@ -52,7 +53,8 @@
         <span class="text-caption">{{ $t('free') }} ({{ getRealFreePercentage() }}%)</span>
       </div>
     </div>
-  </row>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>

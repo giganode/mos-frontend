@@ -92,9 +92,6 @@
           <v-card-actions>
             <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="onPrimary" @change="switchAutomount(pool)" />
             <v-spacer />
-            <v-btn icon @click="openDeletePoolDialog(pool)">
-              <v-icon color="red">mdi-delete</v-icon>
-            </v-btn>
             <v-menu>
               <template #activator="{ props }">
                 <v-btn variant="text" icon v-bind="props" color="onPrimary">
@@ -109,6 +106,10 @@
                   <v-list-item-title>{{ $t('unmount pool') }}</v-list-item-title>
                 </v-list-item>
                 <v-divider></v-divider>
+                <v-list-item @click="openDeletePoolDialog(pool)">
+                  <v-list-item-title>{{ $t('delete pool') }}</v-list-item-title>
+                </v-list-item>
+                <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
                 <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddParityDevicesDialog(pool)">
                   <v-list-item-title>{{ $t('add parity devices') }}</v-list-item-title>
                 </v-list-item>

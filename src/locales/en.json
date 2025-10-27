@@ -124,6 +124,7 @@
   "share could not be deleted": "Share could not be deleted",
   "delete directory": "Delete directory",
   "create pool": "Create pool",
+  "delete pool": "Delete pool",
   "format": "Format",
   "confirm format": "Confirm format",
   "are you sure you want to format this disk?": "Are you sure you want to format this disk?",

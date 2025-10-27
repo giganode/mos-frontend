@@ -124,6 +124,7 @@
   "share could not be deleted": "Freigabe konnte nicht gelöscht werden",
   "delete directory": "Verzeichnis löschen",
   "create pool": "Pool anlegen",
+  "delete pool": "Pool löschen",
   "format": "Formatieren",
   "confirm format": "Formatierung bestätigen",
   "are you sure you want to format this disk?": "Bist du sicher, dass du diese Festplatte formatieren möchtest?",

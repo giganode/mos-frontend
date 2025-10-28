@@ -588,5 +588,12 @@
   "sound on reboot": "Ton bei Neustart",
   "sound on shutdown": "Ton bei Herunterfahren",
   "sound on error": "Ton bei Fehler",
-  "sound on startup": "Ton bei Start"
+  "sound on startup": "Ton bei Start",
+  "replace parity device": "Paritätsgerät ersetzen",
+  "parity device could not be replaced": "Paritätsgerät konnte nicht ersetzt werden",
+  "parity device replaced successfully": "Paritätsgerät erfolgreich ersetzt",
+  "select device to replace parity": "Wähle das Gerät aus, um die Parität zu ersetzen",
+  "old device": "Altes Gerät",
+  "new device": "Neues Gerät",
+  "replace": "Ersetzen"
 }

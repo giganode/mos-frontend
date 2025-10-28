@@ -12,7 +12,7 @@
       class="mb-1"
     >
       <template #default>
-        <span>{{ (pool.status?.usagePercent ?? 0).toFixed(1) }}%</span>
+        <span><small>{{ (pool.status?.usagePercent ?? 0).toFixed(1) }}%</small></span>
       </template>
     </v-progress-linear>
   </div>

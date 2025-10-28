@@ -38,7 +38,7 @@
     <v-col class="d-flex align-center">
       <v-progress-linear
         :model-value="processor.load"
-        height="14"
+        height="16"
         :color="processor.load >= 90 ? 'red' : processor.load >= 60 ? 'orange' : 'green'"
         style="margin-top: 0; border-radius: 7px; overflow: hidden"
       >

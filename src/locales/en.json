@@ -588,5 +588,12 @@
   "sound on reboot": "Sound on reboot",
   "sound on shutdown": "Sound on shutdown",
   "sound on error": "Sound on error",
-  "sound on startup": "Sound on startup"
+  "sound on startup": "Sound on startup",
+  "replace parity device": "Replace parity device",
+  "parity device could not be replaced": "Parity device could not be replaced",
+  "parity device replaced successfully": "Parity device replaced successfully",
+  "select device to replace parity": "Select device to replace parity",
+  "old device": "Old device",
+  "new device": "New device",
+  "replace": "Replace"
 }

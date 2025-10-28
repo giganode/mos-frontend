@@ -116,6 +116,9 @@
                 <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openRemoveParityDevicesDialog(pool)">
                   <v-list-item-title>{{ $t('remove parity devices') }}</v-list-item-title>
                 </v-list-item>
+                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openReplaceParityDeviceDialog(pool)">
+                  <v-list-item-title>{{ $t('replace parity device') }}</v-list-item-title>
+                </v-list-item>
                 <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
                   <v-list-item-title>{{ $t('snapraid operation') }}</v-list-item-title>
                 </v-list-item>
@@ -331,6 +334,40 @@
     </v-card>
   </v-dialog>
 
+  <!-- Replace Parity Device Dialog -->
+  <v-dialog v-model="replaceParityDeviceDialog.value" max-width="600">
+    <v-card>
+      <v-card-title>{{ $t('replace parity device') }}</v-card-title>
+      <v-card-text>
+        <p class="mb-4">{{ $t('select device to replace parity') }}</p>
+        <v-form>
+          <v-select
+            v-model="replaceParityDeviceDialog.oldDevice"
+            :items="replaceParityDeviceDialog.pool ? replaceParityDeviceDialog.pool.parity_devices.map((device) => device.device) : []"
+            :label="$t('old device')"
+            dense
+          />
+          <v-select
+            v-model="replaceParityDeviceDialog.newDevice"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('new device')"
+            dense
+          />
+          <v-switch v-model="replaceParityDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="replaceParityDeviceDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+        <v-btn
+          @click="replaceMergerfsParityDevice(replaceParityDeviceDialog.pool.id, replaceParityDeviceDialog.oldDevice, replaceParityDeviceDialog.newDevice, replaceParityDeviceDialog.format)"
+          color="red"
+        >
+          {{ $t('replace') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- SnapRAID Operation Dialog -->
   <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
     <v-card>
@@ -430,6 +467,13 @@ const snapraidOperationDialog = reactive({
   pool: null,
   operation: '',
 });
+const replaceParityDeviceDialog = reactive({
+  value: false,
+  pool: null,
+  oldDevice: null,
+  newDevice: null,
+  format: false,
+});
 
 onMounted(async () => {
   getPools();
@@ -437,6 +481,13 @@ onMounted(async () => {
   getFilesystems();
 });
 
+const openReplaceParityDeviceDialog = (pool) => {
+  replaceParityDeviceDialog.value = true;
+  replaceParityDeviceDialog.pool = pool;
+  replaceParityDeviceDialog.oldDevice = null;
+  replaceParityDeviceDialog.newDevice = null;
+  replaceParityDeviceDialog.format = false;
+};
 const openSnapraidOperationDialog = (pool) => {
   snapraidOperationDialog.value = true;
   snapraidOperationDialog.pool = pool;
@@ -941,6 +992,39 @@ const switchPoolType = () => {
     createPoolDialog.filesystem = 'xfs';
   } else {
     createPoolDialog.filesystem = 'btrfs';
+  }
+};
+
+const replaceMergerfsParityDevice = async (poolId, oldDevice, newDevice, format) => {
+  overlay.value = true;
+  const replaceParityData = {
+    oldDevice: oldDevice,
+    newDevice: newDevice,
+    format: format
+  };
+
+  try {
+    const res = await fetch(`/api/v1/pools/${poolId}/parity/replace`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(replaceParityData),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('parity device could not be replaced')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('parity device replaced successfully'));
+    getPools();
+    getUnassignedDisks();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 

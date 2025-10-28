@@ -13,12 +13,12 @@
     <div class="memory-bar-container">
       <div class="memory-segment actual-used" :style="{ width: getMemUsedPercentage() + '%' }" :title="`Used: ${mem.used_human || 0}`">
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%">
-          {{ mem.used_human || 0 }}
+          <small>{{ mem.used_human || 0 }}</small>
         </div>
       </div>
       <div class="memory-segment free" :style="{ width: getMemFreePercentage() + '%' }" :title="`Free: ${mem.free_human || 0}`">
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%">
-          {{ mem.free_human || 0 }}
+          <small>{{ mem.free_human || 0 }}</small>
         </div>
       </div>
     </div>

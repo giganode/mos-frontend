@@ -72,6 +72,7 @@
         </router-view>
       </v-main>
     </template>
+    <Toaster :position="sonnerPosition" :richColors="true" :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'" :expand="true" />
   </v-app>
 
   <v-dialog v-model="logoutDialog" width="auto">
@@ -83,7 +84,7 @@
     </v-card>
   </v-dialog>
 
-  <v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="showErrorDetails ? -1 : 3000" :width="isWideScreen ? 800 : 'auto'" multiLine :location="snackbarPosition" max-height="500">
+  <!--<v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="showErrorDetails ? -1 : 3000" :width="isWideScreen ? 800 : 'auto'" multiLine :location="snackbarPosition" max-height="500">
     {{ snackbarText }}
     <template #actions>
       <v-btn v-if="snackbarApiError != ''" text @click="showErrorDetails = !showErrorDetails" color="white">{{ showErrorDetails ? $t('less details') : $t('details') }}</v-btn>
@@ -94,7 +95,7 @@
         {{ snackbarApiError }}
       </div>
     </v-expand-transition>
-  </v-snackbar>
+  </v-snackbar>-->
 </template>
 
 <script setup>
@@ -105,6 +106,7 @@ import { useSnackbar, showSnackbarError, showSnackbarSuccess } from './composabl
 import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { getContrast } from 'vuetify/lib/util/colorUtils';
+import { Toaster } from 'vue-sonner';
 
 const { snackbar, snackbarText, snackbarColor, snackbarIcon, snackbarApiError, snackbarShowErrorDetails, snackbarPosition } = useSnackbar();
 const theme = useTheme();
@@ -153,6 +155,22 @@ const isDark = computed(() => {
 });
 const logoSrc = computed(() => {
   return isDark.value ? 'mos_black.png' : 'mos_white.png';
+});
+const sonnerPosition = computed(() => {
+  switch ((snackbarPosition.value || 'top center').toLowerCase()) {
+    case 'top left':
+      return 'top-left';
+    case 'top right':
+      return 'top-right';
+    case 'bottom left':
+      return 'bottom-left';
+    case 'bottom right':
+      return 'bottom-right';
+    case 'bottom center':
+      return 'bottom-center';
+    default:
+      return 'top-center';
+  }
 });
 
 const checkLoggedIn = async () => {

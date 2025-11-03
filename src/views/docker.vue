@@ -822,6 +822,7 @@ const checkForUpdates = async () => {
 
     showSnackbarSuccess(t('update check finished'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

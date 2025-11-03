@@ -161,6 +161,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
+import { fi } from 'vuetify/locale';
 
 const showPassword = ref(false);
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
@@ -218,7 +219,7 @@ const getUsers = async () => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('Failed to load users'));
+      throw new Error(error.error || t('failed to load users'));
     }
 
     users.value = await res.json();
@@ -248,17 +249,19 @@ const addUser = async () => {
       },
       body: JSON.stringify(newUser),
     });
-    overlay.value = false;
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('Failed to create user'));
+      throw new Error(`${t('failed to create user')}|$| ${error.error || t('unknown error')}`);
     }
 
-    showSnackbarSuccess(t('User successfully created'));
+    showSnackbarSuccess(t('user successfully created'));
     getUsers();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -276,10 +279,10 @@ const deleteUser = async (user) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('Failed to delete user'));
+      throw new Error(error.error || t('failed to delete user'));
     }
 
-    showSnackbarSuccess(t('User successfully deleted'));
+    showSnackbarSuccess(t('user successfully deleted'));
     getUsers();
   } catch (e) {
     showSnackbarError(e.message);
@@ -309,10 +312,10 @@ const changeUser = async () => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('Failed to update user'));
+      throw new Error(error.error || t('failed to update user'));
     }
 
-    showSnackbarSuccess(t('User successfully updated'));
+    showSnackbarSuccess(t('user successfully updated'));
     getUsers();
   } catch (e) {
     showSnackbarError(e.message);

@@ -28,6 +28,7 @@
             />
             <span style="font-size: 0.875rem">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}</span>
           </div>
+          <v-divider />
           <v-card-text>
             <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent">
               <v-list-item-title>{{ $t('disks') }}</v-list-item-title>
@@ -58,6 +59,7 @@
                 <v-list-item-subtitle v-if="data_device.storage" class="mt-2">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</v-list-item-subtitle>
               </v-list-item>
             </v-list>
+            <v-divider />
             <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent">
               <v-list-item-title>{{ $t('parities') }}</v-list-item-title>
               <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
@@ -89,6 +91,7 @@
               </v-list-item>
             </v-list>
           </v-card-text>
+          <v-divider />
           <v-card-actions>
             <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="green" @change="switchAutomount(pool)" />
             <v-spacer />
@@ -490,7 +493,7 @@ import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const pools = ref([]);
 const poolsLoading = ref(true);
 const unassignedDisks = ref([]);

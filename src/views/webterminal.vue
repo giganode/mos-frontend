@@ -17,7 +17,7 @@ import { showSnackbarError } from '@/composables/snackbar'
 import { useI18n } from 'vue-i18n'
 import '@xterm/xterm/css/xterm.css'
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 let socket
 let term

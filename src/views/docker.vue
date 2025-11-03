@@ -484,7 +484,7 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 const dockers = ref([]);
 const dockerGroups = ref([]);

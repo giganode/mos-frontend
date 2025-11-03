@@ -79,7 +79,7 @@ import { useI18n } from 'vue-i18n';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useTheme } from 'vuetify';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { availableLocales, locale, t } = useI18n();
 const authToken = ref(localStorage.getItem('authToken'));
 const overlay = ref(false);

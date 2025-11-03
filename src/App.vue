@@ -14,8 +14,8 @@
         <v-app-bar-nav-icon variant="text" @click.stop="toggleDrawer"></v-app-bar-nav-icon>
         <v-img :src="logoSrc" alt="MOS Logo" max-width="50" class="ml-3 mr-3" contain />
         <v-toolbar-title>{{ $t('mos') }}</v-toolbar-title>
-        <v-badge :model-value="notificationsBadge" color="green" dot floating bordered location="bottom end" :offset-x="14" :offset-y="14" @refresh-notifications-badge="getNotificationsBadge()">
-          <v-btn icon variant="text" aria-label="Notifications">
+        <v-badge :model-value="notificationsBadge" color="green" dot floating bordered location="bottom end" offset-x="14" offset-y="14">
+          <v-btn icon variant="text" aria-label="Notifications" to="/notifications">
             <v-icon>mdi-bell</v-icon>
           </v-btn>
         </v-badge>
@@ -68,7 +68,7 @@
       </v-navigation-drawer>
       <v-main>
         <router-view v-slot="{ Component }">
-          <component :is="Component" @refresh-drawer="getMosServices()" />
+          <component :is="Component" @refresh-drawer="getMosServices()" @refresh-notifications-badge="getNotificationsBadge()" />
         </router-view>
       </v-main>
     </template>

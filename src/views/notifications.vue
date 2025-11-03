@@ -79,7 +79,7 @@ import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
-const emit = defineEmits(['refresh-notifications-badge', 'refreshDrawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const notifications = ref([]);
 const notificationsOrder = ref('desc');
 const overlay = ref(false);
@@ -124,7 +124,6 @@ const markNotificationAsRead = async (id) => {
       n.id === id ? { ...n, read: true } : n
     );
     emit('refresh-notifications-badge');
-
   } catch (e) {
     showSnackbarError(e.message);
   }

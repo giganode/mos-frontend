@@ -116,7 +116,7 @@ import { onMounted, ref, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const mosReleases = ref({});
 const updateOsDialog = reactive({
   value: false,

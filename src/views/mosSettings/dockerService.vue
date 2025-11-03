@@ -102,7 +102,7 @@ const settingsDocker = ref({
 const dockerServiceLoading = ref(true);
 const overlay = ref(false);
 const { t } = useI18n();
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 
 onMounted(() => {
   getDockerService();

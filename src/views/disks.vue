@@ -94,7 +94,7 @@ import { useI18n } from 'vue-i18n';
 
 const disks = ref([]);
 const { t } = useI18n();
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const overlay = ref(false);
 const formatDialog = reactive({
   value: false,

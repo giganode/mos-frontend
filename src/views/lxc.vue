@@ -119,7 +119,7 @@ import draggable from 'vuedraggable';
 import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const lxcs = ref([]);
 const images = ref([]);
 const overlay = ref(false);

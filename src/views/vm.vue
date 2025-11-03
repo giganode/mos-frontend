@@ -54,7 +54,7 @@
 import { ref, onMounted } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const vms = ref([]);
 const overlay = ref(false);
 import { useI18n } from 'vue-i18n';

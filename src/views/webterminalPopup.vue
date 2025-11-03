@@ -10,7 +10,7 @@ import '@xterm/xterm/css/xterm.css'
 import { useI18n } from 'vue-i18n'
 
 let socket, term
-const emit = defineEmits(['refresh-drawer']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n()
 
 onMounted(() => {

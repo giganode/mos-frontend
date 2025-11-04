@@ -55,6 +55,7 @@
     </v-container>
   </v-container>
 
+  <!-- Notification Detail Dialog -->
   <v-dialog v-model="notificationDialog.value" max-width="600px">
     <v-card>
       <v-card-title>{{ notificationDialog.notification.title }}</v-card-title>
@@ -68,6 +69,26 @@
     </v-card>
   </v-dialog>
 
+  <!-- Read All Dialog -->
+  <v-dialog v-model="readAllDialog.value" max-width="600px">
+    <v-card>
+      <v-card-title>{{ $t('mark all as read') }}</v-card-title>
+      <v-card-text>
+        <p>{{ $t('are you sure you want to mark all notifications as read?') }}</p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text @click="readAllDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="markAllAsRead()">{{ $t('confirm') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Floating Action Button -->
+  <v-fab @click="openReadAllDialog()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+    <v-icon>mdi-check-all</v-icon>
+  </v-fab>
+
+  <!-- Loading Overlay -->
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
@@ -87,6 +108,10 @@ const notificationDialog = reactive({
   value: false,
   notification: {},
 });
+const readAllDialog = reactive({
+  value: false
+});
+
 const { t } = useI18n();
 
 onMounted(() => {
@@ -129,6 +154,30 @@ const markNotificationAsRead = async (id) => {
   }
 };
 
+const markAllAsRead = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/notifications/read/all', {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+      }
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('all notifications could not be marked as read')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    readAllDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const switchNotificationsOrder = () => {
   if (notificationsOrder.value === 'asc') {
     notificationsOrder.value = 'desc';
@@ -145,6 +194,9 @@ const openNotificationDialog = (notification) => {
   if (!notification.read) {
     markNotificationAsRead(notification.id);
   }
+};
+const openReadAllDialog = () => {
+  readAllDialog.value = true;
 };
 
 </script>

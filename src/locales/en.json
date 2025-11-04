@@ -612,5 +612,8 @@
   "no unused images found": "No unused images found",
   "image id": "Image ID",
   "unused image could not be removed": "Unused image could not be removed",
-  "unused image removed successfully": "Unused image removed successfully"
+  "unused image removed successfully": "Unused image removed successfully",
+  "mark all as read": "Mark all as read",
+  "are you sure you want to mark all notifications as read?": "Are you sure you want to mark all notifications as read?",
+  "all notifications could not be marked as read": "All notifications could not be marked as read"
 }

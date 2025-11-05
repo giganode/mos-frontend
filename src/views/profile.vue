@@ -257,7 +257,7 @@ const changeByteUnit = async () => {
 const copyAuthToken = async (token) => {
   try {
     if (!window.isSecureContext || !navigator.clipboard) {
-      throw new Error('Clipboard API not available in this context');
+      throw new Error('clipboard api not available in this context');
     }
     await navigator.clipboard.writeText(token);
     showSnackbarSuccess(t('api token copied to clipboard'));
@@ -277,7 +277,7 @@ const copyAuthToken = async (token) => {
       document.body.removeChild(ta);
 
       if (ok) {
-        showSnackbarSuccess(t('api token copied to clipboard (fallback)'));
+        showSnackbarSuccess(t('api token copied to clipboard'));
       } else {
         throw new Error('execCommand copy failed');
       }

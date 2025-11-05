@@ -617,5 +617,7 @@
   "are you sure you want to mark all notifications as read?": "Are you sure you want to mark all notifications as read?",
   "all notifications could not be marked as read": "All notifications could not be marked as read",
   "enable ipv4": "Enable IPv4",
-  "enable ipv6": "Enable IPv6"
+  "enable ipv6": "Enable IPv6",
+  "execCommand copy failed": "ExecCommand copy failed",
+  "clipboard api not available in this context": "Clipboard API not available in this context"
 }

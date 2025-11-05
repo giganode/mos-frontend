@@ -348,12 +348,7 @@ const getDrawerState = () => {
 
 // WS START --------------------------------------
 function connectNotificationWS() {
-  const authToken = localStorage.getItem('authToken');
-  if (!authToken) {
-    showSnackbarError('No auth token found');
-    return;
-  }
-
+  cleanupWS();
   ws = new WebSocket('/api/v1/notify');
 
   ws.onopen = () => {
@@ -364,7 +359,8 @@ function connectNotificationWS() {
   };
 
   ws.onerror = (ev) => {
-    showSnackbarError('Notification connection error');
+    console.log('WebSocket error', ev);
+    //showSnackbarError('Notification connection error');
   };
 
   ws.onclose = (ev) => {

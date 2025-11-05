@@ -168,8 +168,10 @@ const markAllAsRead = async () => {
       const error = await res.json();
       throw new Error(`${t('all notifications could not be marked as read')}|$| ${error.error || t('unknown error')}`);
     }
-
     readAllDialog.value = false;
+    getNotifications();
+    emit('refresh-notifications-badge');
+
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

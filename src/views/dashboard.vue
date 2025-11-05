@@ -18,8 +18,8 @@
         >
           <template #item="{ element }">
             <div class="card">
-              <div class="card-head drag-handle">
-                <span>⋮⋮</span>
+              <div class="card-head">
+                <span class="drag-handle">⋮⋮</span>
                 <span>{{ labelFor(element.kind) }}</span>
               </div>
               <component
@@ -43,8 +43,8 @@
         >
           <template #item="{ element }">
             <div class="card">
-              <div class="card-head drag-handle">
-                <span>⋮⋮</span>
+              <div class="card-head">
+                <span class="drag-handle">⋮⋮</span>
                 <span>{{ labelFor(element.kind) }}</span>
               </div>
               <component

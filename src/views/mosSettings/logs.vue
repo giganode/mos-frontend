@@ -44,7 +44,7 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const logs = ref([]);
 const selectedLog = ref('');
 const logFileContent = ref([]);
-const lines = ref(1000);
+const lines = ref(10000);
 const overlay = ref(false);
 const { t } = useI18n();
 

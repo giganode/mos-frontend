@@ -254,10 +254,39 @@ const changeByteUnit = async () => {
   }
 };
 
-const copyAuthToken = (token) => {
-  navigator.clipboard.writeText(token)
-    .then(() => showSnackbarSuccess(t('api token copied to clipboard')))
-    .catch(() => showSnackbarError(t('failed to copy api token')));
+const copyAuthToken = async (token) => {
+  try {
+    if (!window.isSecureContext || !navigator.clipboard) {
+      throw new Error('Clipboard API not available in this context');
+    }
+    await navigator.clipboard.writeText(token);
+    showSnackbarSuccess(t('api token copied to clipboard'));
+  } catch (err) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = token;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+
+      if (ok) {
+        showSnackbarSuccess(t('api token copied to clipboard (fallback)'));
+      } else {
+        throw new Error('execCommand copy failed');
+      }
+    } catch (fallbackErr) {
+      showSnackbarError(
+        t('failed to copy api token') + ': ' + (err?.message || fallbackErr?.message || '')
+      );
+    }
+  }
 };
 
 </script>

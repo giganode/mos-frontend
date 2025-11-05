@@ -83,19 +83,6 @@
       </template>
     </v-card>
   </v-dialog>
-
-  <!--<v-snackbar v-model="snackbar" :color="snackbarColor" :timeout="showErrorDetails ? -1 : 3000" :width="isWideScreen ? 800 : 'auto'" multiLine :location="snackbarPosition" max-height="500">
-    {{ snackbarText }}
-    <template #actions>
-      <v-btn v-if="snackbarApiError != ''" text @click="showErrorDetails = !showErrorDetails" color="white">{{ showErrorDetails ? $t('less details') : $t('details') }}</v-btn>
-      <v-btn text @click="snackbar = false" color="white">{{ $t('close') }}</v-btn>
-    </template>
-    <v-expand-transition>
-      <div v-if="showErrorDetails != ''" class="mt-2">
-        {{ snackbarApiError }}
-      </div>
-    </v-expand-transition>
-  </v-snackbar>-->
 </template>
 
 <script setup>

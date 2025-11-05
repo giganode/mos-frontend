@@ -7,15 +7,21 @@
       <v-container fluid>
         <v-row>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
-            <v-btn color="primary" width="250px" @click="updateOsDialog.value = true">
-              {{ $t('update system') }}
-            </v-btn>
-          </v-col>
-          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
             <v-btn color="primary" width="250px" @click="rebootDialog = true">{{ $t('reboot') }}</v-btn>
           </v-col>
           <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
             <v-btn color="primary" width="250px" @click="shutdownDialog = true">{{ $t('shutdown') }}</v-btn>
+          </v-col>
+        </v-row>
+        <v-divider class="mb-4 mt-4"></v-divider>
+        <v-row>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn color="primary" width="250px" @click="openUpdateOsDialog()">
+              {{ $t('update system') }}
+            </v-btn>
+          </v-col>
+          <v-col xl="2" l="2" md="3" sm="6" xs="12" class="d-flex justify-center">
+            <v-btn color="primary" width="250px" @click="openUpdateDriversDialog()">{{ $t('update drivers') }}</v-btn>
           </v-col>
         </v-row>
         <v-divider class="mb-4 mt-4"></v-divider>
@@ -61,6 +67,7 @@
     </v-container>
   </v-container>
 
+  <!-- Update OS Dialog -->
   <v-dialog v-model="updateOsDialog.value" width="auto">
     <v-card max-width="600" prepend-icon="mdi-update" :title="t('update system')">
       <v-card-text>
@@ -88,6 +95,42 @@
     </v-card>
   </v-dialog>
 
+  <!-- Update Drivers Dialog -->
+  <v-dialog v-model="updateDriversDialog.value" width="auto">
+    <v-card max-width="600" prepend-icon="mdi-update" :title="t('update drivers')">
+      <v-card-text>
+        <p class="mb-4">{{ t('please select the driver you want to update!') }}</p>
+        <v-select
+          v-model="updateDriversDialog.driver"
+          :items="getDrivers()"
+          :label="t('driver')"
+          @update:model-value="
+            (val) => {
+              updateDriversDialog.name = null;
+              updateDriversDialog.version = null;
+            }
+          "
+        />
+        <v-select
+          v-model="updateDriversDialog.name"
+          :items="getNamesOfDriver()"
+          :label="t('name')"
+          @update:model-value="
+            (val) => {
+              updateDriversDialog.version = null;
+            }
+          "
+        ></v-select>
+        <v-select v-model="updateDriversDialog.version" :items="getVersionOfName()" :label="t('version')"></v-select>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn class="ms-auto" color="onPrimary" :text="t('cancel')" @click="updateDriversDialog.value = false"></v-btn>
+        <v-btn class="ms-auto" color="onPrimary" :text="t('ok')" @click="updateDrivers()"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Reboot Dialog -->
   <v-dialog v-model="rebootDialog" width="auto">
     <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to reboot your system?')" :title="t('reboot')">
       <v-card-actions>
@@ -97,6 +140,7 @@
     </v-card>
   </v-dialog>
 
+  <!-- Shutdown Dialog -->
   <v-dialog v-model="shutdownDialog" width="auto">
     <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to shutdown your system?')" :title="t('shutdown')">
       <v-card-actions>
@@ -118,11 +162,18 @@ import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const mosReleases = ref({});
+const mosDrivers = ref({});
 const updateOsDialog = reactive({
   value: false,
   channel: null,
   release: null,
   update_kernel: true,
+});
+const updateDriversDialog = reactive({
+  value: false,
+  driver: null,
+  name: null,
+  version: null,
 });
 const rebootDialog = ref(false);
 const shutdownDialog = ref(false);
@@ -132,6 +183,7 @@ const { t } = useI18n();
 
 onMounted(() => {
   getMosReleases();
+  getMosDrivers();
   getOsInfo();
 });
 
@@ -147,6 +199,23 @@ const getMosReleases = async () => {
     if (!res.ok) throw new Error(t('failed to fetch releases'));
     const data = await res.json();
     mosReleases.value = data;
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
+};
+
+const getMosDrivers = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/getdrivers', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) throw new Error(t('failed to fetch drivers'));
+    const data = await res.json();
+    mosDrivers.value = data;
   } catch (e) {
     showSnackbarError(e.message);
   }
@@ -170,7 +239,6 @@ const getOsInfo = async () => {
 const getMosChannels = () => {
   return Object.keys(mosReleases.value);
 };
-
 const getMosReleasesOfChannel = () => {
   if (!updateOsDialog.channel) return [];
 
@@ -182,8 +250,22 @@ const getMosReleasesOfChannel = () => {
   return tags;
 };
 
+const getDrivers = () => {
+  return Object.keys(mosDrivers.value);
+};
+const getNamesOfDriver = () => {
+  return Object.keys(mosDrivers.value[updateDriversDialog.driver] || {});
+};
+const getVersionOfName = () => {
+  if (!updateDriversDialog.driver || !updateDriversDialog.name) return [];
+
+  const drivers = mosDrivers.value[updateDriversDialog.driver] || [];
+  const names = drivers[updateDriversDialog.name] || [];
+
+  return mosDrivers.value[updateDriversDialog.driver][updateDriversDialog.name] || [];
+};
+
 const updateOS = async () => {
-  updateOsDialog.value = false;
   const updateBody = {
     version: updateOsDialog.release,
     channel: updateOsDialog.channel,
@@ -200,16 +282,45 @@ const updateOS = async () => {
       },
       body: JSON.stringify(updateBody),
     });
-    overlay.value = false;
 
     if (!res.ok) throw new Error(t('update could not be initiated'));
     const result = await res.json();
-    clearUpdateOsDialog();
+    updateOsDialog.value = false;
     showSnackbarSuccess(t('update initiated successfully'));
   } catch (e) {
     showSnackbarError(e.message);
+  } finally {
+    overlay.value = false;
   }
 };
+
+const updateDrivers = async () => {
+  const updateBody = {
+    drivername: updateDriversDialog.name,
+    driverversion: updateDriversDialog.version,
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/drivers', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateBody),
+    });
+
+    if (!res.ok) throw new Error(t('driver update could not be initiated'));
+    const result = await res.json();
+    updateDriversDialog.value = false;
+    showSnackbarSuccess(t('driver update initiated successfully'));
+  } catch (e) {
+    showSnackbarError(e.message);
+  } finally {
+    overlay.value = false;
+  }
+};  
 
 const rebootOS = async () => {
   rebootDialog.value = false;
@@ -292,10 +403,23 @@ const updateUI = async () => {
   }
 };
 
+const openUpdateOsDialog = () => {
+  updateOsDialog.value = true;
+  clearUpdateOsDialog();
+};
 const clearUpdateOsDialog = () => {
-  updateOsDialog.value = false;
   updateOsDialog.release = null;
   updateOsDialog.channel = null;
   updateOsDialog.update_kernel = true;
 };
+const openUpdateDriversDialog = () => {
+  updateDriversDialog.value = true;
+  clearUpdateDriversDialog();
+};
+const clearUpdateDriversDialog = () => {
+  updateDriversDialog.driver = null;
+  updateDriversDialog.name = null;
+  updateDriversDialog.version = null;
+};
+
 </script>

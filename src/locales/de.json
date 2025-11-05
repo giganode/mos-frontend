@@ -620,5 +620,11 @@
   "enable ipv6": "IPv6 aktivieren",
   "enable ipv4": "IPv4 aktivieren",
   "execCommand copy failed": "Kopieren mit execCommand fehlgeschlagen",
-  "clipboard api not available in this context": "Clipboard-API in diesem Kontext nicht verfügbar"
+  "clipboard api not available in this context": "Clipboard-API in diesem Kontext nicht verfügbar",
+  "update drivers": "Treiber aktualisieren",
+  "please select the driver you want to update!": "Bitte wähle den Treiber aus, den du aktualisieren möchtest!",
+  "driver": "Treiber",
+  "driver update could not be initiated": "Treiberaktualisierung konnte nicht gestartet werden",
+  "driver update initiated successfully": "Treiberaktualisierung erfolgreich gestartet",
+  "failed to fetch drivers": "Treiber konnten nicht abgerufen werden"
 }

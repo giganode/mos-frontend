@@ -1,6 +1,7 @@
 // composables/snackbar.js
-import { ref } from 'vue'
+import { ref, h } from 'vue'
 import { toast } from 'vue-sonner'
+import { VIcon } from 'vuetify/components'
 
 /**
  * @typedef {'top left'|'top center'|'top right'|'bottom left'|'bottom center'|'bottom right'} SnackbarPosition
@@ -8,11 +9,6 @@ import { toast } from 'vue-sonner'
  */
 
 const snackbar = ref(false)
-const snackbarText = ref('')
-const snackbarColor = ref('info')
-const snackbarIcon = ref('')
-const snackbarApiError = ref('')
-const snackbarShowErrorDetails = ref(false)
 const snackbarPosition = ref('bottom center')
 
 export function showSnackbarSuccess(
@@ -21,14 +17,10 @@ export function showSnackbarSuccess(
   position = 'bottom center',
   duration = 3000
 ) {
-  snackbarText.value = text
-  snackbarColor.value = 'success'
   snackbar.value = true
-  snackbarIcon.value = icon
-  snackbarApiError.value = ''
   snackbarPosition.value = position
-  snackbarShowErrorDetails.value = false
-  toast.success(text, { duration })
+
+  toast.success(text, { duration, icon: h(VIcon, { icon }) })
 }
 
 export function showSnackbarError(
@@ -38,29 +30,42 @@ export function showSnackbarError(
   position = 'bottom center',
   durationWhenNoDetails = 3000
 ) {
-  snackbarText.value = text
-  snackbarColor.value = 'error'
-  snackbar.value = true
-  snackbarIcon.value = icon
-  snackbarApiError.value = errorText
-  snackbarShowErrorDetails.value = false
   snackbarPosition.value = position
 
   toast.error(text, {
     description: errorText || undefined,
     duration: errorText ? Infinity : durationWhenNoDetails,
+    icon: h(VIcon, { icon }),
     cancel: { label: 'Close' },
   })
 }
 
+export function showSnackbarInfo(
+  text,
+  icon = 'mdi-information',
+  position = 'bottom center',
+  duration = 3000
+) {
+  snackbar.value = true
+  snackbarPosition.value = position
+
+  toast.info(text, { duration, icon: h(VIcon, { icon }) })
+}
+
+export function showSnackbarWarning(
+  text,
+  icon = 'mdi-alert',
+  position = 'bottom center',
+  duration = 3000
+) {
+  snackbar.value = true
+  snackbarPosition.value = position
+
+  toast.warning(text, { duration, icon: h(VIcon, { icon }) })
+}
+
 export function useSnackbar() {
   return {
-    snackbar,
-    snackbarText,
-    snackbarColor,
-    snackbarIcon,
-    snackbarApiError,
-    snackbarShowErrorDetails,
     snackbarPosition,
   }
 }

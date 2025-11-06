@@ -20,10 +20,11 @@
                     <v-list-item v-for="(notification, index) in notifications" :key="notification.id"
                     @click="openNotificationDialog(notification)">
                     <template v-slot:prepend>
-                      <v-icon v-if="notification.priority === 'normal'" color="blue">mdi-information-outline</v-icon>
+                      <v-icon v-if="notification.priority === 'normal' || notification.priority === 'info'" color="blue">mdi-information-outline</v-icon>
                       <v-icon v-else-if="notification.priority === 'warning'" color="orange">mdi-alert-outline</v-icon>
-                      <v-icon v-else-if="notification.priority === 'alert'"
+                      <v-icon v-else-if="notification.priority === 'alert' || notification.priority === 'error'"
                       color="red">mdi-alert-circle-outline</v-icon>
+                      <v-icon v-else-if="notification.priority === 'success'" color="green">mdi-check-circle-outline</v-icon>
                       <v-icon v-else color="grey">mdi-bell-outline</v-icon>
                     </template>
                     <v-list-item-title :class="{ 'font-weight-bold': !notification.read }">

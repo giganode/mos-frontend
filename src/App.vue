@@ -89,13 +89,13 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Login from './views/login.vue';
 import FirstSetup from './views/firstSetup.vue';
-import { useSnackbar, showSnackbarError, showSnackbarSuccess } from './composables/snackbar';
+import { useSnackbar, showSnackbarError, showSnackbarSuccess, showSnackbarInfo, showSnackbarWarning } from './composables/snackbar';
 import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { getContrast } from 'vuetify/lib/util/colorUtils';
 import { Toaster } from 'vue-sonner';
 
-const { snackbar, snackbarText, snackbarColor, snackbarIcon, snackbarApiError, snackbarShowErrorDetails, snackbarPosition } = useSnackbar();
+const { snackbarPosition } = useSnackbar();
 const theme = useTheme();
 const { locale, t } = useI18n();
 const tab = ref('');
@@ -108,7 +108,6 @@ const loginChecked = ref(false);
 const mosServices = ref({});
 const appBarColor = 'primary';
 const notificationsBadge = ref(false);
-const showErrorDetails = ref(false);
 const RECONNECT_MAX_DELAY = 15000;
 const RECONNECT_BASE_DELAY = 1000;
 
@@ -356,11 +355,22 @@ function connectNotificationWS() {
 
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
+    console.log(msg);
     if (msg?.type === 'ping') {
       ws?.send?.(JSON.stringify({ type: 'pong' }));
     } else {
       notificationsBadge.value = true;
-      showSnackbarSuccess(msg?.message || 'New notification received', 'mdi-bell', 'top center');
+      if (msg?.priority === 'error' || msg?.priority === 'alert') {
+        showSnackbarError(msg?.message || 'New notification received', '', 'mdi-bell-ring', 'top center');
+      } else if (msg?.priority === 'warning') {
+        showSnackbarWarning(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+      } else if (msg?.priority === 'success') {
+        showSnackbarSuccess(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+      } else if (msg?.priority === 'info') {
+        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+      } else {
+        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+      }
     }
   };
 }

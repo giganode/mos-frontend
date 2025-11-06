@@ -5,7 +5,8 @@
         <h2>{{ $t('docker containers') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card fluid style="margin-bottom: 80px">
+        <v-skeleton-loader v-if="dockersLoading" type="card" :width="'100%'" :height="'60px'" class="mb-2" />
+        <v-card v-else fluid style="margin-bottom: 80px">
           <v-card-text class="pa-0">
             <v-list class="bg-transparent">
               <draggable v-model="dockerGroups" item-key="id" @end="onDragEndGrp" handle=".drag-handle">
@@ -557,10 +558,12 @@ const unusedImagesDialog = reactive({
   value: false,
   images: [],
 });
+const dockersLoading = ref(true);
 
-onMounted(() => {
-  getDockers();
-  getDockerGroups();
+onMounted(async () => {
+  await getDockers();
+  await getDockerGroups();
+  dockersLoading.value = false;
 });
 
 const getDockers = async () => {

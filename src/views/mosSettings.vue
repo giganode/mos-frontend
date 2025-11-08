@@ -8,7 +8,7 @@
         <v-row>
           <!-- Power Management Card -->
           <v-col cols="12" md="6" lg="4" class="pb-0">
-            <v-card class="pa-0" elevation="2">
+            <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-power</v-icon>
                 {{ $t('power management') }}
@@ -18,7 +18,7 @@
                   <v-icon start>mdi-restart</v-icon>
                   {{ $t('reboot') }}
                 </v-btn>
-                <v-btn color="error" variant="elevated" block rounded @click="shutdownDialog = true">
+                <v-btn color="primary" variant="elevated" block rounded @click="shutdownDialog = true">
                   <v-icon start>mdi-power</v-icon>
                   {{ $t('shutdown') }}
                 </v-btn>
@@ -28,7 +28,7 @@
 
           <!-- System Updates Card -->
           <v-col cols="12" md="6" lg="4" class="pb-0">
-            <v-card class="pa-0" elevation="2">
+            <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-update</v-icon>
                 {{ $t('system updates') }}
@@ -52,7 +52,7 @@
 
           <!-- System Configuration Card -->
           <v-col cols="12" md="6" lg="4" class="pb-0">
-            <v-card class="pa-0" elevation="2">
+            <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-cog</v-icon>
                 {{ $t('system configuration') }}
@@ -100,7 +100,7 @@
 
           <!-- Network Card -->
           <v-col cols="12" md="6" lg="4" class="pb-0">
-            <v-card class="pa-0" elevation="2">
+            <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-network</v-icon>
                 {{ $t('network') }}
@@ -120,7 +120,7 @@
 
           <!-- Hardware Card -->
           <v-col cols="12" md="6" lg="4" class="pb-0">
-            <v-card class="pa-0" elevation="2">
+            <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-chip</v-icon>
                 {{ $t('hardware') }}

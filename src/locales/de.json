@@ -659,5 +659,10 @@
   "hardware": "Hardware",
   "virtualization": "Virtualisierung",
   "system configuration": "Systemkonfiguration",
-  "vms": "VMs"
+  "vms": "VMs",
+  "special": "Spezial",
+  "please select your target kernel release!": "Bitte wähle die gewünschte Kernel-Version!",
+  "kernel release": "Kernel-Version",
+  "kernel update could not be initiated": "Kernel Aktualisierung konnte nicht gestartet werden",
+  "kernel update initiated successfully": "Kernel Aktualisierung erfolgreich gestartet"
 }

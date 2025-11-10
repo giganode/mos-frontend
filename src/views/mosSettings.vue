@@ -38,13 +38,9 @@
                   <v-icon start>mdi-package-up</v-icon>
                   {{ $t('update system') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="updateAPI()">
-                  <v-icon start>mdi-api</v-icon>
-                  {{ $t('update api') }}
-                </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded @click="updateUI()">
-                  <v-icon start>mdi-monitor</v-icon>
-                  {{ $t('update ui') }}
+                <v-btn color="primary" variant="elevated" block rounded @click="openUpdateKernelDialog()">
+                  <v-icon start>mdi-engine</v-icon>
+                  {{ $t('update kernel') }}
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -133,6 +129,25 @@
               </v-card-text>
             </v-card>
           </v-col>
+
+          <v-col cols="12" md="6" lg="4" class="pb-0">
+            <v-card class="pa-0">
+              <v-card-title class="text-h6 mb-3">
+                <v-icon color="primary" class="mr-2">mdi-star-face</v-icon>
+                {{ $t('special') }}
+              </v-card-title>
+              <v-card-text>
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="updateAPI()">
+                  <v-icon start>mdi-api</v-icon>
+                  {{ $t('update api') }}
+                </v-btn>
+                <v-btn color="primary" variant="elevated" block rounded @click="updateUI()">
+                  <v-icon start>mdi-monitor</v-icon>
+                  {{ $t('update ui') }}
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </v-col>
         </v-row>
       </v-container>
     </v-container>
@@ -162,6 +177,20 @@
       <v-card-actions>
         <v-btn color="onPrimary" :text="t('cancel')" @click="updateOsDialog.value = false"></v-btn>
         <v-btn color="onPrimary" :text="t('ok')" @click="updateOS"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Update Kernel Dialog -->
+  <v-dialog v-model="updateKernelDialog.value" width="auto">
+    <v-card max-width="600" prepend-icon="mdi-engine" :title="t('update kernel')">
+      <v-card-text>
+        <p class="mb-4">{{ t('please select your target kernel release!') }}</p>
+        <v-select v-model="updateKernelDialog.version" :items="['recommended', ...mosKernel.map((k) => k.tag_name)]" :label="t('kernel release')" />
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="onPrimary" :text="t('cancel')" @click="updateKernelDialog.value = false"></v-btn>
+        <v-btn color="onPrimary" :text="t('ok')" @click="updateKernel(updateKernelDialog.version)"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -198,6 +227,7 @@ import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const mosReleases = ref({});
+const mosKernel = ref([]);
 const rebootDialog = ref(false);
 const shutdownDialog = ref(false);
 const osInfo = ref({});
@@ -209,10 +239,15 @@ const updateOsDialog = reactive({
   release: null,
   update_kernel: true,
 });
+const updateKernelDialog = reactive({
+  value: false,
+  version: null,
+});
 
 onMounted(() => {
   getMosReleases();
   getOsInfo();
+  getMosKernel();
 });
 
 const getMosReleases = async () => {
@@ -224,11 +259,38 @@ const getMosReleases = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('failed to fetch releases'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('failed to fetch releases')}|$| ${error.error || t('unknown error')}`);
+    }
+
     const data = await res.json();
     mosReleases.value = data;
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const getMosKernel = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/getkernel', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('failed to fetch kernel releases')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    const data = await res.json();
+    mosKernel.value = data;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -240,10 +302,15 @@ const getOsInfo = async () => {
       },
     });
 
-    if (!res.ok) throw new Error('API-Error');
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('API-Error')}|$| ${error.error || t('unknown error')}`);
+    }
+
     osInfo.value = await res.json();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
@@ -279,12 +346,47 @@ const updateOS = async () => {
       body: JSON.stringify(updateBody),
     });
 
-    if (!res.ok) throw new Error(t('update could not be initiated'));
-    const result = await res.json();
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
     updateOsDialog.value = false;
     showSnackbarSuccess(t('update initiated successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateKernel = async (kernelVersion) => {
+  const updateBody = {
+    version: kernelVersion,
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/updatekernel', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateBody),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('kernel update could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    updateKernelDialog.value = false;
+    showSnackbarSuccess(t('kernel update initiated successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }
@@ -303,12 +405,17 @@ const rebootOS = async () => {
       },
     });
 
-    overlay.value = false;
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('reboot could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
 
-    if (!res.ok) throw new Error(t('reboot could not be initiated'));
     showSnackbarSuccess(t('reboot initiated successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -324,12 +431,17 @@ const shutdownOS = async () => {
       },
     });
 
-    overlay.value = false;
-
-    if (!res.ok) throw new Error(t('shutdown could not be initiated'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('shutdown could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+    
     showSnackbarSuccess(t('shutdown initiated successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -343,10 +455,15 @@ const updateAPI = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('update api could not be initiated'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update api could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('update api initiated successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }
@@ -362,10 +479,15 @@ const updateUI = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('update ui could not be initiated'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update ui could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('update ui initiated successfully'));
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }
@@ -380,4 +502,8 @@ const clearUpdateOsDialog = () => {
   updateOsDialog.channel = null;
   updateOsDialog.update_kernel = true;
 };
+const openUpdateKernelDialog = () => {
+  updateKernelDialog.value = true;
+};
+
 </script>

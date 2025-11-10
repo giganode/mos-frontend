@@ -6,7 +6,7 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="dockersLoading" type="card" :width="'100%'" :height="'60px'" class="mb-2" />
-        <v-card v-else fluid style="margin-bottom: 80px">
+        <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-list class="bg-transparent">
               <draggable v-model="dockerGroups" item-key="id" @end="onDragEndGrp" handle=".drag-handle">

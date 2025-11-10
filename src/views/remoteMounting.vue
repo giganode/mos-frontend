@@ -5,49 +5,45 @@
         <h2>{{ $t('remote mounting') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-row>
-          <v-col cols="12" sm="12" md="12" lg="12" xl="12">
-            <v-card   fluid>
-              <v-card-title>{{ $t('overview') }}</v-card-title>
-              <v-card-text class="pa-0">
-                <v-list>
-                  <v-list-item v-for="remote in remotes" :key="remote.id">
-                    <v-list-item-title>
-                      {{ remote.name }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>{{ remote.server }}</v-list-item-subtitle>
-                    <template v-slot:prepend>
-                      <v-icon :color="remote.status === 'mounted' ? 'green' : 'red'">mdi-network</v-icon>
+        <v-card fluid style="margin-bottom: 80px" class="pa-0">
+          <v-card-title>{{ $t('overview') }}</v-card-title>
+          <v-card-text class="pa-0">
+            <v-list>
+              <v-list-item v-for="remote in remotes" :key="remote.id">
+                <v-list-item-title>
+                  {{ remote.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ remote.server }}</v-list-item-subtitle>
+                <template v-slot:prepend>
+                  <v-icon :color="remote.status === 'mounted' ? 'green' : 'red'">mdi-network</v-icon>
+                </template>
+                <template v-slot:append>
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
                     </template>
-                    <template v-slot:append>
-                      <v-menu>
-                        <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item v-if="remote.status !== 'mounted'" @click="openChangeDialog(remote)">
-                            <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item @click="openDeleteDialog(remote)">
-                            <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item v-if="remote.status === 'mounted'" @click="unmountRemote(remote)">
-                            <v-list-item-title>{{ $t('unmount remote') }}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item v-if="remote.status !== 'mounted' && remote.status !== 'unavailable'" @click="mountRemote(remote)">
-                            <v-list-item-title>{{ $t('mount remote') }}</v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </template>
-                  </v-list-item>
-                </v-list>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                    <v-list>
+                      <v-list-item v-if="remote.status !== 'mounted'" @click="openChangeDialog(remote)">
+                        <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openDeleteDialog(remote)">
+                        <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="remote.status === 'mounted'" @click="unmountRemote(remote)">
+                        <v-list-item-title>{{ $t('unmount remote') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="remote.status !== 'mounted' && remote.status !== 'unavailable'" @click="mountRemote(remote)">
+                        <v-list-item-title>{{ $t('mount remote') }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
       </v-container>
     </v-container>
   </v-container>

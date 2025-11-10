@@ -5,7 +5,7 @@
         <h2>{{ $t('disks') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card fluid style="margin-bottom: 80px">
+        <v-card fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-list class="bg-transparent">
               <template v-for="(disk, index) in disks" :key="disk.device">
@@ -44,7 +44,7 @@
                     </v-menu>
                   </template>
                 </v-list-item>
-                <v-divider v-if="index < disks.length - 1" inset />
+                <v-divider v-if="index < disks.length - 1" />
               </template>
             </v-list>
           </v-card-text>

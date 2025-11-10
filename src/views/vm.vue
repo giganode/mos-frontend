@@ -5,7 +5,7 @@
         <h2>{{ $t('vm') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card fluid style="margin-bottom: 80px">
+        <v-card fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-list class="bg-transparent">
             <draggable v-model="vms" item-key="Id">

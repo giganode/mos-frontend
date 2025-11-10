@@ -5,7 +5,7 @@
         <h2>{{ $t('lxc containers') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card fluid>
+        <v-card fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-list>
               <draggable v-model="lxcs" item-key="Id" @end="onDragEnd" handle=".drag-handle">

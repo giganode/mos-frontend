@@ -5,41 +5,40 @@
         <h2>{{ $t('shares') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-skeleton-loader :loading="sharesLoading" type="card" class="w-100">
-          <v-card style="margin-bottom: 80px" class="w-100">
-            <v-card-text class="pa-0">
-              <v-list class="bg-transparent">
-                <template v-for="(share, index) in shares" :key="share.id ?? share.name">
-                  <v-list-item>
-                    <template v-slot:prepend>
-                      <v-icon>mdi-folder</v-icon>
-                    </template>
-                    <v-list-item-title>{{ share.name }}</v-list-item-title>
-                    <v-list-item-subtitle>{{ share.path }}</v-list-item-subtitle>
-                    <template v-slot:append>
-                      <v-menu>
-                        <template #activator="{ props }">
-                          <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item @click="openDeleteDialog(share)">
-                            <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item @click="openEditDialog(share)">
-                            <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </template>
-                  </v-list-item>
-                  <v-divider v-if="index < shares.length - 1" inset />
-                </template>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
+        <v-skeleton-loader v-if="sharesLoading" type="card" />
+        <v-card v-else style="margin-bottom: 80px" class="pa-0">
+          <v-card-text class="pa-0">
+            <v-list class="bg-transparent">
+              <template v-for="(share, index) in shares" :key="share.id ?? share.name">
+                <v-list-item>
+                  <template v-slot:prepend>
+                    <v-icon>mdi-folder</v-icon>
+                  </template>
+                  <v-list-item-title>{{ share.name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ share.path }}</v-list-item-subtitle>
+                  <template v-slot:append>
+                    <v-menu>
+                      <template #activator="{ props }">
+                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item @click="openDeleteDialog(share)">
+                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="openEditDialog(share)">
+                          <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-list-item>
+                <v-divider v-if="index < shares.length - 1" />
+              </template>
+            </v-list>
+          </v-card-text>
+        </v-card>
       </v-container>
     </v-container>
   </v-container>

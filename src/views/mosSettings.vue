@@ -18,7 +18,7 @@
                   <v-icon start>mdi-restart</v-icon>
                   {{ $t('reboot') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded @click="shutdownDialog = true">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="shutdownDialog = true">
                   <v-icon start>mdi-power</v-icon>
                   {{ $t('shutdown') }}
                 </v-btn>
@@ -38,10 +38,14 @@
                   <v-icon start>mdi-package-up</v-icon>
                   {{ $t('update system') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded @click="openUpdateKernelDialog()">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="openUpdateKernelDialog()">
                   <v-icon start>mdi-engine</v-icon>
                   {{ $t('update kernel') }}
                 </v-btn>
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="rollbackKernelDialog = true">
+                  <v-icon start>mdi-undo</v-icon>
+                  {{ $t('rollback kernel') }}
+                </v-btn>                
               </v-card-text>
             </v-card>
           </v-col>
@@ -86,7 +90,7 @@
                   <v-icon start>mdi-package-variant</v-icon>
                   {{ $t('lxc service') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded to="/mosSettings/vm">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded to="/mosSettings/vm">
                   <v-icon start>mdi-desktop-tower</v-icon>
                   {{ $t('vm service') }}
                 </v-btn>
@@ -106,7 +110,7 @@
                   <v-icon start>mdi-ethernet</v-icon>
                   {{ $t('network interfaces') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded to="/mosSettings/networkServices">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded to="/mosSettings/networkServices">
                   <v-icon start>mdi-network-outline</v-icon>
                   {{ $t('network services') }}
                 </v-btn>
@@ -122,7 +126,7 @@
                 {{ $t('hardware') }}
               </v-card-title>
               <v-card-text>
-                <v-btn color="primary" variant="elevated" block rounded to="/mosSettings/drivers">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded to="/mosSettings/drivers">
                   <v-icon start>mdi-expansion-card</v-icon>
                   {{ $t('drivers') }}
                 </v-btn>
@@ -141,7 +145,7 @@
                   <v-icon start>mdi-api</v-icon>
                   {{ $t('update api') }}
                 </v-btn>
-                <v-btn color="primary" variant="elevated" block rounded @click="updateUI()">
+                <v-btn color="primary" variant="elevated" block class="mb-2" rounded @click="updateUI()">
                   <v-icon start>mdi-monitor</v-icon>
                   {{ $t('update ui') }}
                 </v-btn>
@@ -195,6 +199,19 @@
     </v-card>
   </v-dialog>
 
+  <!-- Rollback Kernel Dialog -->
+  <v-dialog v-model="rollbackKernelDialog" width="auto">
+    <v-card max-width="600" prepend-icon="mdi-undo" :title="t('rollback kernel')">
+      <v-card-text>
+        <p class="mb-4">{{ t('are you sure you want to rollback to the previous kernel version?') }}</p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="onPrimary" :text="t('cancel')" @click="rollbackKernelDialog = false"></v-btn>
+        <v-btn color="red" :text="t('ok')" @click="rollbackKernel()"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Reboot Dialog -->
   <v-dialog v-model="rebootDialog" width="auto">
     <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to reboot your system?')" :title="t('reboot')">
@@ -230,6 +247,7 @@ const mosReleases = ref({});
 const mosKernel = ref([]);
 const rebootDialog = ref(false);
 const shutdownDialog = ref(false);
+const rollbackKernelDialog = ref(false);
 const osInfo = ref({});
 const overlay = ref(false);
 const { t } = useI18n();
@@ -384,6 +402,37 @@ const updateKernel = async (kernelVersion) => {
 
     updateKernelDialog.value = false;
     showSnackbarSuccess(t('kernel update initiated successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const rollbackKernel = async () => {
+  const rollbackBody = { 
+    kernel_rollback: true
+  }
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/rollbackos', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(rollbackBody),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('kernel rollback could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('kernel rollback initiated successfully'));
+    rollbackKernelDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

@@ -664,5 +664,9 @@
   "please select your target kernel release!": "Bitte wähle die gewünschte Kernel-Version!",
   "kernel release": "Kernel-Version",
   "kernel update could not be initiated": "Kernel Aktualisierung konnte nicht gestartet werden",
-  "kernel update initiated successfully": "Kernel Aktualisierung erfolgreich gestartet"
+  "kernel update initiated successfully": "Kernel Aktualisierung erfolgreich gestartet",
+  "kernel rollback could not be initiated": "Kernel Rollback konnte nicht gestartet werden",
+  "kernel rollback initiated successfully": "Kernel Rollback erfolgreich gestartet",
+  "are you sure you want to rollback to the previous kernel version?": "Bist du sicher, dass du zur vorherigen Kernel-Version zurückkehren möchtest?",
+  "rollback kernel": "Kernel zurücksetzen"
 }

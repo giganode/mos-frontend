@@ -686,6 +686,7 @@ const stopDocker = async (name) => {
     }
     showSnackbarSuccess(t('docker container stopped successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -710,6 +711,7 @@ const startDocker = async (name) => {
     }
     showSnackbarSuccess(t('docker container started successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -736,6 +738,7 @@ const restartDocker = async (name) => {
     }
     showSnackbarSuccess(t('docker container restarted successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -760,6 +763,7 @@ const killDocker = async (name) => {
     }
     showSnackbarSuccess(t('docker container stopped successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -788,6 +792,7 @@ const removeDocker = async (name) => {
 
     showSnackbarSuccess(t('docker container removed successfully'));
     getDockers();
+    getDockerGroups();
     clearDeleteDialog();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -816,6 +821,7 @@ const updateDocker = async (name, force_update = false) => {
     }
     showSnackbarSuccess(t('docker container updated successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -872,6 +878,7 @@ const updateAll = async () => {
 
     showSnackbarSuccess(t('docker containers updated successfully'));
     getDockers();
+    getDockerGroups();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

@@ -509,43 +509,45 @@
     </v-card>
   </v-dialog>
 
-  <!-- Floating Action Button -->
+  <!-- Floating Action Button with Menu -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-icon color="onPrimary">mdi-dots-vertical</v-icon>
-    <v-speed-dial v-model="menu" location="top right" activator="parent" :itemTransition="false" transition="false">
-      <v-sheet key="speed-dial-panel" class="bg-surface elevation-8 rounded-xl pa-2 d-flex flex-column align-end" style="max-width: 250px">
-        <div class="d-flex align-center justify-end ga-2 mb-1" key="1" @click="$router.push('/docker/create')" style="cursor: pointer">
-          <span class="me-2">{{ $t('add container') }}</span>
-          <v-btn icon color="primary" density="comfortable">
-            <v-icon color="onPrimary">mdi-plus</v-icon>
-          </v-btn>
-        </div>
-        <div class="d-flex align-center justify-end ga-2 mb-1" key="2" @click="openCreateGroupDialog()" style="cursor: pointer">
-          <span class="me-2">{{ $t('create docker group') }}</span>
-          <v-btn icon color="primary" density="comfortable">
-            <v-icon color="onPrimary">mdi-folder-plus</v-icon>
-          </v-btn>
-        </div>
-        <div class="d-flex align-center justify-end ga-2 mb-1" key="3" @click="openUnusedImagesDialog()" style="cursor: pointer">
-          <span class="me-2">{{ $t('unused docker images') }}</span>
-          <v-btn icon color="primary" density="comfortable">
-            <v-icon color="onPrimary">mdi-image-off</v-icon>
-          </v-btn>
-        </div>
-        <div class="d-flex align-center justify-end ga-2 mb-1" key="4" @click="checkForUpdates()" style="cursor: pointer">
-          <span class="me-2">{{ $t('check for updates') }}</span>
-          <v-btn icon color="primary" density="comfortable">
-            <v-icon color="onPrimary">mdi-update</v-icon>
-          </v-btn>
-        </div>
-        <div class="d-flex align-center justify-end ga-2 mb-1" key="5" @click="updateAll()" style="cursor: pointer">
-          <span class="me-2">{{ $t('update all') }}</span>
-          <v-btn icon color="primary" density="comfortable">
-            <v-icon color="onPrimary">mdi-refresh</v-icon>
-          </v-btn>
-        </div>
-      </v-sheet>
-    </v-speed-dial>
+    <v-menu location="top">
+      <template v-slot:activator="{ props }">
+      <v-icon v-bind="props" color="onPrimary">mdi-dots-vertical</v-icon>
+      </template>
+      <v-list>
+      <v-list-item @click="$router.push('/docker/create')">
+        <template v-slot:prepend>
+        <v-icon>mdi-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('add container') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openCreateGroupDialog()">
+        <template v-slot:prepend>
+        <v-icon>mdi-folder-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('create docker group') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openUnusedImagesDialog()">
+        <template v-slot:prepend>
+        <v-icon>mdi-image-off</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('unused docker images') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="checkForUpdates()">
+        <template v-slot:prepend>
+        <v-icon>mdi-update</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('check for updates') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="updateAll()">
+        <template v-slot:prepend>
+        <v-icon>mdi-refresh</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('update all') }}</v-list-item-title>
+      </v-list-item>
+      </v-list>
+    </v-menu>
   </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">

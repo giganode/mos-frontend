@@ -510,45 +510,45 @@
   </v-dialog>
 
   <!-- Floating Action Button with Menu -->
-  <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-menu location="top">
-      <template v-slot:activator="{ props }">
-        <v-icon v-bind="props" color="onPrimary">mdi-dots-vertical</v-icon>
-      </template>
-      <v-list>
-        <v-list-item @click="$router.push('/docker/create')">
-          <template v-slot:prepend>
-            <v-icon>mdi-plus</v-icon>
-          </template>
-          <v-list-item-title>{{ $t('add container') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="openCreateGroupDialog()">
-          <template v-slot:prepend>
-            <v-icon>mdi-folder-plus</v-icon>
-          </template>
-          <v-list-item-title>{{ $t('create docker group') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="openUnusedImagesDialog()">
-          <template v-slot:prepend>
-            <v-icon>mdi-image-off</v-icon>
-          </template>
-          <v-list-item-title>{{ $t('unused docker images') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="checkForUpdates()">
-          <template v-slot:prepend>
-            <v-icon>mdi-update</v-icon>
-          </template>
-          <v-list-item-title>{{ $t('check for updates') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="updateAll()">
-          <template v-slot:prepend>
-            <v-icon>mdi-refresh</v-icon>
-          </template>
-          <v-list-item-title>{{ $t('update all') }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </v-fab>
+  <v-menu location="top">
+    <template v-slot:activator="{ props }">
+      <v-fab v-bind="props" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+        <v-icon color="onPrimary">mdi-dots-vertical</v-icon>
+      </v-fab>
+    </template>
+    <v-list>
+      <v-list-item @click="$router.push('/docker/create')">
+        <template v-slot:prepend>
+          <v-icon>mdi-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('add container') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openCreateGroupDialog()">
+        <template v-slot:prepend>
+          <v-icon>mdi-folder-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('create docker group') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openUnusedImagesDialog()">
+        <template v-slot:prepend>
+          <v-icon>mdi-image-off</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('unused docker images') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="checkForUpdates()">
+        <template v-slot:prepend>
+          <v-icon>mdi-update</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('check for updates') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="updateAll()">
+        <template v-slot:prepend>
+          <v-icon>mdi-refresh</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('update all') }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -605,7 +605,7 @@ const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDocker
   onCompleted: async () => {
     await getDockers();
     await getDockerGroups();
-  }
+  },
 });
 
 onMounted(async () => {

@@ -105,7 +105,7 @@
                                   <p style="min-width: 250px; max-width: 150px">{{ $t('image') }}: {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}</p>
                                   <v-divider vertical class="mx-2" />
                                 </template>
-                                <template v-if="$vuetify.display.mdAndUp">
+                                <template v-if="$vuetify.display.smAndUp">
                                   <p style="min-width: 150px; max-width: 150px">
                                     {{ $t('ports') }}:
                                     {{
@@ -122,7 +122,7 @@
                                   </p>
                                   <v-divider vertical class="mx-2" />
                                 </template>
-                                <template v-if="$vuetify.display.mdAndUp && dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
+                                <template v-if="$vuetify.display.smAndUp && dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
                                   <p style="min-width: 160px; max-width: 160px">
                                     {{ $t('ip address') }}: {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.bridge.IPAddress || '-' }}
                                   </p>
@@ -157,13 +157,7 @@
                                   <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                                   <v-divider vertical class="mx-2" />
                                 </template>
-                                <template
-                                  v-if="
-                                    $vuetify.display.smAndUp &&
-                                    mosDockers &&
-                                    mosDockers.find((item) => item.name === dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0] && item.update_available)
-                                  "
-                                >
+                                <template v-if="mosDockers && mosDockers.find((item) => item.name === dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0] && item.update_available)">
                                   <v-icon tooltip="$t('update available')" color="green" @click="updateDocker(dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0])">
                                     mdi-autorenew
                                   </v-icon>
@@ -283,15 +277,15 @@
                           </p>
                           <v-divider vertical class="mx-2" />
                         </template>
-                        <template v-if="$vuetify.display.smAndUp && docker.HostConfig.NetworkMode === 'bridge'">
+                        <template v-if="$vuetify.display.mdAndUp && docker.HostConfig.NetworkMode === 'bridge'">
                           <p style="min-width: 160px; max-width: 160px">{{ $t('ip address') }}: {{ docker.NetworkSettings.Networks.bridge.IPAddress || '-' }}</p>
                           <v-divider vertical class="mx-2" />
                         </template>
-                        <template v-else-if="$vuetify.display.smAndUp && docker.HostConfig.NetworkMode === 'host'">
+                        <template v-else-if="$vuetify.display.mdAndUp && docker.HostConfig.NetworkMode === 'host'">
                           <p style="min-width: 160px; max-width: 160px">{{ $t('ip address') }}: {{ docker.NetworkSettings.Networks.host.IPAddress || '-' }}</p>
                           <v-divider vertical class="mx-2" />
                         </template>
-                        <template v-else-if="$vuetify.display.smAndUp">
+                        <template v-else-if="$vuetify.display.mdAndUp">
                           <p style="min-width: 160px; max-width: 160px">
                             {{ $t('ip address') }}: {{ Object.values(docker.NetworkSettings.Networks)[0]?.IPAddress || '-' }}
                             <span v-if="Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address">
@@ -312,7 +306,7 @@
                           <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                           <v-divider vertical class="mx-2" />
                         </template>
-                        <template v-if="$vuetify.display.smAndUp && mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)">
+                        <template v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)">
                           <v-icon tooltip="$t('update available')" color="green" @click="updateDocker(docker.Names[0])">mdi-autorenew</v-icon>
                           <v-divider vertical class="mx-2" />
                         </template>
@@ -495,7 +489,7 @@
   </v-dialog>
 
   <!-- WebSocket Operation Dialog -->
-  <v-dialog v-model="wsOperationDialog.value" max-width="600">
+  <v-dialog v-model="wsOperationDialog.value" max-width="800">
     <v-card>
       <v-card-text class="pa-1">
         <div
@@ -1418,7 +1412,7 @@ const closeWsDialog = () => {
 };
 
 // WebSocket for Docker Commands
-const sendDockerWSCommand = (command, params = null  ) => {
+const sendDockerWSCommand = (command, params = null) => {
   const authToken = localStorage.getItem('authToken');
   if (!authToken) {
     wsError.value = 'No auth token found';
@@ -1436,7 +1430,7 @@ const sendDockerWSCommand = (command, params = null  ) => {
     console.log('WebSocket connected');
     wsIsConnected.value = true;
     wsError.value = null;
-    socket.emit('docker', { token: authToken, operation: command, params: params  });
+    socket.emit('docker', { token: authToken, operation: command, params: params });
   });
 
   socket.on('connect_error', (err) => {

@@ -48,30 +48,54 @@
       <div v-if="processor.cores && processor.cores.length">
         <details class="mt-2">
           <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline">{{ $t('cores') }}</summary>
-          <div class="cores-grid">
-            <div class="core-row" v-for="(core, i) in processor.cores" :key="i">
-              <div class="core-label text-body-2">
-                <small>
-                  <b>CPU {{ i }}</b>
-                </small>
+          <v-row v-for="(core, i) in (processor.cores || []).filter((c) => c.isPhysical)" :key="i" dense>
+            <v-col>
+              <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
+                <div class="core-label text-body-2 mb-1">
+                  <small>
+                    <b>CPU {{ core.number }}</b>
+                  </small>
+                </div>
+                <div class="core-bar">
+                  <v-progress-linear
+                    :model-value="core.load?.total ?? 0"
+                    height="12"
+                    :color="core.load?.total >= 90 ? 'red' : core.load?.total >= 75 ? 'orange' : 'green'"
+                    style="margin-top: 2px; border-radius: 6px; overflow: hidden; width: 100%"
+                  >
+                    <template #default>
+                      <span>
+                        <small>{{ Number(core.load?.total ?? 0).toFixed(2) }}%</small>
+                      </span>
+                    </template>
+                  </v-progress-linear>
+                </div>
               </div>
-
-              <div class="core-bar">
-                <v-progress-linear
-                  :model-value="core.load?.total ?? 0"
-                  height="12"
-                  :color="core.load?.total >= 90 ? 'red' : core.load?.total >= 75 ? 'orange' : 'green'"
-                  style="margin-top: 2px; border-radius: 6px; overflow: hidden; width: 100%"
-                >
-                  <template #default>
-                    <span>
-                      <small>{{ Number(core.load?.total ?? 0).toFixed(2) }}%</small>
-                    </span>
-                  </template>
-                </v-progress-linear>
+            </v-col>
+            <v-col v-for="(thread, ti) in (processor.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti">
+              <div class="core-row" style="min-width: 0">
+                <div class="core-label text-body-2 mb-1">
+                  <small>
+                    <b>vCPU {{ thread.number }}</b>
+                  </small>
+                </div>
+                <div class="core-bar">
+                  <v-progress-linear
+                    :model-value="thread.load?.total ?? 0"
+                    height="12"
+                    :color="thread.load?.total >= 90 ? 'red' : thread.load?.total >= 75 ? 'orange' : 'green'"
+                    style="margin-top: 2px; border-radius: 6px; overflow: hidden; width: 100%"
+                  >
+                    <template #default>
+                      <span>
+                        <small>{{ Number(thread.load?.total ?? 0).toFixed(2) }}%</small>
+                      </span>
+                    </template>
+                  </v-progress-linear>
+                </div>
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
         </details>
       </div>
     </v-col>
@@ -127,7 +151,7 @@ const getOsInfo = async () => {
 }
 
 .core-label {
-  width: 48px;
+  width: 50px;
   display: flex;
   align-items: center;
   flex: 0 0 auto;

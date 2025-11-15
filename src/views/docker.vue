@@ -157,12 +157,16 @@
                                   <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                                   <v-divider vertical class="mx-2" />
                                 </template>
-                                <template v-if="mosDockers && mosDockers.find((item) => item.name === dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0] && item.update_available)">
-                                  <v-icon tooltip="$t('update available')" color="green" @click="updateDocker(dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0])">
-                                    mdi-autorenew
-                                  </v-icon>
-                                  <v-divider vertical class="mx-2" />
-                                </template>
+                                <v-icon
+                                  v-if="mosDockers && mosDockers.find((item) => item.name === dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0] && item.update_available)"
+                                  tooltip="$t('update available')"
+                                  color="green"
+                                  @click="updateDocker(dockers.find((d) => d.Names && d.Names[0] === containerName)?.Names[0])"
+                                >
+                                  mdi-autorenew
+                                </v-icon>
+                                <v-icon v-else style="width: 21px; height: 21px"></v-icon>
+                                <v-divider vertical class="mx-2" />
                                 <v-switch
                                   :model-value="dockers.find((d) => d.Names && d.Names[0] === containerName)?.autostart ?? false"
                                   color="green"
@@ -306,10 +310,16 @@
                           <p style="min-width: 150px; max-width: 150px">{{ $t('network') }}: -</p>
                           <v-divider vertical class="mx-2" />
                         </template>
-                        <template v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)">
-                          <v-icon tooltip="$t('update available')" color="green" @click="updateDocker(docker.Names[0])">mdi-autorenew</v-icon>
-                          <v-divider vertical class="mx-2" />
-                        </template>
+                        <v-icon
+                          v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)"
+                          tooltip="$t('update available')"
+                          color="green"
+                          @click="updateDocker(docker.Names[0])"
+                        >
+                          mdi-autorenew
+                        </v-icon>
+                        <v-icon v-else style="width: 21px; height: 21px"></v-icon>
+                        <v-divider vertical class="mx-2" />
                         <v-switch v-model="docker.autostart" color="green" hide-details @change="switchAutostart(docker)" inset density="compact" />
                         <v-divider vertical class="mx-2" />
                         <v-icon class="drag-handle" @click="openInfoDialog(docker)">mdi-information-outline</v-icon>
@@ -494,9 +504,29 @@
       <v-card-text class="pa-1">
         <div
           ref="wsScrollContainer"
-          style="flex-grow: 1; height: calc(100vh - 340px); overflow: auto; white-space: pre; font-family: monospace; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px"
+          :style="{
+            flexGrow: 1,
+            height: 'calc(100vh - 340px)',
+            overflow: 'auto',
+            whiteSpace: 'pre',
+            fontFamily: 'monospace',
+            border: '1px solid ' + ($vuetify.theme && $vuetify.theme.dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.12)'),
+            borderRadius: '4px',
+            backgroundColor: $vuetify.theme && $vuetify.theme.name == 'dark' ? '#121212' : '#fafafa',
+            color: $vuetify.theme && $vuetify.theme.name == 'dark' ? '#e0e0e0' : '#111'
+          }"
         >
-          <div v-for="(line, index) in wsOperationDialog.data" :key="index" style="padding-left: 4px; padding-right: 4px; background-color: #fafafa; color: #111; white-space: pre-wrap">
+          <div
+            v-for="(line, index) in wsOperationDialog.data"
+            :key="index"
+            :style="{
+              paddingLeft: '4px',
+              paddingRight: '4px',
+              whiteSpace: 'pre-wrap',
+              backgroundColor: $vuetify.theme && $vuetify.theme.name == 'dark' ? 'transparent' : '#fafafa',
+              color: $vuetify.theme && $vuetify.theme.name == 'dark' ? '#e0e0e0' : '#111'
+            }"
+          >
             <small>{{ line.output }}</small>
           </div>
         </div>

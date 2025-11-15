@@ -39,7 +39,7 @@
                       <td>
                         <v-menu>
                           <template #activator="{ props }">
-                            <v-icon class="drag-handle" style="cursor:grab" v-bind="props">mdi-folder</v-icon>
+                            <v-icon class="drag-handle" style="cursor:grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
                           <v-list>
                             <v-list-item @click.stop="openChangeGroupDialog(group)">
@@ -188,7 +188,7 @@
                         </template>
                       </td>
                       <td>
-                        <v-icon
+                        <v-icon 
                           v-if="mosDockers && mosDockers.find(item => item.name === containerName && item.update_available)"
                           color="green"
                           @click="updateDocker(containerName)"
@@ -204,7 +204,7 @@
                         />
                       </td>
                       <td>
-                        <v-icon class="drag-handle" @click="openInfoDialog(dockers.find(d => d.Names && d.Names[0] === containerName))">
+                        <v-icon class="drag-handle" @click="openInfoDialog(dockers.find(d => d.Names && d.Names[0] === containerName))" color="grey-darken-1">
                           mdi-information-outline
                         </v-icon>
                       </td>
@@ -334,7 +334,7 @@
                       />
                     </td>
                     <td>
-                      <v-icon class="drag-handle" @click="openInfoDialog(docker)">mdi-information-outline</v-icon>
+                      <v-icon class="drag-handle" @click="openInfoDialog(docker)" color="grey-darken-1">mdi-information-outline</v-icon>
                     </td>
                     <td></td>
                   </tr>
@@ -450,7 +450,7 @@
         <draggable v-model="changeGroupDialog.containers" class="d-flex flex-wrap mt-2" :component="'div'">
           <template #item="{ element, index }">
             <v-chip class="ma-1" closable @click:close="changeGroupDialog.containers.splice(index, 1)">
-              <v-icon left class="drag-handle" style="cursor: grab">mdi-drag</v-icon>
+              <v-icon left class="drag-handle" style="cursor: grab" color="grey-darken-1">mdi-drag</v-icon>
               {{ element }}
             </v-chip>
           </template>

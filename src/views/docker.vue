@@ -124,10 +124,10 @@
                           {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.State }}
                         </div>
                       </td>
-                      <td v-if="$vuetify.display.xlAndUp">
+                      <td>
                         {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}
                       </td>
-                      <td v-if="$vuetify.display.smAndUp">
+                      <td>
                         {{
                           dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports && dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports.some((p) => p.PublicPort)
                             ? dockers
@@ -139,7 +139,7 @@
                             : 'none'
                         }}
                       </td>
-                      <td v-if="$vuetify.display.smAndUp">
+                      <td>
                         <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
                           {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.bridge.IPAddress || 'none' }}
                         </template>
@@ -150,7 +150,7 @@
                           {{ Object.values(dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks)[0]?.IPAddress || 'none' }}
                         </template>
                       </td>
-                      <td v-if="$vuetify.display.smAndUp">
+                      <td>
                         <template v-if="!dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode.startsWith('container:')">
                           {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode }}
                         </template>

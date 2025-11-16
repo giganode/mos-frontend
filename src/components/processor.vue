@@ -12,13 +12,13 @@
       </div>
       <div class="text-body-2" :title="processor.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ processor.info.architecture }}</div>
     </v-col>
-    <v-col cols="6" sm="6" md="3" xl="3" v-if="osInfo.cpu?.cores !== undefined && osInfo.cpu?.physicalCores !== undefined">
+    <v-col cols="6" sm="6" md="6" xl="6" v-if="osInfo.cpu?.cores !== undefined && osInfo.cpu?.physicalCores !== undefined">
       <div class="text-caption text-medium-emphasis">
         <strong>{{ $t('cores') }}</strong>
       </div>
       <div class="text-body-2" :title="processor.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.cpu.physicalCores }} / {{ osInfo.cpu.cores }}</div>
     </v-col>
-    <v-col cols="6" sm="6" md="3" xl="3" v-if="temp.main != null || temp.min != null || temp.max != null">
+    <v-col cols="6" sm="6" md="6" xl="6" v-if="temp.main != null || temp.min != null || temp.max != null">
       <div class="text-caption text-medium-emphasis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
         <strong>{{ $t('temperature / min / max') }}</strong>
       </div>

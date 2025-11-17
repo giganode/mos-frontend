@@ -1,8 +1,8 @@
 name: Build MOS Frontend
 
 on:
-  push:
-    branches: [ master ]
+  # Trigger build manually
+  workflow_dispatch:
 
 jobs:
   build_frontend:

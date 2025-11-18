@@ -703,5 +703,7 @@
   "docker compose stack removed successfully": "Docker Compose Stack erfolgreich entfernt",
   "start stack": "Stack starten",
   "stop stack": "Stack stoppen",
-  "remove stack": "Stack entfernen"
+  "remove stack": "Stack entfernen",
+  "are you sure you want to remove this docker compose stack? all containers in this stack will be removed.": "Bist du sicher, dass du diesen Docker Compose Stack entfernen möchtest? Alle Container in diesem Stack werden entfernt.",
+  "remove docker compose stack": "Docker Compose Stack entfernen"
 }

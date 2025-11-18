@@ -25,14 +25,15 @@
               </thead>
 
               <!-- Docker Groups -->
-              <draggable tag="tbody" v-model="dockerGroups" item-key="id" handle=".drag-handle" @end="onDragEndGrp">
+              <draggable v-if="dockerGroups.length > 0" tag="tbody" v-model="dockerGroups" item-key="id" handle=".drag-handle" @end="onDragEndGrp">
                 <template #item="{ element: group }">
                   <template v-if="group.name !== ''">
                     <tr :id="group.id" @click.stop="group.expanded = !group.expanded" style="cursor: pointer">
                       <td>
                         <v-menu v-model="group.menu">
                           <template #activator="{ props }">
-                            <v-icon class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
+                            <v-icon v-if="group.compose" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
+                            <v-icon v-else class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
                           <v-list v-if="group.compose">
                             <v-list-item @click="startStack(group.name)">
@@ -42,7 +43,7 @@
                               <v-list-item-title>{{ $t('stop stack') }}</v-list-item-title>
                             </v-list-item>
                             <v-divider />
-                            <v-list-item @click="removeStack(group.name)">
+                            <v-list-item @click="openDockerComposeRemoveDialog(group.name)">
                               <v-list-item-title>{{ $t('remove stack') }}</v-list-item-title>
                             </v-list-item>
                           </v-list>
@@ -69,12 +70,10 @@
                       <td>
                         <div class="d-flex align-center">
                           <div class="mr-2">
-                          <div style="font-size: 0.9rem">
-                            {{ group.name }}
-                          </div>
-                          <div class="text-caption">
-                            {{ group.runningCount }}/{{ group.count }} {{ $t('started') }}
-                          </div>
+                            <div style="font-size: 0.9rem">
+                              {{ group.name }}
+                            </div>
+                            <div class="text-caption">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
                           </div>
                           <v-chip v-if="group.compose" size="small">{{ $t('composed') }}</v-chip>
                         </div>
@@ -220,8 +219,29 @@
                 </template>
               </draggable>
 
+              <!-- Separator Row -->
+              <tr v-if="dockerGroups.length > 0 && dockers.some((d) => !dockerGroups.some((g) => g.containers && g.containers.includes(d.Names?.[0])))">
+                <td colspan="10" class="pa-0">
+                  <div
+                    :style="{
+                      width: '100%',
+                      margin: '0',
+                      boxSizing: 'border-box',
+                      borderTop: $vuetify && $vuetify.theme && $vuetify.theme.name === 'dark' ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.12)',
+                    }"
+                  />
+                </td>
+              </tr>
+
               <!-- Ungrouped Docker Containers -->
-              <draggable tag="tbody" v-model="dockers" item-key="Id" handle=".drag-handle" @end="onDragEnd">
+              <draggable
+                v-if="dockers.some((d) => !dockerGroups.some((g) => g.containers && g.containers.includes(d.Names?.[0])))"
+                tag="tbody"
+                v-model="dockers"
+                item-key="Id"
+                handle=".drag-handle"
+                @end="onDragEnd"
+              >
                 <template #item="{ element: docker }">
                   <tr v-if="!dockerGroups.some((g) => g.containers && g.containers.includes(docker.Names?.[0]))" :id="docker.Id">
                     <td>
@@ -555,12 +575,29 @@
         <v-text-field v-model="dockerComposeDialog.name" :label="$t('stack name')" required></v-text-field>
         <v-textarea v-model="dockerComposeDialog.yaml" :label="$t('compose yaml')" rows="10" required></v-textarea>
         <v-textarea v-model="dockerComposeDialog.env" :label="$t('environment variables')" rows="5"></v-textarea>
-        <v-text-field v-model="dockerComposeDialog.icon" :label="$t('icon url')" ></v-text-field>
+        <v-text-field v-model="dockerComposeDialog.icon" :label="$t('icon url')"></v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-btn color="onPrimary" @click="dockerComposeDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="createDockerCompose()">
           {{ $t('create') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!--Docker Compose Remove Dialog -->
+  <v-dialog v-model="dockerComposeRemoveDialog.value" max-width="500" persistent>
+    <v-card>
+      <v-card-title class="text-h6">{{ $t('remove docker compose stack') }} - {{ dockerComposeRemoveDialog.name }}</v-card-title>
+      <v-card-text>
+        {{ $t('are you sure you want to remove this docker compose stack? all containers in this stack will be removed.') }}
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="onPrimary" @click="dockerComposeRemoveDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="red" @click="removeStack(dockerComposeRemoveDialog.name)">
+          {{ $t('remove') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -676,6 +713,10 @@ const dockerComposeDialog = reactive({
   yaml: '',
   env: '',
   icon: '',
+});
+const dockerComposeRemoveDialog = reactive({
+  value: false,
+  name: '',
 });
 
 onMounted(async () => {
@@ -1591,6 +1632,7 @@ const removeStack = async (name) => {
       const error = await res.json();
       throw new Error(`${t('docker compose stack could not be removed')}|$| ${error.error || t('unknown error')}`);
     }
+    closeDockerComposeRemoveDialog();
     getDockers();
     getDockerGroups();
     showSnackbarSuccess(t('docker compose stack removed successfully'));
@@ -1669,5 +1711,13 @@ const openDockerComposeDialog = () => {
   dockerComposeDialog.yaml = '';
   dockerComposeDialog.env = '';
   dockerComposeDialog.icon = '';
+};
+const openDockerComposeRemoveDialog = (name) => {
+  dockerComposeRemoveDialog.value = true;
+  dockerComposeRemoveDialog.name = name;
+};
+const closeDockerComposeRemoveDialog = () => {
+  dockerComposeRemoveDialog.value = false;
+  dockerComposeRemoveDialog.name = '';
 };
 </script>

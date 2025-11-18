@@ -30,33 +30,54 @@
                   <template v-if="group.name !== ''">
                     <tr :id="group.id" @click.stop="group.expanded = !group.expanded" style="cursor: pointer">
                       <td>
-                        <v-menu>
+                        <v-menu v-model="group.menu">
                           <template #activator="{ props }">
                             <v-icon class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
-                          <v-list>
-                            <v-list-item @click.stop="openChangeGroupDialog(group)">
+                          <v-list v-if="group.compose">
+                            <v-list-item @click="startStack(group.name)">
+                              <v-list-item-title>{{ $t('start stack') }}</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @click="stopStack(group.name)">
+                              <v-list-item-title>{{ $t('stop stack') }}</v-list-item-title>
+                            </v-list-item>
+                            <v-divider />
+                            <v-list-item @click="removeStack(group.name)">
+                              <v-list-item-title>{{ $t('remove stack') }}</v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                          <v-list v-else>
+                            <v-list-item @click="openChangeGroupDialog(group)">
                               <v-list-item-title>{{ $t('edit group') }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item @click.stop="openDeleteGroupDialog(group)">
+                            <v-list-item @click="openDeleteGroupDialog(group)">
                               <v-list-item-title>{{ $t('delete group') }}</v-list-item-title>
                             </v-list-item>
                             <v-divider />
-                            <v-list-item @click.stop="startDockerGroupContainers(group)">
+                            <v-list-item @click="startDockerGroupContainers(group)">
                               <v-list-item-title>{{ $t('start all') }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item @click.stop="stopDockerGroupContainers(group)">
+                            <v-list-item @click="stopDockerGroupContainers(group)">
                               <v-list-item-title>{{ $t('stop all') }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item @click.stop="restartDockerGroupContainers(group)">
+                            <v-list-item @click="restartDockerGroupContainers(group)">
                               <v-list-item-title>{{ $t('restart all') }}</v-list-item-title>
                             </v-list-item>
                           </v-list>
                         </v-menu>
                       </td>
                       <td>
-                        <span style="font-size: 0.9rem;">{{ group.name }}</span>
-                        <div class="text-caption">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
+                        <div class="d-flex align-center">
+                          <div class="mr-2">
+                          <div style="font-size: 0.9rem">
+                            {{ group.name }}
+                          </div>
+                          <div class="text-caption">
+                            {{ group.runningCount }}/{{ group.count }} {{ $t('started') }}
+                          </div>
+                          </div>
+                          <v-chip v-if="group.compose" size="small">{{ $t('composed') }}</v-chip>
+                        </div>
                       </td>
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
@@ -74,7 +95,6 @@
                       </td>
                     </tr>
 
-                    <!-- Containers inside group -->
                     <tr v-for="containerName in group.expanded ? group.containers : []" :key="containerName">
                       <td>
                         <v-menu>
@@ -129,7 +149,7 @@
                         </v-menu>
                       </td>
                       <td>
-                        <div style="font-size: 0.9rem;">{{ containerName }}</div>
+                        <div style="font-size: 0.9rem">{{ containerName }}</div>
                         <div class="text-caption" :style="{ color: dockers.find((d) => d.Names && d.Names[0] === containerName)?.State === 'running' ? 'green' : 'red' }">
                           {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.State }}
                         </div>
@@ -286,9 +306,10 @@
                       </template>
                       <template v-else>
                         {{ Object.values(docker.NetworkSettings.Networks)[0]?.IPAddress || '-' }}
-                       <span v-if="Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address">
-                        <br>{{ Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address }}
-                       </span>
+                        <span v-if="Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address">
+                          <br />
+                          {{ Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address }}
+                        </span>
                       </template>
                     </td>
                     <td>
@@ -311,6 +332,7 @@
                     <td>
                       <v-icon class="drag-handle" @click="openInfoDialog(docker)" color="grey-darken-1">mdi-information-outline</v-icon>
                     </td>
+                    <td></td>
                   </tr>
                 </template>
               </draggable>
@@ -525,6 +547,25 @@
     </v-card>
   </v-dialog>
 
+  <!-- Docker Compose Dialog -->
+  <v-dialog v-model="dockerComposeDialog.value" max-width="800">
+    <v-card>
+      <v-card-title class="text-h6">{{ $t('docker compose') }}</v-card-title>
+      <v-card-text>
+        <v-text-field v-model="dockerComposeDialog.name" :label="$t('stack name')" required></v-text-field>
+        <v-textarea v-model="dockerComposeDialog.yaml" :label="$t('compose yaml')" rows="10" required></v-textarea>
+        <v-textarea v-model="dockerComposeDialog.env" :label="$t('environment variables')" rows="5"></v-textarea>
+        <v-text-field v-model="dockerComposeDialog.icon" :label="$t('icon url')" ></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="onPrimary" @click="dockerComposeDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="createDockerCompose()">
+          {{ $t('create') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button with Menu -->
   <v-menu location="top">
     <template v-slot:activator="{ props }">
@@ -538,6 +579,12 @@
           <v-icon>mdi-plus</v-icon>
         </template>
         <v-list-item-title>{{ $t('add container') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openDockerComposeDialog()">
+        <template v-slot:prepend>
+          <v-icon>mdi-toy-brick-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('docker compose') }}</v-list-item-title>
       </v-list-item>
       <v-list-item @click="openCreateGroupDialog()">
         <template v-slot:prepend>
@@ -622,6 +669,13 @@ const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDocker
     await getDockers();
     await getDockerGroups();
   },
+});
+const dockerComposeDialog = reactive({
+  value: false,
+  name: '',
+  yaml: '',
+  env: '',
+  icon: '',
 });
 
 onMounted(async () => {
@@ -1361,7 +1415,7 @@ const restartDockerGroupContainers = async (group) => {
 };
 
 const updateDockerGroupContainers = async (group, force_update = false) => {
-  const updateBody = { groupId: group.id, force_update: force_update }
+  const updateBody = { groupId: group.id, force_update: force_update };
   sendDockerWSCommand('upgrade-group', updateBody);
   /*
   try {
@@ -1440,6 +1494,114 @@ const removeUnusedImage = async (imageId) => {
   }
 };
 
+const createDockerCompose = async () => {
+  const newCompose = {
+    name: dockerComposeDialog.name.trim(),
+    yaml: dockerComposeDialog.yaml,
+    env: dockerComposeDialog.env,
+    icon: dockerComposeDialog.icon,
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/docker/mos/compose/stacks', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCompose),
+    });
+    overlay.value = false;
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker compose could not be created')}|$| ${error.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('docker compose created successfully'));
+    getDockers();
+    getDockerGroups();
+    dockerComposeDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const startStack = async (name) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(name)}/start`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker compose stack could not be started')}|$| ${error.error || t('unknown error')}`);
+    }
+    getDockers();
+    getDockerGroups();
+    showSnackbarSuccess(t('docker compose stack started successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const stopStack = async (name) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(name)}/stop`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker compose stack could not be stopped')}|$| ${error.error || t('unknown error')}`);
+    }
+    getDockers();
+    getDockerGroups();
+    showSnackbarSuccess(t('docker compose stack stopped successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const removeStack = async (name) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(name)}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker compose stack could not be removed')}|$| ${error.error || t('unknown error')}`);
+    }
+    getDockers();
+    getDockerGroups();
+    showSnackbarSuccess(t('docker compose stack removed successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const getContainerNameFromNetworkmode = (networkMode) => {
   if (!networkMode || !networkMode.startsWith('container:')) return '-';
 
@@ -1500,5 +1662,12 @@ const clearDeleteGroupDialog = () => {
 const openUnusedImagesDialog = async () => {
   await getUnusedImages();
   unusedImagesDialog.value = true;
+};
+const openDockerComposeDialog = () => {
+  dockerComposeDialog.value = true;
+  dockerComposeDialog.name = '';
+  dockerComposeDialog.yaml = '';
+  dockerComposeDialog.env = '';
+  dockerComposeDialog.icon = '';
 };
 </script>

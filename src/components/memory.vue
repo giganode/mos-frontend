@@ -2,7 +2,7 @@
     <v-row dense>
         <v-col cols="3" sm="3" md="3" xl="3" v-if="mem.total_human">
             <div class="text-caption text-medium-emphasis">
-                <strong>{{ $t('Installed') }}</strong>
+                <strong>{{ $t('installed') }}</strong>
             </div>
             <div class="text-body-2" :title="mem.total_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 {{ mem.installed_human }}
@@ -10,7 +10,7 @@
         </v-col>
         <v-col cols="3" sm="3" md="3" xl="3" v-if="mem.total_human">
             <div class="text-caption text-medium-emphasis">
-                <strong>{{ $t('Usable') }}</strong>
+                <strong>{{ $t('usable') }}</strong>
             </div>
             <div class="text-body-2" :title="mem.total_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 {{ mem.total_human }}
@@ -127,19 +127,19 @@
                 <div class="memory-legend mt-2">
                     <div class="legend-item">
                         <div class="legend-color system-used"></div>
-                        <span class="text-caption">{{ $t('System') }} ({{ mem.breakdown?.system?.percentage || 0 }}%)</span>
+                        <span class="text-caption">{{ $t('system') }} ({{ mem.breakdown?.system?.percentage || 0 }}%)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color docker-used"></div>
-                        <span class="text-caption">{{ $t('Docker') }} ({{ mem.breakdown?.docker?.percentage || 0 }}%)</span>
+                        <span class="text-caption">{{ $t('docker') }} ({{ mem.breakdown?.docker?.percentage || 0 }}%)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color lxc-used"></div>
-                        <span class="text-caption">{{ $t('LXC') }} ({{ mem.breakdown?.lxc?.percentage || 0 }}%)</span>
+                        <span class="text-caption">{{ $t('lxc') }} ({{ mem.breakdown?.lxc?.percentage || 0 }}%)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color vms-used"></div>
-                        <span class="text-caption">{{ $t('VMs') }} ({{ mem.breakdown?.vms?.percentage || 0 }}%)</span>
+                        <span class="text-caption">{{ $t('vms') }} ({{ mem.breakdown?.vms?.percentage || 0 }}%)</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color caches"></div>

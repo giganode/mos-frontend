@@ -676,5 +676,7 @@
   "info": "Info",
   "start all": "Start All",
   "stop all": "Stop All",
-  "restart all": "Restart All"
+  "restart all": "Restart All",
+  "all containers in group could not be updated": "All containers in group could not be updated",
+  "all containers in group updated successfully": "All containers in group updated successfully"
 }

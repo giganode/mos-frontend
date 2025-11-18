@@ -682,5 +682,7 @@
   "all containers in group restarted successfully": "Alle Container in der Gruppe erfolgreich neu gestartet",
   "start all": "Alle starten",
   "stop all": "Alle stoppen",
-  "restart all": "Alle neu starten"
+  "restart all": "Alle neu starten",
+  "all containers in group could not be updated": "Alle Container in der Gruppe konnten nicht aktualisiert werden",
+  "all containers in group updated successfully": "Alle Container in der Gruppe erfolgreich aktualisiert"
 }

@@ -1360,9 +1360,10 @@ const restartDockerGroupContainers = async (group) => {
   }
 };
 
-const updateDockerGroupContainers = async (group) => {
-  /* TODO
-  
+const updateDockerGroupContainers = async (group, force_update = false) => {
+  const updateBody = { groupId: group.id, force_update: force_update }
+  sendDockerWSCommand('upgrade-group', updateBody);
+  /*
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/docker/mos/groups/${encodeURIComponent(group.id)}/upgrade`, {

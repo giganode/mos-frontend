@@ -1468,39 +1468,14 @@ const removeUnusedImage = async (imageId) => {
 };
 
 const createComposeStack = async () => {
+  createComposeStackDialog.value = false;
   const newCompose = {
     name: createComposeStackDialog.name.trim(),
     yaml: createComposeStackDialog.yaml,
     env: createComposeStackDialog.env,
     icon: createComposeStackDialog.icon,
   };
-
-  try {
-    overlay.value = true;
-    const res = await fetch('/api/v1/docker/mos/compose/stacks', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newCompose),
-    });
-    overlay.value = false;
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker compose could not be created')}|$| ${error.error || t('unknown error')}`);
-    }
-    showSnackbarSuccess(t('docker compose created successfully'));
-    getDockers();
-    getDockerGroups();
-    createComposeStackDialog.value = false;
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }
+  sendDockerWSCommand('compose-create', newCompose);
 };
 
 const startComposeStack = async (name) => {
@@ -1552,28 +1527,7 @@ const stopComposeStack = async (name) => {
 };
 
 const removeComposeStack = async (name) => {
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(name)}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker compose stack could not be removed')}|$| ${error.error || t('unknown error')}`);
-    }
-    closeRemoveComposeStackDialog();
-    getDockers();
-    getDockerGroups();
-    showSnackbarSuccess(t('docker compose stack removed successfully'));
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }
+  sendDockerWSCommand('compose-delete', { name: name });
 };
 
 const restartComposeStack = async (name) => {
@@ -1601,66 +1555,18 @@ const restartComposeStack = async (name) => {
 };
 
 const pullImagesForComposeStack = async (name) => {
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(name)}/pull`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker compose stack images could not be pulled')}|$| ${error.error || t('unknown error')}`);
-    }
-    getDockers();
-    getDockerGroups();
-    showSnackbarSuccess(t('docker compose stack images pulled successfully'));
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }
+  sendDockerWSCommand('compose-pull', { name: name });
 };
 
 const editComposeStack = async () => {
-  if (!editComposeStackDialog.name || editComposeStackDialog.name.trim() === '') {
-    showSnackbarError(t('compose name is required'));
-    return;
-  }
-
+  editComposeStackDialog.value = false;
   const updatedCompose = {
+    name: editComposeStackDialog.name.trim(),
     yaml: editComposeStackDialog.yaml,
     env: editComposeStackDialog.env,
     icon: editComposeStackDialog.icon,
   };
-
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/compose/stacks/${encodeURIComponent(editComposeStackDialog.name)}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedCompose),
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker compose could not be updated')}|$| ${error.error || t('unknown error')}`);
-    }
-    showSnackbarSuccess(t('docker compose updated successfully'));
-    getDockers();
-    getDockerGroups();
-    editComposeStackDialog.value = false;
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }
+  sendDockerWSCommand('compose-update', updatedCompose );
 };
 
 const getComposeStack = async (name) => {

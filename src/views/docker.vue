@@ -12,13 +12,11 @@
               <thead>
                 <tr>
                   <th style="width: 42px"></th>
-                  <th>{{ $t('name') }}</th>
-                  <th style="width:250px; max-width:250px;">
-                    <div style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                      {{ $t('image') }}
-                    </div>
+                  <th style="min-width: 250px">{{ $t('name') }}</th>
+                  <th style="min-width: 150px">
+                    {{ $t('image') }}
                   </th>
-                  <th style="width: 250px;">{{ $t('ports') }}</th>
+                  <th style="width: 250px">{{ $t('ports') }}</th>
                   <th>{{ $t('ip address') }}</th>
                   <th>{{ $t('network') }}</th>
                   <th style="width: 42px">{{ $t('state') }}</th>
@@ -86,7 +84,7 @@
                             <div style="font-size: 0.9rem">
                               {{ group.name }}
                             </div>
-                            <div class="text-caption">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
+                            <div class="text-caption" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
                           </div>
                           <v-chip v-if="group.compose" size="small">{{ $t('compose') }}</v-chip>
                         </div>
@@ -166,7 +164,7 @@
                           {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.State }}
                         </div>
                       </td>
-                      <td>
+                      <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                         {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}
                       </td>
                       <td>
@@ -183,13 +181,28 @@
                       </td>
                       <td>
                         <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
-                          {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.bridge.IPAddress || 'none' }}
+                          {{
+                            getContainerIPAddress(
+                              dockers.find((d) => d.Names && d.Names[0] === containerName),
+                              'none'
+                            )
+                          }}
                         </template>
                         <template v-else-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'host'">
-                          {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks.host.IPAddress || 'none' }}
+                          {{
+                            getContainerIPAddress(
+                              dockers.find((d) => d.Names && d.Names[0] === containerName),
+                              'none'
+                            )
+                          }}
                         </template>
                         <template v-else>
-                          {{ Object.values(dockers.find((d) => d.Names && d.Names[0] === containerName)?.NetworkSettings.Networks)[0]?.IPAddress || 'none' }}
+                          {{
+                            getContainerIPAddress(
+                              dockers.find((d) => d.Names && d.Names[0] === containerName),
+                              'none'
+                            )
+                          }}
                         </template>
                       </td>
                       <td>
@@ -319,7 +332,7 @@
                       <div class="text-caption-2">{{ docker.Names[0] }}</div>
                       <div class="text-caption" :style="{ color: docker.State === 'running' ? 'green' : 'red' }">{{ docker.State }}</div>
                     </td>
-                    <td>{{ docker.Image }}</td>
+                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ docker.Image }}</td>
                     <td>
                       {{
                         docker.Ports && docker.Ports.some((p) => p.PublicPort)
@@ -332,16 +345,16 @@
                     </td>
                     <td>
                       <template v-if="docker.HostConfig.NetworkMode === 'bridge'">
-                        {{ docker.NetworkSettings.Networks.bridge.IPAddress || '-' }}
+                        {{ getContainerIPAddress(docker, '-') }}
                       </template>
                       <template v-else-if="docker.HostConfig.NetworkMode === 'host'">
-                        {{ docker.NetworkSettings.Networks.host.IPAddress || '-' }}
+                        {{ getContainerIPAddress(docker, '-') }}
                       </template>
                       <template v-else>
-                        {{ Object.values(docker.NetworkSettings.Networks)[0]?.IPAddress || '-' }}
-                        <span v-if="Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address">
+                        {{ getContainerIPAddress(docker, '-') }}
+                        <span v-if="getFirstNetwork(docker)?.GlobalIPv6Address">
                           <br />
-                          {{ Object.values(docker.NetworkSettings.Networks)[0]?.GlobalIPv6Address }}
+                          {{ getFirstNetwork(docker)?.GlobalIPv6Address }}
                         </span>
                       </template>
                     </td>
@@ -1571,7 +1584,7 @@ const editComposeStack = async () => {
     env: editComposeStackDialog.env,
     icon: editComposeStackDialog.icon,
   };
-  sendDockerWSCommand('compose-update', updatedCompose );
+  sendDockerWSCommand('compose-update', updatedCompose);
 };
 
 const getComposeStack = async (name) => {
@@ -1605,6 +1618,27 @@ const getContainerNameFromNetworkmode = (networkMode) => {
   const matched = dockers.value.find((d) => (d.Id && (d.Id === ref || d.Id.startsWith(ref))) || (d.Names && d.Names[0] === ref));
 
   return matched ? (matched.Names && matched.Names[0]) || matched.Id : ref;
+};
+
+const getFirstNetwork = (docker) => {
+  if (!docker) return null;
+  const networks = docker.NetworkSettings && docker.NetworkSettings.Networks;
+  if (!networks) return null;
+  const vals = Object.values(networks);
+  return vals && vals.length > 0 ? vals[0] : null;
+};
+
+const getContainerIPAddress = (docker, defaultValue = 'none') => {
+  if (!docker) return defaultValue;
+  const mode = docker.HostConfig && docker.HostConfig.NetworkMode;
+  if (mode === 'bridge') {
+    return docker.NetworkSettings && docker.NetworkSettings.Networks && docker.NetworkSettings.Networks.bridge ? docker.NetworkSettings.Networks.bridge.IPAddress || defaultValue : defaultValue;
+  }
+  if (mode === 'host') {
+    return docker.NetworkSettings && docker.NetworkSettings.Networks && docker.NetworkSettings.Networks.host ? docker.NetworkSettings.Networks.host.IPAddress || defaultValue : defaultValue;
+  }
+  const firstNet = getFirstNetwork(docker);
+  return firstNet ? firstNet.IPAddress || defaultValue : defaultValue;
 };
 
 const showWebui = (docker) => {

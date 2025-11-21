@@ -34,7 +34,8 @@
                       <td>
                         <v-menu v-model="group.menu">
                           <template #activator="{ props }">
-                            <v-icon v-if="group.compose" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
+                            <v-icon v-if="group.icon" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">{{ group.icon }}</v-icon>
+                            <v-icon v-else-if="group.compose" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
                             <v-icon v-else class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
                           <v-list v-if="group.compose">
@@ -472,6 +473,7 @@
       <v-card-title class="text-h6">{{ $t('create docker group') }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="createGroupDialog.name" :label="$t('group name')" required></v-text-field>
+        <v-text-field v-model="createGroupDialog.icon" :label="$t('icon')"></v-text-field>
         <v-select v-model="createGroupDialog.containers" :items="dockers.map((d) => d.Names[0])" :label="$t('select containers')" multiple chips></v-select>
       </v-card-text>
       <v-card-actions>
@@ -489,6 +491,7 @@
       <v-card-title class="text-h6">{{ $t('edit docker group') }} - {{ changeGroupDialog.name }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="changeGroupDialog.name" :label="$t('group name')" required></v-text-field>
+        <v-text-field v-model="changeGroupDialog.icon" :label="$t('icon')"></v-text-field>
         <v-combobox v-model="changeGroupDialog.containers" :items="dockers.map((d) => d.Names[0])" :label="$t('select containers')" multiple chips clearable></v-combobox>
         <draggable v-model="changeGroupDialog.containers" class="d-flex flex-wrap mt-2" :component="'div'">
           <template #item="{ element, index }">
@@ -728,12 +731,14 @@ const infoDialog = reactive({
 const createGroupDialog = reactive({
   value: false,
   name: '',
+  icon: '',
   containers: [],
 });
 const changeGroupDialog = reactive({
   value: false,
   group: null,
   name: '',
+  icon: '',
   containers: [],
 });
 const deleteGroupDialog = reactive({
@@ -1247,6 +1252,7 @@ const createDockerGroup = async () => {
 
   const newGroup = {
     name: createGroupDialog.name.trim(),
+    icon: createGroupDialog.icon.trim(),
     containers: createGroupDialog.containers,
   };
 
@@ -1325,6 +1331,7 @@ const updateDockerGroup = async () => {
 
   const updatedGroup = {
     name: changeGroupDialog.name.trim(),
+    icon: changeGroupDialog.icon.trim(),
     containers: changeGroupDialog.containers,
   };
 
@@ -1661,22 +1668,26 @@ const openDeleteDialog = (docker) => {
 const openCreateGroupDialog = () => {
   createGroupDialog.value = true;
   createGroupDialog.name = '';
+  createGroupDialog.icon = '';
   createGroupDialog.containers = [];
 };
 const clearCreateGroupDialog = () => {
   createGroupDialog.value = false;
   createGroupDialog.name = '';
+  createGroupDialog.icon = '';
   createGroupDialog.containers = [];
 };
 const openChangeGroupDialog = (group) => {
   changeGroupDialog.value = true;
   changeGroupDialog.group = group;
+  changeGroupDialog.icon = group.icon || '';
   changeGroupDialog.name = group.name;
   changeGroupDialog.containers = group.containers || [];
 };
 const clearChangeGroupDialog = () => {
   changeGroupDialog.value = false;
   changeGroupDialog.group = null;
+  changeGroupDialog.icon = '';
   changeGroupDialog.name = '';
   changeGroupDialog.containers = [];
 };

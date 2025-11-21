@@ -88,7 +88,6 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
     });
 
     socket.on('connect', () => {
-        console.log('WebSocket connected');
         wsIsConnected.value = true;
         wsError.value = null;
 
@@ -100,7 +99,6 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
     });
 
     socket.on('connect_error', (err: any) => {
-      console.log('WebSocket connection error:', err);
       wsError.value = `Connection error: ${err.message}`;
       onErrorSnackbar(t('docker command error occurred'), err.message);
       cleanupSocket();
@@ -111,7 +109,6 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
     });
 
     const apply = (data: any) => {
-      console.log('Docker data received:', data);
 
       if (wsOperationDialog.operationId && data.operationId && data.operationId !== wsOperationDialog.operationId) {
         return;
@@ -149,7 +146,6 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
     socket.on('docker-update', apply);
 
     socket.on('error', (err: any) => {
-      console.log('WebSocket error:', err);
       wsError.value = `Socket error: ${err}`;
       onErrorSnackbar(t('docker command error occurred'), String(err));
       cleanupSocket();

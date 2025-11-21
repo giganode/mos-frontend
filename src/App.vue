@@ -345,7 +345,6 @@ function connectNotificationWS() {
   };
 
   ws.onerror = (ev) => {
-    console.log('WebSocket error', ev);
     //showSnackbarError('Notification connection error');
   };
 
@@ -355,7 +354,6 @@ function connectNotificationWS() {
 
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
-    console.log(msg);
     if (msg?.type === 'ping') {
       ws?.send?.(JSON.stringify({ type: 'pong' }));
     } else {

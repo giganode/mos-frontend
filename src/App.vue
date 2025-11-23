@@ -94,6 +94,8 @@ import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { getContrast } from 'vuetify/lib/util/colorUtils';
 import { Toaster } from 'vue-sonner';
+import mosBlack from '/mos_black.png';
+import mosWhite from '/mos_white.png';
 
 const { snackbarPosition } = useSnackbar();
 const theme = useTheme();
@@ -140,7 +142,7 @@ const isDark = computed(() => {
   return contrast < 2.7;
 });
 const logoSrc = computed(() => {
-  return isDark.value ? 'mos_black.png' : 'mos_white.png';
+  return isDark.value ? mosBlack : mosWhite;
 });
 const sonnerPosition = computed(() => {
   switch ((snackbarPosition.value || 'top center').toLowerCase()) {

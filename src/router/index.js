@@ -11,6 +11,7 @@ import Login from "../views/login.vue";
 import FirstSetup from "../views/firstSetup.vue";
 import DockerCreate from "../views/docker/dockerCreate.vue";
 import DockerChange from "../views/docker/dockerChange.vue";
+import CommunityTemplates from "../views/communityTemplates.vue";
 import profile from "../views/profile.vue";
 import mosSettings from "../views/mosSettings.vue";
 import mosSettingsDocker from "../views/mosSettings/dockerService.vue";
@@ -41,6 +42,7 @@ const routes = [
   { path: "/docker", component: Docker, meta: { hideAppBar: false, title: "Docker", description: "Manage Docker containers" } },
   { path: "/docker/create", component: DockerCreate, meta: { hideAppBar: false, title: "Create Docker", description: "Create a new Docker container" } },
   { path: "/docker/change/:docker", component: DockerChange, props: true, meta: { hideAppBar: false, title: "Change Docker", description: "Change Docker container settings" } },
+  { path: "/communityTemplates", component: CommunityTemplates, meta: { hideAppBar: false, title: "Community Templates", description: "Manage community templates" } },
   { path: "/lxc", component: LXC, meta: { hideAppBar: false, title: "LXC", description: "Manage LXC containers" } },
   { path: "/vm", component: Vm, meta: { hideAppBar: false, title: "VM", description: "Manage virtual machines" } },
   { path: "/mosSettings", component: mosSettings, meta: { hideAppBar: false, title: "MOS Settings", description: "Manage MOS settings" } },

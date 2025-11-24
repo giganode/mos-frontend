@@ -738,5 +738,12 @@
   "admin api tokens could not be deleted": "Admin API Tokens konnten nicht gelöscht werden",
   "admin api token could not be created": "Admin API Token konnte nicht erstellt werden",
   "admin api tokens could not be loaded": "Admin API Tokens konnten nicht geladen werden",
-  "profile could not be loaded": "Profil konnte nicht geladen werden"
+  "profile could not be loaded": "Profil konnte nicht geladen werden",
+  "community templates": "Community Vorlagen",
+  "no description": "Keine Beschreibung",
+  "failed to load community templates": "Fehler beim Laden der Community Vorlagen",
+  "no templates found matching your search": "Keine Vorlagen gefunden, die deiner Suche entsprechen",
+  "view": "Ansicht",
+  "webpage": "Webseite",
+  "search templates": "Vorlagen durchsuchen"
 }

@@ -1167,7 +1167,7 @@ const createDockerTerminalSession = async (dockerName) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ command: 'docker', args: ['exec', '-it', dockerName, '/bin/sh'] }),
+      body: JSON.stringify({ command: 'docker', args: ['exec', '-it', dockerName, '/bin/sh'], width: 900, height: 420 }),
     });
 
     if (!res.ok) {
@@ -1195,7 +1195,7 @@ const createLogsTerminalSession = async (dockerName) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ command: 'docker', args: ['logs', '-f', '--tail', '100', dockerName], readonlyOnly: true }),
+      body: JSON.stringify({ command: 'docker', args: ['logs', '-f', '--tail', '100', dockerName], readonlyOnly: true, width: 900, height: 420 }),
     });
 
     if (!res.ok) {

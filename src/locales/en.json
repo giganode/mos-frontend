@@ -738,5 +738,12 @@
   "admin api tokens could not be deleted": "Admin API tokens could not be deleted",
   "admin api token could not be created": "Admin API token could not be created",
   "admin api tokens could not be loaded": "Admin API tokens could not be loaded",
-  "profile could not be loaded": "Profile could not be loaded"
+  "profile could not be loaded": "Profile could not be loaded",
+  "community templates": "Community Templates",
+  "no description": "No description",
+  "failed to load community templates": "Failed to load community templates",
+  "no templates found matching your search": "No templates found matching your search",
+  "view": "View",
+  "webpage": "Webpage",
+  "search templates": "Search templates"
 }

@@ -14,7 +14,7 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n()
 
 onMounted(() => {
-  term = new Terminal({ cursorBlink: true, fontSize: 15 })
+  term = new Terminal({ cursorBlink: true, fontFamily: 'monospace', fontSize: 14});
   term.open(document.getElementById('terminal'))
   term.focus()
 

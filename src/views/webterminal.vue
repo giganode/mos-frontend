@@ -29,7 +29,7 @@ onMounted(async () => {
         await createTerminalSession();
     }
 
-    term = new Terminal({ cursorBlink: true })
+    term = new Terminal({ cursorBlink: true, fontFamily: 'monospace', fontSize: 14});
     term.open(document.getElementById('terminal'))
 
     // Websocket connection through proxy

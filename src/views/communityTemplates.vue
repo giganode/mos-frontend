@@ -48,7 +48,7 @@
                       <v-btn color="secondary" :href="tpl.url" target="_blank" v-if="tpl.url" prepend-icon="mdi-web" size="small">
                         {{ $t('webpage') }}
                       </v-btn>
-                      <v-btn color="secondary" v-if="tpl.link" prepend-icon="mdi-docker" size="small">
+                      <v-btn color="secondary" v-if="tpl.link" prepend-icon="mdi-docker" size="small" @click="$router.push({ path: '/docker/create', query: { urlTemplate: tpl.link } })">
                         {{ $t('install') }}
                       </v-btn>
                     </v-card-actions>

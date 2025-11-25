@@ -1,65 +1,84 @@
-import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/dashboard.vue";
-import Users from "../views/users.vue";
-import Pools from "../views/pools.vue";
-import Disks from "../views/disks.vue";
-import Shares from "../views/shares.vue";
-import Docker from "../views/docker.vue";
-import LXC from "../views/lxc.vue";
-import Vm from "../views/vm.vue";
-import Login from "../views/login.vue";
-import FirstSetup from "../views/firstSetup.vue";
-import DockerCreate from "../views/docker/dockerCreate.vue";
-import DockerChange from "../views/docker/dockerChange.vue";
-import CommunityTemplates from "../views/communityTemplates.vue";
-import profile from "../views/profile.vue";
-import mosSettings from "../views/mosSettings.vue";
-import mosSettingsDocker from "../views/mosSettings/dockerService.vue";
-import mosSettingsLXC from "../views/mosSettings/lxcService.vue";
-import mosSettingsVm from "../views/mosSettings/vmService.vue";
-import mosSettingsNetworkInterfaces from "../views/mosSettings/networkInterfaces.vue";
-import mosSettingsNetworkServices from "../views/mosSettings/networkServices.vue";
-import mosSettingsSystem from "../views/mosSettings/system.vue";
-import mosSettingsCron from "../views/mosSettings/cron.vue";
-import mosSettingsLogs from "../views/mosSettings/logs.vue";
-import mosSettingsDrivers from "../views/mosSettings/drivers.vue";
-import mosSettingsBoot from "../views/mosSettings/boot.vue";
-import webterminal from "../views/webterminal.vue";
-import webterminalPopup from "../views/webterminalPopup.vue";
-import Notifications from "../views/notifications.vue";
-import RemoteMounting from "../views/remoteMounting.vue";
+import { createRouter, createWebHistory } from 'vue-router';
+import Dashboard from '../views/dashboard.vue';
+import Users from '../views/users.vue';
+import Pools from '../views/pools.vue';
+import Disks from '../views/disks.vue';
+import Shares from '../views/shares.vue';
+import Docker from '../views/docker.vue';
+import LXC from '../views/lxc.vue';
+import Vm from '../views/vm.vue';
+import Login from '../views/login.vue';
+import FirstSetup from '../views/firstSetup.vue';
+import DockerCreate from '../views/docker/dockerCreate.vue';
+import DockerChange from '../views/docker/dockerChange.vue';
+import CommunityTemplates from '../views/communityTemplates.vue';
+import profile from '../views/profile.vue';
+import mosSettings from '../views/mosSettings.vue';
+import mosSettingsDocker from '../views/mosSettings/dockerService.vue';
+import mosSettingsLXC from '../views/mosSettings/lxcService.vue';
+import mosSettingsVm from '../views/mosSettings/vmService.vue';
+import mosSettingsNetworkInterfaces from '../views/mosSettings/networkInterfaces.vue';
+import mosSettingsNetworkServices from '../views/mosSettings/networkServices.vue';
+import mosSettingsSystem from '../views/mosSettings/system.vue';
+import mosSettingsCron from '../views/mosSettings/cron.vue';
+import mosSettingsLogs from '../views/mosSettings/logs.vue';
+import mosSettingsDrivers from '../views/mosSettings/drivers.vue';
+import mosSettingsBoot from '../views/mosSettings/boot.vue';
+import webterminal from '../views/webterminal.vue';
+import webterminalPopup from '../views/webterminalPopup.vue';
+import Notifications from '../views/notifications.vue';
+import RemoteMounting from '../views/remoteMounting.vue';
 
 const routes = [
-  { path: "/login", component: Login, meta: { hideAppBar: false, title: "MOS Login", description: "Login to your account" } },
-  { path: "/firstSetup", component: FirstSetup, props: true, meta: { hideAppBar: false, title: "MOS First Setup", description: "Set up your account for the first time" } },
-  { path: "", component: Dashboard, meta: { hideAppBar: false, title: "Dashboard", description: "Overview of your account" } },
-  { path: "/dashboard", component: Dashboard, meta: { hideAppBar: false, title: "Dashboard", description: "Overview of your account" } },
-  { path: "/users", component: Users, meta: { hideAppBar: false, title: "Users", description: "Manage users in your account" } },
-  { path: "/pools", component: Pools, meta: { hideAppBar: false, title: "Pools", description: "Manage storage pools" } },
-  { path: "/disks", component: Disks, meta: { hideAppBar: false, title: "Disks", description: "Manage disks in your account" } },
-  { path: "/shares", component: Shares, meta: { hideAppBar: false, title: "Shares", description: "Manage shares in your account" } },
-  { path: "/remoteMounting", component: RemoteMounting, meta: { hideAppBar: false, title: "Remote Mounting", description: "Manage remote mounting" } },
-  { path: "/docker", component: Docker, meta: { hideAppBar: false, title: "Docker", description: "Manage Docker containers" } },
-  { path: "/docker/create", component: DockerCreate, meta: { hideAppBar: false, title: "Create Docker", description: "Create a new Docker container" } },
-  { path: "/docker/change/:docker", component: DockerChange, props: true, meta: { hideAppBar: false, title: "Change Docker", description: "Change Docker container settings" } },
-  { path: "/communityTemplates", component: CommunityTemplates, meta: { hideAppBar: false, title: "Community Templates", description: "Manage community templates" } },
-  { path: "/lxc", component: LXC, meta: { hideAppBar: false, title: "LXC", description: "Manage LXC containers" } },
-  { path: "/vm", component: Vm, meta: { hideAppBar: false, title: "VM", description: "Manage virtual machines" } },
-  { path: "/mosSettings", component: mosSettings, meta: { hideAppBar: false, title: "MOS Settings", description: "Manage MOS settings" } },
-  { path: "/mosSettings/docker", component: mosSettingsDocker, meta: { hideAppBar: false, title: "MOS Settings - Docker", description: "Manage Docker settings" } },
-  { path: "/mosSettings/lxc", component: mosSettingsLXC, meta: { hideAppBar: false, title: "MOS Settings - LXC", description: "Manage LXC settings" } },
-  { path: "/mosSettings/vm", component: mosSettingsVm, meta: { hideAppBar: false, title: "MOS Settings - VM", description: "Manage VM settings" } },
-  { path: "/mosSettings/networkInterfaces", component: mosSettingsNetworkInterfaces, meta: { hideAppBar: false, title: "MOS Settings - Network Interfaces", description: "Manage Network Interfaces settings" } },
-  { path: "/mosSettings/networkServices", component: mosSettingsNetworkServices, meta: { hideAppBar: false, title: "MOS Settings - Network Services", description: "Manage Network Services settings" } },
-  { path: "/mosSettings/system", component: mosSettingsSystem, meta: { hideAppBar: false, title: "MOS Settings - System", description: "Manage System settings" } },
-  { path: "/mosSettings/cron", component: mosSettingsCron, meta: { hideAppBar: false, title: "MOS Settings - Cron", description: "Manage Cron jobs" } },
-  { path: "/mosSettings/logs", component: mosSettingsLogs, meta: { hideAppBar: false, title: "MOS Settings - Logs", description: "View system logs" } },
-  { path: "/mosSettings/drivers", component: mosSettingsDrivers, meta: { hideAppBar: false, title: "MOS Settings - Drivers", description: "Manage device drivers" } },
-  { path: "/mosSettings/boot", component: mosSettingsBoot, meta: { hideAppBar: false, title: "MOS Settings - Boot", description: "Manage boot settings" } },
-  { path: "/profile", component: profile, meta: { hideAppBar: false, title: "Profile", description: "Manage your profile" } },
-  { path: "/webTerminal", component: webterminal, meta: { hideAppBar: false, title: "Web Terminal", description: "Access the web terminal" } },
-  { path: "/webTerminalPopup", component: webterminalPopup, children: [ { path: "", component: webterminalPopup, meta: { hideAppBar: true, title: "Web Terminal", description: "Access the web terminal" } } ] },
-  { path: "/notifications", component: Notifications, meta: { hideAppBar: false, title: "Notifications", description: "View your notifications" } }
+  { path: '/login', component: Login, meta: { hideAppBar: false, title: 'MOS Login', description: 'Login to your account' } },
+  { path: '/firstSetup', component: FirstSetup, props: true, meta: { hideAppBar: false, title: 'MOS First Setup', description: 'Set up your account for the first time' } },
+  { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
+  { path: '/dashboard', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
+  { path: '/users', component: Users, meta: { hideAppBar: false, title: 'Users', description: 'Manage users in your account' } },
+  { path: '/pools', component: Pools, meta: { hideAppBar: false, title: 'Pools', description: 'Manage storage pools' } },
+  { path: '/disks', component: Disks, meta: { hideAppBar: false, title: 'Disks', description: 'Manage disks in your account' } },
+  { path: '/shares', component: Shares, meta: { hideAppBar: false, title: 'Shares', description: 'Manage shares in your account' } },
+  { path: '/remoteMounting', component: RemoteMounting, meta: { hideAppBar: false, title: 'Remote Mounting', description: 'Manage remote mounting' } },
+  { path: '/docker', component: Docker, meta: { hideAppBar: false, title: 'Docker', description: 'Manage Docker containers' } },
+  {
+    path: '/docker/create',
+    component: DockerCreate,
+    props: (route) => ({
+      urlTemplate: route.query.urlTemplate || '',
+    }),
+    meta: { hideAppBar: false, title: 'Create Docker', description: 'Create a new Docker container' },
+  },
+  { path: '/docker/change/:docker', component: DockerChange, props: true, meta: { hideAppBar: false, title: 'Change Docker', description: 'Change Docker container settings' } },
+  { path: '/communityTemplates', component: CommunityTemplates, meta: { hideAppBar: false, title: 'Community Templates', description: 'Manage community templates' } },
+  { path: '/lxc', component: LXC, meta: { hideAppBar: false, title: 'LXC', description: 'Manage LXC containers' } },
+  { path: '/vm', component: Vm, meta: { hideAppBar: false, title: 'VM', description: 'Manage virtual machines' } },
+  { path: '/mosSettings', component: mosSettings, meta: { hideAppBar: false, title: 'MOS Settings', description: 'Manage MOS settings' } },
+  { path: '/mosSettings/docker', component: mosSettingsDocker, meta: { hideAppBar: false, title: 'MOS Settings - Docker', description: 'Manage Docker settings' } },
+  { path: '/mosSettings/lxc', component: mosSettingsLXC, meta: { hideAppBar: false, title: 'MOS Settings - LXC', description: 'Manage LXC settings' } },
+  { path: '/mosSettings/vm', component: mosSettingsVm, meta: { hideAppBar: false, title: 'MOS Settings - VM', description: 'Manage VM settings' } },
+  {
+    path: '/mosSettings/networkInterfaces',
+    component: mosSettingsNetworkInterfaces,
+    meta: { hideAppBar: false, title: 'MOS Settings - Network Interfaces', description: 'Manage Network Interfaces settings' },
+  },
+  {
+    path: '/mosSettings/networkServices',
+    component: mosSettingsNetworkServices,
+    meta: { hideAppBar: false, title: 'MOS Settings - Network Services', description: 'Manage Network Services settings' },
+  },
+  { path: '/mosSettings/system', component: mosSettingsSystem, meta: { hideAppBar: false, title: 'MOS Settings - System', description: 'Manage System settings' } },
+  { path: '/mosSettings/cron', component: mosSettingsCron, meta: { hideAppBar: false, title: 'MOS Settings - Cron', description: 'Manage Cron jobs' } },
+  { path: '/mosSettings/logs', component: mosSettingsLogs, meta: { hideAppBar: false, title: 'MOS Settings - Logs', description: 'View system logs' } },
+  { path: '/mosSettings/drivers', component: mosSettingsDrivers, meta: { hideAppBar: false, title: 'MOS Settings - Drivers', description: 'Manage device drivers' } },
+  { path: '/mosSettings/boot', component: mosSettingsBoot, meta: { hideAppBar: false, title: 'MOS Settings - Boot', description: 'Manage boot settings' } },
+  { path: '/profile', component: profile, meta: { hideAppBar: false, title: 'Profile', description: 'Manage your profile' } },
+  { path: '/webTerminal', component: webterminal, meta: { hideAppBar: false, title: 'Web Terminal', description: 'Access the web terminal' } },
+  {
+    path: '/webTerminalPopup',
+    component: webterminalPopup,
+    children: [{ path: '', component: webterminalPopup, meta: { hideAppBar: true, title: 'Web Terminal', description: 'Access the web terminal' } }],
+  },
+  { path: '/notifications', component: Notifications, meta: { hideAppBar: false, title: 'Notifications', description: 'View your notifications' } },
 ];
 
 const router = createRouter({
@@ -84,6 +103,6 @@ router.beforeEach((to) => {
     meta.content = description || defaultDescription;
     document.head.appendChild(meta);
   }
-})
+});
 
 export default router;

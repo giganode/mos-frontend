@@ -45,7 +45,7 @@
           <v-list-item v-if="mosServices.docker?.enabled" to="/docker" prepend-icon="mdi-docker">
             <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="mosServices.docker?.enabled" to="/communityTemplates" prepend-icon="mdi-file-document">
+          <v-list-item v-if="mosServices.docker?.enabled" to="/communityTemplates" prepend-icon="mdi-store">
             <v-list-item-title>{{ $t('community templates') }}</v-list-item-title>
           </v-list-item>
           <v-list-item v-if="mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-arrange-send-backward">

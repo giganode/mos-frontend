@@ -749,5 +749,6 @@
   "unknown": "Unbekannt",
   "install": "Installieren",
   "pool types could not be loaded": "Pool-Typen konnten nicht geladen werden",
-  "user settings": "Benutzereinstellungen"
+  "user settings": "Benutzereinstellungen",
+  "template loaded successfully": "Vorlage erfolgreich geladen"
 }

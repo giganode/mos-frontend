@@ -2,7 +2,7 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <v-row align="center">
+        <v-row>
           <v-col cols="auto" class="d-flex align-center">
             <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
           </v-col>
@@ -15,19 +15,6 @@
         <v-card class="px-0" style="margin-bottom: 80px">
           <v-card-text>
             <v-select :items="allTemplatesMixed || []" :label="$t('template')" v-model="form.selectedTemplate" @update:model-value="selectTemplate" dense outlined></v-select>
-            <v-autocomplete
-              :items="selectOnlineTemplate.length > 0 ? selectOnlineTemplate.map(item => item.name) : []"
-              v-model:search="searchOnlineTemplate"
-              :label="$t('search online templates')"
-              clear-icon="mdi-close-circle"
-              append-icon="mdi-download"
-              type="url"
-              class="mb-0"
-              style="margin-bottom: 0"
-              clearable
-              @click:clear="searchTemplate = ''"
-              @click:append="fetchOnlineTemplate()"
-            />
             <v-text-field
               v-model="dockerUrl"
               :label="$t('load from url')"
@@ -379,8 +366,6 @@ const networkMode = ref('');
 const dockerUrl = ref('');
 const gpus = ref([]);
 const gpuIds = ref([]);
-const searchOnlineTemplate = ref('');
-const selectOnlineTemplate = ref([]);
 const form = ref({
   selectedTemplate: '',
   name: '',
@@ -407,13 +392,19 @@ const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDocker
   onCompleted: async () => {},
 });
 
+const props = defineProps({
+  urlTemplate: String,
+});
+
 onMounted(() => {
   window.scrollTo(0, 0);
   getAllTemplates();
   getDockerNetworks();
   getDockerContainers();
   getGPUs();
-  getOnlineTemplates();
+  if (props.urlTemplate) {
+    fetchOnlineTemplate(props.urlTemplate);
+  }
 });
 
 const getDockerNetworks = async () => {
@@ -529,7 +520,7 @@ const removeVariable = (index) => {
   form.value.variables.splice(index, 1);
 };
 
-const fetchDockerTemplateUrl = async () => {
+const fetchDocke1rTemplateUrl = async () => {
   const dockerTemplate = { url: dockerUrl.value };
   try {
     overlay.value = true;
@@ -559,13 +550,7 @@ const fetchDockerTemplateUrl = async () => {
   }
 };
 
-const fetchOnlineTemplate = async () => {
-  const url = selectOnlineTemplate.value.find((item) => item.name === searchOnlineTemplate.value)?.link;
-  if (!url) {
-    showSnackbarError(t('please select a valid online template'));;
-    return;
-  }
-
+const fetchOnlineTemplate = async (url) => {
   try {
     overlay.value = true;
     const res = await fetch(url, {
@@ -719,23 +704,6 @@ const getAllTemplates = async () => {
     const result = await res.json();
     allTemplates.value = result;
     allTemplatesMixed.value = [...result.installed, ...result.removed];
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  }
-};
-
-const getOnlineTemplates = async () => {
-  try {
-    const res = await fetch('https://raw.githubusercontent.com/s3ppo/docker_json_templates/refs/heads/main/index.json', {
-      method: 'GET'
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('could not fetch online templates')}|$| ${error.error || t('unknown error')}`);
-    }
-    selectOnlineTemplate.value = await res.json();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

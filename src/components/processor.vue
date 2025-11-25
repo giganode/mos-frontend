@@ -53,7 +53,7 @@
               <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
                 <div class="core-label text-body-2">
                   <small>
-                    <b>CPU {{ core.number }}</b>
+                    <b>Core-{{ core.number }}</b>
                   </small>
                 </div>
                 <div class="core-bar">
@@ -76,7 +76,7 @@
               <div class="core-row" style="min-width: 0">
                 <div class="core-label text-body-2">
                   <small>
-                    <b>vCPU {{ thread.number }}</b>
+                    <b>Ht-{{ thread.number }}</b>
                   </small>
                 </div>
                 <div class="core-bar">

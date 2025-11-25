@@ -236,8 +236,8 @@
       <v-card-title>{{ $t('create pool') }}</v-card-title>
       <v-card-text>
         <v-form>
-          <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType()" />
           <v-text-field v-model="createPoolDialog.name" :label="$t('name')" />
+          <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType()" />
           <v-select
             v-model="createPoolDialog.devices"
             :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
@@ -509,7 +509,7 @@ const unassignedDisksLoading = ref(true);
 const overlay = ref(false);
 const { t } = useI18n();
 const filesystems = ref([]);
-const poolTypes = ['single', 'mergerfs', 'multi', 'nonraid'];
+const poolTypes = ref([]);
 const raidLevels = ['raid0', 'raid1', 'raid5'];
 const formatDialog = reactive({
   value: false,
@@ -601,6 +601,7 @@ onMounted(async () => {
   getPools();
   getUnassignedDisks();
   getFilesystems();
+  getPoolTypes();
 });
 const openAddMergerfsDevicesDialog = (pool) => {
   addMergerfsDevicesDialog.value = true;
@@ -732,6 +733,26 @@ const getFilesystems = async () => {
     }
     const Result = await res.json();
     filesystems.value = Result || [];
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const getPoolTypes = async () => {
+  try {
+    const res = await fetch('/api/v1/pools/availablepooltypes', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('pool types could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const result = await res.json();
+    poolTypes.value = result || [];
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

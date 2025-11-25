@@ -747,5 +747,7 @@
   "webpage": "Webseite",
   "search templates": "Vorlagen durchsuchen",
   "unknown": "Unbekannt",
-  "install": "Installieren"
+  "install": "Installieren",
+  "pool types could not be loaded": "Pool-Typen konnten nicht geladen werden",
+  "user settings": "Benutzereinstellungen"
 }

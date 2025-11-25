@@ -146,12 +146,12 @@ const getOsInfo = async () => {
 .core-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 
 .core-label {
-  width: 54px;
+  width: 56px;
   display: flex;
   align-items: center;
   flex: 0 0 auto;

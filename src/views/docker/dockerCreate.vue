@@ -554,7 +554,7 @@ const fetchPathTemplate = async (path) => {
   const newPathBody = { template: path }
   try {
     overlay.value = true;
-    const res = await fetch('/api/v1/mos/hub/docker', {
+    const res = await fetch('/api/v1/mos/hub/docker/template', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),

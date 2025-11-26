@@ -70,7 +70,11 @@
               </v-row>
             </v-container>
             <v-container v-else fluid class="pa-4 d-flex justify-center">
-              <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
+              <v-row class="ma-n2" style="width: 100%">
+                <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3" xl="2" class="pa-2">
+                  <v-skeleton-loader type="card" class="pa-0" />
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
         </v-card>

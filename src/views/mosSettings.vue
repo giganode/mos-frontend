@@ -70,9 +70,9 @@
                   <v-icon start>mdi-text-box-outline</v-icon>
                   {{ $t('logs') }}
                 </v-btn>
-                <v-btn color="primary" block rounded to="/mosSettings/boot">
-                  <v-icon start>mdi-usb-flash-drive</v-icon>
-                  {{ $t('boot') }}
+                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/mosHub">
+                  <v-icon start>mdi-hub</v-icon>
+                  {{ $t('mos hub') }}
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -133,6 +133,10 @@
                 <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/drivers">
                   <v-icon start>mdi-expansion-card</v-icon>
                   {{ $t('drivers') }}
+                </v-btn>
+                <v-btn color="primary" block rounded to="/mosSettings/boot">
+                  <v-icon start>mdi-usb-flash-drive</v-icon>
+                  {{ $t('boot') }}
                 </v-btn>
               </v-card-text>
             </v-card>

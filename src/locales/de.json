@@ -763,5 +763,9 @@
   "repositories could not be loaded": "Repositories konnten nicht geladen werden",
   "repositories could not be changed": "Repositories konnten nicht geändert werden",
   "repositories changed successfully": "Repositories erfolgreich geändert",
-  "add repository": "Repository hinzufügen"
+  "add repository": "Repository hinzufügen",
+  "mos hub settings could not be changed": "MOS Hub Einstellungen konnten nicht geändert werden",
+  "mos hub settings changed successfully": "MOS Hub Einstellungen erfolgreich geändert",
+  "mos hub settings could not be loaded": "MOS Hub Einstellungen konnten nicht geladen werden",
+  "initial update": "Initiales Update"
 }

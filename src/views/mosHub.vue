@@ -273,6 +273,7 @@ const setHubRepositories = async (repositories) => {
     }
 
     showSnackbarSuccess(t('repositories changed successfully'));
+    refreshRepositories();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

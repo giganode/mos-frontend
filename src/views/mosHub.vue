@@ -51,11 +51,12 @@
                         {{ $t('webpage') }}
                       </v-btn>
                       <v-btn
-                        v-if="tpl.type == 'docker'"
+                        v-if="tpl.type == 'docker' && mosServices && mosServices.docker"
                         color="secondary"
                         prepend-icon="mdi-docker"
                         size="small"
                         @click="$router.push({ path: '/docker/create', query: { path: tpl.files.template } })"
+                        :disabled="!mosServices.docker.enabled"
                       >
                         {{ $t('install') }}
                       </v-btn>
@@ -155,6 +156,7 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 const overlay = ref(false);
+const mosServices = ref({});
 const searchOnlineTemplate = ref('');
 const hubLoading = ref(true);
 const mosHub = ref([
@@ -186,6 +188,7 @@ const mosHubRepositoriesDialog = reactive({
 
 onMounted(() => {
   getMosHub();
+  getMosServices();
 });
 
 const getMosHub = async (search) => {
@@ -279,6 +282,22 @@ const setHubRepositories = async (repositories) => {
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
+  }
+};
+
+const getMosServices = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/services', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+    mosServices.value = await res.json();
+  } catch (e) {
+    showSnackbarError(e.message);
   }
 };
 

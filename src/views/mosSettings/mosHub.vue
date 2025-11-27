@@ -2,7 +2,7 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('lxc service') }}</h2>
+        <h2>{{ $t('mos hub settings') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader :loading="mosHubLoading" type="card" class="w-100">

@@ -767,5 +767,6 @@
   "mos hub settings could not be changed": "MOS Hub Einstellungen konnten nicht geändert werden",
   "mos hub settings changed successfully": "MOS Hub Einstellungen erfolgreich geändert",
   "mos hub settings could not be loaded": "MOS Hub Einstellungen konnten nicht geladen werden",
-  "initial update": "Initiales Update"
+  "initial update": "Initiales Update",
+  "mos hub settings": "MOS Hub Einstellungen"
 }

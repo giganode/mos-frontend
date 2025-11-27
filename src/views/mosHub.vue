@@ -181,6 +181,7 @@ const mosHub = ref([
     },
   },
 ]);
+const mosHubCount = ref(0);
 const mosHubRepositoriesDialog = reactive({
   value: false,
   repositories: [''],
@@ -202,7 +203,9 @@ const getMosHub = async (search) => {
       },
     });
 
-    mosHub.value = (await res.json()) || [];
+    const result = await res.json();
+    mosHub.value = result.results || [];
+    mosHubCount.value = result.count || 0;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

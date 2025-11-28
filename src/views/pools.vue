@@ -113,7 +113,7 @@
                   <v-list-item-title>{{ $t('delete pool') }}</v-list-item-title>
                 </v-list-item>
                 <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
-                <v-list-item @click="openAddMergerfsDevicesDialog(pool)">
+                <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddMergerfsDevicesDialog(pool)">
                   <v-list-item-title>{{ $t('add devices') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item v-if="pool.type === 'mergerfs'" @click="openRemoveMergerfsDevicesDialog(pool)">
@@ -134,6 +134,9 @@
                 </v-list-item>
                 <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
                   <v-list-item-title>{{ $t('snapraid operation') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidSchedulesDialog(pool)">
+                  <v-list-item-title>{{ $t('snapraid schedules') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -253,7 +256,13 @@
             dense
             multiple="true"
           />
-          <v-select v-if="createPoolDialog.type === 'nonraid'" v-model="createPoolDialog.parity" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('parity')" dense />
+          <v-select
+            v-if="createPoolDialog.type === 'nonraid'"
+            v-model="createPoolDialog.parity"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('parity')"
+            dense
+          />
           <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="raidLevels" :label="$t('raid level')" dense />
           <v-select v-model="createPoolDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense />
           <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.comment" :label="$t('comment')" />
@@ -486,6 +495,31 @@
     </v-card>
   </v-dialog>
 
+  <!-- SnapRAID Schedules Dialog -->
+  <v-dialog v-model="snapraidSchedulesDialog.value" max-width="600">
+    <v-card>
+      <v-card-title class="pa-0">{{ $t('snapraid schedules') }}</v-card-title>
+      <v-card-text class="px-0">
+        <v-form>
+          <v-switch v-model="snapraidSchedulesDialog.sync.enabled" :label="$t('sync')" hide-details="auto" density="compact" color="green" inset />
+          <v-text-field v-model="snapraidSchedulesDialog.sync.schedule" :label="$t('sync schedule (cron)')" hide-details="auto" class="mt-2 mb-4" />
+          <v-switch v-model="snapraidSchedulesDialog.sync.check.enabled" :label="$t('check')" hide-details="auto" density="compact" color="green" inset />
+          <v-text-field v-model="snapraidSchedulesDialog.sync.check.schedule" :label="$t('check schedule (cron)')" hide-details="auto" class="mt-2 mb-4" />
+          <v-switch v-model="snapraidSchedulesDialog.sync.scrub.enabled" :label="$t('scrub')" hide-details="auto" density="compact" color="green" inset />
+          <v-text-field v-model="snapraidSchedulesDialog.sync.scrub.schedule" :label="$t('scrub schedule (cron)')" hide-details="auto" class="mt-2" />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="snapraidSchedulesDialog.value = false" color="onPrimary">
+          {{ $t('cancel') }}
+        </v-btn>
+        <v-btn color="onPrimary" @click="saveSnapraidSchedules(snapraidSchedulesDialog.pool.id, snapraidSchedulesDialog.sync)">
+          {{ $t('save') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -596,6 +630,21 @@ const replaceMergerfsDeviceDialog = reactive({
   newDevice: null,
   format: false,
 });
+const snapraidSchedulesDialog = reactive({
+  value: false,
+  sync: {
+    enabled: false,
+    schedule: '30 0 * * *',
+    check: {
+      enabled: false,
+      schedule: '0 0 * */3 SUN',
+    },
+    scrub: {
+      enabled: false,
+      schedule: '0 4 * * WED',
+    },
+  },
+});
 
 onMounted(async () => {
   getPools();
@@ -633,6 +682,22 @@ const openSnapraidOperationDialog = (pool) => {
   snapraidOperationDialog.value = true;
   snapraidOperationDialog.pool = pool;
   snapraidOperationDialog.operation = '';
+};
+const openSnapraidSchedulesDialog = (pool) => {
+  snapraidSchedulesDialog.value = true;
+  snapraidSchedulesDialog.pool = pool;
+  snapraidSchedulesDialog.sync = pool.config.sync || {
+    enabled: false,
+    schedule: '30 0 * * *',
+    check: {
+      enabled: false,
+      schedule: '0 0 * */3 SUN',
+    },
+    scrub: {
+      enabled: false,
+      schedule: '0 4 * * WED',
+    },
+  };
 };
 const openPassphraseDialog = (pool) => {
   passphraseDialog.value = true;
@@ -1271,6 +1336,38 @@ const performSnapraidOperation = async (poolId, operation) => {
     getPools();
     getUnassignedDisks();
     snapraidOperationDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const saveSnapraidSchedules  = async (id, sync) => {
+  overlay.value = true;
+  const configData = {
+    sync: sync,
+  };
+
+  try {
+    const res = await fetch(`/api/v1/pools/${id}/config`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(configData),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('snapraid schedules could not be saved')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('snapraid schedules saved successfully'));
+    getPools();
+    getUnassignedDisks();
+    snapraidSchedulesDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

@@ -768,5 +768,15 @@
   "mos hub settings changed successfully": "MOS Hub Einstellungen erfolgreich geändert",
   "mos hub settings could not be loaded": "MOS Hub Einstellungen konnten nicht geladen werden",
   "initial update": "Initiales Update",
-  "mos hub settings": "MOS Hub Einstellungen"
+  "mos hub settings": "MOS Hub Einstellungen",
+  "snapraid schedules": "SnapRAID Zeitpläne",
+  "configure snapraid schedules": "SnapRAID Zeitpläne konfigurieren",
+  "sync": "Sync",
+  "scrub": "Scrub",
+  "check": "Check",
+  "sync schedule (cron)": "Sync Zeitplan (Cron)",
+  "scrub schedule (cron)": "Scrub Zeitplan (Cron)",
+  "check schedule (cron)": "Check zeitplan (Cron)",
+  "snapraid schedules could not be saved": "SnapRAID Zeitpläne konnten nicht gespeichert werden",
+  "snapraid schedules saved successfully": "SnapRAID Zeitpläne erfolgreich gespeichert"
 }

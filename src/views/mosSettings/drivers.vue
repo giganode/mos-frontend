@@ -179,6 +179,8 @@ const updateDrivers = async () => {
     const result = await res.json();
     updateDriversDialog.value = false;
     showSnackbarSuccess(t('driver install initiated successfully'));
+    getMosDrivers();
+    getInstalledDrivers();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -227,10 +229,8 @@ const getNamesOfDriver = () => {
 };
 const getVersionOfName = () => {
   if (!updateDriversDialog.driver || !updateDriversDialog.name) return [];
-
   const drivers = mosDrivers.value[updateDriversDialog.driver] || [];
   const names = drivers[updateDriversDialog.name] || [];
-
   return mosDrivers.value[updateDriversDialog.driver][updateDriversDialog.name] || [];
 };
 

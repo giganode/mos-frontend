@@ -204,10 +204,10 @@ onMounted(() => {
   getMosServices();
 });
 
-const getMosHub = async (search, limit = 24, skip = 0) => {
+const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name') => {
   hubLoading.value = true;
   try {
-    const res = await fetch(`/api/v1/mos/hub/index?search=${encodeURIComponent(search || '')}&order=asc&limit=${limit}&skip=${skip}`, {
+    const res = await fetch(`/api/v1/mos/hub/index?search=${encodeURIComponent(search || '')}&order=${order}&sort=${sort}&limit=${limit}&skip=${skip}`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),

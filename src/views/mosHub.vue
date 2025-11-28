@@ -33,18 +33,30 @@
                         <v-img v-if="tpl.icon" :src="tpl.icon" height="60" contain style="max-width: 100%"></v-img>
                         <v-icon v-else size="60" color="grey" style="opacity: 0.5">mdi-package-variant</v-icon>
                       </div>
-                      <v-chip v-if="tpl.type" size="small" style="position: absolute; top: 12px; right: 12px; background: var(--v-theme-primary); color: var(--v-theme-on-primary)">
+                      <v-chip v-if="tpl.type" size="small" class="position-absolute" style="top: 12px; right: 12px; background: var(--v-theme-primary); color: var(--v-theme-on-primary)">
                         {{ $t(tpl.type) }}
                       </v-chip>
                     </v-card-text>
-                    <v-card-title class="pb-1">
-                      <div class="text-h6 font-weight-bold" style="line-height: 1.3">
+                    <v-card-text class="py-2 px-4" style="min-height: 96px">
+                      <div class="text-h6 font-weight-bold mb-1" style="line-height: 1.3">
                         {{ tpl.name || $t('unknown') }}
                       </div>
-                    </v-card-title>
-                    <v-card-text style="flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding-top: 0; max-height: 120px; white-space: pre-wrap">
-                      {{ tpl.description }}
+                      <div
+                        style="
+                          max-height: 3.6em;
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                          display: -webkit-box;
+                          -webkit-line-clamp: 2;
+                          -webkit-box-orient: vertical;
+                          white-space: normal;
+                          font-size: 0.9rem;
+                        "
+                      >
+                        {{ tpl.description }}
+                      </div>
                     </v-card-text>
+                    <v-spacer />
                     <v-divider />
                     <v-card-actions style="flex: 0 0 auto; gap: 4px; padding: 8px">
                       <v-btn color="secondary" :href="tpl.website" target="_blank" v-if="tpl.website" prepend-icon="mdi-web" size="small">
@@ -69,7 +81,12 @@
                     v-model="currentPage"
                     :length="Math.ceil(mosHubCount / pageLimit)"
                     :total-visible="7"
-                    @update:model-value="(page) => { currentPage = page; getMosHub(searchOnlineTemplate, pageLimit, (page - 1) * pageLimit); }"
+                    @update:model-value="
+                      (page) => {
+                        currentPage = page;
+                        getMosHub(searchOnlineTemplate, pageLimit, (page - 1) * pageLimit);
+                      }
+                    "
                   />
                 </v-col>
                 <v-col v-else cols="12">

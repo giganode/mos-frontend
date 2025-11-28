@@ -26,13 +26,24 @@
             <v-divider class="mt-2" />
             <v-container fluid class="pa-4" v-if="!hubLoading">
               <v-row class="ma-n2">
-                <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="3" xl="2" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2">
+                <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2">
                   <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0">
                     <v-card-text class="pa-0 pt-4">
                       <div class="d-flex justify-center">
                         <v-img v-if="tpl.icon" :src="tpl.icon" height="60" contain style="max-width: 100%"></v-img>
                         <v-icon v-else size="60" color="grey" style="opacity: 0.5">mdi-package-variant</v-icon>
                       </div>
+                      <v-chip
+                        v-if="tpl.maintainer"
+                        size="small"
+                        class="position-absolute"
+                        style="top: 12px; left: 12px; background: var(--v-theme-secondary); color: var(--v-theme-on-secondary)"
+                        :href="tpl.donate"
+                        target="_blank"
+                        prepend-icon="mdi-github"
+                      >
+                        {{ tpl.maintainer || $t('unknown') }}
+                      </v-chip>
                       <v-chip v-if="tpl.type" size="small" class="position-absolute" style="top: 12px; right: 12px; background: var(--v-theme-primary); color: var(--v-theme-on-primary)">
                         {{ $t(tpl.type) }}
                       </v-chip>

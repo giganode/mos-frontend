@@ -109,7 +109,7 @@
             </v-container>
             <v-container v-else fluid class="pa-4 d-flex justify-center">
               <v-row class="ma-n2" style="width: 100%">
-                <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3" xl="2" class="pa-2">
+                <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="4" xl="3" class="pa-2">
                   <v-skeleton-loader type="card" class="pa-0" />
                 </v-col>
               </v-row>

@@ -14,8 +14,8 @@
       <v-container fluid class="pa-0">
         <v-card class="px-0" style="margin-bottom: 80px">
           <v-card-text>
-            <v-select :items="allTemplatesMixed || []" :label="$t('template')" v-model="form.selectedTemplate" @update:model-value="selectTemplate" dense outlined></v-select>
-            <v-text-field
+            <v-select :items="allTemplatesMixed || []" :label="$t('template')" v-model="form.selectedTemplate" @update:model-value="selectTemplate" hide-details="auto" dense outlined></v-select>
+            <!--<v-text-field
               v-model="dockerUrl"
               :label="$t('load from url')"
               clear-icon="mdi-close-circle"
@@ -27,7 +27,7 @@
               clearable
               @click:append="fetchDockerTemplateUrl()"
               @click:clear="dockerUrl = ''"
-            />
+            />-->
           </v-card-text>
           <v-divider :color="$vuetify.theme.name === 'dark' ? 'white' : 'black'"></v-divider>
           <v-card-text>
@@ -113,7 +113,7 @@
                   </v-row>
                   <v-row class="mt-n8">
                     <v-col cols="6">
-                      <v-text-field :label="$t('host')" v-model="path.host" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('host')" v-model="path.host" density="compact" hide-details append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { path.host = item.path })" ></v-text-field>
                     </v-col>
                     <v-col cols="6">
                       <v-text-field :label="$t('container')" v-model="path.container" density="compact" hide-details></v-text-field>
@@ -336,6 +336,9 @@
     </v-card>
   </v-dialog>
 
+  <!-- File System Navigator Dialog -->
+  <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
+
   <!-- Floating Action Button -->
   <v-fab color="primary" @click="createDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon color="onPrimary">mdi-content-save</v-icon>
@@ -352,6 +355,7 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
+import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -386,12 +390,8 @@ const form = ref({
 });
 const allTemplates = ref({});
 const allTemplatesMixed = ref([]);
-const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDockerWSCommand, closeWsDialog } = useDockerWebSocket({
-  onErrorSnackbar: showSnackbarError,
-  onSuccessSnackbar: showSnackbarSuccess,
-  onCompleted: async () => {},
-});
-
+const fsDialog = ref(false);
+const fsDialogCallback = ref(null);
 const props = defineProps({
   path: String,
 });
@@ -406,6 +406,24 @@ onMounted(() => {
     fetchPathTemplate(props.path);
   }
 });
+
+const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDockerWSCommand, closeWsDialog } = useDockerWebSocket({
+  onErrorSnackbar: showSnackbarError,
+  onSuccessSnackbar: showSnackbarSuccess,
+  onCompleted: async () => {},
+});
+
+const openFsDialog = (cb) => {
+  fsDialogCallback.value = cb;
+  fsDialog.value = true;
+};
+const handleFsSelected = (item) => {
+  if (typeof fsDialogCallback.value === 'function') {
+    fsDialogCallback.value(item);
+  }
+  fsDialogCallback.value = null;
+  fsDialog.value = false;
+};
 
 const getDockerNetworks = async () => {
   try {

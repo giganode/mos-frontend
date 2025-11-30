@@ -96,7 +96,7 @@
                   </v-row>
                   <v-row class="mt-n8">
                     <v-col cols="6">
-                      <v-text-field :label="$t('host')" v-model="path.host" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('host')" v-model="path.host" density="compact" hide-details append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { path.host = item.path })" ></v-text-field>                      
                     </v-col>
                     <v-col cols="6">
                       <v-text-field :label="$t('container')" v-model="path.container" density="compact" hide-details></v-text-field>
@@ -333,6 +333,9 @@
     </v-card>
   </v-dialog>
 
+  <!-- File System Navigator Dialog -->
+  <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
+
   <!-- Floating Action Button -->
   <v-fab color="primary" @click="updateDocker()" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon color="onPrimary">mdi-content-save</v-icon>
@@ -349,12 +352,10 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
-const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDockerWSCommand, closeWsDialog } = useDockerWebSocket({
-  onErrorSnackbar: showSnackbarError,
-  onSuccessSnackbar: showSnackbarSuccess,
-  onCompleted: async () => {},
-});
+import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 
+const fsDialog = ref(false);
+const fsDialogCallback = ref(null);
 const router = useRouter();
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -385,6 +386,7 @@ const form = reactive({
   variables: [],
   gpus: [],
 });
+
 const props = defineProps({
   docker: String,
 });
@@ -396,6 +398,23 @@ onMounted(() => {
   getDockerContainers();
   getGPUs();
 });
+const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDockerWSCommand, closeWsDialog } = useDockerWebSocket({
+  onErrorSnackbar: showSnackbarError,
+  onSuccessSnackbar: showSnackbarSuccess,
+  onCompleted: async () => {},
+});
+
+const openFsDialog = (cb) => {
+  fsDialogCallback.value = cb;
+  fsDialog.value = true;
+};
+const handleFsSelected = (item) => {
+  if (typeof fsDialogCallback.value === 'function') {
+    fsDialogCallback.value(item);
+  }
+  fsDialogCallback.value = null;
+  fsDialog.value = false;
+};
 
 const getDockerTemplate = async () => {
   try {
@@ -591,68 +610,6 @@ const updateDocker = async () => {
   }));
   const newDocker = { template: changeDocker };
   sendDockerWSCommand('create', newDocker);
-
-  /*
-  const changeDocker = getDocker.value;
-  changeDocker.name = form.name;
-  changeDocker.repo = form.repo;
-  changeDocker.network = form.network;
-  changeDocker.custom_ip = form.custom_ip;
-  changeDocker.default_shell = form.default_shell;
-  changeDocker.privileged = form.privileged;
-  changeDocker.extra_parameters = form.extra_parameters;
-  changeDocker.post_parameters = form.post_parameters;
-  changeDocker.web_ui_url = form.web_ui_url;
-  changeDocker.icon = form.icon;
-  changeDocker.gpus = form.gpus;
-  changeDocker.paths = form.paths.map((path) => ({
-    name: path.name,
-    mode: path.mode,
-    host: path.host,
-    container: path.container,
-  }));
-  changeDocker.ports = form.ports.map((port) => ({
-    name: port.name,
-    protocol: port.protocol,
-    host: port.host,
-    container: port.container,
-  }));
-  changeDocker.devices = form.devices.map((device) => ({
-    name: device.name,
-    host: device.host,
-    container: device.container,
-  }));
-  changeDocker.variables = form.variables.map((variable) => ({
-    name: variable.name,
-    key: variable.key,
-    value: variable.value,
-    mask: variable.mask,
-  }));
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/create`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(changeDocker),
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker container could not be changed')}|$| ${error.error || t('unknown error')}`);
-    }
-    
-    goBackSafely();
-    showSnackbarSuccess(t('docker container changed successfully'));
-
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }*/
 };
 
 const getGPUs = async () => {

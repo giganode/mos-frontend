@@ -77,7 +77,25 @@
         </router-view>
       </v-main>
     </template>
-    <Toaster :position="sonnerPosition" :richColors="true" :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'" :expand="true" />
+    <!-- Top Toaster -->
+    <Toaster id="top-toaster"
+      position="top-center"
+      richColors="true"
+      :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'"
+      expand="true"
+      visibleToasts="3"
+      offset="16"
+    />
+
+    <!-- Bottom Toaster -->
+    <Toaster id="bottom-toaster"
+      position="bottom-center"
+      richColors="true"
+      :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'"
+      expand="true"
+      visibleToasts="3"
+      offset="16"
+    />
   </v-app>
 
   <v-dialog v-model="logoutDialog" width="auto" min-width="400">
@@ -94,7 +112,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Login from './views/login.vue';
 import FirstSetup from './views/firstSetup.vue';
-import { useSnackbar, showSnackbarError, showSnackbarSuccess, showSnackbarInfo, showSnackbarWarning } from './composables/snackbar';
+import { showSnackbarError, showSnackbarSuccess, showSnackbarInfo, showSnackbarWarning } from './composables/snackbar';
 import { useTheme } from 'vuetify';
 import { useI18n } from 'vue-i18n';
 import { getContrast } from 'vuetify/lib/util/colorUtils';
@@ -102,7 +120,6 @@ import { Toaster } from 'vue-sonner';
 import mosBlack from '/mos_black.png';
 import mosWhite from '/mos_white.png';
 
-const { snackbarPosition } = useSnackbar();
 const theme = useTheme();
 const { locale, t } = useI18n();
 const tab = ref('');
@@ -148,22 +165,6 @@ const isDark = computed(() => {
 });
 const logoSrc = computed(() => {
   return isDark.value ? mosBlack : mosWhite;
-});
-const sonnerPosition = computed(() => {
-  switch ((snackbarPosition.value || 'top center').toLowerCase()) {
-    case 'top left':
-      return 'top-left';
-    case 'top right':
-      return 'top-right';
-    case 'bottom left':
-      return 'bottom-left';
-    case 'bottom right':
-      return 'bottom-right';
-    case 'bottom center':
-      return 'bottom-center';
-    default:
-      return 'top-center';
-  }
 });
 
 const checkLoggedIn = async () => {
@@ -366,15 +367,15 @@ function connectNotificationWS() {
     } else {
       notificationsBadge.value = true;
       if (msg?.priority === 'error' || msg?.priority === 'alert') {
-        showSnackbarError(msg?.message || 'New notification received', '', 'mdi-bell-ring', 'top center');
+        showSnackbarError(msg?.message || 'New notification received', '', 'mdi-bell-ring', 'top-toaster');
       } else if (msg?.priority === 'warning') {
-        showSnackbarWarning(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+        showSnackbarWarning(msg?.message || 'New notification received', 'mdi-bell-ring', 'top-toaster');
       } else if (msg?.priority === 'success') {
-        showSnackbarSuccess(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+        showSnackbarSuccess(msg?.message || 'New notification received', 'mdi-bell-ring', 'top-toaster');
       } else if (msg?.priority === 'info') {
-        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top-toaster');
       } else {
-        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top center');
+        showSnackbarInfo(msg?.message || 'New notification received', 'mdi-bell-ring', 'top-toaster');
       }
     }
   };

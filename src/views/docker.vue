@@ -34,7 +34,25 @@
                       <td>
                         <v-menu v-model="group.menu">
                           <template #activator="{ props }">
-                            <v-icon v-if="group.icon" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">{{ group.icon }}</v-icon>
+                            <v-img
+                              v-if="group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
+                              class="drag-handle"
+                              v-bind="props"
+                              :src="`/docker_icons/compose/${group.icon}.png`"
+                              alt="docker image"
+                              width="24"
+                              height="24"
+                              style="cursor: pointer"
+                            >
+                              <template #error>
+                                <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                  <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                                </v-sheet>
+                              </template>
+                            </v-img>
+                            <v-icon v-else-if="group.icon" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">
+                              {{ group.icon }}
+                            </v-icon>
                             <v-icon v-else-if="group.compose" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
                             <v-icon v-else class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
@@ -85,7 +103,7 @@
                             <div style="font-size: 0.9rem">
                               {{ group.name }}
                             </div>
-                            <div class="text-caption" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
+                            <div class="text-caption" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
                           </div>
                           <v-chip v-if="group.compose" size="small">{{ $t('compose') }}</v-chip>
                         </div>
@@ -119,7 +137,7 @@
                               </template>
                             </v-img>
                           </template>
-                          <v-list>
+                          <v-list v-if="!group.compose">
                             <v-list-item
                               v-if="checkWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))"
                               @click="showWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))"
@@ -132,13 +150,23 @@
                             <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'running'" @click="startDocker(containerName)">
                               <v-list-item-title>{{ $t('start') }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'" @click="stopDocker(containerName)">
+                            <v-list-item
+                              v-if="
+                                dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
+                              "
+                              @click="stopDocker(containerName)"
+                            >
                               <v-list-item-title>{{ $t('stop') }}</v-list-item-title>
                             </v-list-item>
                             <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running'" @click="restartDocker(containerName)">
                               <v-list-item-title>{{ $t('restart') }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'" @click="killDocker(containerName)">
+                            <v-list-item
+                              v-if="
+                                dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
+                              "
+                              @click="killDocker(containerName)"
+                            >
                               <v-list-item-title>{{ $t('kill') }}</v-list-item-title>
                             </v-list-item>
                             <v-list-item :to="`/docker/change/${containerName}`">

@@ -70,9 +70,9 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const overlay = ref(false);
 const props = defineProps({
-    template: String,
-    yaml: String,
-    env: String
+  template: String,
+  yaml: String,
+  env: String,
 });
 const composeStack = reactive({
   name: '',
@@ -82,12 +82,12 @@ const composeStack = reactive({
 });
 
 onMounted(() => {
-  console.log(props)
+  console.log(props);
   if (props.template || props.yaml || props.env) {
-      const template = props.template ? decodeURIComponent(props.template) : props.template;
-      const yaml = props.yaml ? decodeURIComponent(props.yaml) : props.yaml;
-      const env = props.env ? decodeURIComponent(props.env) : props.env;
-      getComposeHubTemplate(template, yaml, env);
+    const template = props.template ? decodeURIComponent(props.template) : props.template;
+    const yaml = props.yaml ? decodeURIComponent(props.yaml) : props.yaml;
+    const env = props.env ? decodeURIComponent(props.env) : props.env;
+    getComposeHubTemplate(template, yaml, env);
   }
 });
 
@@ -129,6 +129,16 @@ const getComposeHubTemplate = async (template, yaml, env) => {
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
+  }
+};
+
+const goBackSafely = () => {
+  const canGoBack = window.history.length > 1 && document.referrer && new URL(document.referrer).origin === window.location.origin;
+
+  if (canGoBack) {
+    router.back();
+  } else {
+    router.push('/docker');
   }
 };
 </script>

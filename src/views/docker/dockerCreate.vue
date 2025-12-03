@@ -403,7 +403,7 @@ const allTemplatesMixed = ref([]);
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
 const props = defineProps({
-  path: String,
+  template: String,
 });
 
 onMounted(() => {
@@ -412,8 +412,8 @@ onMounted(() => {
   getDockerNetworks();
   getDockerContainers();
   getGPUs();
-  if (props.path) {
-    fetchPathTemplate(props.path);
+  if (props.template) {
+    getDockerHubTemplate(props.template);
   }
 });
 
@@ -548,38 +548,8 @@ const removeVariable = (index) => {
   form.value.variables.splice(index, 1);
 };
 
-const fetchDocke1rTemplateUrl = async () => {
-  const dockerTemplate = { url: dockerUrl.value };
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/docker/mos/xml_convert`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dockerTemplate),
-    });
-    overlay.value = false;
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('docker template could not be fetched')}|$| ${error.error || t('unknown error')}`);
-    }
-
-    const jsonData = await res.json();
-    fillFormFromJson(jsonData);
-    dockerUrl.value = '';
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(e.message);
-  } finally {
-    overlay.value = false;
-  }
-};
-
-const fetchPathTemplate = async (path) => {
-  const newPathBody = { template: path };
+const getDockerHubTemplate = async (template) => {
+  const newPathBody = { template: template };
   try {
     overlay.value = true;
     const res = await fetch('/api/v1/mos/hub/docker/template', {

@@ -79,7 +79,26 @@
                         color="secondary"
                         prepend-icon="mdi-docker"
                         size="small"
-                        @click="$router.push({ path: '/docker/create', query: { path: tpl.files.template } })"
+                        @click="$router.push({ path: '/docker/create', query: { template: tpl.files.template } })"
+                        :disabled="!mosServices.docker.enabled"
+                      >
+                        {{ $t('install') }}
+                      </v-btn>
+                      <v-btn
+                        v-else-if="tpl.type == 'compose' && mosServices && mosServices.docker"
+                        color="secondary"
+                        prepend-icon="mdi-toy-brick-plus"
+                        size="small"
+                        @click="
+                          $router.push({
+                          path: '/docker/compose',
+                            query: {
+                            template: encodeURIComponent(tpl.files?.template ?? ''),
+                            yaml: encodeURIComponent(tpl.files?.yaml ?? ''),
+                            env: encodeURIComponent(tpl.files?.env ?? ''),
+                            },
+                          })
+                        "
                         :disabled="!mosServices.docker.enabled"
                       >
                         {{ $t('install') }}

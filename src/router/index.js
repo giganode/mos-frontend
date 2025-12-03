@@ -46,12 +46,21 @@ const routes = [
     path: '/docker/create',
     component: DockerCreate,
     props: (route) => ({
-      path: route.query.path || '',
+      template: route.query.template || '',
     }),
     meta: { hideAppBar: false, title: 'Create Docker', description: 'Create a new Docker container' },
   },
   { path: '/docker/change/:docker', component: DockerChange, props: true, meta: { hideAppBar: false, title: 'Change Docker', description: 'Change Docker container settings' } },
-  { path: '/docker/compose', component: DockerCompose, meta: { hideAppBar: false, title: 'Docker Compose', description: 'Manage Docker Compose stacks' } },
+  {
+    path: '/docker/compose',
+    component: DockerCompose,
+    props: (route) => ({
+      template: route.query.template || '',
+      yaml: route.query.yaml || '',
+      env: route.query.env || '',
+    }),
+    meta: { hideAppBar: false, title: 'Docker Compose', description: 'Manage Docker Compose stacks' },
+  },
   { path: '/mosHub', component: mosHub, meta: { hideAppBar: false, title: 'MOS Hub', description: 'Manage MOS Hub' } },
   { path: '/lxc', component: LXC, meta: { hideAppBar: false, title: 'LXC', description: 'Manage LXC containers' } },
   { path: '/vm', component: Vm, meta: { hideAppBar: false, title: 'VM', description: 'Manage virtual machines' } },

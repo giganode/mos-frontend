@@ -787,5 +787,5 @@
   "spin down pool": "Pool Spindown",
   "pool could not be put to sleep": "Pool konnte nicht in den Ruhezustand versetzt werden",
   "pool put to sleep successfully": "Pool erfolgreich in den Ruhezustand versetzt",
-  "boot": "Boot"
+  "extra partition": "Extra Partition"
 }

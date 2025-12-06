@@ -25,6 +25,7 @@
         <v-form>
           <v-select v-model="installToDiskDialog.disk" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" dense />
           <v-select v-model="installToDiskDialog.filesystem" :items="['ext4', 'btrfs', 'xfs', 'vfat']" :label="$t('filesystem')" required outlined></v-select>
+          <v-switch v-model="installToDiskDialog.extra_partition" :label="$t('extra partition')" inset color="green" hide-details="auto"></v-switch>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -47,6 +48,7 @@ const installToDiskDialog = reactive({
   value: false,
   disk: '',
   filesystem: '',
+  extra_partition: false
 });
 
 onMounted(() => {
@@ -57,6 +59,7 @@ const installToDisk = async () => {
   const installToDiskBody = {
     disk: installToDiskDialog.disk,
     filesystem: installToDiskDialog.filesystem,
+    extra_partition: installToDiskDialog.extra_partition
   };
 
   try {

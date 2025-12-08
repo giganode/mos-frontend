@@ -94,7 +94,7 @@
           />
           <v-select
             v-model="addDialog.role"
-            :items="['admin', 'user', 'samba_only']"
+            :items="['admin', 'samba_only']"
             :label="$t('role')"
             required
             @update:modelValue="
@@ -132,7 +132,7 @@
             @click:append-inner="showPassword = !showPassword"
             :required="changeDialog.samba_user"
           />
-          <v-select v-model="changeDialog.role" :items="['admin', 'user', 'samba_only']" :label="$t('role')" required />
+          <v-select v-model="changeDialog.role" :items="['admin', 'samba_only']" :label="$t('role')" required />
           <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="onPrimary" />
         </form>
       </v-card-text>
@@ -204,7 +204,7 @@ const openAddDialog = () => {
   addDialog.value = true;
   addDialog.username = '';
   addDialog.password = '';
-  addDialog.role = 'user';
+  addDialog.role = 'admin';
   addDialog.samba_user = false;
   addDialog.submitted = false;
 };

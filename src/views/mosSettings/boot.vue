@@ -52,7 +52,7 @@
 import { ref, onMounted, reactive, onUnmounted } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
-import FileEditDialog from '@/components/FileEditDialog.vue';
+import FileEditDialog from '@/components/fileEditDialog.vue';
 
 const editFileDialogVisible = ref(false);
 const selectedFilePath = ref('');

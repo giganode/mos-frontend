@@ -5,17 +5,17 @@
         <h2>{{ $t('logs') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card>
+        <v-card fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
-                <v-select v-model="selectedLog" :items="logs" :label="$t('select log file')" outlined dense hide-details @update:modelValue="getLogFileContent(selectedLog, lines)" />
+                <v-select v-model="selectedLog" :items="logs" :label="$t('select log file')" outlined hide-details="auto" @update:modelValue="getLogFileContent(selectedLog, lines)" />
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field v-model="lines" :label="$t('lines')" type="number" outlined dense @keyup.enter="getLogFileContent(selectedLog)" />
+                <v-text-field v-model="lines" :label="$t('lines')" type="number" outlined hide-details="auto" @keyup.enter="getLogFileContent(selectedLog)" />
               </v-col>
             </v-row>
-            <div style="flex-grow: 1; height: calc(100vh - 340px); overflow: auto; white-space: pre; font-family: monospace; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px">
+            <div class="mt-4" style="flex-grow: 1; height: calc(100vh - 340px); overflow: auto; white-space: pre; font-family: monospace; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px">
               <div
                 v-for="(line, idx) in logFileContent.split('\n')"
                 :key="idx"
@@ -35,6 +35,11 @@
       </v-container>
     </v-container>
   </v-container>
+
+  <!-- Floating Action Button -->
+  <v-fab :disabled="!selectedLog" @click="getLogFileContent(selectedLog)" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+    <v-icon>mdi-refresh</v-icon>
+  </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>

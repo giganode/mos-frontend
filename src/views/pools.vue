@@ -35,7 +35,11 @@
               <v-list-item-title class="pt-2 pl-4">{{ $t('disks') }}</v-list-item-title>
               <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id">
                 <template v-slot:prepend>
-                  <v-icon class="cursor-pointer" :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'" @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)">
+                  <v-icon
+                    class="cursor-pointer"
+                    :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                    @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)"
+                  >
                     {{ getDiskIcon(data_device.diskType.type) }}
                   </v-icon>
                 </template>
@@ -65,7 +69,11 @@
               <v-list-item-title class="pt-2 pl-4">{{ $t('parities') }}</v-list-item-title>
               <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
                 <template v-slot:prepend>
-                  <v-icon class="cursor-pointer" :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'" @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)">
+                  <v-icon
+                    class="cursor-pointer"
+                    :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                    @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)"
+                  >
                     {{ getDiskIcon(parity_device.diskType.type) }}
                   </v-icon>
                 </template>
@@ -267,6 +275,7 @@
             v-model="createPoolDialog.parity"
             :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
             :label="$t('parity')"
+            :multiple="true"
             dense
           />
           <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="raidLevels" :label="$t('raid level')" dense />
@@ -1350,7 +1359,7 @@ const performSnapraidOperation = async (poolId, operation) => {
   }
 };
 
-const saveSnapraidSchedules  = async (id, sync) => {
+const saveSnapraidSchedules = async (id, sync) => {
   overlay.value = true;
   const configData = {
     sync: sync,
@@ -1484,11 +1493,8 @@ const replaceMergerfsDevice = async (poolId, oldDevice, newDevice, format) => {
 
 const wakePool = async (pool) => {
   overlay.value = true;
-    const wakePoolData = {
-    devices: [
-      ...(pool.data_devices ? pool.data_devices.map((d) => d.device) : []),
-      ...(pool.parity_devices ? pool.parity_devices.map((d) => d.device) : []),
-    ],
+  const wakePoolData = {
+    devices: [...(pool.data_devices ? pool.data_devices.map((d) => d.device) : []), ...(pool.parity_devices ? pool.parity_devices.map((d) => d.device) : [])],
   };
 
   try {
@@ -1519,10 +1525,7 @@ const wakePool = async (pool) => {
 const sleepPool = async (pool) => {
   overlay.value = true;
   const sleepPoolData = {
-    devices: [
-      ...(pool.data_devices ? pool.data_devices.map((d) => d.device) : []),
-      ...(pool.parity_devices ? pool.parity_devices.map((d) => d.device) : []),
-    ],
+    devices: [...(pool.data_devices ? pool.data_devices.map((d) => d.device) : []), ...(pool.parity_devices ? pool.parity_devices.map((d) => d.device) : [])],
   };
 
   try {

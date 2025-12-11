@@ -54,7 +54,7 @@
                               v-else-if="!group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
                               class="drag-handle"
                               v-bind="props"
-                              :src="`/docker_icons/groups/${group.icon}.png`"
+                              :src="`/docker_icons/groups/${group.icon}`"
                               alt="docker image"
                               width="24"
                               height="24"

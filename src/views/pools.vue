@@ -206,7 +206,7 @@
 
   <!-- Format Dialog -->
   <v-dialog v-model="formatDialog.value" max-width="400">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('confirm format') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to format this disk?') }}
@@ -215,10 +215,10 @@
             <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="onPrimary" />
+            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
           </v-col>
           <v-col cols="12">
-            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="onPrimary" />
+            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="red" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -233,7 +233,7 @@
 
   <!-- Delete Pool Dialog -->
   <v-dialog v-model="deletePoolDialog.value" max-width="400">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('confirm delete') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this pool?') }}
@@ -249,7 +249,7 @@
 
   <!-- Create Pool Dialog -->
   <v-dialog v-model="createPoolDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('create pool') }}</v-card-title>
       <v-card-text>
         <v-form>
@@ -257,7 +257,16 @@
           <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType()" />
           <v-select
             v-model="createPoolDialog.devices"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="
+              Array.isArray(unassignedDisks)
+                ? unassignedDisks.map((disk) => ({
+                    title: `${disk.device} (${disk.size_human})`,
+                    value: disk.device,
+                  }))
+                : []
+            "
+            item-title="title"
+            item-value="value"
             :label="$t('devices')"
             :multiple="createPoolDialog.type !== 'single'"
             dense
@@ -265,7 +274,16 @@
           <v-select
             v-if="createPoolDialog.type === 'mergerfs'"
             v-model="createPoolDialog.snapraidDevice"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="
+              Array.isArray(unassignedDisks)
+                ? unassignedDisks.map((disk) => ({
+                    title: `${disk.device} (${disk.size_human})`,
+                    value: disk.device,
+                  }))
+                : []
+            "
+            item-title="title"
+            item-value="value"
             :label="$t('snapraid device')"
             dense
             multiple="true"
@@ -273,7 +291,16 @@
           <v-select
             v-if="createPoolDialog.type === 'nonraid'"
             v-model="createPoolDialog.parity"
-            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :items="
+              Array.isArray(unassignedDisks)
+                ? unassignedDisks.map((disk) => ({
+                    title: `${disk.device} (${disk.size_human})`,
+                    value: disk.device,
+                  }))
+                : []
+            "
+            item-title="title"
+            item-value="value"
             :label="$t('parity')"
             :multiple="true"
             dense
@@ -292,11 +319,11 @@
               </div>
             </v-slide-y-transition>
           </div>
-          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="onPrimary" inset />
-          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
-          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" density="compact" color="onPrimary" inset />
+          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="green" inset />
+          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
+          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" density="compact" color="red" inset />
           <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
-          <v-switch v-if="createPoolDialog.encrypted" v-model="createPoolDialog.create_keyfile" :label="$t('create keyfile')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-if="createPoolDialog.encrypted" v-model="createPoolDialog.create_keyfile" :label="$t('create keyfile')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -310,7 +337,7 @@
 
   <!-- Passphrase Dialog -->
   <v-dialog v-model="passphraseDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('enter passphrase') }}</v-card-title>
       <v-card-text>
         <v-form>
@@ -328,7 +355,7 @@
 
   <!-- Add Mergerfs Device Dialog -->
   <v-dialog v-model="addMergerfsDevicesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('add devices') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select devices to add to pool') }}</p>
@@ -340,7 +367,7 @@
             :multiple="true"
             dense
           />
-          <v-switch v-model="addMergerfsDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="addMergerfsDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -354,7 +381,7 @@
 
   <!-- Remove MergerfsDevice Dialog -->
   <v-dialog v-model="removeMergerfsDevicesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('remove devices') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select devices to remove from pool') }}</p>
@@ -366,7 +393,7 @@
             :multiple="true"
             dense
           />
-          <v-switch v-model="removeMergerfsDevicesDialog.unmount" :label="$t('unmount')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="removeMergerfsDevicesDialog.unmount" :label="$t('unmount')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -380,7 +407,7 @@
 
   <!-- Replace Mergerfs Device Dialog -->
   <v-dialog v-model="replaceMergerfsDeviceDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('replace device') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select device to replace') }}</p>
@@ -392,7 +419,7 @@
             dense
           />
           <v-select v-model="replaceMergerfsDeviceDialog.newDevice" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('new device')" dense />
-          <v-switch v-model="replaceMergerfsDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="replaceMergerfsDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -409,13 +436,13 @@
 
   <!-- Add Parity Devices Dialog -->
   <v-dialog v-model="addParityDevicesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('add parity devices') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
           <v-select v-model="addParityDevicesDialog.devices" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('devices')" :multiple="true" dense />
-          <v-switch v-model="addParityDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="addParityDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -429,7 +456,7 @@
 
   <!-- Remove Parity Devices Dialog -->
   <v-dialog v-model="removeParityDevicesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('remove parity devices') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select parity devices to remove') }}</p>
@@ -441,7 +468,7 @@
             :multiple="true"
             dense
           />
-          <v-switch v-model="removeParityDevicesDialog.unmount" :label="$t('unmount')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="removeParityDevicesDialog.unmount" :label="$t('unmount')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -455,7 +482,7 @@
 
   <!-- Replace Parity Device Dialog -->
   <v-dialog v-model="replaceParityDeviceDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('replace parity device') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select device to replace parity') }}</p>
@@ -467,7 +494,7 @@
             dense
           />
           <v-select v-model="replaceParityDeviceDialog.newDevice" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('new device')" dense />
-          <v-switch v-model="replaceParityDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="onPrimary" inset />
+          <v-switch v-model="replaceParityDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -484,7 +511,7 @@
 
   <!-- SnapRAID Operation Dialog -->
   <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('snapraid operations') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('select the snapraid operation to be performed') }}</p>
@@ -512,7 +539,7 @@
 
   <!-- SnapRAID Schedules Dialog -->
   <v-dialog v-model="snapraidSchedulesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="pa-0">{{ $t('snapraid schedules') }}</v-card-title>
       <v-card-text class="px-0">
         <v-form>
@@ -1093,6 +1120,7 @@ const deletePool = async (poolId) => {
     clearDeletePoolDialog();
     getPools();
     getUnassignedDisks();
+    getPoolTypes();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

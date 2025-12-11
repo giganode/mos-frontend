@@ -10,7 +10,7 @@
           <v-card-text class="pa-0">
             <v-table class="bg-transparent">
               <thead>
-                <tr style="cursor: pointer; background-color: rgba(0,0,0,0.04);">
+                <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
                   <th style="width: 42px"></th>
                   <th style="min-width: 250px">{{ $t('name') }}</th>
                   <th style="width: 42px">{{ $t('state') }}</th>
@@ -35,10 +35,26 @@
                         <v-menu v-model="group.menu">
                           <template #activator="{ props }">
                             <v-img
-                              v-if="group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
+                              v-if="group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
                               class="drag-handle"
                               v-bind="props"
                               :src="`/docker_icons/compose/${group.icon}.png`"
+                              alt="docker image"
+                              width="24"
+                              height="24"
+                              style="cursor: pointer"
+                            >
+                              <template #error>
+                                <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                  <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                                </v-sheet>
+                              </template>
+                            </v-img>
+                            <v-img
+                              v-else-if="!group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
+                              class="drag-handle"
+                              v-bind="props"
+                              :src="`/docker_icons/groups/${group.icon}.png`"
                               alt="docker image"
                               width="24"
                               height="24"

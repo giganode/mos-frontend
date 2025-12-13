@@ -104,6 +104,14 @@ const DEFAULT_RIGHT = [
   { id: 'memory', kind: 'Memory' },
   { id: 'disks', kind: 'Disks' },
 ];
+const DEFAULT_VISIBILITY = {
+  OS: true,
+  Processor: true,
+  Pools: true,
+  Network: true,
+  Memory: true,
+  Disks: true,
+};
 const kindKeyMap = {
   OS: 'os',
   Processor: 'processor',
@@ -121,6 +129,7 @@ const visibility = ref({
   Memory: true,
   Disks: true,
 });
+
 
 let socket = null;
 
@@ -148,13 +157,15 @@ const loadLayout = () => {
     if (saved?.left && saved?.right) {
       left.value = saved.left.map(({ id, kind }) => ({ id, kind }));
       right.value = saved.right.map(({ id, kind }) => ({ id, kind }));
-      visibility.value = saved.visibility || {};
+      visibility.value = { ...DEFAULT_VISIBILITY, ...(saved.visibility || {}) };
       return;
     }
   } catch (_) {}
+
   left.value = DEFAULT_LEFT;
   right.value = DEFAULT_RIGHT;
-}
+  visibility.value = { ...DEFAULT_VISIBILITY };
+};
 
 const saveLayout = () => {
   localStorage.setItem(

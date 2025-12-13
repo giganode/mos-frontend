@@ -83,14 +83,14 @@
         </v-row>
 
         <v-row v-for="(parity_device, devIdx) in pool.parity_devices ?? []" :key="`parity-${devIdx}`" dense class="py-0" style="flex-wrap: nowrap; overflow: hidden">
-          <v-col cols="3" sm="3" class="d-flex align-center py-1" style="gap: 6px; min-width: 0; overflow: hidden">
+          <v-col cols="3" sm="3" class="d-flex align-center py-1" style="gap: 3px; min-width: 0; overflow: hidden">
             <span
               style="display: inline-block; width: 7px; height: 7px; border-radius: 999px; background: rgba(255, 180, 0, 0.9); box-shadow: 0 0 0 2px rgba(255, 180, 0, 0.16); flex: 0 0 auto"
             ></span>
             <div class="text-body-2" :title="parity_device.device" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; min-width: 0">
               <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: baseline">
                 {{ parity_device.device }}
-                <span class="text-caption text-medium-emphasis" style="line-height: 1.1; font-size: inherit; display: inline; vertical-align: baseline; margin-left: 6px; overflow: hidden">
+                <span class="text-caption text-medium-emphasis ma-0 pa-0" style="line-height: 1.1; font-size: inherit; display: inline; vertical-align: baseline; margin-left: 6px; overflow: hidden">
                   (parity)
                 </span>
               </span>

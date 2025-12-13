@@ -540,8 +540,8 @@
   <!-- SnapRAID Schedules Dialog -->
   <v-dialog v-model="snapraidSchedulesDialog.value" max-width="600">
     <v-card class="pa-0">
-      <v-card-title class="pa-0">{{ $t('snapraid schedules') }}</v-card-title>
-      <v-card-text class="px-0">
+      <v-card-title>{{ $t('snapraid schedules') }}</v-card-title>
+      <v-card-text>
         <v-form>
           <v-switch v-model="snapraidSchedulesDialog.sync.enabled" :label="$t('sync')" hide-details="auto" density="compact" color="green" inset />
           <v-text-field v-model="snapraidSchedulesDialog.sync.schedule" :label="$t('sync schedule (cron)')" hide-details="auto" class="mt-2 mb-4" />

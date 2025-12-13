@@ -798,7 +798,9 @@
   "edit config": "Edit config",
   "read": "Read",
   "write": "Write",
+  "written": "Written",
   "r/s": "R/s",
   "w/s": "W/s",
-  "widget settings": "Widget Settings"  
+  "widget settings": "Widget Settings",
+  "device(s)": "Device(s)"
 }

@@ -5,29 +5,29 @@
         <h2>{{ t('dashboard') }}</h2>
       </v-container>
 
-      <div class="masonry-grid">
+      <div class="masonry-grid" style="margin-bottom: 80px">
         <!-- Left Column -->
         <draggable v-model="left" group="widgets" item-key="id" handle=".drag-handle" class="column" ghost-class="ghost" animation="150">
           <template #item="{ element }">
-            <div class="card">
+            <div class="card" v-if="widgetVisible(element.kind)">
               <div class="card-head">
                 <span class="drag-handle">⋮⋮</span>
                 <span>{{ labelFor(element.kind) }}</span>
               </div>
-              <component :is="components[element.kind]" v-bind="widgetProps(element.kind)" v-if="widgetVisible(element.kind)" />
+              <component :is="components[element.kind]" v-bind="widgetProps(element.kind)"  />
             </div>
           </template>
         </draggable>
 
         <!-- Right Column -->
-        <draggable v-model="right" group="widgets" item-key="id" handle=".drag-handle" class="column" ghost-class="ghost" animation="150">
-          <template #item="{ element }">
-            <div class="card">
+        <draggable v-model="right" group="widgets" item-key="id" handle=".drag-handle" class="column" ghost-class="ghost" animation="150" >
+          <template #item="{ element }" >
+            <div class="card" v-if="widgetVisible(element.kind)">
               <div class="card-head">
                 <span class="drag-handle">⋮⋮</span>
                 <span>{{ labelFor(element.kind) }}</span>
               </div>
-              <component :is="components[element.kind]" v-bind="widgetProps(element.kind)" v-if="widgetVisible(element.kind)" />
+              <component :is="components[element.kind]" v-bind="widgetProps(element.kind)"  />
             </div>
           </template>
         </draggable>
@@ -47,9 +47,8 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <spacer />
         <v-btn color="onPrimary" text @click="settingsDialog = false">{{ t('close') || 'Close' }}</v-btn>
-        <v-btn color="onPrimary" @click="saveLayout()">{{ t('save') || 'Save' }}</v-btn>
+        <v-btn color="onPrimary" @click="saveLayout(); settingsDialog = false">{{ t('save') || 'Save' }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -73,6 +72,7 @@ import OS from '../components/os.vue';
 import Network from '../components/network.vue';
 import Pools from '../components/pools.vue';
 import Disks from '../components/disks.vue';
+import { vi } from 'vuetify/locale';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -148,6 +148,7 @@ const loadLayout = () => {
     if (saved?.left && saved?.right) {
       left.value = saved.left.map(({ id, kind }) => ({ id, kind }));
       right.value = saved.right.map(({ id, kind }) => ({ id, kind }));
+      visibility.value = saved.visibility || {};
       return;
     }
   } catch (_) {}
@@ -161,11 +162,12 @@ const saveLayout = () => {
     JSON.stringify({
       left: left.value.map(({ id, kind }) => ({ id, kind })),
       right: right.value.map(({ id, kind }) => ({ id, kind })),
+      visibility: visibility.value,
     })
   );
 }
 
-watch([left, right], saveLayout, { deep: true });
+watch([left, right, visibility], saveLayout, { deep: true });
 
 const widgetProps = (kind) => {
   switch (kind) {
@@ -183,13 +185,14 @@ const widgetProps = (kind) => {
 }
 
 const widgetVisible = (kind) => {
-  if (kind === 'OS') return true;
-  if (kind === 'Processor') return !!cpu.value;
-  if (kind === 'Network') return !!network.value;
-  if (kind === 'Memory') return !!memory.value;
-  if (kind === 'Pools') return true;
-  if (kind === 'Disks') return !!pools.value;
-  return true;
+  if (visibility.value && visibility.value[kind] === false) return false;
+  if (kind === 'OS') return !!visibility.value?.OS;
+  if (kind === 'Processor') return !!visibility.value?.Processor && !!cpu.value;
+  if (kind === 'Network') return !!visibility.value?.Network && !!network.value;
+  if (kind === 'Memory') return !!visibility.value?.Memory && !!memory.value;
+  if (kind === 'Pools') return !!visibility.value?.Pools;
+  if (kind === 'Disks') return !!visibility.value?.Disks && !!pools.value;
+  return !!visibility.value?.[kind];
 }
 
 const getLoad = async () => {

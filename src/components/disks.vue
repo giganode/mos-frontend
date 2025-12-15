@@ -57,7 +57,7 @@
           </v-col>
           <v-col cols="2" sm="2" class="py-1" style="min-width: 0; overflow: hidden">
             <div class="text-body-2" style="font-variant-numeric: tabular-nums; line-height: 1.1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-              {{ data_device.temperature ?? '—' }}°
+              {{ data_device.temperature ?? '—' }}{{ data_device.temperature ? '°' : '' }}
             </div>
           </v-col>
         </v-row>
@@ -88,7 +88,7 @@
           </v-col>
           <v-col cols="2" sm="2" class="py-1" style="min-width: 0; overflow: hidden">
             <div class="text-body-2" style="font-variant-numeric: tabular-nums; line-height: 1.1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-              {{ parity_device.temperature ?? '—' }}°
+              {{ parity_device.temperature ?? '—' }}{{ parity_device.temperature ? '°' : '' }}
             </div>
           </v-col>          
         </v-row>

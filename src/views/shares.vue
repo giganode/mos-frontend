@@ -25,9 +25,15 @@
                       </template>
                       <v-list>
                         <v-list-item @click="openDeleteDialog(share)">
+                          <template #prepend>
+                            <v-icon>mdi-delete</v-icon>
+                          </template>
                           <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                         </v-list-item>
                         <v-list-item @click="openEditDialog(share)">
+                          <template #prepend>
+                            <v-icon>mdi-text-box-edit</v-icon>
+                          </template>
                           <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                         </v-list-item>
                       </v-list>

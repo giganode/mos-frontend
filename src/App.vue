@@ -25,7 +25,7 @@
           </v-btn>
         </v-badge>
       </v-app-bar>
-      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer">
+      <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" :temporary="!display.mdAndUp.value">
         <v-list>
           <v-list-item to="/dashboard" prepend-icon="mdi-view-dashboard">
             <v-list-item-title>{{ $t('dashboard') }}</v-list-item-title>
@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import Login from './views/login.vue';
 import FirstSetup from './views/firstSetup.vue';
 import { showSnackbarError, showSnackbarSuccess, showSnackbarInfo, showSnackbarWarning } from './composables/snackbar';
@@ -119,12 +119,14 @@ import { getContrast } from 'vuetify/lib/util/colorUtils';
 import { Toaster } from 'vue-sonner';
 import mosBlack from '/mos_black.png';
 import mosWhite from '/mos_white.png';
+import { useDisplay } from 'vuetify';
 
+const display = useDisplay()
 const theme = useTheme();
 const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
-const isWideScreen = computed(() => typeof window !== 'undefined' && window.innerWidth > 600);
+const isWideScreen = computed(() => display.mdAndUp.value)
 const loggedIn = ref(false);
 const token = ref('');
 const logoutDialog = ref(false);
@@ -138,6 +140,10 @@ const RECONNECT_BASE_DELAY = 1000;
 let ws = null;
 let reconnectTimer = null;
 let reconnectAttempts = 0;
+
+watch(drawer, (val) => {
+  localStorage.setItem('drawer', String(val))
+})
 
 onMounted(async () => {
   if (tab.value === '') {
@@ -324,9 +330,8 @@ const getNotificationsBadge = async () => {
 };
 
 const toggleDrawer = () => {
-  drawer.value = !drawer.value;
-  localStorage.setItem('drawer', drawer.value);
-};
+  drawer.value = !drawer.value
+}
 
 const getDrawerState = () => {
   if (localStorage.getItem('drawer')) {

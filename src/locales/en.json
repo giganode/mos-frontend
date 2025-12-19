@@ -810,5 +810,10 @@
   "parity valid": "Parity valid",
   "add parity device": "Add parity device",
   "start after creation": "Start after creation",
-  "edit file": "Edit file"
+  "edit file": "Edit file",
+  "template file available": "Template file available",
+  "created": "Created",
+  "maintainer": "Maintainer",
+  "installation summary": "Installation summary",
+  "stack images": "Stack Images"
 }

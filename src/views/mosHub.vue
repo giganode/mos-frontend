@@ -79,7 +79,11 @@
                         color="secondary"
                         prepend-icon="mdi-docker"
                         size="small"
-                        @click="$router.push({ path: '/docker/create', query: { template: tpl.files.template } })"
+                        @click="
+                          installDialog.tpl = tpl;
+                          installDialog.type = 'docker';
+                          installDialog.value = true;
+                        "
                         :disabled="!mosServices.docker.enabled"
                       >
                         {{ $t('install') }}
@@ -90,14 +94,9 @@
                         prepend-icon="mdi-toy-brick-plus"
                         size="small"
                         @click="
-                          $router.push({
-                          path: '/docker/compose',
-                            query: {
-                            template: encodeURIComponent(tpl.files?.template ?? ''),
-                            yaml: encodeURIComponent(tpl.files?.yaml ?? ''),
-                            env: encodeURIComponent(tpl.files?.env ?? ''),
-                            },
-                          })
+                          installDialog.tpl = tpl;
+                          installDialog.type = 'compose';
+                          installDialog.value = true;
                         "
                         :disabled="!mosServices.docker.enabled"
                       >
@@ -200,6 +199,116 @@
     </v-list>
   </v-menu>
 
+  <!-- Install/Details Dialog -->
+  <v-dialog v-model="installDialog.value" max-width="760" scrollable>
+    <v-card rounded="lg" class="pa-0">
+      <v-card-title class="px-6 pt-6 pb-4">
+        <div class="d-flex align-center w-100" style="gap: 16px">
+          <v-avatar size="52" rounded="lg">
+            <v-img v-if="installDialog.tpl?.icon" :src="installDialog.tpl?.icon" height="60" contain style="max-width: 100%"></v-img>
+            <v-icon v-else size="28" color="on-surface-variant">mdi-package-variant</v-icon>
+          </v-avatar>
+          <div class="flex-grow-1" style="min-width: 0">
+            <div class="text-h6 font-weight-bold text-truncate">
+              {{ installDialog.tpl?.name || $t('unknown') }}
+            </div>
+            <div class="text-body-2 text-medium-emphasis text-truncate">
+              {{ installDialog.tpl?.maintainer || $t('unknown') }}
+            </div>
+          </div>
+          <v-chip v-if="installDialog.tpl?.type" size="small" variant="tonal" color="primary" class="text-uppercase">
+            {{ $t(installDialog.tpl.type) }}
+          </v-chip>
+        </div>
+      </v-card-title>
+      <v-divider />
+      <v-card-text class="px-3 py-3">
+        <v-row class="align-stretch" dense>
+          <v-col cols="12" md="8">
+            <div v-if="installDialog.tpl?.description" class="text-body-2 mb-4 pr-8" style="white-space: pre-line">
+              {{ installDialog.tpl.description }}
+            </div>
+            <v-list density="compact" lines="one" class="pa-0">
+              <v-list-item v-if="installDialog.tpl?.website" :href="installDialog.tpl.website" target="_blank" rel="noopener noreferrer" class="text-truncate" style="text-transform: none">
+                <template #prepend>
+                  <v-icon>mdi-web</v-icon>
+                </template>
+                <v-list-item-title class="text-truncate">
+                    {{ $t('webpage') }}
+                </v-list-item-title>
+                <template #append>
+                  <v-icon size="18" class="text-medium-emphasis">mdi-open-in-new</v-icon>
+                </template>
+              </v-list-item>
+              <v-list-item v-if="installDialog.tpl?.repository">
+                <template #prepend>
+                  <v-icon>mdi-source-repository</v-icon>
+                </template>
+                <v-list-item-title class="text-truncate">
+                  {{ installDialog.tpl.repository }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-card variant="tonal" color="surface-variant" rounded="lg" class="pa-4">
+              <div class="text-caption text-medium-emphasis mb-3">
+                {{ $t('installation summary') }}
+              </div>
+              <div class="text-body-2">
+                <div class="d-flex justify-space-between" style="gap: 12px">
+                  <span class="text-medium-emphasis">{{ $t('type') }}</span>
+                  <span class="font-weight-medium">{{ installDialog.tpl?.type || $t('unknown') }}</span>
+                </div>
+                <div v-if="installDialog.tpl?.maintainer" class="d-flex justify-space-between mt-2" style="gap: 12px">
+                  <span class="text-medium-emphasis">{{ $t('maintainer') }}</span>
+                  <span class="font-weight-medium text-truncate">{{ installDialog.tpl.maintainer }}</span>
+                </div>
+                <div v-if="installDialog.tpl?.created_at" class="d-flex justify-space-between mt-2" style="gap: 12px">
+                  <span class="text-medium-emphasis">{{ $t('created') }}</span>
+                  <span class="font-weight-medium">
+                    {{ new Date(installDialog.tpl.created_at * 1000).toLocaleDateString() }}
+                  </span>
+                </div>
+              </div>
+            </v-card>
+            <v-alert v-if="mosServices?.docker && !mosServices.docker.enabled" class="mt-4" type="warning" variant="tonal" density="compact">
+              {{ $t('service not available') }}
+            </v-alert>
+          </v-col>
+        </v-row>
+      </v-card-text>
+
+      <v-divider />
+
+      <v-card-actions class="px-6 py-4">
+        <v-spacer />
+        <v-btn variant="text" @click="installDialog.value = false">
+          {{ $t('cancel') }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          :disabled="!mosServices?.docker?.enabled"
+          :prepend-icon="installDialog.type === 'docker' ? 'mdi-docker' : 'mdi-toy-brick-plus'"
+          @click="
+            installDialog.type === 'docker'
+              ? $router.push({ path: '/docker/create', query: { template: installDialog.tpl.files.template } })
+              : $router.push({
+                  path: '/docker/compose',
+                  query: {
+                    template: encodeURIComponent(installDialog.tpl.files?.template ?? ''),
+                    yaml: encodeURIComponent(installDialog.tpl.files?.yaml ?? ''),
+                    env: encodeURIComponent(installDialog.tpl.files?.env ?? ''),
+                  },
+                })
+          "
+        >
+          {{ $t('install') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
@@ -216,6 +325,11 @@ const overlay = ref(false);
 const mosServices = ref({});
 const searchOnlineTemplate = ref('');
 const hubLoading = ref(true);
+const installDialog = reactive({
+  value: false,
+  tpl: null,
+  type: '',
+});
 
 const mosHub = ref([
   {

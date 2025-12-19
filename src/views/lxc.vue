@@ -108,8 +108,9 @@
     </v-container>
   </v-container>
 
-  <v-dialog v-model="createDialog.value" max-width="500">
-    <v-card>
+  <!-- Create LXC Dialog -->
+  <v-dialog v-model="createDialog.value" max-width="600">
+    <v-card class="pa-0">
       <v-card-title>{{ $t('create lxc container') }}</v-card-title>
       <v-card-text>
         <v-form>
@@ -117,11 +118,14 @@
           <v-select v-model="createDialog.distribution" :items="images.map((image) => image.name)" :label="$t('distribution')" required />
           <v-select v-model="createDialog.release" :items="getReleasesfromDistribution(createDialog.distribution)" :label="$t('release')" required />
           <v-select v-model="createDialog.arch" :items="getArchitectuesfromDistribution(createDialog.distribution, createDialog.release)" :label="$t('architecture')" required />
+          <v-textarea v-model="createDialog.description" :label="$t('description')" rows="2" />
+          <v-switch v-model="createDialog.autostart" :label="$t('autostart')" class="mt-2" inset density="compact" hide-details="auto" color="green"/>
+          <v-switch v-model="createDialog.start_after_creation" :label="$t('start after creation')" class="mt-2" inset density="compact" hide-details="auto" color="green"/>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn text @click="createDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="createLXC()">
           {{ $t('create') }}
         </v-btn>
@@ -129,15 +133,16 @@
     </v-card>
   </v-dialog>
 
+  <!-- Delete LXC Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('delete') }} {{ deleteDialog.lxc.name }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this lxc container?') }}
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="deleteDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn text @click="deleteDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="removeLXC(deleteDialog.lxc.name)">
           {{ $t('delete') }}
         </v-btn>
@@ -145,7 +150,8 @@
     </v-card>
   </v-dialog>
 
-  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('Config bearbeiten')" @saved="onFileSaved" />
+  <!-- File Edit Dialog -->
+  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('edit file')" @saved="onFileSaved" />
 
   <!-- Floating Action Button -->
   <v-fab @click="openCreateDialog()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
@@ -178,6 +184,9 @@ const createDialog = reactive({
   distribution: null,
   release: null,
   architectures: null,
+  autostart: false,
+  description: '',
+  start_after_creation: false,
 });
 const deleteDialog = reactive({
   value: false,
@@ -195,7 +204,6 @@ const openFileEditor = (path) => {
   editFileDialogVisible.value = true;
 };
 const onFileSaved = (file) => {};
-
 
 const getLXCs = async () => {
   try {
@@ -356,6 +364,9 @@ const createLXC = async () => {
     distribution: createDialog.distribution,
     release: createDialog.release,
     arch: createDialog.arch,
+    autostart: createDialog.autostart,
+    description: createDialog.description,
+    start_after_creation: createDialog.start_after_creation
   };
 
   try {
@@ -438,7 +449,7 @@ const createLXCTerminalSession = async (lxcName) => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('failed to create terminal session')}|$| ${error.error || t('unknown error')}`);
-    }    
+    }
 
     const Result = await res.json();
     return Result.sessionId;
@@ -465,7 +476,7 @@ const switchAutostart = async (lxc) => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('autostart setting could not be saved')}|$| ${error.error || t('unknown error')}`);
-    }    
+    }
 
     showSnackbarSuccess(t('autostart setting saved successfully'));
   } catch (e) {
@@ -501,7 +512,7 @@ const onDragEnd = async () => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('lxc container order could not be saved')}|$| ${error.error || t('unknown error')}`);
-    }   
+    }
 
     showSnackbarSuccess(t('lxc container order saved successfully'));
   } catch (e) {
@@ -635,14 +646,14 @@ const checkWebui = (lxc) => {
 const showWebui = (lxc) => {
   if (!lxc.webui) return;
   let webui = lxc.webui;
-  
+
   // Replace [ADDRESS] with first IPv4 address of the container
   const addressMatch = webui.match(/\[ADDRESS\]/g);
   if (addressMatch) {
     const ipv4 = Array.isArray(lxc.ipv4) && lxc.ipv4.length > 0 ? lxc.ipv4[0] : '';
     webui = webui.replace(/\[ADDRESS\]/g, ipv4);
   }
-  
+
   window.open(webui, '_blank');
 };
 </script>

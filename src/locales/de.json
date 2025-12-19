@@ -808,5 +808,7 @@
   "select device to add to pool": "Wähle Gerät zum Hinzufügen zum Pool aus",
   "passphrase (if encrypted)": "Passphrase (falls verschlüsselt)",
   "parity valid": "Parität gültig",
-  "add parity device": "Paritätsgerät hinzufügen"
+  "add parity device": "Paritätsgerät hinzufügen",
+  "start after creation": "Nach der Erstellung starten",
+  "edit file": "Datei bearbeiten"
 }

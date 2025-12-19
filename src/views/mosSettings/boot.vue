@@ -41,7 +41,7 @@
     </v-card>
   </v-dialog>
 
-  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('Config bearbeiten')" @saved="onFileSaved" />
+  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('edit file')" @saved="onFileSaved" />
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular indeterminate size="64" color="primary" />

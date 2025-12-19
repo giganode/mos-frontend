@@ -9,9 +9,9 @@
         <v-card class="w-100">
           <v-card-text>
             <v-form>
-              <v-switch :label="$t('lxc service')" color="onPrimary" inset density="compact"
+              <v-switch :label="$t('lxc service')" color="green" inset density="compact"
                 v-model="settingsLXC.enabled"></v-switch>
-              <v-switch :label="$t('bridge')" color="onPrimary" inset density="compact"
+              <v-switch :label="$t('bridge')" color="green" inset density="compact"
                 v-model="settingsLXC.bridge"></v-switch>
               <v-text-field :label="$t('directory')" v-model="settingsLXC.directory" hide-details="auto" append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { settingsLXC.directory = item.path })"></v-text-field>
             </v-form>

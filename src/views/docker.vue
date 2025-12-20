@@ -10,19 +10,19 @@
           <v-card-text class="pa-0">
             <v-table class="bg-transparent">
               <thead>
-                <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
-                  <th style="width: 42px"></th>
-                  <th style="min-width: 250px">{{ $t('name') }}</th>
-                  <th style="width: 42px">{{ $t('state') }}</th>
-                  <th style="min-width: 150px">
+                <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04);">
+                  <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
+                  <th style="min-width: 250px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
+                  <th style="width: 42px; padding: 4px 8px; vertical-align: middle">{{ $t('state') }}</th>
+                  <th style="min-width: 150px; padding: 4px 8px; vertical-align: middle">
                     {{ $t('image') }}
                   </th>
-                  <th style="width: 250px">{{ $t('ports') }}</th>
-                  <th>{{ $t('ip address') }}</th>
-                  <th>{{ $t('network') }}</th>
-                  <th style="width: 90px">{{ $t('autostart') }}</th>
-                  <th style="width: 42px">{{ $t('info') }}</th>
-                  <th style="width: 42px"></th>
+                  <th style="width: 250px; padding: 4px 8px; vertical-align: middle">{{ $t('ports') }}</th>
+                  <th style="padding: 4px 8px; vertical-align: middle">{{ $t('ip address') }}</th>
+                  <th style="padding: 4px 8px; vertical-align: middle">{{ $t('network') }}</th>
+                  <th style="width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('autostart') }}</th>
+                  <th style="width: 42px; padding: 4px 8px; vertical-align: middle">{{ $t('info') }}</th>
+                  <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
                 </tr>
               </thead>
 
@@ -172,15 +172,7 @@
                       <td>&nbsp;</td>
                       <td>&nbsp;</td>
                       <td>
-                        <v-switch
-                          v-if="group.compose"
-                          v-model="group.autostart"
-                          color="green"
-                          hide-details
-                          density="compact"
-                          @click.stop
-                          @change="switchComposeAutostart(group)"
-                        />
+                        <v-switch v-if="group.compose" v-model="group.autostart" color="green" hide-details density="compact" @click.stop @change="switchComposeAutostart(group)" />
                       </td>
                       <td>&nbsp;</td>
                       <td>

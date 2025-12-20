@@ -204,10 +204,10 @@
     <v-card rounded="lg" class="pa-0">
       <v-card-title class="px-6 pt-6 pb-4">
         <div class="d-flex align-center w-100" style="gap: 16px">
-          <v-avatar size="52" rounded="lg">
-            <v-img v-if="installDialog.tpl?.icon" :src="installDialog.tpl?.icon" height="60" contain style="max-width: 100%"></v-img>
-            <v-icon v-else size="28" color="on-surface-variant">mdi-package-variant</v-icon>
-          </v-avatar>
+            <div class="d-flex align-center me-4" style="min-width:60px">
+              <v-img v-if="installDialog.tpl?.icon" :src="installDialog.tpl?.icon" height="60" contain style="max-width: 100%"></v-img>
+              <v-icon v-else size="28" color="on-surface-variant">mdi-package-variant</v-icon>
+            </div>
           <div class="flex-grow-1" style="min-width: 0">
             <div class="text-h6 font-weight-bold text-truncate">
               {{ installDialog.tpl?.name || $t('unknown') }}
@@ -236,10 +236,15 @@
                 <v-list-item-title class="text-truncate">
                     {{ $t('webpage') }}
                 </v-list-item-title>
-                <template #append>
-                  <v-icon size="18" class="text-medium-emphasis">mdi-open-in-new</v-icon>
-                </template>
               </v-list-item>
+              <v-list-item v-if="installDialog.tpl?.donate" :href="installDialog.tpl.donate" target="_blank" rel="noopener noreferrer" class="text-truncate" style="text-transform: none">
+                <template #prepend>
+                  <v-icon>mdi-gift</v-icon>
+                </template>
+                <v-list-item-title class="text-truncate">
+                  {{ $t('donate') }}
+                </v-list-item-title>
+              </v-list-item>              
               <v-list-item v-if="installDialog.tpl?.repository">
                 <template #prepend>
                   <v-icon>mdi-source-repository</v-icon>
@@ -253,7 +258,7 @@
           <v-col cols="12" md="4">
             <v-card variant="tonal" color="surface-variant" rounded="lg" class="pa-4">
               <div class="text-caption text-medium-emphasis mb-3">
-                {{ $t('installation summary') }}
+                {{ $t('template') }}
               </div>
               <div class="text-body-2">
                 <div class="d-flex justify-space-between" style="gap: 12px">
@@ -263,6 +268,12 @@
                 <div v-if="installDialog.tpl?.maintainer" class="d-flex justify-space-between mt-2" style="gap: 12px">
                   <span class="text-medium-emphasis">{{ $t('maintainer') }}</span>
                   <span class="font-weight-medium text-truncate">{{ installDialog.tpl.maintainer }}</span>
+                </div>
+                <div v-if="installDialog.tpl?.maintainer_donate" class="d-flex justify-space-between mt-2" style="gap: 12px">
+                  <span class="text-medium-emphasis">{{ $t('donate') }}</span>
+                  <a :href="installDialog.tpl.maintainer_donate" target="_blank" class="font-weight-medium text-truncate">
+                    <v-icon>mdi-gift</v-icon>
+                  </a>
                 </div>
                 <div v-if="installDialog.tpl?.created_at" class="d-flex justify-space-between mt-2" style="gap: 12px">
                   <span class="text-medium-emphasis">{{ $t('created') }}</span>
@@ -278,16 +289,14 @@
           </v-col>
         </v-row>
       </v-card-text>
-
       <v-divider />
-
       <v-card-actions class="px-6 py-4">
         <v-spacer />
-        <v-btn variant="text" @click="installDialog.value = false">
+        <v-btn color="onPrimary" variant="text" @click="installDialog.value = false">
           {{ $t('cancel') }}
         </v-btn>
         <v-btn
-          color="primary"
+          color="onPrimary"
           :disabled="!mosServices?.docker?.enabled"
           :prepend-icon="installDialog.type === 'docker' ? 'mdi-docker' : 'mdi-toy-brick-plus'"
           @click="

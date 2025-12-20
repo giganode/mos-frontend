@@ -26,28 +26,40 @@
               @update:modelValue="changeByteUnit()"
             />
             <v-text-field v-model="expiryDays" :label="$t('ui session expiry time (days)')" append-icon="mdi-content-save" type="number" min="1" max="365" @click:append="changeUiSessionExpiry()" />
-            <h3>{{ $t('uicolor') }}</h3>
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('uicolor') }}</span>
             <v-color-picker v-model="color" show-swatches hide-canvas hide-sliders hide-inputs @update:modelValue="changePrimaryColor" />
-            <h3 class="mt-4 d-flex align-center">
-              {{ $t('admin api tokens') }}
-              <v-btn icon size="small" class="ml-2" @click="openAdminTokenDialog()" color="onPrimary">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </h3>
-            <v-card v-for="token in adminTokens" :key="token.id" class="mt-4">
+            <v-row class="mt-4">
+              <v-col cols="12" class="d-flex align-center justify-space-between py-0">
+                <span class="text-subtitle-1 font-weight-medium">{{ $t('admin api tokens') }}</span>
+                <v-btn
+                  variant="text"
+                  size="small"
+                  color="green"
+                  class="ma-1 pa-0 float-right"
+                  style="min-width: 0"
+                  @click="openAdminTokenDialog()"
+                  title="Add admin api token"
+                  aria-label="add admin api token"
+                >
+                  <v-icon size="18" class="mr-1">mdi-plus</v-icon>
+                  {{ $t('add') }}
+                </v-btn>
+              </v-col>
+            </v-row>            
+            <v-card v-for="token in adminTokens" :key="token.id" class="mt-4 pa-0">
               <v-card-title class="d-flex justify-space-between align-center">
                 <div>
                   {{ token.name }}
                   <v-chip v-if="token.description" class="ml-2" size="small">{{ token.description }}</v-chip>
                 </div>
               </v-card-title>
-              <v-card-text>
+              <v-card-text class="pb-0">
                 <v-text-field
                   v-model="token.token"
                   :type="showPassword ? 'text' : 'password'"
                   readonly
                   label="Token"
-                  hide-details
+                  hide-details="auto"
                   :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   @click:append-inner="showPassword = !showPassword"
                 />

@@ -205,10 +205,10 @@
     <v-card rounded="lg" class="pa-0">
       <v-card-title class="px-6 pt-6 pb-4">
         <div class="d-flex align-center w-100" style="gap: 16px">
-            <div class="d-flex align-center me-4" style="min-width:60px">
-              <v-img v-if="installDialog.tpl?.icon" :src="installDialog.tpl?.icon" height="60" contain style="max-width: 100%"></v-img>
-              <v-icon v-else size="28" color="on-surface-variant">mdi-package-variant</v-icon>
-            </div>
+          <div class="d-flex align-center me-4" style="min-width: 60px">
+            <v-img v-if="installDialog.tpl?.icon" :src="installDialog.tpl?.icon" height="60" contain style="max-width: 100%"></v-img>
+            <v-icon v-else size="28" color="on-surface-variant">mdi-package-variant</v-icon>
+          </div>
           <div class="flex-grow-1" style="min-width: 0">
             <div class="text-h6 font-weight-bold text-truncate">
               {{ installDialog.tpl?.name || $t('unknown') }}
@@ -235,7 +235,7 @@
                   <v-icon>mdi-web</v-icon>
                 </template>
                 <v-list-item-title class="text-truncate">
-                    {{ $t('webpage') }}
+                  {{ $t('webpage') }}
                 </v-list-item-title>
               </v-list-item>
               <v-list-item v-if="installDialog.tpl?.donate" :href="installDialog.tpl.donate" target="_blank" rel="noopener noreferrer" class="text-truncate" style="text-transform: none">
@@ -245,7 +245,7 @@
                 <v-list-item-title class="text-truncate">
                   {{ $t('donate') }}
                 </v-list-item-title>
-              </v-list-item>              
+              </v-list-item>
               <v-list-item v-if="installDialog.tpl?.repository">
                 <template #prepend>
                   <v-icon>mdi-source-repository</v-icon>

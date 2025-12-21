@@ -816,5 +816,10 @@
   "maintainer": "Maintainer",
   "installation summary": "Installation summary",
   "stack images": "Stack Images",
-  "donate": "Donate"
+  "donate": "Donate",
+  "wait times": "Wait Times",
+  "set wait times": "Set Wait Times",
+  "wait (sec)": "Wait (Sec)",
+  "wait times saved successfully": "Wait times saved successfully",
+  "wait times could not be saved": "Wait times could not be saved"  
 }

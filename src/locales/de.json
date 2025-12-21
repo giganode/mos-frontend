@@ -1,5 +1,5 @@
 {
-  "mos slogan": "Das bessere NAS",
+  "mos slogan": "Dein privates NAS",
   "welcome back": "Willkommen zurück",
   "logged in successfully": "Erfolgreich angemeldet",
   "dashboard": "Dashboard",
@@ -816,5 +816,10 @@
   "maintainer": "Betreuer",
   "installation summary": "Installationsübersicht",
   "stack images": "Stack Images",
-  "donate": "Spenden"
+  "donate": "Spenden",
+  "wait times": "Wartezeiten",
+  "set wait times": "Wartezeiten festlegen",
+  "wait (sec)": "Warten (Sek.)",
+  "wait times saved successfully": "Wartezeiten erfolgreich gespeichert",
+  "wait times could not be saved": "Wartezeiten konnten nicht gespeichert werden"
 }

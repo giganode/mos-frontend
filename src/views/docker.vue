@@ -10,7 +10,7 @@
           <v-card-text class="pa-0">
             <v-table class="bg-transparent">
               <thead>
-                <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04);">
+                <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
                   <th style="min-width: 250px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle">{{ $t('state') }}</th>
@@ -522,7 +522,7 @@
 
   <!-- Delete Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6" v-if="deleteDialog.docker">{{ $t('delete') }} {{ deleteDialog.docker.Names[0] }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this docker container?') }}
@@ -539,7 +539,7 @@
 
   <!-- Info Dialog -->
   <v-dialog v-model="infoDialog.value" max-width="500">
-    <v-card v-if="infoDialog.docker">
+    <v-card v-if="infoDialog.docker" class="pa-0">
       <v-card-title class="text-h6">{{ infoDialog.docker.Names[0] }}</v-card-title>
       <v-card-text>
         <div>
@@ -598,7 +598,7 @@
 
   <!-- Create Group Dialog -->
   <v-dialog v-model="createGroupDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('create docker group') }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="createGroupDialog.name" :label="$t('group name')" required></v-text-field>
@@ -616,7 +616,7 @@
 
   <!-- Change Group Dialog -->
   <v-dialog v-model="changeGroupDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('edit docker group') }} - {{ changeGroupDialog.name }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="changeGroupDialog.name" :label="$t('group name')" required></v-text-field>
@@ -643,7 +643,7 @@
 
   <!-- Delete Group Dialog -->
   <v-dialog v-model="deleteGroupDialog.value" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6" v-if="deleteGroupDialog.group">{{ $t('delete') }} - {{ deleteGroupDialog.group.name }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this docker group?') }}
@@ -660,7 +660,7 @@
 
   <!-- Unused Images Dialog -->
   <v-dialog v-model="unusedImagesDialog.value" max-width="600">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('unused docker images') }}</v-card-title>
       <v-card-text>
         <div v-if="unusedImages.length === 0">{{ $t('no unused images found') }}</div>
@@ -728,7 +728,7 @@
 
   <!-- Docker Compose Dialog -->
   <v-dialog v-model="createComposeStackDialog.value" max-width="800">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('docker compose') }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="createComposeStackDialog.name" :label="$t('stack name')" required></v-text-field>
@@ -748,7 +748,7 @@
 
   <!--Docker Compose Edit Dialog -->
   <v-dialog v-model="editComposeStackDialog.value" max-width="800">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('edit docker compose stack') }} - {{ editComposeStackDialog.name }}</v-card-title>
       <v-card-text>
         <v-text-field v-model="editComposeStackDialog.name" :label="$t('stack name')" readonly></v-text-field>
@@ -768,7 +768,7 @@
 
   <!--Docker Compose Remove Dialog -->
   <v-dialog v-model="removeComposeStackDialog.value" max-width="500" persistent>
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('remove docker compose stack') }} - {{ removeComposeStackDialog.name }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to remove this docker compose stack? all containers in this stack will be removed.') }}
@@ -778,6 +778,31 @@
         <v-btn color="onPrimary" @click="removeComposeStackDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="removeComposeStack(removeComposeStackDialog.name)">
           {{ $t('remove') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Docker Waittime dialog -->
+  <v-dialog v-model="dockerWaitTimesDialog.value" persistent width="500">
+    <v-card max-height="80vh" style="display: flex; flex-direction: column;" class="pa-0">
+      <v-card-title class="text-h6 pb-0">{{ $t('wait times') }}</v-card-title>
+      <v-card-text style="overflow: auto; flex: 1; padding-bottom: 0;" class="px-1">
+        <v-row v-for="d in dockers" :key="d.Id" class="d-flex align-center pa-0 ma-0 ml-2">
+          <v-col cols="8" class="pa-0 ma-0 mb-1">
+            <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ d.Names?.[0] }}</div>
+          </v-col>
+          <v-col cols="4" class="px-2 py-0 ma-0 mb-2">
+            <v-text-field density="compact" dense hide-details="auto" type="number" min="0" max="999" maxlength="3" v-model="d.wait" :label="$t('wait (sec)')"/>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer />
+        <v-btn text color="onPrimary" @click="dockerWaitTimesDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn text color="onPrimary" @click="updateDockerWaitTimes()">
+          {{ $t('save') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -808,6 +833,12 @@
           <v-icon>mdi-folder-plus</v-icon>
         </template>
         <v-list-item-title>{{ $t('create docker group') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="dockerWaitTimesDialog.value = true">
+        <template v-slot:prepend>
+          <v-icon>mdi-timer-sand</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('set wait times') }}</v-list-item-title>
       </v-list-item>
       <v-list-item @click="openUnusedImagesDialog()">
         <template v-slot:prepend>
@@ -852,6 +883,9 @@ const composeStacks = ref([]);
 const overlay = ref(false);
 const menu = ref(false);
 const unusedImages = ref([]);
+const dockerWaitTimesDialog = reactive({
+  value: false,
+});
 const deleteDialog = reactive({
   value: false,
   docker: null,
@@ -972,6 +1006,7 @@ const getDockers = async () => {
     result.forEach((docker) => {
       const mos = mosResult.find((item) => item.name === docker.Names[0]);
       docker.autostart = mos ? mos.autostart : false;
+      docker.wait = mos ? mos.wait : 0;
     });
 
     dockers.value = result;
@@ -1758,6 +1793,37 @@ const restartComposeStack = async (name) => {
     getDockers();
     getDockerGroups();
     showSnackbarSuccess(t('docker compose stack restarted successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateDockerWaitTimes = async () => {
+  const waitTimes = dockers.value.map((docker) => ({
+    name: docker.Names[0],
+    wait: docker.wait,
+  }));
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/docker/mos/containers', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(waitTimes),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('wait times could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('wait times saved successfully'));
+    dockerWaitTimesDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

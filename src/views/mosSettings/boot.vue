@@ -123,8 +123,6 @@ const getUnassignedDisks = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    unassignedDisksLoading.value = false;
   }
 };
 </script>

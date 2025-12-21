@@ -51,7 +51,7 @@
 
   <!-- Notification Detail Dialog -->
   <v-dialog v-model="notificationDialog.value" max-width="600px">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ notificationDialog.notification.title }}</v-card-title>
       <v-card-text>
         <p>{{ notificationDialog.notification.message }}</p>
@@ -65,7 +65,7 @@
 
   <!-- Read All Dialog -->
   <v-dialog v-model="readAllDialog.value" max-width="600px">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('mark all as read') }}</v-card-title>
       <v-card-text>
         <p>{{ $t('are you sure you want to mark all notifications as read?') }}</p>

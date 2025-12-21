@@ -71,7 +71,7 @@
           <v-select v-model="newRemoteDialog.version" :items="['1.0', '2.0', '2.1', '3.0', '3.02', '3.1.1', '3.2']" :label="$t('version')" required></v-select>
           <!--<v-text-field v-model.number="newRemoteDialog.uid" :label="$t('uid')" type="number" required></v-text-field>
           <v-text-field v-model.number="newRemoteDialog.gid" :label="$t('gid')" type="number" required></v-text-field>-->
-          <v-switch v-model="newRemoteDialog.auto_mount" :label="$t('automount')" inset color="onPrimary"></v-switch>
+          <v-switch v-model="newRemoteDialog.auto_mount" :label="$t('automount')" inset color="green"></v-switch>
         </v-form>
       </v-card-text>
       <v-card-actions>

@@ -167,7 +167,7 @@
 
   <!-- Update OS Dialog -->
   <v-dialog v-model="updateOsDialog.value" width="auto">
-    <v-card max-width="600" prepend-icon="mdi-update" :title="t('update system')">
+    <v-card max-width="600" prepend-icon="mdi-update" :title="t('update system')" class="pa-0">
       <v-card-text>
         <p class="mb-4">{{ t('please select your target firmware!') }}</p>
         <p v-if="osInfo && osInfo.mos">
@@ -195,7 +195,7 @@
 
   <!-- Update Kernel Dialog -->
   <v-dialog v-model="updateKernelDialog.value" width="auto">
-    <v-card max-width="600" prepend-icon="mdi-engine" :title="t('update kernel')">
+    <v-card max-width="600" prepend-icon="mdi-engine" :title="t('update kernel')" class="pa-0">
       <v-card-text>
         <p class="mb-4">{{ t('please select your target kernel release!') }}</p>
         <v-select v-model="updateKernelDialog.version" :items="['recommended', ...mosKernel.map((k) => k.tag_name)]" :label="t('kernel release')" />
@@ -209,7 +209,7 @@
 
   <!-- Rollback Kernel Dialog -->
   <v-dialog v-model="rollbackKernelDialog" width="auto">
-    <v-card max-width="600" prepend-icon="mdi-undo" :title="t('rollback kernel')">
+    <v-card max-width="600" prepend-icon="mdi-undo" :title="t('rollback kernel')" class="pa-0">
       <v-card-text>
         <p class="mb-4">{{ t('are you sure you want to rollback to the previous kernel version?') }}</p>
       </v-card-text>
@@ -222,7 +222,7 @@
 
   <!-- Reboot Dialog -->
   <v-dialog v-model="rebootDialog" width="auto">
-    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to reboot your system?')" :title="t('reboot')">
+    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to reboot your system?')" :title="t('reboot')" class="pa-0">
       <v-card-actions>
         <v-btn color="onPrimary" :text="t('cancel')" @click="rebootDialog = false"></v-btn>
         <v-btn color="onPrimary" :text="t('ok')" @click="rebootOS"></v-btn>
@@ -232,7 +232,7 @@
 
   <!-- Shutdown Dialog -->
   <v-dialog v-model="shutdownDialog" width="auto">
-    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to shutdown your system?')" :title="t('shutdown')">
+    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to shutdown your system?')" :title="t('shutdown')" class="pa-0">
       <v-card-actions>
         <v-btn color="onPrimary" :text="t('cancel')" @click="shutdownDialog = false"></v-btn>
         <v-btn color="onPrimary" :text="t('ok')" @click="shutdownOS"></v-btn>

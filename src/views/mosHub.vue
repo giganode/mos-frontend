@@ -142,7 +142,7 @@
 
   <!-- Repositories Dialog -->
   <v-dialog v-model="mosHubRepositoriesDialog.value" max-width="600px">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('repositories') }}</v-card-title>
       <v-card-text class="pa-0">
         <v-container fluid>

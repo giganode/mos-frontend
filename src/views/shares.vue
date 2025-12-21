@@ -51,7 +51,7 @@
 
   <!-- Create Dialog -->
   <v-dialog v-model="createDialog.value" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('create share') }}</v-card-title>
       <v-card-text>
         <v-form>
@@ -68,17 +68,17 @@
             <div v-if="createDialog.showAdvanced">
               <v-text-field v-model="createDialog.create_mask" :label="$t('create mask')" required />
               <v-text-field v-model="createDialog.directory_mask" :label="$t('directory mask')" required />
-              <v-switch v-model="createDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-              <v-switch v-model="createDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-              <v-switch v-model="createDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-              <v-switch v-model="createDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-              <v-switch v-model="createDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
+              <v-switch v-model="createDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
+              <v-switch v-model="createDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
+              <v-switch v-model="createDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
+              <v-switch v-model="createDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
+              <v-switch v-model="createDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
             </div>
           </v-slide-y-transition>
-          <v-switch v-model="createDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="createDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="createDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="createDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
+          <v-switch v-model="createDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="createDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="createDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="createDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -94,7 +94,7 @@
 
   <!-- Delete Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="400">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('confirm delete') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this share?') }}
@@ -113,7 +113,7 @@
 
   <!-- Edit Dialog -->
   <v-dialog v-model="editDialog.value" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('edit share') }}</v-card-title>
       <v-card-text>
         <v-form>
@@ -122,15 +122,15 @@
           <v-text-field v-model="editDialog.comment" :label="$t('comment')" clearable />
           <v-select v-model="editDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
           <v-select v-model="editDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
-          <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
-          <v-switch v-model="editDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="onPrimary" />
+          <v-switch v-model="editDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
+          <v-switch v-model="editDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
         </v-form>
       </v-card-text>
       <v-card-actions>

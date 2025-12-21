@@ -43,6 +43,7 @@
     </v-container>
   </v-container>
 
+  <!-- Delete User Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="400">
     <v-card>
       <v-card-title>{{ $t('confirm delete') }}</v-card-title>
@@ -60,6 +61,7 @@
     </v-card>
   </v-dialog>
 
+  <!-- Add User Dialog -->
   <v-dialog v-model="addDialog.value" max-width="400">
     <v-card>
       <v-card-title>{{ $t('add user') }}</v-card-title>
@@ -118,6 +120,7 @@
     </v-card>
   </v-dialog>
 
+  <!-- Change User Dialog -->
   <v-dialog v-model="changeDialog.value" max-width="400">
     <v-card>
       <v-card-title>{{ $t('change user') }}</v-card-title>

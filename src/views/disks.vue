@@ -68,7 +68,7 @@
   </v-container>
 
   <v-dialog v-model="formatDialog.value" max-width="400">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('confirm format') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to format this disk?') }}

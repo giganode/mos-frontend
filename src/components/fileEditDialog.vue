@@ -20,10 +20,10 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn variant="text" @click="onCancel">
+        <v-btn variant="text" @click="onCancel" color="onPrimary">
           {{ t('cancel') }}
         </v-btn>
-        <v-btn color="primary" :disabled="loading" @click="saveFile">
+        <v-btn color="onPrimary" :disabled="loading" @click="saveFile">
           {{ t('save') }}
         </v-btn>
       </v-card-actions>

@@ -2,7 +2,14 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('network interfaces') }}</h2>
+        <v-row>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          </v-col>
+          <v-col>
+            <h2>{{ $t('network interfaces') }}</h2>
+          </v-col>
+        </v-row>
       </v-container>
       <v-container fluid class="pa-0">
         <v-card class="pl-0 pr-0">
@@ -25,22 +32,30 @@
                   ></v-select>
                 </v-col>
                 <template v-if="iface.type === 'ethernet'">
-                    <v-col v-if="iface.ipv4.length > 0" cols="12">
-                      <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                  <v-col v-if="iface.ipv4.length > 0" cols="12">
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                  </v-col>
+                  <template v-if="iface.ipv4.length > 0 && !iface.ipv4[0].dhcp">
+                    <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" hide-details="auto"></v-text-field>
                     </v-col>
-                    <template v-if="iface.ipv4.length > 0 && !iface.ipv4[0].dhcp">
-                      <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 address')" v-model="iface.ipv4[0].address" hide-details="auto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" hide-details="auto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" hide-details="auto"></v-text-field>
-                      </v-col>
-                    </template>
+                    <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 gateway')" v-model="iface.ipv4[0].gateway" hide-details="auto"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" v-if="!iface.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(iface, 'ipv4').value" hide-details="auto"></v-text-field>
+                    </v-col>
+                  </template>
                   <v-col cols="12">
-                    <v-switch :label="$t('enable ipv6')" color="green" inset density="compact" hide-details="auto" v-model="eth0IPv6Enabled" @update:model-value="changeEthernetIPv6Enabled(eth0IPv6Enabled)"></v-switch>
+                    <v-switch
+                      :label="$t('enable ipv6')"
+                      color="green"
+                      inset
+                      density="compact"
+                      hide-details="auto"
+                      v-model="eth0IPv6Enabled"
+                      @update:model-value="changeEthernetIPv6Enabled(eth0IPv6Enabled)"
+                    ></v-switch>
                   </v-col>
                   <template v-if="eth0IPv6Enabled">
                     <v-col v-if="iface.ipv6.length > 0" cols="12">
@@ -60,22 +75,30 @@
                   <v-col cols="12">
                     <v-text-field :label="$t('bridge')" v-model="bridge.name" hide-details="auto"></v-text-field>
                   </v-col>
-                    <v-col v-if="bridge.ipv4.length > 0" cols="12">
-                      <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                  <v-col v-if="bridge.ipv4.length > 0" cols="12">
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+                  </v-col>
+                  <template v-if="bridge.ipv4.length > 0 && !bridge.ipv4[0].dhcp">
+                    <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 address')" v-model="bridge.ipv4[0].address" hide-details="auto"></v-text-field>
                     </v-col>
-                    <template v-if="bridge.ipv4.length > 0 && !bridge.ipv4[0].dhcp">
-                      <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 address')" v-model="bridge.ipv4[0].address" hide-details="auto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 gateway')" v-model="bridge.ipv4[0].gateway" hide-details="auto"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
-                        <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(bridge, 'ipv4').value" hide-details="auto"></v-text-field>
-                      </v-col>
+                    <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 gateway')" v-model="bridge.ipv4[0].gateway" hide-details="auto"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" v-if="!bridge.ipv4[0].dhcp">
+                      <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="getIfaceIpDnsString(bridge, 'ipv4').value" hide-details="auto"></v-text-field>
+                    </v-col>
                   </template>
                   <v-col cols="12">
-                    <v-switch :label="$t('enable ipv6')" color="green" hide-details="auto" inset density="compact" v-model="br0IPv6Enabled" @update:model-value="changeBridgeIPv6Enabled(br0IPv6Enabled)"></v-switch>
+                    <v-switch
+                      :label="$t('enable ipv6')"
+                      color="green"
+                      hide-details="auto"
+                      inset
+                      density="compact"
+                      v-model="br0IPv6Enabled"
+                      @update:model-value="changeBridgeIPv6Enabled(br0IPv6Enabled)"
+                    ></v-switch>
                   </v-col>
                   <template v-if="br0IPv6Enabled">
                     <v-col v-if="bridge.ipv6.length > 0" cols="12">
@@ -121,29 +144,29 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const eth0IPv6Enabled = ref(false);
 const br0IPv6Enabled = ref(false);
 const settingsNetwork = ref([
-    {
-      name: '',
-      type: '',
-      mode: null,
-      ipv4: [
-        {
-          dhcp: false,
-          address: null,
-          gateway: null,
-          dns: [],
-        },
-      ],
-      ipv6: [
-        {
-          dhcp: false,
-          address: null,
-          gateway: null,
-          dns: [],
-        },
-      ],
-      interfaces: [],
-    }
-  ]);
+  {
+    name: '',
+    type: '',
+    mode: null,
+    ipv4: [
+      {
+        dhcp: false,
+        address: null,
+        gateway: null,
+        dns: [],
+      },
+    ],
+    ipv6: [
+      {
+        dhcp: false,
+        address: null,
+        gateway: null,
+        dns: [],
+      },
+    ],
+    interfaces: [],
+  },
+]);
 const overlay = ref(false);
 const { t } = useI18n();
 
@@ -230,12 +253,14 @@ const changeInterfaceType = (iface) => {
       name: bridgeName,
       type: 'bridge',
       mode: null,
-      ipv4: [ {
-        dhcp: true,
-        address: null,
-        gateway: null,
-        dns: [],
-      } ],
+      ipv4: [
+        {
+          dhcp: true,
+          address: null,
+          gateway: null,
+          dns: [],
+        },
+      ],
       ipv6: [],
       interfaces: [iface.name],
     });
@@ -272,5 +297,4 @@ const changeEthernetIPv6Enabled = (enabled) => {
     eth0.ipv6 = [];
   }
 };
-
 </script>

@@ -2,7 +2,14 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('docker service') }}</h2>
+        <v-row>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          </v-col>
+          <v-col>
+            <h2>{{ $t('docker service') }}</h2>
+          </v-col>
+        </v-row>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader :loading="dockerServiceLoading" type="card" class="w-100">
@@ -10,8 +17,28 @@
             <v-card-text>
               <v-form>
                 <v-switch :label="$t('docker service')" inset density="compact" v-model="settingsDocker.enabled" color="green"></v-switch>
-                <v-text-field v-model="settingsDocker.directory" :label="$t('directory')" append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { settingsDocker.directory = item.path })" required></v-text-field>
-                <v-text-field v-model="settingsDocker.appdata" :label="$t('appdata')" append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { settingsDocker.appdata = item.path })" required></v-text-field>
+                <v-text-field
+                  v-model="settingsDocker.directory"
+                  :label="$t('directory')"
+                  append-inner-icon="mdi-folder"
+                  @click:append-inner="
+                    openFsDialog((item) => {
+                      settingsDocker.directory = item.path;
+                    })
+                  "
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="settingsDocker.appdata"
+                  :label="$t('appdata')"
+                  append-inner-icon="mdi-folder"
+                  @click:append-inner="
+                    openFsDialog((item) => {
+                      settingsDocker.appdata = item.path;
+                    })
+                  "
+                  required
+                ></v-text-field>
                 <v-text-field v-model="settingsDocker.filesystem" :label="$t('filesystem')" required></v-text-field>
                 <v-row>
                   <v-col cols="12" md="6">
@@ -45,7 +72,8 @@
                       inset
                       density="compact"
                       :disabled="!settingsDocker.update_check.enabled"
-                      color="green" hide-details
+                      color="green"
+                      hide-details
                     ></v-switch>
                   </v-col>
                   <v-col cols="12" md="8">
@@ -53,7 +81,8 @@
                       v-model="settingsDocker.update_check.auto_update.auto_update_schedule"
                       :label="$t('auto update schedule')"
                       :disabled="!settingsDocker.update_check.enabled || !settingsDocker.update_check.auto_update.enabled"
-                      dense hide-details="auto"
+                      dense
+                      hide-details="auto"
                     ></v-text-field>
                   </v-col>
                 </v-row>

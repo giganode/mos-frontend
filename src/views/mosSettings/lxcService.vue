@@ -1,22 +1,37 @@
 <template>
   <v-container fluid class="d-flex justify-center">
-    <v-container style="width: 100%; max-width: 1920px;" class="pa-0">
+    <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('lxc service') }}</h2>
+        <v-row>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          </v-col>
+          <v-col>
+            <h2>{{ $t('lxc service') }}</h2>
+          </v-col>
+        </v-row>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader :loading="lxcServiceLoading" type="card" class="w-100">
-        <v-card class="w-100">
-          <v-card-text>
-            <v-form>
-              <v-switch :label="$t('lxc service')" color="green" inset density="compact"
-                v-model="settingsLXC.enabled"></v-switch>
-              <v-switch :label="$t('bridge')" color="green" inset density="compact"
-                v-model="settingsLXC.bridge"></v-switch>
-              <v-text-field :label="$t('directory')" v-model="settingsLXC.directory" hide-details="auto" append-inner-icon="mdi-folder" @click:append-inner="openFsDialog((item) => { settingsLXC.directory = item.path })"></v-text-field>
-            </v-form>
-          </v-card-text>
-        </v-card>
+          <v-card class="w-100">
+            <v-card-text>
+              <v-form>
+                <v-switch :label="$t('lxc service')" color="green" inset density="compact" v-model="settingsLXC.enabled"></v-switch>
+                <v-switch :label="$t('bridge')" color="green" inset density="compact" v-model="settingsLXC.bridge"></v-switch>
+                <v-text-field
+                  :label="$t('directory')"
+                  v-model="settingsLXC.directory"
+                  hide-details="auto"
+                  append-inner-icon="mdi-folder"
+                  @click:append-inner="
+                    openFsDialog((item) => {
+                      settingsLXC.directory = item.path;
+                    })
+                  "
+                ></v-text-field>
+              </v-form>
+            </v-card-text>
+          </v-card>
         </v-skeleton-loader>
       </v-container>
     </v-container>
@@ -26,8 +41,7 @@
   <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
 
   <!-- Floating Action Button -->
-  <v-fab @click="setLXCService()" color="primary"
-    style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+  <v-fab @click="setLXCService()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
   </v-fab>
 
@@ -48,13 +62,11 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const settingsLXC = ref({
   enabled: false,
   bridge: '',
-  directory: ''
+  directory: '',
 });
 const overlay = ref(false);
 const { t } = useI18n();
 const lxcServiceLoading = ref(true);
-
-
 
 onMounted(() => {
   getLXCService();
@@ -76,13 +88,12 @@ const getLXCService = async () => {
   try {
     const res = await fetch('/api/v1/mos/settings/lxc', {
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-      }
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
     });
 
     if (!res.ok) throw new Error(t('lxc service could not be loaded'));
     settingsLXC.value = await res.json();
-
   } catch (e) {
     showSnackbarError(e.message);
   } finally {
@@ -96,21 +107,19 @@ const setLXCService = async () => {
     const res = await fetch('/api/v1/mos/settings/lxc', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(settingsLXC.value)
+      body: JSON.stringify(settingsLXC.value),
     });
     overlay.value = false;
 
     if (!res.ok) throw new Error(t('lxc service could not be changed'));
     showSnackbarSuccess(t('lxc service changed successfully'));
     emit('refresh-drawer');
-
   } catch (e) {
     overlay.value = false;
     showSnackbarError(e.message);
   }
 };
-
 </script>

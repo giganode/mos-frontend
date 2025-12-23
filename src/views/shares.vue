@@ -56,9 +56,20 @@
       <v-card-text>
         <v-form>
           <v-text-field v-model="createDialog.shareName" :label="$t('share name')" required autofocus />
-          <v-text-field v-model="createDialog.subPath" :label="$t('select directory')" append-inner-icon="mdi-folder" required @click:append-inner="openFsDialog((item) => { createDialog.subPath = item.path })" />
+          <v-text-field
+            v-model="createDialog.subPath"
+            :label="$t('select directory')"
+            append-inner-icon="mdi-folder"
+            required
+            @click:append-inner="
+              openFsDialog((item) => {
+                createDialog.subPath = item.path;
+              })
+            "
+          />
           <v-select v-model="createDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
-          <v-select v-model="createDialog.selectedUser" :items="smbUsers" item-title="username" item-value="username" :label="$t('smb user')" required multiple />
+          <v-select v-model="createDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
+          <v-select v-model="createDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
           <v-text-field v-model="createDialog.comment" :label="$t('comment')" clearable />
           <v-divider></v-divider>
           <v-btn variant="text" @click="createDialog.showAdvanced = !createDialog.showAdvanced" class="mb-4">
@@ -82,12 +93,10 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-row class="d-flex justify-end">
-          <v-btn color="onPrimary" @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="createShare">
-            {{ $t('create') }}
-          </v-btn>
-        </v-row>
+        <v-btn color="onPrimary" @click="createDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="createShare()">
+          {{ $t('create') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -101,12 +110,10 @@
         <v-checkbox v-model="deleteDialog.deleteDirectory" :label="$t('delete directory')" class="mt-4" />
       </v-card-text>
       <v-card-actions>
-        <v-row class="d-flex justify-end">
-          <v-btn color="onPrimary" @click="deleteDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="red" @click="deleteShare(deleteDialog.share, deleteDialog.deleteDirectory)">
-            {{ $t('delete') }}
-          </v-btn>
-        </v-row>
+        <v-btn color="onPrimary" @click="deleteDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="red" @click="deleteShare(deleteDialog.share, deleteDialog.deleteDirectory)">
+          {{ $t('delete') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -134,13 +141,11 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-row class="d-flex justify-end">
-          <v-spacer />
-          <v-btn color="onPrimary" @click="editDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="updateShare(editDialog)">
-            {{ $t('save') }}
-          </v-btn>
-        </v-row>
+        <v-spacer />
+        <v-btn color="onPrimary" @click="editDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="updateShare(editDialog)">
+          {{ $t('save') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -177,7 +182,8 @@ const createDialog = reactive({
   shareName: '',
   poolName: null,
   subPath: '',
-  selectedUser: [],
+  write_list: [],
+  valid_users: [],
   comment: '',
   enabled: true,
   browseable: true,
@@ -329,8 +335,8 @@ const createShare = async () => {
     read_only: createDialog.read_only,
     guest_ok: createDialog.guest_ok,
     force_root: createDialog.force_root,
-    valid_users: createDialog.selectedUser,
-    write_list: createDialog.selectedUser,
+    valid_users: createDialog.valid_users,
+    write_list: createDialog.write_list,
     create_mask: createDialog.create_mask,
     directory_mask: createDialog.directory_mask,
     inherit_permissions: createDialog.inherit_permissions,
@@ -435,7 +441,8 @@ const clearCreateDialog = () => {
   createDialog.shareName = '';
   createDialog.poolName = null;
   createDialog.subPath = '';
-  createDialog.selectedUser = [];
+  createDialog.valid_users = [];
+  createDialog.write_list = [];
   createDialog.comment = '';
   createDialog.enabled = true;
   createDialog.browseable = true;

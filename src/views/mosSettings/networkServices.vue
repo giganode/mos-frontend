@@ -2,7 +2,14 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('network services') }}</h2>
+        <v-row>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          </v-col>
+          <v-col>
+            <h2>{{ $t('network services') }}</h2>
+          </v-col>
+        </v-row>
       </v-container>
       <v-container fluid class="pa-0">
         <v-card class="pl-0 pr-0">
@@ -50,35 +57,35 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const eth0IPv6Enabled = ref(false);
 const br0IPv6Enabled = ref(false);
 const settingsNetwork = ref({
-    ssh: {
-      enabled: false,
-    },
-    samba: {
-      enabled: false,
-    },
-    nmbd: {
-      enabled: false,
-    },
-    nfs: {
-      enabled: false,
-      exports: [],
-    },
-    nut: {
-      enabled: false,
-    },
-    tailscale: {
-      enabled: false,
-      update_check: false,
-      tailscaled_params: null,
-    },
-    netbird: {
-      enabled: false,
-      update_check: false,
-      netbird_service_params: null,
-    },
-    remote_mounting: {
-      enabled: false,
-    }
+  ssh: {
+    enabled: false,
+  },
+  samba: {
+    enabled: false,
+  },
+  nmbd: {
+    enabled: false,
+  },
+  nfs: {
+    enabled: false,
+    exports: [],
+  },
+  nut: {
+    enabled: false,
+  },
+  tailscale: {
+    enabled: false,
+    update_check: false,
+    tailscaled_params: null,
+  },
+  netbird: {
+    enabled: false,
+    update_check: false,
+    netbird_service_params: null,
+  },
+  remote_mounting: {
+    enabled: false,
+  },
 });
 const overlay = ref(false);
 const { t } = useI18n();
@@ -101,7 +108,6 @@ const getNetworkSettings = async () => {
     }
 
     settingsNetwork.value = await res.json();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -133,5 +139,4 @@ const setNetworkSettings = async () => {
     overlay.value = false;
   }
 };
-
 </script>

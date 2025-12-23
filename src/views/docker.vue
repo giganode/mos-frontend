@@ -27,7 +27,7 @@
               </thead>
 
               <!-- Docker Groups -->
-              <draggable v-if="dockerGroups.length > 0" tag="tbody" v-model="dockerGroups" item-key="id" handle=".drag-handle" @end="onDragEndGrp">
+              <draggable v-if="dockerGroups.length > 0" tag="tbody" v-model="dockerGroups" item-key="id" handle=".drag-handle-grp" @end="onDragEndGrp">
                 <template #item="{ element: group }">
                   <template v-if="group.name !== ''">
                     <tr :id="group.id" @click.stop="group.expanded = !group.expanded" style="cursor: pointer">
@@ -36,7 +36,7 @@
                           <template #activator="{ props }">
                             <v-img
                               v-if="group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
-                              class="drag-handle"
+                              class="drag-handle-grp"
                               v-bind="props"
                               :src="`/docker_icons/compose/${group.icon}.png`"
                               alt="docker image"
@@ -52,7 +52,7 @@
                             </v-img>
                             <v-img
                               v-else-if="!group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
-                              class="drag-handle"
+                              class="drag-handle-grp"
                               v-bind="props"
                               :src="`/docker_icons/groups/${group.icon}`"
                               alt="docker image"
@@ -66,11 +66,11 @@
                                 </v-sheet>
                               </template>
                             </v-img>
-                            <v-icon v-else-if="group.icon" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">
+                            <v-icon v-else-if="group.icon" class="drag-handle-grp" style="cursor: grab" v-bind="props" color="grey-darken-1">
                               {{ group.icon }}
                             </v-icon>
-                            <v-icon v-else-if="group.compose" class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
-                            <v-icon v-else class="drag-handle" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
+                            <v-icon v-else-if="group.compose" class="drag-handle-grp" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
+                            <v-icon v-else class="drag-handle-grp" style="cursor: grab" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                           </template>
                           <v-list v-if="group.compose">
                             <v-list-item v-if="group.webui" @click="showComposeWebui(group)">
@@ -186,7 +186,7 @@
                       <td>
                         <v-menu>
                           <template #activator="{ props }">
-                            <v-img class="drag-handle" v-bind="props" :src="`/docker_icons/${containerName}.png`" alt="docker image" width="24" height="24" style="cursor: pointer">
+                            <v-img v-bind="props" :src="`/docker_icons/${containerName}.png`" alt="docker image" width="24" height="24" style="cursor: pointer">
                               <template #error>
                                 <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
                                   <v-icon color="grey-darken-1">{{ group.compose ? 'mdi-cube-outline' : 'mdi-image-off' }}</v-icon>
@@ -397,7 +397,7 @@
                 v-model="dockers"
                 item-key="Id"
                 handle=".drag-handle"
-                @end="onDragEnd"
+                @end="onDragEnd()"
               >
                 <template #item="{ element: docker }">
                   <tr v-if="!dockerGroups.some((g) => g.containers && g.containers.includes(docker.Names?.[0]))" :id="docker.Id">
@@ -990,7 +990,6 @@ const getDockers = async () => {
       if (docker.Names && Array.isArray(docker.Names)) {
         docker.Names = docker.Names.map((name) => (name.startsWith('/') ? name.slice(1) : name));
       }
-      // Initialize properties to avoid mutating in template
       docker.showInfo = false;
       docker.webui = '';
     });

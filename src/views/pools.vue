@@ -6,209 +6,214 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="poolsLoading" type="card" />
-        <v-card v-for="pool in pools" :key="pool.id" fluid class="mb-4 pa-0">
-          <v-card-title class="d-flex align-center pb-0">
-            <span>{{ pool.name }}</span>
-            <v-spacer />
-            <v-chip v-if="pool.type" size="small" class="mr-2">{{ pool.type }}</v-chip>
-            <v-chip v-if="pool.status.mounted" size="small">{{ $t('mounted') }}</v-chip>
-            <v-chip v-else size="small">{{ $t('unmounted') }}</v-chip>
-            <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1" aria-label="locked">mdi-lock</v-icon>
-          </v-card-title>
-          <v-card-subtitle v-if="pool.mountPoint">{{ pool.mountPoint }}</v-card-subtitle>
-          <div v-if="pool.status" class="mt-2 mr-4 ml-4">
-            <v-progress-linear
-              :model-value="pool.status.usagePercent"
-              height="8"
-              class="mb-2"
-              :color="getUsageColor(pool.status.usagePercent)"
-              rounded
-              :label="`${pool.status.usagePercent}%`"
-              style="min-width: 120px"
-              bg-opacity="0.35"
-            />
-            <span style="font-size: 0.875rem">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}</span>
-          </div>
-          <v-divider />
-          <v-card-text class="pa-0">
-            <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent">
-              <v-list-item-title class="pt-2 pl-4">{{ $t('disks') }}</v-list-item-title>
-              <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id">
-                <template v-slot:prepend>
-                  <v-icon
-                    class="cursor-pointer"
-                    :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'"
-                    @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)"
-                  >
-                    {{ getDiskIcon(data_device.diskType.type) }}
-                  </v-icon>
-                </template>
-                <v-list-item-title class="d-flex align-center">
-                  {{ data_device.device }}
-                  <v-spacer />
-                  <v-chip color="onPrimary" size="small" class="ml-2" label>
-                    {{ data_device.filesystem }}
-                  </v-chip>
-                </v-list-item-title>
-                <v-list-item-subtitle>{{ data_device.mountPoint }}</v-list-item-subtitle>
+          <draggable v-model="pools" item-key="id" handle=".drag-handle" @end="onDragEndPool">
+          <template #item="{ element: pool, index }">
+            <v-card class="mb-4 pa-0">
+              <v-card-title class="d-flex align-center pb-0">
+                <span class="mr-2 drag-handle" style="cursor: grab" aria-label="drag handle">⋮⋮</span>
+                <span>{{ pool.name }}</span>
+                <v-spacer />
+                <v-chip v-if="pool.type" size="small" class="mr-2">{{ pool.type }}</v-chip>
+                <v-chip v-if="pool.status.mounted" size="small">{{ $t('mounted') }}</v-chip>
+                <v-chip v-else size="small">{{ $t('unmounted') }}</v-chip>
+                <v-icon v-if="pool.config.encrypted" class="ml-2" color="grey darken-1" aria-label="locked">mdi-lock</v-icon>
+              </v-card-title>
+              <v-card-subtitle v-if="pool.mountPoint">{{ pool.mountPoint }}</v-card-subtitle>
+              <div v-if="pool.status" class="mt-2 mr-4 ml-4">
                 <v-progress-linear
-                  v-if="data_device.storage"
-                  :model-value="data_device.storage.usagePercent"
+                  :model-value="pool.status.usagePercent"
                   height="8"
-                  :color="getUsageColor(data_device.storage.usagePercent)"
+                  class="mb-2"
+                  :color="getUsageColor(pool.status.usagePercent)"
                   rounded
-                  class="mt-2"
-                  :label="`${data_device.storage.usagePercent}%`"
+                  :label="`${pool.status.usagePercent}%`"
                   style="min-width: 120px"
+                  bg-opacity="0.35"
                 />
-                <v-list-item-subtitle v-if="data_device.storage" class="mt-2">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-            <v-divider />
-            <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent">
-              <v-list-item-title class="pt-2 pl-4">{{ $t('parities') }}</v-list-item-title>
-              <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
-                <template v-slot:prepend>
-                  <v-icon
-                    class="cursor-pointer"
-                    :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'"
-                    @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)"
-                  >
-                    {{ getDiskIcon(parity_device.diskType.type) }}
-                  </v-icon>
-                </template>
-                <v-list-item-title class="d-flex align-center">
-                  {{ parity_device.device }}
-                  <v-chip v-if="pool.status.parity_operation" color="green" size="small" class="ml-2" label>{{ $t('operation running') }}</v-chip>
-                  <v-spacer />
-                  <v-chip color="onPrimary" size="small" class="ml-2" label>
-                    {{ parity_device.filesystem }}
-                  </v-chip>
-                </v-list-item-title>
-                <v-list-item-subtitle>{{ parity_device.mountPoint }}</v-list-item-subtitle>
-                <v-progress-linear
-                  v-if="parity_device.storage"
-                  :model-value="parity_device.storage.usagePercent"
-                  height="8"
-                  color="grey darken-1"
-                  rounded
-                  class="mt-2"
-                  :label="`${parity_device.storage.usagePercent}%`"
-                  style="min-width: 120px"
-                />
-                <v-list-item-subtitle v-if="parity_device.storage" class="mt-2">{{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}</v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-          <v-divider />
-          <v-card-actions>
-            <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="green" @change="switchAutomount(pool)" />
-            <v-spacer />
-            <v-menu>
-              <template #activator="{ props }">
-                <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item v-if="!pool.status.mounted" @click="pool.config && pool.config.encrypted ? openPassphraseDialog(pool) : mountPool(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-connection</v-icon>
+                <span style="font-size: 0.875rem">{{ pool.status.usedSpace_human }} / {{ pool.status.totalSpace_human }}</span>
+              </div>
+              <v-divider />
+              <v-card-text class="pa-0">
+                <v-list v-if="pool.data_devices && pool.data_devices.length > 0" class="pa-0" style="background-color: transparent">
+                  <v-list-item-title class="pt-2 pl-4">{{ $t('disks') }}</v-list-item-title>
+                  <v-list-item v-for="data_device in pool.data_devices" :key="data_device.id">
+                    <template v-slot:prepend>
+                      <v-icon
+                        class="cursor-pointer"
+                        :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                        @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)"
+                      >
+                        {{ getDiskIcon(data_device.diskType.type) }}
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="d-flex align-center">
+                      {{ data_device.device }}
+                      <v-spacer />
+                      <v-chip color="onPrimary" size="small" class="ml-2" label>
+                        {{ data_device.filesystem }}
+                      </v-chip>
+                    </v-list-item-title>
+                    <v-list-item-subtitle>{{ data_device.mountPoint }}</v-list-item-subtitle>
+                    <v-progress-linear
+                      v-if="data_device.storage"
+                      :model-value="data_device.storage.usagePercent"
+                      height="8"
+                      :color="getUsageColor(data_device.storage.usagePercent)"
+                      rounded
+                      class="mt-2"
+                      :label="`${data_device.storage.usagePercent}%`"
+                      style="min-width: 120px"
+                    />
+                    <v-list-item-subtitle v-if="data_device.storage" class="mt-2">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+                <v-divider />
+                <v-list v-if="pool.parity_devices && pool.parity_devices.length > 0" class="pa-0" style="background-color: transparent">
+                  <v-list-item-title class="pt-2 pl-4">{{ $t('parities') }}</v-list-item-title>
+                  <v-list-item v-for="parity_device in pool.parity_devices" :key="parity_device.id">
+                    <template v-slot:prepend>
+                      <v-icon
+                        class="cursor-pointer"
+                        :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                        @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)"
+                      >
+                        {{ getDiskIcon(parity_device.diskType.type) }}
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="d-flex align-center">
+                      {{ parity_device.device }}
+                      <v-chip v-if="pool.status.parity_operation" color="green" size="small" class="ml-2" label>{{ $t('operation running') }}</v-chip>
+                      <v-spacer />
+                      <v-chip color="onPrimary" size="small" class="ml-2" label>
+                        {{ parity_device.filesystem }}
+                      </v-chip>
+                    </v-list-item-title>
+                    <v-list-item-subtitle>{{ parity_device.mountPoint }}</v-list-item-subtitle>
+                    <v-progress-linear
+                      v-if="parity_device.storage"
+                      :model-value="parity_device.storage.usagePercent"
+                      height="8"
+                      color="grey darken-1"
+                      rounded
+                      class="mt-2"
+                      :label="`${parity_device.storage.usagePercent}%`"
+                      style="min-width: 120px"
+                    />
+                    <v-list-item-subtitle v-if="parity_device.storage" class="mt-2">{{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+              <v-divider />
+              <v-card-actions>
+                <v-switch v-model="pool.automount" :label="$t('automount')" inset hide-details density="compact" color="green" @change="switchAutomount(pool)" />
+                <v-spacer />
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
                   </template>
-                  <v-list-item-title>{{ $t('mount pool') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.status.mounted" @click="unmountPool(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-power-plug-off</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('unmount pool') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="openDeletePoolDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-delete</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('delete pool') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="wakePool(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-motion-play</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('spin up pool') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="sleepPool(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-motion-pause</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('spin down pool') }}</v-list-item-title>
-                </v-list-item>
-                <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
-                <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddMergerfsDevicesDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-plus</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('add devices') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'mergerfs'" @click="openRemoveMergerfsDevicesDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-remove</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('remove devices') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'mergerfs'" @click="openReplaceMergerfsDeviceDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-file-replace</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('replace device') }}</v-list-item-title>
-                </v-list-item>
-                <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
-                <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddParityDevicesDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-plus</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('add parity devices') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openRemoveParityDevicesDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-remove</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('remove parity devices') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openReplaceParityDeviceDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-file-replace</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('replace parity device') }}</v-list-item-title>
-                </v-list-item>
-                <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
-                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-database-check</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('snapraid operation') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidSchedulesDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-clock-outline</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('snapraid schedules') }}</v-list-item-title>
-                </v-list-item>
-                <v-divider v-if="pool.type === 'nonraid'"></v-divider>
-                <v-list-item v-if="pool.type === 'nonraid'" @click="openAddNonRaidDeviceDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-plus</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('add device') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item v-if="pool.type === 'nonraid'" @click="openAddNonRaidParityDialog(pool)">
-                  <template #prepend>
-                    <v-icon>mdi-harddisk-plus</v-icon>
-                  </template>
-                  <v-list-item-title>{{ $t('add parity device') }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-card-actions>
-        </v-card>
+                  <v-list>
+                    <v-list-item v-if="!pool.status.mounted" @click="pool.config && pool.config.encrypted ? openPassphraseDialog(pool) : mountPool(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-connection</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('mount pool') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.status.mounted" @click="unmountPool(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-power-plug-off</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('unmount pool') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="openDeletePoolDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-delete</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('delete pool') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="wakePool(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-motion-play</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('spin up pool') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="sleepPool(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-motion-pause</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('spin down pool') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
+                    <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddMergerfsDevicesDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-plus</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('add devices') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'mergerfs'" @click="openRemoveMergerfsDevicesDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-remove</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('remove devices') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'mergerfs'" @click="openReplaceMergerfsDeviceDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-file-replace</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('replace device') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
+                    <v-list-item v-if="pool.type === 'mergerfs'" @click="openAddParityDevicesDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-plus</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('add parity devices') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openRemoveParityDevicesDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-remove</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('remove parity devices') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openReplaceParityDeviceDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-file-replace</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('replace parity device') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
+                    <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-database-check</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('snapraid operation') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidSchedulesDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-clock-outline</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('snapraid schedules') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="pool.type === 'nonraid'"></v-divider>
+                    <v-list-item v-if="pool.type === 'nonraid'" @click="openAddNonRaidDeviceDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-plus</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('add device') }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="pool.type === 'nonraid'" @click="openAddNonRaidParityDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-harddisk-plus</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('add parity device') }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </draggable>
         <v-card v-if="pools.length === 0 && !poolsLoading" fluid class="mb-4 ml-0 mr-0 pa-0">
           <v-card-text class="pa-4">
             {{ $t('no pools have been created yet') }}
@@ -685,6 +690,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
+import draggable from 'vuedraggable';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const pools = ref([]);
@@ -935,6 +941,7 @@ const getPools = async () => {
       throw new Error(`${t('pools could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
     }
     pools.value = await res.json();
+    pools.value.sort((a, b) => a.index - b.index);
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -1848,6 +1855,35 @@ const addNonRaidParity = async (device) => {
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
+  }
+};
+
+const onDragEndPool = async () => {
+  const payload = {
+    order: pools.value.map((pool, index) => ({
+      id: pool.id,
+      index: index + 1,
+    })),
+  };
+
+  try {
+    const res = await fetch('/api/v1/pools/order', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('pool order could not be saved')}|$| ${error.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('pool order saved successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 

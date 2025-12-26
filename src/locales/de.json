@@ -825,5 +825,7 @@
   "select device to replace": "Wähle Gerät zum Ersetzen aus",
   "pool order could not be saved": "Pool Reihenfolge konnte nicht gespeichert werden",
   "pool order saved successfully": "Pool Reihenfolge erfolgreich gespeichert",
-  "target devices": "Zielgeräte"
+  "target devices": "Zielgeräte",
+  "target devices could not be set": "Zielgeräte konnten nicht festgelegt werden",
+  "target devices set successfully": "Zielgeräte erfolgreich festgelegt"
 }

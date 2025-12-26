@@ -36,7 +36,7 @@
                           </template>
                           <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                         </v-list-item>
-                        <v-list-item v-if="checkMergerFs(share.pool)" @click="openTargetDevices(share)">
+                        <v-list-item v-if="checkMergerFs(share.pool)" @click="openTargetDevicesDialog(share)">
                           <template #prepend>
                             <v-icon>mdi-target</v-icon>
                           </template>
@@ -156,6 +156,23 @@
     </v-card>
   </v-dialog>
 
+  <!-- Target Devices Dialog -->
+  <v-dialog v-model="targetDevicesDialog.value" max-width="500">
+    <v-card class="pa-0">
+      <v-card-title>{{ $t('target devices') }}</v-card-title>
+      <v-card-text>
+        <v-select v-model="targetDevicesDialog.selectedDevices" :items="targetDevicesDialog.targetDevices" item-title="name" item-value="value" :label="$t('target devices')" multiple chips clearable dense />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="onPrimary" @click="targetDevicesDialog.value = false">{{ $t('close') }}</v-btn>
+        <v-btn color="onPrimary" @click="setTargetDevices(targetDevicesDialog.share, targetDevicesDialog.selectedDevices)">
+          {{ $t('save') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- File System Navigator Dialog -->
   <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
 
@@ -239,11 +256,11 @@ const handleFsSelected = (item) => {
   fsDialogCallback.value = null;
   fsDialog.value = false;
 };
-const targetDevices = ref({
-  targetDevices: [
-    3,
-    4
-  ]
+const targetDevicesDialog = reactive({
+  value: false,
+  share: null,
+  selectedDevices: [],
+  targetDevices: [ { name: '', value: '' }],
 });
 
 onMounted(async () => {
@@ -280,6 +297,15 @@ const openEditDialog = (share) => {
   editDialog.preserve_case = share.preserve_case || true;
   editDialog.case_sensitive = share.case_sensitive || true;
   editDialog.comment = share.comment || '';
+};
+
+const openTargetDevicesDialog =  async (share) => {
+  targetDevicesDialog.value = true;
+  targetDevicesDialog.share = share;
+  targetDevicesDialog.selectedDevices = [];
+  targetDevicesDialog.targetDevices = [];
+  targetDevicesDialog.targetDevices = await getDevicesOfPool(share.pool);
+  targetDevicesDialog.selectedDevices = await getTargetDevices(share);
 };
 
 const getShares = async () => {
@@ -449,9 +475,70 @@ const deleteShare = async () => {
   }
 };
 
+const getTargetDevices = async (share) => {
+  try {
+    const res = await fetch(`/api/v1/shares/smb/${encodeURIComponent(share.id)}/target-devices`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) throw new Error(t('target devices could not be loaded'));
+    const result = await res.json();
+    return result.target_devices || [];
+  } catch (e) {
+    showSnackbarError(e.message);
+    return [];
+  }
+};
+
+const setTargetDevices = async (share, devices) => {
+  const payload = {
+    targetDevices: devices,
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/shares/smb/${encodeURIComponent(share.id)}/target-devices`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error(t('target devices could not be set'));
+    showSnackbarSuccess(t('target devices set successfully'));
+    targetDevicesDialog.value = false;
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const checkMergerFs = (pool) => {
   const mergerFsPools = pools.value.filter((p) => p.type === 'mergerfs').map((p) => p.name);
   return mergerFsPools.includes(pool);
+};
+
+const getDevicesOfPool = async (pool) => {
+  try {
+    const localPool = pools.value.find((p) => p.name === pool);
+    const dataDevices = Array.isArray(localPool?.data_devices) ? localPool.data_devices : [];
+
+    const normalize = (d) => {
+      if (typeof d === 'string') return { name: d, value: d };
+      const value = parseInt(d?.slot) || '';
+      const name = d?.device || '';
+      return { name, value };
+    };
+
+    return dataDevices.map(normalize);
+  } catch (e) {
+    return [];
+  }
 };
 
 const clearCreateDialog = () => {

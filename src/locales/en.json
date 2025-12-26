@@ -825,5 +825,7 @@
   "select device to replace": "Select device to replace",
   "pool order could not be saved": "Pool order could not be saved",
   "pool order saved successfully": "Pool order saved successfully",
-  "target devices": "Target Devices"
+  "target devices": "Target Devices",
+  "target devices could not be set": "Target devices could not be set",
+  "target devices set successfully": "Target devices set successfully"
 }

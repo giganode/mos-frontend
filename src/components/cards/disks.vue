@@ -102,12 +102,8 @@
           </v-col>          
         </v-row>
       </template>
-
-      <div v-else class="text-body-2 text-medium-emphasis">No devices</div>
     </div>
   </div>
-
-  <div v-else class="text-body-2 text-medium-emphasis">No disks</div>
 </template>
 
 <script setup>

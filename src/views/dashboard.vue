@@ -92,6 +92,7 @@ const memory = ref(null);
 const pools = ref([]);
 const disks = ref([]);
 const temperature = ref(null);
+const osInfo = ref({});
 const isConnected = ref(false);
 const error = ref(null);
 const left = ref([]);
@@ -279,7 +280,7 @@ watch([left, right, visibility], saveLayout, { deep: true });
 const widgetProps = (id) => {
   switch (id) {
     case 'processor':
-      return { cpu: cpu.value, temperature: temperature.value };
+      return { cpu: cpu.value, temperature: temperature.value, osInfo: osInfo.value };
     case 'network':
       return { network: network.value };
     case 'memory':
@@ -288,6 +289,8 @@ const widgetProps = (id) => {
       return { disks: disks.value };
     case 'pools':
       return { pools: pools.value };
+    case 'os':
+      return { osInfo: osInfo.value };
     default:
       return {};
   }
@@ -295,8 +298,8 @@ const widgetProps = (id) => {
 
 const widgetVisible = (id) => {
   if (visibility.value && visibility.value[id] === false) return false;
-  if (id === 'os') return !!visibility.value?.os;
-  if (id === 'processor') return !!visibility.value?.processor && !!cpu.value;
+  if (id === 'os') return !!visibility.value?.os && !!osInfo.value;
+  if (id === 'processor') return !!visibility.value?.processor && !!cpu.value && !!osInfo.value;
   if (id === 'network') return !!visibility.value?.network && !!network.value;
   if (id === 'memory') return !!visibility.value?.memory && !!memory.value;
   if (id === 'pools') return !!visibility.value?.pools && !!pools.value;
@@ -313,6 +316,11 @@ const getData = async () => {
     const resPools = await fetch('/api/v1/pools', {
       headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') },
     });
+    const resOs = await fetch('/api/v1/mos/osinfo', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
 
     if (!res.ok) throw new Error('API-Error');
     const result = await res.json();
@@ -324,8 +332,12 @@ const getData = async () => {
     if (!resPools.ok) throw new Error('API-Error');
     pools.value = await resPools.json();
 
+    if (!resOs.ok) throw new Error('API-Error');
+    osInfo.value = await resOs.json();
+
   } catch (e) {
     error.value = e.message;
+  } finally {
   }
 };
 

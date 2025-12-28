@@ -51,24 +51,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { toRefs } from 'vue';
 
-const osInfo = ref({});
-
-onMounted(() => {
-  getOsInfo();
+const props = defineProps({
+  osInfo: { type: Object, default: () => ({}) },
 });
-
-const getOsInfo = async () => {
-  try {
-    const res = await fetch('/api/v1/mos/osinfo', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-
-    if (!res.ok) throw new Error('API-Error');
-    osInfo.value = await res.json();
-  } catch (e) {}
-};
+const { osInfo } = toRefs(props);
 </script>

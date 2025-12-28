@@ -6,49 +6,44 @@
       </div>
       <div class="text-body-2" :title="osInfo.base[0].os_id" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.cpu.manufacturer }}, {{ osInfo.cpu.brand }}</div>
     </v-col>
-    <v-col cols="6" sm="6" md="6" xl="6" v-if="processor.info.architecture !== undefined">
+    <v-col cols="6" sm="6" md="6" xl="6" v-if="cpu.info.architecture !== undefined">
       <div class="text-caption text-medium-emphasis">
         <strong>{{ $t('architecture') }}</strong>
       </div>
-      <div class="text-body-2" :title="processor.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ processor.info.architecture }}</div>
+      <div class="text-body-2" :title="cpu.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ cpu.info.architecture }}</div>
     </v-col>
     <v-col cols="6" sm="6" md="6" xl="6" v-if="osInfo.cpu?.cores !== undefined && osInfo.cpu?.physicalCores !== undefined">
       <div class="text-caption text-medium-emphasis">
         <strong>{{ $t('cores') }}</strong>
       </div>
-      <div class="text-body-2" :title="processor.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.cpu.physicalCores }} / {{ osInfo.cpu.cores }}</div>
+      <div class="text-body-2" :title="cpu.info.architecture" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.cpu.physicalCores }} / {{ osInfo.cpu.cores }}</div>
     </v-col>
-    <v-col cols="6" sm="6" md="6" xl="6" v-if="temp.main != null || temp.min != null || temp.max != null">
+    <v-col cols="6" sm="6" md="6" xl="6" v-if="temperature.main != null || temperature.min != null || temperature.max != null">
       <div class="text-caption text-medium-emphasis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
         <strong>{{ $t('temperature / min / max') }}</strong>
       </div>
-      <span v-if="temp.main != null" class="text-body-2" :title="temp.main" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ temp.main }}°C</span>
-      <span v-if="temp.min != null" class="text-body-2" :title="temp.min" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">/ {{ temp.min }}°C</span>
-      <span v-if="temp.max != null" class="text-body-2" :title="temp.max" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">/ {{ temp.max }}°C</span>
+      <span v-if="temperature.main != null" class="text-body-2" :title="temperature.main" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ temperature.main }}°C</span>
+      <span v-if="temperature.min != null" class="text-body-2" :title="temperature.min" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">/ {{ temperature.min }}°C</span>
+      <span v-if="temperature.max != null" class="text-body-2" :title="temperature.max" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">/ {{ temperature.max }}°C</span>
     </v-col>
     <v-divider class="mt-2 mb-2"></v-divider>
     <v-col cols="auto" class="d-flex align-center text-caption" style="width: 60px">
       <strong>{{ $t('load') }}:</strong>
     </v-col>
     <v-col class="d-flex align-center">
-      <v-progress-linear
-        :model-value="processor.load"
-        height="16"
-        :color="processor.load >= 90 ? 'red' : processor.load >= 60 ? 'orange' : 'green'"
-        style="margin-top: 0; border-radius: 7px; overflow: hidden"
-      >
+      <v-progress-linear :model-value="cpu.load" height="16" :color="cpu.load >= 90 ? 'red' : cpu.load >= 60 ? 'orange' : 'green'" style="margin-top: 0; border-radius: 7px; overflow: hidden">
         <template #default>
           <span>
-            <small>{{ processor.load.toFixed(2) }}%</small>
+            <small>{{ cpu.load.toFixed(2) }}%</small>
           </span>
         </template>
       </v-progress-linear>
     </v-col>
     <v-col cols="12" sm="12" md="12" xl="12">
-      <div v-if="processor.cores && processor.cores.length">
+      <div v-if="cpu.cores && cpu.cores.length">
         <details>
           <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('cores') }}</summary>
-          <v-row v-for="(core, i) in (processor.cores || []).filter((c) => c.isPhysical)" :key="i" dense>
+          <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" dense>
             <v-col>
               <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
                 <div class="core-label text-body-2">
@@ -72,7 +67,7 @@
                 </div>
               </div>
             </v-col>
-            <v-col v-for="(thread, ti) in (processor.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti">
+            <v-col v-for="(thread, ti) in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti">
               <div class="core-row" style="min-width: 0">
                 <div class="core-label text-body-2">
                   <small>
@@ -103,36 +98,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { toRefs, computed } from 'vue';
+import { toRefs } from 'vue';
 
-const osInfo = ref({});
 const props = defineProps({
   cpu: { type: Object, default: () => ({ load: 0 }) },
   temperature: { type: Object, default: () => ({}) },
+  osInfo: { type: Object, default: () => ({}) },
 });
-const { cpu, temperature } = toRefs(props);
-const processor = computed(() => cpu.value ?? { load: 0 });
-const temp = computed(() => temperature.value ?? {});
-
-onMounted(() => {
-  getOsInfo();
-});
-
-const getOsInfo = async () => {
-  try {
-    const res = await fetch('/api/v1/mos/osinfo', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-
-    if (!res.ok) throw new Error('API-Error');
-    osInfo.value = await res.json();
-  } catch (e) {
-    console.error('Failed to load OS info:', e);
-  }
-};
+const { cpu, temperature, osInfo } = toRefs(props);
 </script>
 
 <style scoped>

@@ -13,7 +13,7 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader :loading="dockerServiceLoading" type="card" class="w-100">
-          <v-card class="w-100">
+          <v-card fluid style="margin-bottom: 80px" class="pa-0">
             <v-card-text>
               <v-form>
                 <v-switch :label="$t('docker service')" inset density="compact" v-model="settingsDocker.enabled" color="green"></v-switch>

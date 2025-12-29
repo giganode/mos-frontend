@@ -842,7 +842,7 @@
   "other": "Other",
   "cpu": "CPU",
   "update schedule": "Update Schedule",
-  "virtio isos": "VirtIO ISOs"
+  "virtio isos": "VirtIO ISOs",
   "subtype": "Subtype",
   "manufacturer": "Manufacturer",
   "model": "Model",

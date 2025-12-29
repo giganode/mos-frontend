@@ -2,18 +2,11 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <v-row>
-          <v-col cols="auto" class="d-flex align-center">
-            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
-          </v-col>
-          <v-col>
-            <h2>{{ $t('pools') }}</h2>
-          </v-col>
-        </v-row>
+        <h2>{{ $t('pools') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="poolsLoading" type="card" />
-          <draggable v-model="pools" item-key="id" handle=".drag-handle" @end="onDragEndPool">
+        <draggable v-model="pools" item-key="id" handle=".drag-handle" @end="onDragEndPool">
           <template #item="{ element: pool, index }">
             <v-card class="mb-4 pa-0">
               <v-card-title class="d-flex align-center pb-0">
@@ -348,7 +341,7 @@
           />
           <v-select
             v-if="createPoolDialog.type === 'mergerfs'"
-          v-model="createPoolDialog.snapraidDevice"
+            v-model="createPoolDialog.snapraidDevice"
             :items="
               Array.isArray(unassignedDisks)
                 ? unassignedDisks.map((disk) => ({
@@ -714,7 +707,7 @@ const formatDialog = reactive({
   filesystems: [],
   filesystem: '',
   partition: true,
-  wipeExisting: true
+  wipeExisting: true,
 });
 const createPoolDialog = reactive({
   value: false,
@@ -739,63 +732,63 @@ const createPoolDialog = reactive({
   policies: {
     create: 'epmfs',
     read: 'ff',
-    search: 'ff'
-  }
+    search: 'ff',
+  },
 });
 const deletePoolDialog = reactive({
   value: false,
   pool: null,
   filesystems: [],
-  filesystem: ''
+  filesystem: '',
 });
 const passphraseDialog = reactive({
   value: false,
   pool: null,
-  passphrase: ''
+  passphrase: '',
 });
 const addParityDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
-  format: false
+  format: false,
 });
 const removeParityDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
-  unmount: true
+  unmount: true,
 });
 const snapraidOperationDialog = reactive({
   value: false,
   pool: null,
-  operation: ''
+  operation: '',
 });
 const replaceParityDeviceDialog = reactive({
   value: false,
   pool: null,
   oldDevice: null,
   newDevice: null,
-  format: false
+  format: false,
 });
 const addMergerfsDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
   format: false,
-  passphrase: ''
+  passphrase: '',
 });
 const removeMergerfsDevicesDialog = reactive({
   value: false,
   pool: null,
   devices: [],
-  unmount: true
+  unmount: true,
 });
 const replaceMergerfsDeviceDialog = reactive({
   value: false,
   pool: null,
   oldDevice: null,
   newDevice: null,
-  format: false
+  format: false,
 });
 const snapraidSchedulesDialog = reactive({
   value: false,
@@ -809,8 +802,8 @@ const snapraidSchedulesDialog = reactive({
     scrub: {
       enabled: false,
       schedule: '0 4 * * WED',
-    }
-  }
+    },
+  },
 });
 const addNonRaidDeviceDialog = reactive({
   value: false,
@@ -820,12 +813,12 @@ const addNonRaidDeviceDialog = reactive({
   filesystems: [],
   filesystem: 'xfs',
   passphrase: '',
-  parity_valid: false
+  parity_valid: false,
 });
 const addNonRaidParityDialog = reactive({
   value: false,
   pool: null,
-  device: ''
+  device: '',
 });
 
 onMounted(async () => {
@@ -891,7 +884,7 @@ const openFormatDialog = async (disk) => {
   formatDialog.disk = disk;
   formatDialog.filesystems = await getFilesystems();
 };
-const openCreatePoolDialog = async(disk) => {
+const openCreatePoolDialog = async (disk) => {
   createPoolDialog.value = true;
   createPoolDialog.disk = disk;
   createPoolDialog.single = 'single';
@@ -987,29 +980,27 @@ const getUnassignedDisks = async () => {
   }
 };
 
-  const getFilesystems = async (pooltype = '') => {
-    try {
-      const url = pooltype
-        ? `/api/v1/disks/availablefilesystems?pooltype=${encodeURIComponent(pooltype)}`
-        : '/api/v1/disks/availablefilesystems';
-      const res = await fetch(url, {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        },
-      });
+const getFilesystems = async (pooltype = '') => {
+  try {
+    const url = pooltype ? `/api/v1/disks/availablefilesystems?pooltype=${encodeURIComponent(pooltype)}` : '/api/v1/disks/availablefilesystems';
+    const res = await fetch(url, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
 
-      if (!res.ok) {
-        const errorDetails = await res.json();
-        throw new Error(`${t('filesystems could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
-      }
-      const result = await res.json();
-      return result || [];
-    } catch (e) {
-      const [userMessage, apiErrorMessage] = e.message.split('|$|');
-      showSnackbarError(userMessage, apiErrorMessage);
-      return [];
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('filesystems could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
     }
-  };
+    const result = await res.json();
+    return result || [];
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return [];
+  }
+};
 
 const getPoolTypes = async () => {
   try {

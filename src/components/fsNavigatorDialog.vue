@@ -118,6 +118,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  roots: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'selected', 'cancel']);
@@ -145,6 +149,9 @@ const loadPath = async (path = '/') => {
     const url = new URL('/api/v1/mos/fsnavigator', window.location.origin);
     if (path && path !== '/') {
       url.searchParams.set('path', path);
+    }
+    if (props.roots !== '' && props.roots !== '/') {
+      url.searchParams.set('roots', props.roots);
     }
 
     const res = await fetch(url.toString(), {

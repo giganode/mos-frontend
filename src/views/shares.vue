@@ -62,18 +62,14 @@
       <v-card-text>
         <v-form>
           <v-text-field v-model="createDialog.shareName" :label="$t('share name')" required autofocus />
+          <v-select v-model="createDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
           <v-text-field
             v-model="createDialog.subPath"
             :label="$t('select directory')"
             append-inner-icon="mdi-folder"
             required
-            @click:append-inner="
-              openFsDialog((item) => {
-                createDialog.subPath = item.path;
-              })
-            "
+            @click:append-inner="openFsDialog((item) => { createDialog.subPath = item.path }, (pools.find(p => p.name === createDialog.poolName)?.mountPoint || '/'))"
           />
-          <v-select v-model="createDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
           <v-select v-model="createDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
           <v-select v-model="createDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
           <v-text-field v-model="createDialog.comment" :label="$t('comment')" clearable />
@@ -184,8 +180,8 @@
   </v-dialog>
 
   <!-- File System Navigator Dialog -->
-  <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
-
+  <fsNavigatorDialog v-model="fsDialog" :initial-path="fsDialogInitialPath" :roots="fsDialogInitialPath != '' ? fsDialogInitialPath : ''" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
+  
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -204,6 +200,7 @@ import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
+const fsDialogInitialPath = ref('/');
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 const overlay = ref(false);
@@ -255,9 +252,10 @@ const deleteDialog = reactive({
   deleteDirectory: false,
 });
 const sharesLoading = ref(true);
-const openFsDialog = (cb) => {
+const openFsDialog = (cb, mntPoint = '/') => {
   fsDialogCallback.value = cb;
   fsDialog.value = true;
+  fsDialogInitialPath.value = mntPoint;
 };
 const handleFsSelected = (item) => {
   if (typeof fsDialogCallback.value === 'function') {
@@ -270,7 +268,7 @@ const targetDevicesDialog = reactive({
   value: false,
   share: null,
   selectedDevices: [],
-  targetDevices: [{ name: '', value: '' }]
+  targetDevices: [{ name: '', value: '' }],
 });
 
 onMounted(async () => {

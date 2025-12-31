@@ -68,7 +68,11 @@
             :label="$t('select directory')"
             append-inner-icon="mdi-folder"
             required
-            @click:append-inner="openFsDialog((item) => { createDialog.subPath = item.path }, (pools.find(p => p.name === createDialog.poolName)?.mountPoint || '/'))"
+            @click:append-inner="
+              openFsDialog((item) => {
+                createDialog.subPath = item.path;
+              }, pools.find((p) => p.name === createDialog.poolName)?.mountPoint || '/')
+            "
           />
           <v-select v-model="createDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
           <v-select v-model="createDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
@@ -180,8 +184,15 @@
   </v-dialog>
 
   <!-- File System Navigator Dialog -->
-  <fsNavigatorDialog v-model="fsDialog" :initial-path="fsDialogInitialPath" :roots="fsDialogInitialPath != '' ? fsDialogInitialPath : ''" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
-  
+  <fsNavigatorDialog
+    v-model="fsDialog"
+    :initial-path="fsDialogInitialPath"
+    :roots="fsDialogInitialPath != '' ? fsDialogInitialPath : ''"
+    select-type="directory"
+    :title="$t('select directory')"
+    @selected="handleFsSelected"
+  />
+
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -259,7 +270,13 @@ const openFsDialog = (cb, mntPoint = '/') => {
 };
 const handleFsSelected = (item) => {
   if (typeof fsDialogCallback.value === 'function') {
-    fsDialogCallback.value(item);
+    if (fsDialogInitialPath.value === '' || fsDialogInitialPath.value === '/') {
+      fsDialogCallback.value(item);
+    } else {
+      const relativePath = item.path.replace(fsDialogInitialPath.value, '');
+      const pathWithLeadingSlash = relativePath.startsWith('/') ? relativePath : '/' + relativePath;
+      fsDialogCallback.value({ ...item, path: pathWithLeadingSlash });
+    }
   }
   fsDialogCallback.value = null;
   fsDialog.value = false;

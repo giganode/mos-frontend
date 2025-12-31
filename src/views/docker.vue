@@ -538,7 +538,7 @@
   </v-dialog>
 
   <!-- Info Dialog -->
-  <v-dialog v-model="infoDialog.value" max-width="500">
+  <v-dialog v-model="infoDialog.value" max-width="800">
     <v-card v-if="infoDialog.docker" class="pa-0">
       <v-card-title class="text-h6">{{ infoDialog.docker.Names[0] }}</v-card-title>
       <v-card-text class="pa-4">

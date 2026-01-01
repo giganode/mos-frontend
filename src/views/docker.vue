@@ -304,16 +304,39 @@
                         {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}
                       </td>
                       <td>
-                        {{
-                          dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports && dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports.some((p) => p.PublicPort)
-                            ? dockers
-                                .find((d) => d.Names && d.Names[0] === containerName)
-                                ?.Ports.filter((p) => p.PublicPort)
-                                .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
-                                .map((p) => `${p.PublicPort}:${p.PrivatePort}`)
-                                .join(', ')
-                            : 'none'
-                        }}
+                        <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports && dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports.some((p) => p.PublicPort)">
+                          <div>
+                            <div
+                              class="text-body-2"
+                              v-html="(function () {
+                                const docker = dockers.find((d) => d.Names && d.Names[0] === containerName) || {};
+                                const mappings = (docker.Ports || [])
+                                  .filter((p) => p.PublicPort)
+                                  .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
+                                  .map((p) => `${p.PublicPort}:${p.PrivatePort}`);
+                                const chunks = [];
+                                for (let i = 0; i < mappings.length; i += 2) chunks.push(mappings.slice(i, i + 2).join(', '));
+                                return (docker._portsExpanded ? chunks.join('<br/>') : chunks[0] || '') || 'none';
+                              })()"
+                              :style="{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: (dockers.find((d) => d.Names && d.Names[0] === containerName)? dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded : false) ? 'normal' : 'nowrap'
+                              }"
+                            />
+                            <div v-if="(dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports || []).filter((p) => p.PublicPort).filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort)).length > 2" class="mt-0">
+                              <v-icon
+                                @click.stop="(function(){ const _d = dockers.find((d) => d.Names && d.Names[0] === containerName); if (_d) _d._portsExpanded = !_d._portsExpanded; })()"
+                                :title="(dockers.find((d) => d.Names && d.Names[0] === containerName)? (dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded ? $t('collapse') : $t('expand')) : $t('expand'))"
+                                color="grey-darken-1"
+                                style="cursor: pointer; transition: transform 0.18s"
+                                :style="{ transform: (dockers.find((d) => d.Names && d.Names[0] === containerName)? (dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded ? 'rotate(180deg)' : 'rotate(0deg)') : 'rotate(0deg)') }"
+                              >
+                                mdi-chevron-down
+                              </v-icon>
+                            </div>
+                          </div>
+                        </template>
                       </td>
                       <td>
                         <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
@@ -501,7 +524,6 @@
                           </div>
                         </div>
                       </template>
-                      <template v-else>none</template>
                     </td>
                     <td>
                       <template v-if="docker.HostConfig.NetworkMode === 'bridge'">

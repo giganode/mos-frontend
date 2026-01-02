@@ -909,7 +909,7 @@
       <v-card-title class="text-h6 pb-0">{{ $t('sort / wait times') }}</v-card-title>
       <v-card-text style="overflow: auto; flex: 1; padding-bottom: 0" class="px-1 pt-1">
         <span class="pl-3 text-subtitle-1 font-weight-medium">{{ $t('groups') }}</span>
-        <draggable v-model="dockerGroups" item-key="id" handle=".drag-handle" @end="onDragEnd()" style="line-height: 1.5">
+        <draggable v-model="dockerGroups" item-key="id" handle=".drag-handle" style="line-height: 1.5">
           <template #item="{ element: d }">
             <v-row :key="d.id" class="d-flex align-center pa-0 ma-0 ml-2">
               <v-col cols="8" class="pa-0 ma-0 mb-1 d-flex align-center">
@@ -951,7 +951,7 @@
         >
           {{ $t('cancel') }}
         </v-btn>
-        <v-btn text color="onPrimary" @click="updateDockerWaitTimes()">
+        <v-btn text color="onPrimary" @click="updateDockerWaitTimes(); setGroupOrder()">
           {{ $t('save') }}
         </v-btn>
       </v-card-actions>
@@ -1416,7 +1416,7 @@ const switchComposeAutostart = async (group) => {
   }
 };
 
-const onDragEndGrp = async () => {
+const setGroupOrder = async () => {
   const newOrder = JSON.stringify(
     dockerGroups.value.map((group, idx) => {
       const obj = {

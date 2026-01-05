@@ -154,6 +154,8 @@ const getDiskIcon = (type) => {
       return 'mdi-usb-flash-drive';
     case 'nvme':
       return 'mdi-chip';
+    case 'ramdisk':
+      return 'mdi-memory';
     default:
       return 'mdi-help-circle';
   }

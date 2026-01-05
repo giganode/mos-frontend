@@ -885,5 +885,8 @@
   "no voltage data available": "Keine Spannungsdaten verfügbar",
   "no power data available": "Keine Leistungsdaten verfügbar",
   "no psu data available": "Keine Netzteildaten verfügbar",
-  "no custom data available": "Keine benutzerdefinierten Daten verfügbar"
+  "no custom data available": "Keine benutzerdefinierten Daten verfügbar",
+  "shared": "Geteilt",
+  "lxc registry": "LXC Registry",
+  "start wait (seconds)": "Start Wartezeit (Sekunden)"
 }

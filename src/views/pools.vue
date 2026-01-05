@@ -389,6 +389,7 @@
           </div>
           <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="green" inset />
           <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
+          <v-switch v-model="createPoolDialog.shared" :label="$t('shared')" hide-details density="compact" color="green" inset />
           <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" density="compact" color="red" inset />
           <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
           <v-switch v-if="createPoolDialog.encrypted" v-model="createPoolDialog.create_keyfile" :label="$t('create keyfile')" hide-details density="compact" color="red" inset />
@@ -724,6 +725,7 @@ const createPoolDialog = reactive({
   snapraidDevice: [],
   raidLevel: '',
   encrypted: false,
+  shared: false,
   create_keyfile: false,
   passphrase: '',
   showAdvanced: false,
@@ -896,6 +898,7 @@ const openCreatePoolDialog = async (disk) => {
   createPoolDialog.mergerfsOptions = '';
   createPoolDialog.snapraidDevice = [];
   createPoolDialog.encrypted = false;
+  createPoolDialog.shared = false;
   createPoolDialog.passphrase = '';
   createPoolDialog.create_keyfile = true;
   createPoolDialog.raidLevel = 'raid1';
@@ -1086,6 +1089,7 @@ const createPoolMergerfs = async () => {
       snapraid: { device: createPoolDialog.snapraidDevice },
     },
     config: {
+      shared: createPoolDialog.shared,
       encrypted: createPoolDialog.encrypted,
       create_keyfile: createPoolDialog.encrypted ? createPoolDialog.create_keyfile : false,
     },
@@ -1133,6 +1137,7 @@ const createPoolNonRaid = async () => {
       policies: createPoolDialog.policies,
     },
     config: {
+      shared: createPoolDialog.shared,
       encrypted: createPoolDialog.encrypted,
       create_keyfile: createPoolDialog.encrypted ? createPoolDialog.create_keyfile : false,
     },
@@ -1177,6 +1182,7 @@ const createPoolMulti = async () => {
       automount: createPoolDialog.automount,
     },
     config: {
+      shared: createPoolDialog.shared,
       encrypted: createPoolDialog.encrypted,
       create_keyfile: createPoolDialog.encrypted ? createPoolDialog.create_keyfile : false,
     },
@@ -1221,6 +1227,7 @@ const createPoolSingle = async () => {
       automount: createPoolDialog.automount,
     },
     config: {
+      shared: createPoolDialog.shared,
       encrypted: createPoolDialog.encrypted,
       create_keyfile: createPoolDialog.encrypted ? createPoolDialog.create_keyfile : false,
     },

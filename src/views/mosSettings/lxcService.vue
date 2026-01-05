@@ -28,6 +28,8 @@
                     })
                   "
                 ></v-text-field>
+                <v-text-field :label="$t('start wait (seconds)')" type="number" v-model="settingsLXC.start_wait"></v-text-field>
+                <v-text-field :label="$t('lxc registry')" v-model="settingsLXC.lxc_registry" placeholder="images.linuxcontainers.org or empty"></v-text-field>
               </v-form>
             </v-card-text>
           </v-card>
@@ -62,6 +64,8 @@ const settingsLXC = ref({
   enabled: false,
   bridge: '',
   directory: '',
+  start_wait: '0',
+  lxc_registry: null
 });
 const overlay = ref(false);
 const { t } = useI18n();

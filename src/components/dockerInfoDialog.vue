@@ -4,17 +4,7 @@
       <v-card-title class="d-flex align-center">
         <span class="text-h6">{{ titleComputed }}</span>
       </v-card-title>
-
-      <v-card-subtitle class="d-flex align-center">
-        <v-progress-circular v-if="loading" size="18" indeterminate color="secondary" class="mr-2" />
-        <span v-if="wsStatsError" class="text-error">{{ wsStatsError }}</span>
-      </v-card-subtitle>
-
       <v-card-text class="pa-2" style="max-height: 70vh; overflow: auto">
-        <v-alert v-if="errorMessage" type="error" class="mb-1">
-          {{ errorMessage }}
-        </v-alert>
-
         <v-row dense>
           <v-col cols="12" md="6">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
@@ -31,9 +21,7 @@
                     </v-chip>
                   </v-list-item-title>
                 </v-list-item>
-
                 <v-divider class="my-2" />
-
                 <v-list-item class="px-0">
                   <template #prepend>
                     <v-icon class="mr-2" color="grey-darken-1">mdi-docker</v-icon>
@@ -45,9 +33,7 @@
                     </span>
                   </v-list-item-title>
                 </v-list-item>
-
                 <v-divider class="my-2" />
-
                 <v-list-item class="px-0">
                   <template #prepend>
                     <v-icon class="mr-2" color="grey-darken-1">mdi-lan</v-icon>
@@ -62,11 +48,9 @@
               </v-list>
             </v-sheet>
           </v-col>
-
           <v-col cols="12" md="6">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
               <div class="text-subtitle-1 font-weight-medium mb-1">{{ t('ports') }}</div>
-
               <div v-if="portsFlat.length">
                 <v-row no-gutters>
                   <v-col cols="6">
@@ -76,7 +60,6 @@
                       </v-list-item>
                     </v-list>
                   </v-col>
-
                   <v-col cols="6">
                     <v-list density="compact" class="pa-0">
                       <v-list-item v-for="(p, idx) in portsRight" :key="`pr-${idx}`" class="px-0">
@@ -86,35 +69,41 @@
                   </v-col>
                 </v-row>
               </div>
-
               <div v-else class="text-body-2 text-medium-emphasis">-</div>
             </v-sheet>
           </v-col>
-
           <v-col cols="12">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
               <div class="text-subtitle-1 font-weight-medium mb-1">{{ t('stats') }}</div>
               <v-row dense>
                 <v-col cols="12" md="3">
-                  <v-chip variant="tonal" class="ma-1">Cpu: {{ cpuPercentText }}</v-chip>
+                  <div class="text-subtitle-2 font-weight-bold mb-1">{{ t('cpu') }}</div>
+                  <div class="text-body-2">Usage: {{ stats?.cpu_percent ?? '-' }}%</div>
                 </v-col>
                 <v-col cols="12" md="3">
-                  <v-chip variant="tonal" class="ma-1">Ram: {{ memUsageText }}</v-chip>
+                  <div class="text-subtitle-2 font-weight-bold mb-1">{{ t('memory') }}</div>
+                  <div class="text-body-2">Used: {{ stats?.memory_usage_human ?? '-' }}</div>
+                  <div class="text-body-2">Limit: {{ stats?.memory_limit_human ?? '-' }}</div>
+                  <div class="text-body-2">Percent: {{ stats?.memory_percent ?? '-' }}</div>
                 </v-col>
                 <v-col cols="12" md="3">
-                  <v-chip variant="tonal" class="ma-1">Net: {{ netText }}</v-chip>
+                  <div class="text-subtitle-2 font-weight-bold mb-1">{{ t('network') }}</div>
+                  <div class="text-body-2">Rx: {{ stats?.network_rx_human ?? '-' }}</div>
+                  <div class="text-body-2">Tx: {{ stats?.network_tx_human ?? '-' }}</div>
+                  <div class="text-body-2">Total: {{ stats?.network_total_human ?? '-' }}</div>
                 </v-col>
                 <v-col cols="12" md="3">
-                  <v-chip variant="tonal" class="ma-1">Disk: {{ diskText }}</v-chip>
+                  <div class="text-subtitle-2 font-weight-bold mb-1">{{ t('disk') }}</div>
+                  <div class="text-body-2">Read: {{ stats?.block_read_human ?? '-' }}</div>
+                  <div class="text-body-2">Write: {{ stats?.block_write_human ?? '-' }}</div>
+                  <div class="text-body-2">Total: {{ stats?.block_total_human ?? '-' }}</div>
                 </v-col>
               </v-row>
             </v-sheet>
           </v-col>
-
           <v-col cols="12">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
               <div class="text-subtitle-1 font-weight-medium mb-1">{{ t('mounts') }}</div>
-
               <div v-if="mounts.length">
                 <v-expansion-panels variant="accordion" class="bg-transparent">
                   <v-expansion-panel v-for="(mount, idx) in mounts" :key="idx">
@@ -126,7 +115,6 @@
                         </v-chip>
                       </div>
                     </v-expansion-panel-title>
-
                     <v-expansion-panel-text>
                       <v-list density="compact" class="bg-transparent pa-0">
                         <v-list-item class="px-0">
@@ -135,18 +123,14 @@
                             <span class="text-body-2 text-medium-emphasis">{{ mount.Type || '-' }}</span>
                           </v-list-item-title>
                         </v-list-item>
-
                         <v-divider class="my-2" />
-
                         <v-list-item class="px-0">
                           <v-list-item-title class="d-flex justify-space-between">
                             <span class="text-body-2">{{ t('mode') }}</span>
                             <span class="text-body-2 text-medium-emphasis">{{ mount.Mode || '-' }}</span>
                           </v-list-item-title>
                         </v-list-item>
-
                         <v-divider class="my-2" />
-
                         <v-list-item class="px-0">
                           <v-list-item-title class="d-flex justify-space-between">
                             <span class="text-body-2">{{ t('propagation') }}</span>
@@ -158,7 +142,6 @@
                   </v-expansion-panel>
                 </v-expansion-panels>
               </div>
-
               <div v-else class="text-body-2 text-medium-emphasis">-</div>
             </v-sheet>
           </v-col>
@@ -195,10 +178,7 @@ type DockerLike = {
   Mounts?: DockerMount[];
 };
 
-const cpuPercentText = ref('-');
-const memUsageText = ref('-');
-const netText = ref('-');
-const diskText = ref('-');
+const stats = ref<any>(null);
 
 const props = defineProps<{
   modelValue: boolean;
@@ -273,10 +253,7 @@ const connectStats = (containerName: string) => {
   connecting = true;
   activeContainer = containerName;
 
-  cpuPercentText.value = '-';
-  memUsageText.value = '-';
-  netText.value = '-';
-  diskText.value = '-';
+  stats.value = null;
   errorMessage.value = '';
   wsStatsError.value = null;
   loading.value = true;
@@ -312,11 +289,7 @@ const connectStats = (containerName: string) => {
 
   socket.on('docker-update', (data: any) => {
     if (data.status === 'running') {
-        cpuPercentText.value = data.stats.cpu_percent ?? '-';
-        memUsageText.value = data.stats.memory_usage_human ?? '-';
-        netText.value = data.stats.network_total_human ?? '-';
-        diskText.value = data.stats.block_total_human ?? '-';
-      console.log(data);
+        stats.value = data.stats;
     }
     emit('stats', data);
   });
@@ -345,7 +318,6 @@ watch(
     if (dockerName.value) connectStats(dockerName.value);
   }
 );
-
 watch(
   () => dockerName.value,
   (name, old) => {

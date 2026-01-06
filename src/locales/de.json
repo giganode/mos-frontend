@@ -895,5 +895,7 @@
   "could not download virtio iso": "VirtIO ISO konnte nicht heruntergeladen werden",
   "virtio iso downloaded successfully": "VirtIO ISO erfolgreich heruntergeladen",
   "could not cleanup virtio isos": "VirtIO ISOs konnten nicht bereinigt werden",
-  "virtio isos cleaned up successfully": "VirtIO ISOs erfolgreich bereinigt"
+  "virtio isos cleaned up successfully": "VirtIO ISOs erfolgreich bereinigt",
+  "mounts": "Mounts",
+  "stats": "Statistiken"
 }

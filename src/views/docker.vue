@@ -26,147 +26,147 @@
                 </tr>
               </thead>
 
-                <!-- Docker Groups -->
-                <tbody v-if="dockerGroups.length > 0">
-                  <template v-for="group in dockerGroups" :key="group.id">
+              <!-- Docker Groups -->
+              <tbody v-if="dockerGroups.length > 0">
+                <template v-for="group in dockerGroups" :key="group.id">
                   <tr :id="group.id" @click.stop="group.expanded = !group.expanded">
                     <td>
-                    <v-menu v-model="group.menu">
-                      <template #activator="{ props }">
-                      <v-img
-                        v-if="group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
-                        class="drag-handle-grp"
-                        v-bind="props"
-                        :src="`/docker_icons/compose/${group.icon}.png`"
-                        alt="docker image"
-                        width="24"
-                        height="24"
-                      >
-                        <template #error>
-                        <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
-                          <v-icon color="grey-darken-1">mdi-image-off</v-icon>
-                        </v-sheet>
+                      <v-menu v-model="group.menu">
+                        <template #activator="{ props }">
+                          <v-img
+                            v-if="group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
+                            class="drag-handle-grp"
+                            v-bind="props"
+                            :src="`/docker_icons/compose/${group.icon}.png`"
+                            alt="docker image"
+                            width="24"
+                            height="24"
+                          >
+                            <template #error>
+                              <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                              </v-sheet>
+                            </template>
+                          </v-img>
+                          <v-img
+                            v-else-if="!group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
+                            class="drag-handle-grp"
+                            v-bind="props"
+                            :src="`/docker_icons/groups/${group.icon}`"
+                            alt="docker image"
+                            width="24"
+                            height="24"
+                          >
+                            <template #error>
+                              <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                              </v-sheet>
+                            </template>
+                          </v-img>
+                          <v-icon v-else-if="group.icon" class="drag-handle-grp" v-bind="props" color="grey-darken-1">
+                            {{ group.icon }}
+                          </v-icon>
+                          <v-icon v-else-if="group.compose" class="drag-handle-grp" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
+                          <v-icon v-else class="drag-handle-grp" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
                         </template>
-                      </v-img>
-                      <v-img
-                        v-else-if="!group.compose && group.icon && group.icon != '' && !group.icon.toLowerCase().includes('mdi')"
-                        class="drag-handle-grp"
-                        v-bind="props"
-                        :src="`/docker_icons/groups/${group.icon}`"
-                        alt="docker image"
-                        width="24"
-                        height="24"
-                      >
-                        <template #error>
-                        <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
-                          <v-icon color="grey-darken-1">mdi-image-off</v-icon>
-                        </v-sheet>
-                        </template>
-                      </v-img>
-                      <v-icon v-else-if="group.icon" class="drag-handle-grp" v-bind="props" color="grey-darken-1">
-                        {{ group.icon }}
-                      </v-icon>
-                      <v-icon v-else-if="group.compose" class="drag-handle-grp" v-bind="props" color="grey-darken-1">mdi-toy-brick</v-icon>
-                      <v-icon v-else class="drag-handle-grp" v-bind="props" color="grey-darken-1">mdi-folder</v-icon>
-                      </template>
 
-                      <v-list v-if="group.compose">
-                      <v-list-item v-if="group.webui" @click="showComposeWebui(group)">
-                        <template #prepend>
-                        <v-icon>mdi-web</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('web ui') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="startComposeStack(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-play-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('start stack') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="stopComposeStack(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-stop-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('stop stack') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="restartComposeStack(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-restart</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('restart stack') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-divider />
-                      <v-list-item @click="openEditComposeStackDialog(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-text-box-edit</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('edit stack') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="openRemoveComposeStackDialog(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-delete</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('remove stack') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="pullImagesForComposeStack(group.name)">
-                        <template #prepend>
-                        <v-icon>mdi-download-multiple</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('pull stack images') }}</v-list-item-title>
-                      </v-list-item>
-                      </v-list>
+                        <v-list v-if="group.compose">
+                          <v-list-item v-if="group.webui" @click="showComposeWebui(group)">
+                            <template #prepend>
+                              <v-icon>mdi-web</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('web ui') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="startComposeStack(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-play-circle</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('start stack') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="stopComposeStack(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-stop-circle</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('stop stack') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="restartComposeStack(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-restart</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('restart stack') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-divider />
+                          <v-list-item @click="openEditComposeStackDialog(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-text-box-edit</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('edit stack') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="openRemoveComposeStackDialog(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-delete</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('remove stack') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="pullImagesForComposeStack(group.name)">
+                            <template #prepend>
+                              <v-icon>mdi-download-multiple</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('pull stack images') }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
 
-                      <v-list v-else>
-                      <v-list-item @click="openChangeGroupDialog(group)">
-                        <template #prepend>
-                        <v-icon>mdi-folder-edit</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('edit group') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="openDeleteGroupDialog(group)">
-                        <template #prepend>
-                        <v-icon>mdi-folder-remove</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('delete group') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-divider />
-                      <v-list-item @click="startDockerGroupContainers(group)">
-                        <template #prepend>
-                        <v-icon>mdi-play-box-multiple</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('start all') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="stopDockerGroupContainers(group)">
-                        <template #prepend>
-                        <v-icon>mdi-stop</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('stop all') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="restartDockerGroupContainers(group)">
-                        <template #prepend>
-                        <v-icon>mdi-restart</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('restart all') }}</v-list-item-title>
-                      </v-list-item>
-                      </v-list>
-                    </v-menu>
+                        <v-list v-else>
+                          <v-list-item @click="openChangeGroupDialog(group)">
+                            <template #prepend>
+                              <v-icon>mdi-folder-edit</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('edit group') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="openDeleteGroupDialog(group)">
+                            <template #prepend>
+                              <v-icon>mdi-folder-remove</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('delete group') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-divider />
+                          <v-list-item @click="startDockerGroupContainers(group)">
+                            <template #prepend>
+                              <v-icon>mdi-play-box-multiple</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('start all') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="stopDockerGroupContainers(group)">
+                            <template #prepend>
+                              <v-icon>mdi-stop</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('stop all') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="restartDockerGroupContainers(group)">
+                            <template #prepend>
+                              <v-icon>mdi-restart</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('restart all') }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
                     </td>
 
                     <td>
-                    <div class="d-flex align-center">
-                      <div class="mr-2">
-                      <div style="font-size: 0.9rem">
-                        {{ group.name }}
+                      <div class="d-flex align-center">
+                        <div class="mr-2">
+                          <div style="font-size: 0.9rem">
+                            {{ group.name }}
+                          </div>
+                          <div class="text-caption" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
+                        </div>
+                        <v-chip v-if="group.compose" size="small">{{ $t('compose') }}</v-chip>
                       </div>
-                      <div class="text-caption" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ group.runningCount }}/{{ group.count }} {{ $t('started') }}</div>
-                      </div>
-                      <v-chip v-if="group.compose" size="small">{{ $t('compose') }}</v-chip>
-                    </div>
                     </td>
 
                     <td>
-                    <v-icon v-if="group.update_available" color="red" @click.stop="updateDockerGroupContainers(group)">mdi-autorenew</v-icon>
-                    <v-icon v-else color="green">mdi-check</v-icon>
+                      <v-icon v-if="group.update_available" color="red" @click.stop="updateDockerGroupContainers(group)">mdi-autorenew</v-icon>
+                      <v-icon v-else color="green">mdi-check</v-icon>
                     </td>
 
                     <td>&nbsp;</td>
@@ -175,244 +175,271 @@
                     <td>&nbsp;</td>
 
                     <td>
-                    <v-switch v-if="group.compose" v-model="group.autostart" color="green" hide-details density="compact" @click.stop @change="switchComposeAutostart(group)" />
+                      <v-switch v-if="group.compose" v-model="group.autostart" color="green" hide-details density="compact" @click.stop @change="switchComposeAutostart(group)" />
                     </td>
 
                     <td>&nbsp;</td>
 
                     <td>
-                    <v-btn icon density="compact" @click.stop="group.expanded = !group.expanded">
-                      <v-icon>{{ group.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-                    </v-btn>
+                      <v-btn icon density="compact" @click.stop="group.expanded = !group.expanded">
+                        <v-icon>{{ group.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                      </v-btn>
                     </td>
                   </tr>
 
                   <tr v-for="containerName in group.expanded ? group.containers : []" :key="containerName">
                     <td>
-                    <v-menu>
-                      <template #activator="{ props }">
-                      <v-img v-bind="props" :src="`/docker_icons/${containerName}.png`" alt="docker image" width="24" height="24" style="cursor: pointer">
-                        <template #error>
-                        <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
-                          <v-icon color="grey-darken-1">{{ group.compose ? 'mdi-cube-outline' : 'mdi-image-off' }}</v-icon>
-                        </v-sheet>
+                      <v-menu>
+                        <template #activator="{ props }">
+                          <v-img v-bind="props" :src="`/docker_icons/${containerName}.png`" alt="docker image" width="24" height="24" style="cursor: pointer">
+                            <template #error>
+                              <v-sheet class="d-flex align-center justify-center" height="100%" width="100%">
+                                <v-icon color="grey-darken-1">{{ group.compose ? 'mdi-cube-outline' : 'mdi-image-off' }}</v-icon>
+                              </v-sheet>
+                            </template>
+                          </v-img>
                         </template>
-                      </v-img>
+
+                        <v-list v-if="!group.compose">
+                          <v-list-item v-if="checkWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))" @click="showWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))">
+                            <template #prepend>
+                              <v-icon>mdi-web</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('web ui') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running'" @click="openTerminal(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-console</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'running'" @click="startDocker(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-play-circle</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('start') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item
+                            v-if="
+                              dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
+                            "
+                            @click="stopDocker(containerName)"
+                          >
+                            <template #prepend>
+                              <v-icon>mdi-stop-circle</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('stop') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running'" @click="restartDocker(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-restart</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('restart') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item
+                            v-if="
+                              dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
+                            "
+                            @click="killDocker(containerName)"
+                          >
+                            <template #prepend>
+                              <v-icon>mdi-close-octagon</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('kill') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item :to="`/docker/change/${containerName}`">
+                            <template #prepend>
+                              <v-icon>mdi-text-box-edit</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-divider />
+                          <v-list-item @click="openTerminalLogs(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-math-log</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('logs') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="mosDockers.find((item) => item.name === containerName && item.update_available)" @click="updateDocker(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-update</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('update') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item v-if="!mosDockers.find((item) => item.name === containerName && item.update_available)" @click="updateDocker(containerName, true)">
+                            <template #prepend>
+                              <v-icon>mdi-chevron-up-circle</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('force update') }}</v-list-item-title>
+                          </v-list-item>
+                          <v-list-item @click="openDeleteDialog(dockers.find((d) => d.Names && d.Names[0] === containerName))">
+                            <template #prepend>
+                              <v-icon>mdi-delete</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+
+                        <v-list v-else>
+                          <v-list-item @click="openTerminalLogs(containerName)">
+                            <template #prepend>
+                              <v-icon>mdi-math-log</v-icon>
+                            </template>
+                            <v-list-item-title>{{ $t('logs') }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </td>
+
+                    <td>
+                      <div style="font-size: 0.9rem">{{ containerName }}</div>
+                      <div class="text-caption" :style="{ color: dockers.find((d) => d.Names && d.Names[0] === containerName)?.State === 'running' ? 'green' : 'red' }">
+                        {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.State }}
+                      </div>
+                    </td>
+
+                    <td>
+                      <template v-if="!group.compose">
+                        <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === containerName && item.update_available)" color="red" @click="updateDocker(containerName)">
+                          mdi-autorenew
+                        </v-icon>
+                        <v-icon v-else color="green">mdi-check</v-icon>
                       </template>
-
-                      <v-list v-if="!group.compose">
-                      <v-list-item
-                        v-if="checkWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))"
-                        @click="showWebui(dockers.find((d) => d.Names && d.Names[0] === containerName))"
-                      >
-                        <template #prepend>
-                        <v-icon>mdi-web</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('web ui') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running'" @click="openTerminal(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-console</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'running'" @click="startDocker(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-play-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('start') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item
-                        v-if="
-                        dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
-                        "
-                        @click="stopDocker(containerName)"
-                      >
-                        <template #prepend>
-                        <v-icon>mdi-stop-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('stop') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item v-if="dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running'" @click="restartDocker(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-restart</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('restart') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item
-                        v-if="
-                        dockers.find((d) => d.Names && d.Names[0] === containerName).State === 'running' || dockers.find((d) => d.Names && d.Names[0] === containerName).State !== 'restarting'
-                        "
-                        @click="killDocker(containerName)"
-                      >
-                        <template #prepend>
-                        <v-icon>mdi-close-octagon</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('kill') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item :to="`/docker/change/${containerName}`">
-                        <template #prepend>
-                        <v-icon>mdi-text-box-edit</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-divider />
-                      <v-list-item @click="openTerminalLogs(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-math-log</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('logs') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item v-if="mosDockers.find((item) => item.name === containerName && item.update_available)" @click="updateDocker(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-update</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('update') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item v-if="!mosDockers.find((item) => item.name === containerName && item.update_available)" @click="updateDocker(containerName, true)">
-                        <template #prepend>
-                        <v-icon>mdi-chevron-up-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('force update') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="openDeleteDialog(dockers.find((d) => d.Names && d.Names[0] === containerName))">
-                        <template #prepend>
-                        <v-icon>mdi-delete</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                      </v-list-item>
-                      </v-list>
-
-                      <v-list v-else>
-                      <v-list-item @click="openTerminalLogs(containerName)">
-                        <template #prepend>
-                        <v-icon>mdi-math-log</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('logs') }}</v-list-item-title>
-                      </v-list-item>
-                      </v-list>
-                    </v-menu>
-                    </td>
-
-                    <td>
-                    <div style="font-size: 0.9rem">{{ containerName }}</div>
-                    <div class="text-caption" :style="{ color: dockers.find((d) => d.Names && d.Names[0] === containerName)?.State === 'running' ? 'green' : 'red' }">
-                      {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.State }}
-                    </div>
-                    </td>
-
-                    <td>
-                    <template v-if="!group.compose">
-                      <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === containerName && item.update_available)" color="red" @click="updateDocker(containerName)">
-                      mdi-autorenew
-                      </v-icon>
-                      <v-icon v-else color="green">mdi-check</v-icon>
-                    </template>
                     </td>
 
                     <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
-                    {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}
+                      {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.Image }}
                     </td>
 
                     <td>
-                    <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports && dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports.some((p) => p.PublicPort)">
-                      <div>
-                      <div
-                        class="text-body-2"
-                        v-html="(function () {
-                        const docker = dockers.find((d) => d.Names && d.Names[0] === containerName) || {};
-                        const mappings = (docker.Ports || [])
-                          .filter((p) => p.PublicPort)
-                          .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
-                          .map((p) => `${p.PublicPort}:${p.PrivatePort}`);
-                        const chunks = [];
-                        for (let i = 0; i < mappings.length; i += 2) chunks.push(mappings.slice(i, i + 2).join(', '));
-                        return (docker._portsExpanded ? chunks.join('<br/>') : chunks[0] || '') || 'none';
-                        })()"
-                        :style="{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: (dockers.find((d) => d.Names && d.Names[0] === containerName)? dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded : false) ? 'normal' : 'nowrap'
-                        }"
+                      <template
+                        v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports && dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports.some((p) => p.PublicPort)"
+                      >
+                        <div>
+                          <div
+                            class="text-body-2"
+                            v-html="
+                              (function () {
+                                const docker = dockers.find((d) => d.Names && d.Names[0] === containerName) || {};
+                                const mappings = (docker.Ports || [])
+                                  .filter((p) => p.PublicPort)
+                                  .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
+                                  .map((p) => `${p.PublicPort}:${p.PrivatePort}`);
+                                const chunks = [];
+                                for (let i = 0; i < mappings.length; i += 2) chunks.push(mappings.slice(i, i + 2).join(', '));
+                                return (docker._portsExpanded ? chunks.join('<br/>') : chunks[0] || '') || 'none';
+                              })()
+                            "
+                            :style="{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: (dockers.find((d) => d.Names && d.Names[0] === containerName) ? dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded : false)
+                                ? 'normal'
+                                : 'nowrap',
+                            }"
+                          />
+                          <div
+                            v-if="
+                              (dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports || [])
+                                .filter((p) => p.PublicPort)
+                                .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort)).length > 2
+                            "
+                            class="mt-0"
+                          >
+                            <v-icon
+                              @click.stop="
+                                (function () {
+                                  const _d = dockers.find((d) => d.Names && d.Names[0] === containerName);
+                                  if (_d) _d._portsExpanded = !_d._portsExpanded;
+                                })()
+                              "
+                              :title="
+                                dockers.find((d) => d.Names && d.Names[0] === containerName)
+                                  ? dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded
+                                    ? $t('collapse')
+                                    : $t('expand')
+                                  : $t('expand')
+                              "
+                              color="grey-darken-1"
+                              style="cursor: pointer; transition: transform 0.18s"
+                              :style="{
+                                transform: dockers.find((d) => d.Names && d.Names[0] === containerName)
+                                  ? dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded
+                                    ? 'rotate(180deg)'
+                                    : 'rotate(0deg)'
+                                  : 'rotate(0deg)',
+                              }"
+                            >
+                              mdi-chevron-down
+                            </v-icon>
+                          </div>
+                        </div>
+                      </template>
+                    </td>
+
+                    <td>
+                      <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
+                        {{
+                          getContainerIPAddress(
+                            dockers.find((d) => d.Names && d.Names[0] === containerName),
+                            'none'
+                          )
+                        }}
+                      </template>
+                      <template v-else-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'host'">
+                        {{
+                          getContainerIPAddress(
+                            dockers.find((d) => d.Names && d.Names[0] === containerName),
+                            'none'
+                          )
+                        }}
+                      </template>
+                      <template v-else>
+                        {{
+                          getContainerIPAddress(
+                            dockers.find((d) => d.Names && d.Names[0] === containerName),
+                            'none'
+                          )
+                        }}
+                      </template>
+                    </td>
+
+                    <td>
+                      <template v-if="!dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode.startsWith('container:')">
+                        {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode }}
+                      </template>
+                      <template v-else>
+                        {{ getContainerNameFromNetworkmode(dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode) }}
+                      </template>
+                    </td>
+
+                    <td>
+                      <v-switch
+                        v-if="!group.compose"
+                        :model-value="dockers.find((d) => d.Names && d.Names[0] === containerName)?.autostart ?? false"
+                        color="green"
+                        hide-details
+                        density="compact"
+                        @update:model-value="
+                          (val) => {
+                            const d = dockers.find((x) => x.Names && x.Names[0] === containerName);
+                            if (d) {
+                              d.autostart = val;
+                              switchAutostart(d);
+                            }
+                          }
+                        "
                       />
-                      <div v-if="(dockers.find((d) => d.Names && d.Names[0] === containerName)?.Ports || []).filter((p) => p.PublicPort).filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort)).length > 2" class="mt-0">
-                        <v-icon
-                        @click.stop="(function(){ const _d = dockers.find((d) => d.Names && d.Names[0] === containerName); if (_d) _d._portsExpanded = !_d._portsExpanded; })()"
-                        :title="(dockers.find((d) => d.Names && d.Names[0] === containerName)? (dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded ? $t('collapse') : $t('expand')) : $t('expand'))"
-                        color="grey-darken-1"
-                        style="cursor: pointer; transition: transform 0.18s"
-                        :style="{ transform: (dockers.find((d) => d.Names && d.Names[0] === containerName)? (dockers.find((d) => d.Names && d.Names[0] === containerName)._portsExpanded ? 'rotate(180deg)' : 'rotate(0deg)') : 'rotate(0deg)') }"
-                        >
-                        mdi-chevron-down
-                        </v-icon>
-                      </div>
-                      </div>
-                    </template>
                     </td>
 
                     <td>
-                    <template v-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'bridge'">
-                      {{
-                      getContainerIPAddress(
-                        dockers.find((d) => d.Names && d.Names[0] === containerName),
-                        'none'
-                      )
-                      }}
-                    </template>
-                    <template v-else-if="dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode === 'host'">
-                      {{
-                      getContainerIPAddress(
-                        dockers.find((d) => d.Names && d.Names[0] === containerName),
-                        'none'
-                      )
-                      }}
-                    </template>
-                    <template v-else>
-                      {{
-                      getContainerIPAddress(
-                        dockers.find((d) => d.Names && d.Names[0] === containerName),
-                        'none'
-                      )
-                      }}
-                    </template>
-                    </td>
-
-                    <td>
-                    <template v-if="!dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode.startsWith('container:')">
-                      {{ dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode }}
-                    </template>
-                    <template v-else>
-                      {{ getContainerNameFromNetworkmode(dockers.find((d) => d.Names && d.Names[0] === containerName)?.HostConfig.NetworkMode) }}
-                    </template>
-                    </td>
-
-                    <td>
-                    <v-switch
-                      v-if="!group.compose"
-                      :model-value="dockers.find((d) => d.Names && d.Names[0] === containerName)?.autostart ?? false"
-                      color="green"
-                      hide-details
-                      density="compact"
-                      @update:model-value="
-                      (val) => {
-                        const d = dockers.find((x) => x.Names && x.Names[0] === containerName);
-                        if (d) {
-                        d.autostart = val;
-                        switchAutostart(d);
-                        }
-                      }
-                      "
-                    />
-                    </td>
-
-                    <td>
-                    <v-icon class="drag-handle" @click="openInfoDialog(dockers.find((d) => d.Names && d.Names[0] === containerName))" color="grey-darken-1">mdi-information-outline</v-icon>
+                      <v-icon class="drag-handle" @click="openInfoDialog(dockers.find((d) => d.Names && d.Names[0] === containerName))" color="grey-darken-1">mdi-information-outline</v-icon>
                     </td>
 
                     <td></td>
                   </tr>
-                  </template>
-                </tbody>
+                </template>
+              </tbody>
 
               <!-- Separator Row -->
               <tr v-if="dockerGroups.length > 0 && dockers.some((d) => !dockerGroups.some((g) => g.containers && g.containers.includes(d.Names?.[0])))">
@@ -593,140 +620,6 @@
         <v-btn color="red" @click="removeDocker(deleteDialog.docker.Names[0])">
           {{ $t('delete') }}
         </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
-  <!-- Info Dialog -->
-  <v-dialog v-model="infoDialog.value" max-width="800">
-    <v-card v-if="infoDialog.docker" class="pa-0">
-      <v-card-title class="text-h6">{{ infoDialog.docker.Names[0] }}</v-card-title>
-      <v-card-text class="pa-4">
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <v-sheet rounded="lg" variant="tonal" class="pa-4">
-              <div class="text-subtitle-1 font-weight-medium mb-3">{{ $t('info') }}</div>
-              <v-list density="compact" class="bg-transparent pa-0">
-                <v-list-item class="px-0">
-                  <template #prepend>
-                    <v-icon class="mr-2" color="grey-darken-1">mdi-heart-pulse</v-icon>
-                  </template>
-                  <v-list-item-title class="d-flex align-center justify-space-between">
-                    <span class="text-body-2">{{ $t('state') }}</span>
-                    <v-chip size="small" :color="infoDialog.docker.State === 'running' ? 'green' : 'red'" variant="tonal" class="ml-2">
-                      {{ infoDialog.docker.State }}
-                    </v-chip>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-divider class="my-2" />
-                <v-list-item class="px-0">
-                  <template #prepend>
-                    <v-icon class="mr-2" color="grey-darken-1">mdi-docker</v-icon>
-                  </template>
-                  <v-list-item-title class="d-flex align-center justify-space-between">
-                    <span class="text-body-2">{{ $t('image') }}</span>
-                    <span class="text-body-2 text-truncate ml-2" style="max-width: 260px" :title="infoDialog.docker.Image">
-                      {{ infoDialog.docker.Image }}
-                    </span>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-divider class="my-2" />
-                <v-list-item class="px-0">
-                  <template #prepend>
-                    <v-icon class="mr-2" color="grey-darken-1">mdi-lan</v-icon>
-                  </template>
-                  <v-list-item-title class="d-flex align-center justify-space-between">
-                    <span class="text-body-2">{{ $t('network') }}</span>
-                    <v-chip size="small" color="primary" variant="tonal" class="ml-2">
-                      {{ infoDialog.docker.HostConfig.NetworkMode }}
-                    </v-chip>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-sheet>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-sheet rounded="lg" variant="tonal" class="pa-4">
-              <div class="text-subtitle-1 font-weight-medium mb-3">{{ $t('ports') }}</div>
-              <div v-if="infoDialog.docker.Ports && infoDialog.docker.Ports.length">
-                <v-row no-gutters>
-                  <v-col cols="6">
-                    <v-list density="compact" class="pa-0">
-                      <v-list-item v-for="(port, idx) in infoDialog.docker.Ports.filter((_, i) => i % 2 === 0)" :key="`left-${idx}`" class="px-0">
-                        <div class="v-list-item-content">
-                          <div class="text-body-2">
-                            {{ port.PublicPort ? `${port.PublicPort}:${port.PrivatePort}` : `${port.PrivatePort}` }}
-                            <span class="ml-2 text-caption text-medium-emphasis">({{ port.Type }})</span>
-                          </div>
-                        </div>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-list density="compact" class="pa-0">
-                      <v-list-item v-for="(port, idx) in infoDialog.docker.Ports.filter((_, i) => i % 2 === 1)" :key="`right-${idx}`" class="px-0">
-                        <div class="v-list-item-content">
-                          <div class="text-body-2">
-                            {{ port.PublicPort ? `${port.PublicPort}:${port.PrivatePort}` : `${port.PrivatePort}` }}
-                            <span class="ml-2 text-caption text-medium-emphasis">({{ port.Type }})</span>
-                          </div>
-                        </div>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                </v-row>
-              </div>
-              <div v-else class="text-body-2 text-medium-emphasis">-</div>
-            </v-sheet>
-          </v-col>
-          <v-col cols="12">
-            <v-sheet rounded="lg" variant="tonal" class="pa-4">
-              <div class="text-subtitle-1 font-weight-medium mb-3">{{ $t('mounts') }}</div>
-              <div v-if="infoDialog.docker.Mounts && infoDialog.docker.Mounts.length">
-                <v-expansion-panels variant="accordion" class="bg-transparent">
-                  <v-expansion-panel v-for="(mount, idx) in infoDialog.docker.Mounts" :key="idx">
-                    <v-expansion-panel-title>
-                      <div class="d-flex align-center justify-space-between w-100">
-                        <div class="text-body-2 text-truncate" style="max-width: 520px">{{ mount.Source }} &#8594; {{ mount.Destination }}</div>
-                        <v-chip size="x-small" :color="mount.RW ? 'green' : 'red'" variant="tonal" class="ml-2">
-                          {{ mount.RW ? $t('read/write') : $t('read only') }}
-                        </v-chip>
-                      </div>
-                    </v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                      <v-list density="compact" class="bg-transparent pa-0">
-                        <v-list-item class="px-0">
-                          <v-list-item-title class="d-flex justify-space-between">
-                            <span class="text-body-2">{{ $t('type') }}</span>
-                            <span class="text-body-2 text-medium-emphasis">{{ mount.Type || '-' }}</span>
-                          </v-list-item-title>
-                        </v-list-item>
-                        <v-divider class="my-2" />
-                        <v-list-item class="px-0">
-                          <v-list-item-title class="d-flex justify-space-between">
-                            <span class="text-body-2">{{ $t('mode') }}</span>
-                            <span class="text-body-2 text-medium-emphasis">{{ mount.Mode || '-' }}</span>
-                          </v-list-item-title>
-                        </v-list-item>
-                        <v-divider class="my-2" />
-                        <v-list-item class="px-0">
-                          <v-list-item-title class="d-flex justify-space-between">
-                            <span class="text-body-2">{{ $t('propagation') }}</span>
-                            <span class="text-body-2 text-medium-emphasis">{{ mount.Propagation || '-' }}</span>
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-expansion-panel-text>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </div>
-              <div v-else class="text-body-2 text-medium-emphasis">-</div>
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="onPrimary" text @click="infoDialog.value = false">{{ $t('close') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -966,7 +859,14 @@
         >
           {{ $t('cancel') }}
         </v-btn>
-        <v-btn text color="onPrimary" @click="updateDockerWaitTimes(); setGroupOrder()">
+        <v-btn
+          text
+          color="onPrimary"
+          @click="
+            updateDockerWaitTimes();
+            setGroupOrder();
+          "
+        >
           {{ $t('save') }}
         </v-btn>
       </v-card-actions>
@@ -1026,6 +926,8 @@
     </v-list>
   </v-menu>
 
+  <DockerInfoDialog v-model="infoDialog.value" :docker="infoDialog.docker" />
+
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
@@ -1038,6 +940,7 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
+import DockerInfoDialog from '@/components/dockerInfoDialog.vue';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -1046,7 +949,6 @@ const dockerGroups = ref([]);
 const mosDockers = ref([]);
 const composeStacks = ref([]);
 const overlay = ref(false);
-const menu = ref(false);
 const unusedImages = ref([]);
 const dockerWaitTimesDialog = reactive({
   value: false,
@@ -1055,10 +957,7 @@ const deleteDialog = reactive({
   value: false,
   docker: null,
 });
-const infoDialog = reactive({
-  value: false,
-  docker: null,
-});
+const infoDialog = reactive({ value: false, docker: null });
 const createGroupDialog = reactive({
   value: false,
   name: '',
@@ -2106,8 +2005,8 @@ const showComposeWebui = (group) => {
 };
 
 const openInfoDialog = (docker) => {
-  infoDialog.value = true;
   infoDialog.docker = docker;
+  infoDialog.value = true;
 };
 const clearDeleteDialog = () => {
   deleteDialog.value = false;

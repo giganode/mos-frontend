@@ -897,5 +897,11 @@
   "could not cleanup virtio isos": "Could not cleanup VirtIO ISOs",
   "virtio isos cleaned up successfully": "VirtIO ISOs successfully cleaned up",
   "mounts": "Mounts",
-  "stats": "Stats"
+  "stats": "Stats",
+  "used software and packages": "Used Software and Packages",
+  "special thanks to the whole mos team": "Special Thanks to the Whole MOS Team",
+  "the mos team": "The MOS Team",
+  "thanks you for your use and feedback": "thanks you for your use and feedback",
+  "official channels": "Official Channels",
+  "open source": "Open Source"
 }

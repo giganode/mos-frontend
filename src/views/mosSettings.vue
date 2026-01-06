@@ -45,7 +45,7 @@
                 <v-btn color="primary" block class="mb-2" rounded @click="rollbackKernelDialog = true">
                   <v-icon start>mdi-undo</v-icon>
                   {{ $t('rollback kernel') }}
-                </v-btn>                
+                </v-btn>
               </v-card-text>
             </v-card>
           </v-col>
@@ -139,9 +139,9 @@
                   {{ $t('boot') }}
                 </v-btn>
                 <v-btn color="primary" block rounded to="/mosSettings/sensors">
-                    <v-icon start>mdi-thermometer</v-icon>
-                    {{ $t('sensors') }}
-                </v-btn> 
+                  <v-icon start>mdi-thermometer</v-icon>
+                  {{ $t('sensors') }}
+                </v-btn>
               </v-card-text>
             </v-card>
           </v-col>
@@ -154,9 +154,13 @@
                 {{ $t('others') }}
               </v-card-title>
               <v-card-text>
-                <v-btn color="primary" block rounded @click="thanksDialog = true">
+                <v-btn color="primary" class="mb-2" block rounded @click="thanksDialog = true">
                   <v-icon start>mdi-handshake</v-icon>
                   {{ $t('thanks') }}
+                </v-btn>
+                <v-btn color="primary" class="mb-2" block rounded @click="aboutDialog = true">
+                  <v-icon start>mdi-information</v-icon>
+                  {{ $t('about') }}
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -219,7 +223,7 @@
     <v-card max-width="600" prepend-icon="mdi-engine" :title="t('update kernel')" class="pa-0">
       <v-card-text>
         <p class="mb-4">{{ t('please select your target kernel release!') }}</p>
-        <v-select v-model="updateKernelDialog.version" :items="['recommended', ...mosKernel.map((k) => k.tag_name)]" :label="t('kernel release')" hide-details="auto"/>
+        <v-select v-model="updateKernelDialog.version" :items="['recommended', ...mosKernel.map((k) => k.tag_name)]" :label="t('kernel release')" hide-details="auto" />
       </v-card-text>
       <v-card-actions>
         <v-btn color="onPrimary" :text="t('cancel')" @click="updateKernelDialog.value = false"></v-btn>
@@ -262,25 +266,128 @@
   </v-dialog>
 
   <!-- Thanks Dialog -->
-  <v-dialog v-model="thanksDialog" max-width="600">
-    <v-card max-width="600" class="pa-0" style="max-height: 80vh; display: flex; flex-direction: column;" :title="t('thanks')" prepend-icon="mdi-handshake">
-      <v-card-text style="overflow-y: auto; flex: 1 1 auto; padding-right: 16px;">
-          <v-container v-if="osInfo && osInfo.base && osInfo.base.length" v-for="(baseItem, i) in osInfo.base" :key="i" class="pa-0">
-            <div class="text-subtitle-1 font-weight-medium">
-              {{ baseItem.os_name }} <span v-if="baseItem.os_version">({{ baseItem.os_version }})</span>
-            </div>
-            <v-list class="pa-0">
-              <v-list-item v-for="pkg in baseItem.packages" :key="pkg.name">
-                <div class="v-list-item-content">
-                  <v-list-item-title class="text-body-1">{{ pkg.name }}</v-list-item-title>
-                  <v-list-item-subtitle class="text--secondary">{{ pkg.version }}</v-list-item-subtitle>
-                </div>
-              </v-list-item>
-            </v-list>
+  <v-dialog v-model="thanksDialog" max-width="500">
+    <v-card max-width="600" class="pa-0" style="max-height: 80vh; display: flex; flex-direction: column" :title="t('thanks')" prepend-icon="mdi-handshake">
+      <v-card-text style="padding-right: 16px; padding-bottom: 0">
+        <p>{{ t('the mos team') }},</p>
+        <p>{{ t('thanks you for your use and feedback') }}!</p>
+      </v-card-text>
+      <v-card-text class="font-weight-bold py-0 pt-2 pb-2">{{ t('used software and packages') }}:</v-card-text>
+      <v-card-text style="overflow-y: auto; flex: 1 1 auto; padding-right: 16px" class="py-0">
+        <v-container v-if="osInfo && osInfo.base && osInfo.base.length" v-for="(baseItem, i) in osInfo.base" :key="i" class="pa-0">
+          <div class="text-subtitle-1 font-weight-medium">
+            {{ baseItem.os_name }}
+            <span v-if="baseItem.os_version">({{ baseItem.os_version }})</span>
+          </div>
+          <v-list class="pa-0">
+            <v-list-item v-for="pkg in baseItem.packages" :key="pkg.name">
+              <div class="v-list-item-content">
+                <v-list-item-title class="text-body-1">{{ pkg.name }}</v-list-item-title>
+                <v-list-item-subtitle class="text--secondary">{{ pkg.version }}</v-list-item-subtitle>
+              </div>
+            </v-list-item>
+          </v-list>
         </v-container>
       </v-card-text>
-      <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff);">
+      <v-divider />
+      <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff)">
         <v-btn color="onPrimary" :text="t('close')" @click="thanksDialog = false"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- About Dialog -->
+  <v-dialog v-model="aboutDialog" max-width="600">
+    <v-card class="pa-0" style="max-height: 80vh; display: flex; flex-direction: column" prepend-icon="mdi-information" :title="t('about')">
+      <div style="overflow-y: auto; flex: 1 1 auto; padding-right: 16px">
+        <v-card-text class="py-0">
+          <v-row class="align-center" no-gutters>
+            <v-col cols="auto" class="pr-4">
+              <v-img src="/mos_black.png" alt="MOS Logo" height="56" width="56" contain />
+            </v-col>
+            <v-col>
+              <div class="text-h6 font-weight-medium">{{ $t('mos') }}</div>
+              <div class="text-body-2 text-medium-emphasis">
+                <span v-if="osInfo?.mos">{{ $t('version') }}: {{ osInfo.mos.version }} · {{ $t('channel') }}: {{ osInfo.mos.channel }}</span>
+              </div>
+            </v-col>
+            <v-col cols="auto" class="pl-2">
+              <v-chip color="green" variant="tonal" size="small">
+                {{ $t('open source') }}
+              </v-chip>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider />
+        <v-card-text class="py-4">
+          <div class="font-weight-bold mb-2">{{ $t('the team') }}:</div>
+          <v-row class="d-flex" dense>
+            <v-col cols="12">
+              <v-chip
+                v-for="(c, idx) in ['alturismo', 'anym001', 'giganode', 'Christoph Hummer (ich777)', 'j0k3r', 'Joly0', 'Mainfrezzer', 'RiDDiX', 'Harald Wiesinger (s3ppo)', 'Sonic6']"
+                :key="idx"
+                class="ma-1"
+                size="small"
+                variant="outlined"
+              >
+                <v-icon start size="16">mdi-account</v-icon>
+                {{ c }}
+              </v-chip>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider />
+        <v-card-text class="py-2">
+          <div class="font-weight-bold mb-2">{{ $t('official channels') }}:</div>
+          <v-row dense class="align-center">
+            <v-col cols="auto">
+              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
+                <v-icon color="#7289DA">mdi-headphones</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'Reddit'" title="Reddit">
+                <v-icon color="#FF4500">mdi-reddit</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'X'" title="X">
+                <v-icon color="#1DA1F2">mdi-twitter</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn variant="text" icon size="small" href="mailto:info@example.com" :aria-label="'Mail'" title="Mail">
+                <v-icon color="#D44638">mdi-email</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider />
+        <v-card-text class="py-2">
+          <div class="font-weight-bold mb-2">{{ $t('source & license') }}:</div>
+          <v-row class="mt-2" dense>
+            <v-col cols="auto">
+              <v-btn variant="outlined" size="small" href="https://github.com/your-repo" target="_blank" rel="noopener">
+                <v-icon start>mdi-github</v-icon>
+                GitHub
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn variant="outlined" size="small" href="#" target="_blank" rel="noopener">
+                <v-icon start>mdi-file-document-outline</v-icon>
+                AGPL-3.0
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </div>
+
+      <v-divider />
+      <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff)">
+        <v-spacer />
+        <v-btn variant="text" color="onPrimary" @click="aboutDialog = false">
+          {{ t('close') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -301,6 +408,7 @@ const mosKernel = ref([]);
 const rebootDialog = ref(false);
 const shutdownDialog = ref(false);
 const thanksDialog = ref(false);
+const aboutDialog = ref(false);
 const rollbackKernelDialog = ref(false);
 const osInfo = ref({});
 const overlay = ref(false);
@@ -471,7 +579,7 @@ const rollbackKernel = async () => {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      }
+      },
     });
 
     if (!res.ok) {
@@ -532,7 +640,7 @@ const shutdownOS = async () => {
       const error = await res.json();
       throw new Error(`${t('shutdown could not be initiated')}|$| ${error.error || t('unknown error')}`);
     }
-    
+
     showSnackbarSuccess(t('shutdown initiated successfully'));
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -602,5 +710,4 @@ const clearUpdateOsDialog = () => {
 const openUpdateKernelDialog = () => {
   updateKernelDialog.value = true;
 };
-
 </script>

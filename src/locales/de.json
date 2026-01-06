@@ -13,7 +13,7 @@
   "services": "Dienste",
   "logs": "Protokolle",
   "help": "Hilfe",
-  "about": "Über",
+  "about": "Über uns",
   "logout": "Abmelden",
   "login": "Anmelden",
   "username": "Benutzername",
@@ -897,5 +897,12 @@
   "could not cleanup virtio isos": "VirtIO ISOs konnten nicht bereinigt werden",
   "virtio isos cleaned up successfully": "VirtIO ISOs erfolgreich bereinigt",
   "mounts": "Mounts",
-  "stats": "Statistiken"
+  "stats": "Statistiken",
+  "used software and packages": "Verwendete Software und Pakete",
+  "the mos team": "Das MOS Team",
+  "thanks you for your use and feedback": "bedankt sich bei dir für die Nutzung und dein Feedback",
+  "official channels": "Offizielle Kanäle",
+  "the team": "Das Team",
+  "source & license": "Quellcode & Lizenz",
+  "open source": "Open Source"
 }

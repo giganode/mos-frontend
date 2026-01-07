@@ -904,5 +904,9 @@
   "official channels": "Offizielle Kanäle",
   "the team": "Das Team",
   "source & license": "Quellcode & Lizenz",
-  "open source": "Open Source"
+  "open source": "Open Source",
+  "date & time": "Datum & Uhrzeit",
+  "currently": "Derzeit",
+  "set date or leave empty to keep current": "Datum setzen oder leer lassen um aktuelles Datum zu behalten",
+  "set time or leave empty to keep current": "Uhrzeit setzen oder leer lassen um aktuelle Uhrzeit zu behalten"
 }

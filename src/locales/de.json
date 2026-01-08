@@ -909,5 +909,6 @@
   "no memory data available": "Keine Speicherdaten verfügbar",
   "no pools available": "Keine Pools vorhanden",
   "no os data available": "Keine OS Daten verfügbar",
-  "no cpu data available": "Keine CPU Daten verfügbar"
+  "no cpu data available": "Keine CPU Daten verfügbar",
+  "no shares have been created yet": "Es wurden noch keine Freigaben erstellt"
 }

@@ -121,8 +121,11 @@
                   />
                 </v-col>
                 <v-col v-else cols="12">
-                  <div class="text-center grey--text text--darken-1">
+                  <div v-if="errorMsg === ''" class="text-center grey--text text--darken-1">
                     {{ $t('no templates found matching your search') }}
+                  </div>
+                  <div v-else class="text-center grey--text text--darken-1">
+                    {{ errorMsg }}
                   </div>
                 </v-col>
               </v-row>
@@ -340,29 +343,9 @@ const installDialog = reactive({
   tpl: null,
   type: '',
 });
+const errorMsg = ref('');
 
-const mosHub = ref([
-  {
-    name: '',
-    maintainer: '',
-    maintainer_donate: '',
-    donate: null,
-    type: '',
-    category: ['network'],
-    description: '',
-    website: null,
-    icon: '',
-    repository: '',
-    created_at: 0,
-    updated_at: 0,
-    stack_images: [],
-    files: {
-      template: '',
-      yaml: null,
-      env: null,
-    },
-  },
-]);
+const mosHub = ref([]);
 const mosHubCount = ref(0);
 
 const mosHubRepositoriesDialog = reactive({
@@ -387,12 +370,18 @@ const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'na
       },
     });
 
+    if (!res.ok) {
+      const error = await res.json();
+      errorMsg.value = error.error || t('unknown error');
+    } else {
+      errorMsg.value = '';
+    }
+
     const result = await res.json();
     mosHub.value = result.results || [];
     mosHubCount.value = result.count || 0;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     hubLoading.value = false;
   }
@@ -409,7 +398,10 @@ const refreshRepositories = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('repositories could not be refreshed'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('repositories could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
 
     showSnackbarSuccess(t('repositories refreshed successfully'));
     getMosHub(searchOnlineTemplate.value);

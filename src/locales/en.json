@@ -909,5 +909,6 @@
   "no memory data available": "No memory data available",
   "no pools available": "No pools available",
   "no os data available": "No OS data available",
-  "no cpu data available": "No CPU data available"  
+  "no cpu data available": "No CPU data available",
+  "no shares have been created yet": "No shares have been created yet"
 }

@@ -1,6 +1,6 @@
 <template>
   <template v-if="network && network.interfaces && network.interfaces.length === 0">
-    <p>{{ $t('no network interface found') }}</p>
+    <p class="text-body-2">{{ $t('no network interface found') }}</p>
   </template>
   <template v-else-if="network && network.interfaces && network.interfaces.length > 0">
   <v-row dense>

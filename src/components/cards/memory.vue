@@ -1,6 +1,6 @@
 <template>
   <template v-if="mem && Object.keys(mem).length === 0">
-    <p>{{ $t('no memory data available') }}</p>
+    <p class="text-body-2">{{ $t('no memory data available') }}</p>
   </template>
   <template v-else-if="mem && Object.keys(mem).length > 0" class="memory-overview">
     <v-row dense>

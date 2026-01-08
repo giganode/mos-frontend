@@ -1,6 +1,6 @@
 <template>
   <template v-if="props.disks && props.disks.length === 0">
-    <p>{{ $t('no disks in pools available') }}</p>
+    <p class="text-body-2">{{ $t('no disks in pools available') }}</p>
   </template>
   <template v-else-if="props.disks && props.disks.length > 0" style="overflow: hidden">
     <div v-for="(pool, poolIdx) in props.disks" :key="poolIdx" class="mb-1" style="overflow: hidden">

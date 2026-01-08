@@ -1,6 +1,6 @@
 <template>
   <template v-if="osInfo && Object.keys(osInfo).length === 0">
-    <p>{{ $t('no os data available') }}</p>
+    <p class="text-body-2">{{ $t('no os data available') }}</p>
   </template>
   <template v-else-if="osInfo && Object.keys(osInfo).length > 0">
     <v-row dense>

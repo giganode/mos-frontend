@@ -118,7 +118,7 @@ const byteFormats = ref([
 ]);
 const selectedByteFormat = ref('binary');
 const color = ref('#1976D2');
-let step = ref(2);
+let step = ref(1);
 const step1Error = ref(false);
 const step2Error = ref(false);
 

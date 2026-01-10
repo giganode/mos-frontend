@@ -14,6 +14,7 @@
               :false-value="'light'"
               @update:modelValue="setDarkMode( $event )"
               inset
+              density="compact"
             />
             <v-select
               v-model="selectedLanguage"

@@ -44,7 +44,7 @@
                   <v-select v-model="settingsDocker.docker_net.mode" :items="['ipvlan', 'macvlan']" :label="$t('docker network mode')" dense hide-details="auto"></v-select>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-combobox v-model="settingsDocker.docker_net.config" :label="$t('docker start parameters')" multiple chips></v-combobox>
+                  <v-text-field v-model="settingsDocker.docker_options" :label="$t('docker start parameters')"></v-text-field>
                 </v-col>
               </v-row>
               <v-text-field v-model.number="settingsDocker.start_wait" :label="$t('start wait')" type="number" min="0" hide-details="auto"></v-text-field>
@@ -122,6 +122,7 @@ const settingsDocker = ref({
     mode: '',
     config: [],
   },
+  docker_options: '',
   filesystem: '',
   start_wait: 0,
   update_check: {

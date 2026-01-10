@@ -39,7 +39,29 @@
               ></v-text-field>
               <v-divider class="my-4"></v-divider>
               <span class="text-subtitle-1 font-weight-medium">{{ $t('virtio isos') }}</span>
-              
+              <v-row>
+                <v-col cols="12" lg="12" md="12" sm="12">
+                  <v-select
+                    :items="virtioIsos"
+                    item-title="version"
+                    :label="$t('available virtio iso versions')"
+                    dense
+                    outlined
+                    class="mt-2"
+                    hide-details="auto"
+                    v-model="selectedVirtioIso"
+                    :loading="loadingVirtioIsos"
+                    append-icon="mdi-download"
+                    @click:append="downloadVirtioIso(selectedVirtioIso)"
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <p class="mt-2">{{ $t('installed virtio isos') }}:</p>
+              <template v-for="iso in installedVirtioIsos" :key="iso">
+                <v-chip class="ma-1">{{ iso }}</v-chip>
+              </template>
+              <br />
+              <v-btn class="mt-4" @click="cleanupVirtioIsos()">{{ $t('cleanup virtio isos') }}</v-btn>
             </v-card-text>
           </v-card>
         </v-skeleton-loader>
@@ -78,6 +100,9 @@ const virtioIsos = ref([]);
 const { t } = useI18n();
 const overlay = ref(false);
 const vmServiceLoading = ref(true);
+const loadingVirtioIsos = ref(false);
+const selectedVirtioIso = ref("");
+const installedVirtioIsos = ref([]);
 
 onMounted(() => {
   getVMService();
@@ -147,6 +172,7 @@ const setVMService = async () => {
 };
 
 const getVirtioIsoVersions = async () => {
+  loadingVirtioIsos.value = true;
   try {
     const res = await fetch('/api/v1/vm/virtioiso/versions', {
       headers: {
@@ -159,11 +185,12 @@ const getVirtioIsoVersions = async () => {
       throw new Error(`${t('could not fetch virtio iso versions')}|$| ${error.error || t('unknown error')}`);
     }
     virtioIsos.value = await res.json();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
     return [];
+  } finally {
+    loadingVirtioIsos.value = false;
   }
 };
 
@@ -179,8 +206,7 @@ const getVirtioIsoInstalled = async () => {
       const error = await res.json();
       throw new Error(`${t('could not fetch installed virtio isos')}|$| ${error.error || t('unknown error')}`);
     }
-    return await res.json();
-
+    installedVirtioIsos.value = await res.json();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -194,7 +220,7 @@ const downloadVirtioIso = async (version) => {
   };
   try {
     overlay.value = true;
-    const res = await fetch(`/api/v1/vm/virtioiso/download/${version}`, {
+    const res = await fetch(`/api/v1/vm/virtioiso/download`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
@@ -208,7 +234,7 @@ const downloadVirtioIso = async (version) => {
       throw new Error(`${t('could not download virtio iso')}|$| ${error.error || t('unknown error')}`);
     }
 
-    showSnackbarSuccess(t('virtio iso downloaded successfully'));
+    showSnackbarSuccess(t('virtio iso download started successfully'));
     getVirtioIsoInstalled();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -224,7 +250,7 @@ const cleanupVirtioIsos = async () => {
     const res = await fetch(`/api/v1/vm/virtioiso/cleanup`, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken')
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
     });
 
@@ -242,5 +268,4 @@ const cleanupVirtioIsos = async () => {
     overlay.value = false;
   }
 };
-
 </script>

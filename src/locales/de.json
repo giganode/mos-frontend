@@ -893,7 +893,7 @@
   "could not fetch virtio iso versions": "VirtIO ISO Versionen konnten nicht abgerufen werden",
   "could not fetch installed virtio isos": "Installierte VirtIO ISOs konnten nicht abgerufen werden",
   "could not download virtio iso": "VirtIO ISO konnte nicht heruntergeladen werden",
-  "virtio iso downloaded successfully": "VirtIO ISO erfolgreich heruntergeladen",
+  "virtio iso download started successfully": "VirtIO ISO erfolgreich heruntergeladen gestartet",
   "could not cleanup virtio isos": "VirtIO ISOs konnten nicht bereinigt werden",
   "virtio isos cleaned up successfully": "VirtIO ISOs erfolgreich bereinigt",
   "mounts": "Mounts",
@@ -925,5 +925,8 @@
   "shrinker enabled": "Shrinker aktiviert",
   "zswap max pool percent": "Zswap Max Pool Prozentsatz",
   "zswap compressor": "Zswap Kompressor",
-  "zswap accept threshold percent": "Zswap Akzeptanz Schwellenwert Prozentsatz"
+  "zswap accept threshold percent": "Zswap Akzeptanz Schwellenwert Prozentsatz",
+  "available virtio iso versions": "Verfügbare VirtIO ISO Versionen",
+  "installed virtio isos": "Installierte VirtIO ISOs",
+  "cleanup virtio isos": "VirtIO ISOs bereinigen"
 }

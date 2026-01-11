@@ -862,6 +862,7 @@
   "name is required": "Name ist vorausgesetzt",
   "unit is required": "Unit ist vorausgesetzt",
   "source is required": "Source ist vorausgesetzt",
+  "subtype is required": "Unterkategorie ist vorausgesetzt",
   "sensor mappings could not be loaded": "Sensorzuordnungen konnten nicht geladen werden",
   "multiplier": "Multiplikator",
   "dark mode": "Dunkler Modus",

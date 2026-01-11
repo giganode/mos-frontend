@@ -862,6 +862,7 @@
   "name is required": "Name is required",
   "unit is required": "Unit is required",
   "source is required": "Source is required",
+  "subtype is required": "Subtype is required",
   "sensor mappings could not be loaded": "Sensor mappings could not be loaded",
   "multiplier": "Multiplier",
   "dark mode": "Dark Mode",

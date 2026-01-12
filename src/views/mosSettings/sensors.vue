@@ -110,7 +110,11 @@
                         <span>{{ $t('type') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-select>
-                <v-select v-model="createSensorDialog.subtype" :items="sensorSubtypes" :label="$t('subtype')" dense clearable />
+                <v-select v-model="createSensorDialog.subtype" :items="sensorSubtypes" dense>
+                <template #label>
+                        <span>{{ $t('subtype') }} <span style="color: red" aria-hidden="true">*</span></span>
+                    </template>
+                </v-select>
                 <v-autocomplete v-model="createSensorDialog.source"
                                 :items="unmappedOptions"
                                 item-title="title"
@@ -177,7 +181,11 @@
                         <span>{{ $t('type') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-select>
-                <v-select v-model="editSensorDialog.subtype" :items="sensorSubtypes" :label="$t('subtype')" dense clearable />
+                <v-select v-model="editSensorDialog.subtype" :items="sensorSubtypes" dense>
+                <template #label>
+                        <span>{{ $t('subtype') }} <span style="color: red" aria-hidden="true">*</span></span>
+                    </template>
+                </v-select>
                 <v-autocomplete v-model="editSensorDialog.source"
                                 :items="unmappedOptions"
                                 item-title="title"
@@ -501,7 +509,7 @@ const editSensor = async (s) => {
   editSensorDialog.value.name = details.name ?? '';
   editSensorDialog.value.manufacturer = details.manufacturer ?? '';
   editSensorDialog.value.model = details.model ?? '';
-  editSensorDialog.value.subtype = details.subtype ?? null;
+  editSensorDialog.value.subtype = details.subtype ?? '';
   editSensorDialog.value.type = details.type ?? null;
   editSensorDialog.value.source = details.source ?? '';
   editSensorDialog.value.unit = details.unit ?? '';
@@ -527,6 +535,10 @@ const updateSensor = async () => {
     showSnackbarError(t('type is required'));
     return;
   }
+  if (!editSensorDialog.value.subtype) {
+    showSnackbarError(t('subtype is required'));
+    return;
+  }
   if (!editSensorDialog.value.source?.trim()) {
     showSnackbarError(t('source is required'));
     return;
@@ -540,7 +552,7 @@ const updateSensor = async () => {
     name: editSensorDialog.value.name.trim(),
     manufacturer: editSensorDialog.value.manufacturer || null,
     model: editSensorDialog.value.model || null,
-    subtype: editSensorDialog.value.subtype || null,
+    subtype: editSensorDialog.value.subtype,
     type: editSensorDialog.value.type,
     source: editSensorDialog.value.source.trim(),
     unit: editSensorDialog.value.unit.trim(),
@@ -618,6 +630,10 @@ async function createSensor() {
     showSnackbarError(t('type is required'));
     return;
   }
+  if (!createSensorDialog.value.subtype) {
+    showSnackbarError(t('subtype is required'));
+    return;
+  }
   if (!createSensorDialog.value.source?.trim()) {
     showSnackbarError(t('source is required'));
     return;
@@ -665,7 +681,7 @@ async function createSensor() {
     createSensorDialog.value.name = '';
     createSensorDialog.value.manufacturer = '';
     createSensorDialog.value.model = '';
-    createSensorDialog.value.subtype = null;
+    createSensorDialog.value.subtype = '';
     createSensorDialog.value.type = null;
     createSensorDialog.value.source = '';
     createSensorDialog.value.unit = '';

@@ -148,6 +148,7 @@ const setNetworkSettings = async () => {
     }
 
     showSnackbarSuccess(t('network settings changed successfully'));
+    emit('refresh-drawer');
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

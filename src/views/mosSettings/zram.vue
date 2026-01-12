@@ -131,7 +131,7 @@ import { useI18n } from 'vue-i18n';
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const zram = ref({
   enabled: false,
-  zram_devices: 2,
+  zram_devices: 0,
   devices: [],
 });
 const overlay = ref(false);
@@ -190,6 +190,7 @@ const getZram = async () => {
     }
     zram.value = await res.json();
   } catch (e) {
+    zram.value.enabled = false;
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   }
@@ -222,11 +223,11 @@ const createZramDevice = async () => {
     }
     showSnackbarSuccess(t('zram device created successfully'));
     createZramDeviceDialog.value = false;
-    getZram();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
+    getZram();
     overlay.value = false;
   }
 };
@@ -248,11 +249,12 @@ const setZram = async () => {
     }
 
     showSnackbarSuccess(t('zram settings set successfully'));
-    getZram();
+
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
+    getZram();
     overlay.value = false;
   }
 };

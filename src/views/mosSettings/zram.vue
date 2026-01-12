@@ -58,15 +58,15 @@
   <v-dialog v-model="createZramDeviceDialog.value" max-width="600px">
     <v-card class="pa-0">
       <v-card-title>{{ $t('create zram device') }}</v-card-title>
-      <v-card-text class="py-0" style="overflow-y: auto;">
+      <v-card-text class="py-0" style="overflow-y: auto">
         <v-switch v-model="createZramDeviceDialog.enabled" :label="$t('enabled')" inset color="green" density="compact"></v-switch>
         <v-text-field v-model="createZramDeviceDialog.name" :label="$t('name')" required></v-text-field>
-        <v-text-field v-model="createZramDeviceDialog.index" :label="$t('index')" type="number" min="0" required></v-text-field>
+        <v-select v-model="createZramDeviceDialog.type" :label="$t('type')" :items="['swap', 'ramdisk']" required></v-select>
         <v-select v-model="createZramDeviceDialog.algorithm" :label="$t('algorithm')" :items="zramAlgorithms" required></v-select>
         <v-text-field v-model="createZramDeviceDialog.size" :label="$t('size')" required></v-text-field>
-        <v-select v-model="createZramDeviceDialog.type" :label="$t('type')" :items="['swap', 'ramdisk']" required></v-select>
         <v-text-field v-model="createZramDeviceDialog.config.priority" :label="$t('priority')" type="number"></v-text-field>
-        <v-text-field v-model="createZramDeviceDialog.config.filesystem" :label="$t('filesystem')"></v-text-field>
+        <v-text-field v-model="createZramDeviceDialog.config.uuid" :label="$t('uuid')" readonly></v-text-field>
+        <v-select v-if="createZramDeviceDialog.type === 'ramdisk'" v-model="createZramDeviceDialog.config.filesystem" :label="$t('filesystem')" :items="['ext4', 'xfs', 'btrfs']"></v-select>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -80,16 +80,15 @@
   <v-dialog v-model="changeZramDeviceDialog.value" max-width="600px">
     <v-card class="pa-0">
       <v-card-title>{{ $t('change zram device') }}</v-card-title>
-      <v-card-text class="py-0" style="overflow-y: auto;">
+      <v-card-text class="py-0" style="overflow-y: auto">
         <v-switch v-model="changeZramDeviceDialog.enabled" :label="$t('enabled')" inset color="green" density="compact"></v-switch>
-        <v-text-field v-model="changeZramDeviceDialog.name" :label="$t('name')" readonly></v-text-field>
-        <v-text-field v-model="changeZramDeviceDialog.index" :label="$t('index')" type="number" min="0" required></v-text-field>
+        <v-text-field v-model="changeZramDeviceDialog.name" :label="$t('name')"></v-text-field>
+        <v-select v-model="changeZramDeviceDialog.type" :label="$t('type')" :items="['swap', 'ramdisk']" required></v-select>
         <v-select v-model="changeZramDeviceDialog.algorithm" :label="$t('algorithm')" :items="zramAlgorithms" required></v-select>
         <v-text-field v-model="changeZramDeviceDialog.size" :label="$t('size')" required></v-text-field>
-        <v-select v-model="changeZramDeviceDialog.type" :label="$t('type')" :items="['swap', 'ramdisk']" required></v-select>
         <v-text-field v-model="changeZramDeviceDialog.config.priority" :label="$t('priority')" type="number"></v-text-field>
         <v-text-field v-model="changeZramDeviceDialog.config.uuid" :label="$t('uuid')" readonly></v-text-field>
-        <v-text-field v-model="changeZramDeviceDialog.config.filesystem" :label="$t('filesystem')"></v-text-field>
+        <v-select v-if="changeZramDeviceDialog.type === 'ramdisk'" v-model="changeZramDeviceDialog.config.filesystem" :label="$t('filesystem')" :items="['ext4', 'xfs', 'btrfs']"></v-select>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -141,7 +140,7 @@ const createZramDeviceDialog = reactive({
   value: false,
   name: '',
   enabled: true,
-  index: 0,
+  index: null,
   algorithm: 'zstd',
   size: '1G',
   type: 'swap',
@@ -156,7 +155,7 @@ const changeZramDeviceDialog = reactive({
   id: '',
   name: '',
   enabled: true,
-  index: 0,
+  index: null,
   algorithm: 'zstd',
   size: '1G',
   type: 'swap',
@@ -168,7 +167,7 @@ const changeZramDeviceDialog = reactive({
 });
 const deleteZramDeviceDialog = reactive({
   value: false,
-  device: null
+  device: null,
 });
 const zramAlgorithms = ref([]);
 
@@ -224,7 +223,6 @@ const createZramDevice = async () => {
     showSnackbarSuccess(t('zram device created successfully'));
     createZramDeviceDialog.value = false;
     getZram();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -251,7 +249,6 @@ const setZram = async () => {
 
     showSnackbarSuccess(t('zram settings set successfully'));
     getZram();
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -264,6 +261,10 @@ const changeZramDevice = async () => {
   overlay.value = true;
   const payload = {
     name: changeZramDeviceDialog.name,
+    algorithm: changeZramDeviceDialog.algorithm,
+    size: changeZramDeviceDialog.size,
+    config: changeZramDeviceDialog.config,
+    enabled: changeZramDeviceDialog.enabled,
   };
   try {
     const res = await fetch('/api/v1/mos/zram/devices/' + changeZramDeviceDialog.id, {
@@ -278,7 +279,7 @@ const changeZramDevice = async () => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('zram device could not be changed')}|$| ${error.error || t('unknown error')}`);
-    }       
+    }
     showSnackbarSuccess(t('zram device changed successfully'));
     changeZramDeviceDialog.value = false;
     getZram();
@@ -326,7 +327,7 @@ const getZramAlogorithms = async () => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('zram algorithms could not be loaded')}|$| ${error.error || t('unknown error')}`);
-    }    
+    }
     zramAlgorithms.value = await res.json();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -338,10 +339,10 @@ const openCreateZramDeviceDialog = () => {
   createZramDeviceDialog.value = true;
   createZramDeviceDialog.name = '';
   createZramDeviceDialog.enabled = true;
-  createZramDeviceDialog.index = 0;
+  createZramDeviceDialog.index = null;
   createZramDeviceDialog.algorithm = 'zstd';
   createZramDeviceDialog.size = '1G';
-  createZramDeviceDialog.type = 'swap';
+  createZramDeviceDialog.type = 'ramdisk';
   createZramDeviceDialog.config = {
     priority: -2,
     uuid: null,

@@ -37,74 +37,11 @@
             <v-text-field v-model="expiryDays" :label="$t('ui session expiry time (days)')" append-icon="mdi-content-save" type="number" min="1" max="365" @click:append="changeUiSessionExpiry()" />
             <span class="text-subtitle-1 font-weight-medium">{{ $t('uicolor') }}</span>
             <v-color-picker v-model="color" show-swatches hide-canvas hide-sliders hide-inputs @update:modelValue="changePrimaryColor" />
-            <v-row class="mt-4">
-              <v-col cols="12" class="d-flex align-center justify-space-between py-0">
-                <span class="text-subtitle-1 font-weight-medium">{{ $t('admin api tokens') }}</span>
-                <v-btn
-                  variant="text"
-                  size="small"
-                  color="green"
-                  class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
-                  @click="openAdminTokenDialog()"
-                  title="Add admin api token"
-                  aria-label="add admin api token"
-                >
-                  <v-icon size="18" class="mr-1">mdi-plus</v-icon>
-                  {{ $t('add') }}
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-card v-for="token in adminTokens" :key="token.id" class="mt-4 pa-0">
-              <v-card-title class="d-flex justify-space-between align-center">
-                <div>
-                  {{ token.name }}
-                  <v-chip v-if="token.description" class="ml-2" size="small">{{ token.description }}</v-chip>
-                </div>
-              </v-card-title>
-              <v-card-text class="pb-0">
-                <v-text-field
-                  v-model="token.token"
-                  :type="showPassword ? 'text' : 'password'"
-                  readonly
-                  label="Token"
-                  hide-details="auto"
-                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                  @click:append-inner="showPassword = !showPassword"
-                />
-              </v-card-text>
-              <v-card-actions>
-                <v-row class="d-flex justify-end">
-                  <v-btn variant="text" @click="copyAuthToken(token.token)" class="mr-4">
-                    {{ $t('copy') }}
-                  </v-btn>
-                  <v-btn color="red" @click="deleteAdminToken(token.id)" class="mr-4">
-                    {{ $t('delete') }}
-                  </v-btn>
-                </v-row>
-              </v-card-actions>
-            </v-card>
-            <div class="mt-4" v-if="adminTokens.length === 0">{{ $t('no admin api tokens created') }}</div>
           </v-card-text>
         </v-card>
       </v-container>
     </v-container>
   </v-container>
-
-  <v-dialog v-model="createAdminTokenDialog.value" max-width="600">
-    <v-card>
-      <v-card-title>{{ $t('create admin api token') }}</v-card-title>
-      <v-card-text>
-        <v-text-field v-model="createAdminTokenDialog.name" :label="$t('name')" required></v-text-field>
-        <v-text-field v-model="createAdminTokenDialog.description" :label="$t('description')"></v-text-field>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="onPrimary" variant="text" @click="createAdminTokenDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="onPrimary" @click="createAdminToken()">{{ $t('create') }}</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -119,7 +56,6 @@ import { useTheme } from 'vuetify';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { availableLocales, locale, t } = useI18n();
-const authToken = ref(localStorage.getItem('authToken'));
 const overlay = ref(false);
 const selectedLanguage = ref(locale.value);
 const languages = ref(availableLocales);
@@ -131,26 +67,12 @@ const selectedByteFormat = ref('');
 const expiryDays = ref(1);
 const theme = useTheme();
 const color = ref(theme.themes.value[theme.global.name.value].colors.primary || '#1976D2');
-const adminTokens = ref([]);
-const createAdminTokenDialog = reactive({
-  value: false,
-  name: '',
-  description: '',
-});
-const showPassword = ref(false);
 const darkMode = ref(false);
 
 onMounted(() => {
   getUser();
-  getAdminTokens();
   getUiSessionExpiry();
 });
-
-const openAdminTokenDialog = () => {
-  createAdminTokenDialog.value = true;
-  createAdminTokenDialog.name = '';
-  createAdminTokenDialog.description = '';
-};
 
 const getUser = async () => {
   try {
@@ -171,82 +93,6 @@ const getUser = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  }
-};
-
-const getAdminTokens = async () => {
-  try {
-    const res = await fetch(`/api/v1/auth/admin-tokens`, {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-
-    if (!res.ok) {
-      const errorDetails = await res.json();
-      throw new Error(`${t('admin api tokens could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
-    }
-    adminTokens.value = await res.json();
-    createAdminTokenDialog.value = false;
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  }
-};
-
-const createAdminToken = async (name) => {
-  const newAdminToken = {
-    name: createAdminTokenDialog.name,
-    description: createAdminTokenDialog.description,
-  };
-
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/auth/admin-tokens`, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newAdminToken),
-    });
-
-    if (!res.ok) {
-      const errorDetails = await res.json();
-      throw new Error(`${t('admin api token could not be created')}|$| ${errorDetails.error || t('unknown error')}`);
-    }
-    showSnackbarSuccess(t('admin api token created'));
-    getAdminTokens();
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
-  }
-};
-
-const deleteAdminToken = async (id) => {
-  try {
-    overlay.value = true;
-    const res = await fetch(`/api/v1/auth/admin-tokens/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
-
-    if (!res.ok) {
-      const errorDetails = await res.json();
-      throw new Error(`${t('admin api tokens could not be deleted')}|$| ${errorDetails.error || t('unknown error')}`);
-    }
-    showSnackbarSuccess(t('admin api token deleted'));
-    getAdminTokens();
-  } catch (e) {
-    const [userMessage, apiErrorMessage] = e.message.split('|$|');
-    showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    overlay.value = false;
   }
 };
 
@@ -358,39 +204,6 @@ const changeUiSessionExpiry = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  }
-};
-
-const copyAuthToken = async (token) => {
-  try {
-    if (!window.isSecureContext || !navigator.clipboard) {
-      throw new Error(t('clipboard api not available in this context'));
-    }
-    await navigator.clipboard.writeText(token);
-    showSnackbarSuccess(t('api token copied to clipboard'));
-  } catch (err) {
-    try {
-      const ta = document.createElement('textarea');
-      ta.value = token;
-      ta.setAttribute('readonly', '');
-      ta.style.position = 'fixed';
-      ta.style.top = '0';
-      ta.style.left = '0';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.focus();
-      ta.select();
-      const ok = document.execCommand('copy');
-      document.body.removeChild(ta);
-
-      if (ok) {
-        showSnackbarSuccess(t('api token copied to clipboard'));
-      } else {
-        throw new Error(t('execCommand copy failed'));
-      }
-    } catch (fallbackErr) {
-      showSnackbarError(t('failed to copy api token') + ': ' + (err?.message || fallbackErr?.message || ''));
-    }
   }
 };
 

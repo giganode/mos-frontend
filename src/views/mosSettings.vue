@@ -118,6 +118,10 @@
                   <v-icon start>mdi-network-outline</v-icon>
                   {{ $t('network services') }}
                 </v-btn>
+                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/token">
+                  <v-icon start>mdi-key</v-icon>
+                  {{ $t('token') }}
+                </v-btn>
               </v-card-text>
             </v-card>
           </v-col>

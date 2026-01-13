@@ -28,6 +28,7 @@ import mosSettingsBoot from '../views/mosSettings/boot.vue';
 import mosSettingsHub from '../views/mosSettings/mosHub.vue';
 import mosSettingsSensors from '../views/mosSettings/sensors.vue';
 import mosSettingsZram from '../views/mosSettings/zram.vue';
+import mosSettingsToken from '../views/mosSettings/token.vue';
 import webterminal from '../views/webterminal.vue';
 import webterminalPopup from '../views/webterminalPopup.vue';
 import Notifications from '../views/notifications.vue';
@@ -90,6 +91,7 @@ const routes = [
   { path: '/mosSettings/mosHub', component: mosSettingsHub, meta: { hideAppBar: false, title: 'MOS Settings - MOS Hub', description: 'Manage MOS Hub settings' } },
   { path: '/mosSettings/sensors', component: mosSettingsSensors, meta: { hideAppBar: false, title: 'MOS Settings - Sensors', description: 'Manage system sensors' } },
   { path: '/mosSettings/zram', component: mosSettingsZram, meta: { hideAppBar: false, title: 'MOS Settings - ZRAM', description: 'Manage ZRAM settings' } },
+  { path: '/mosSettings/token', component: mosSettingsToken, meta: { hideAppBar: false, title: 'MOS Settings - Token', description: 'Manage API token' } },
   { path: '/profile', component: profile, meta: { hideAppBar: false, title: 'Profile', description: 'Manage your profile' } },
   { path: '/webTerminal', component: webterminal, meta: { hideAppBar: false, title: 'Web Terminal', description: 'Access the web terminal' } },
   {

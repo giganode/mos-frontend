@@ -349,25 +349,25 @@
           <div class="font-weight-bold mb-2">{{ $t('official channels') }}:</div>
           <v-row dense class="align-center">
             <v-col cols="auto">
-              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
+              <v-btn variant="text" icon size="small" href="https://discord.gg/arQuftfK3Y" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
                 <v-icon color="#7289DA">mdi-headphones</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'Reddit'" title="Reddit">
+              <v-btn variant="text" icon size="small" href="https://www.reddit.com/r/mos_official" target="_blank" rel="noopener" :aria-label="'Reddit'" title="Reddit">
                 <v-icon color="#FF4500">mdi-reddit</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn variant="text" icon size="small" :href="'#'" target="_blank" rel="noopener" :aria-label="'X'" title="X">
+              <v-btn variant="text" icon size="small" href="https://x.com/mos_offi" target="_blank" rel="noopener" :aria-label="'X'" title="X">
                 <v-icon color="#1DA1F2">mdi-twitter</v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="auto">
+            <!--<v-col cols="auto">
               <v-btn variant="text" icon size="small" href="mailto:info@example.com" :aria-label="'Mail'" title="Mail">
                 <v-icon color="#D44638">mdi-email</v-icon>
               </v-btn>
-            </v-col>
+            </v-col>-->
           </v-row>
         </v-card-text>
         <v-divider />
@@ -375,13 +375,13 @@
           <div class="font-weight-bold mb-2">{{ $t('source & license') }}:</div>
           <v-row class="mt-2" dense>
             <v-col cols="auto">
-              <v-btn variant="outlined" size="small" href="https://github.com/your-repo" target="_blank" rel="noopener">
+              <v-btn variant="outlined" size="small" href="https://github.com/ich777/mos-releases" target="_blank" rel="noopener">
                 <v-icon start>mdi-github</v-icon>
                 GitHub
               </v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn variant="outlined" size="small" href="#" target="_blank" rel="noopener">
+              <v-btn variant="outlined" size="small" href="https://github.com/ich777/mos-frontend?tab=AGPL-3.0-1-ov-file" target="_blank" rel="noopener">
                 <v-icon start>mdi-file-document-outline</v-icon>
                 AGPL-3.0
               </v-btn>

@@ -349,7 +349,7 @@
           <div class="font-weight-bold mb-2">{{ $t('official channels') }}:</div>
           <v-row dense class="align-center">
             <v-col cols="auto">
-              <v-btn variant="text" icon size="small" href="https://discord.gg/arQuftfK3Y" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
+              <v-btn variant="text" icon size="small" href="https://discord.gg/sSJpU4XC" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
                 <v-icon color="#7289DA">mdi-headphones</v-icon>
               </v-btn>
             </v-col>

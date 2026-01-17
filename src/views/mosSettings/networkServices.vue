@@ -17,15 +17,24 @@
             <v-row>
               <v-col cols="12" md="6">
                 <v-switch :label="$t('ssh')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.ssh.enabled"></v-switch>
-                <v-switch :label="$t('samba')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.samba.enabled"></v-switch>
-                <v-switch :label="$t('nmbd')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nmbd.enabled"></v-switch>
+                <v-switch :label="$t('nfs')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nfs.enabled"></v-switch>
               </v-col>
               <v-col cols="12" md="6">
-                <v-switch :label="$t('nfs')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nfs.enabled"></v-switch>
                 <v-switch :label="$t('nut')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.nut.enabled"></v-switch>
                 <v-switch :label="$t('remote mounting')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.remote_mounting.enabled"></v-switch>
               </v-col>
             </v-row>
+            <v-divider class="my-4"></v-divider>
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('samba') }}</span>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-switch :label="$t('samba')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.samba.enabled"></v-switch>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-switch :label="$t('samba discovery')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.samba_discovery.enabled" :disabled="!settingsNetwork.samba.enabled"></v-switch>
+              </v-col>
+            </v-row>
+            <v-text-field class="mt-2" :label="$t('workgroup')" color="green" inset hide-details="auto" v-model="settingsNetwork.samba.workgroup"></v-text-field>
             <v-divider class="my-4"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('tailscale') }}</span>
             <v-row>
@@ -33,7 +42,14 @@
                 <v-switch :label="$t('tailscale')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.tailscale.enabled"></v-switch>
               </v-col>
               <v-col cols="12" md="6">
-                <v-switch :label="$t('tailscale update check')" color="green" inset hide-details="auto" density="compact" v-model="settingsNetwork.tailscale.update_check"></v-switch>
+                <v-switch
+                  :label="$t('tailscale update check')"
+                  color="green"
+                  inset
+                  hide-details="auto"
+                  density="compact"
+                  v-model="settingsNetwork.tailscale.update_check"
+                ></v-switch>
               </v-col>
             </v-row>
             <v-text-field class="mt-2" :label="$t('tailscale params')" v-model="settingsNetwork.tailscale.tailscaled_params" hide-details="auto"></v-text-field>
@@ -78,8 +94,9 @@ const settingsNetwork = ref({
   },
   samba: {
     enabled: false,
+    workgroup: '',
   },
-  nmbd: {
+  samba_discovery: {
     enabled: false,
   },
   nfs: {

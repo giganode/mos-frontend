@@ -977,5 +977,7 @@
   "plugin releases could not be loaded": "Plugin releases could not be loaded",
   "plugin": "Plugin",
   "plugin installation started successfully": "Plugin installation started successfully",
-  "plugin installation could not be started": "Plugin installation could not be started"  
+  "plugin installation could not be started": "Plugin installation could not be started",
+  "samba discovery": "Samba Discovery",
+  "workgroup": "Workgroup"
 }

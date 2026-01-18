@@ -1291,7 +1291,7 @@ const createVM = async () => {
 
   const payload = {
     name: newVm.value.name,
-    memory: newVm.value.memorySize,
+    memory: `${newVm.value.memorySize}G`,
     cpus: newVm.value.selectedCores.length || 1,
     cpuPins: newVm.value.selectedCores,
     platform: newVm.value.machineType,

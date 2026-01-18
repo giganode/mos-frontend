@@ -1,28 +1,11 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
-import { VitePWA } from 'vite-plugin-pwa';
 import federation from '@originjs/vite-plugin-federation';
 
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue', 'vue-router'],
-          vuetify: ['vuetify'],
-        },
-      },
-    },
-  },
   plugins: [
     vue(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      workbox: {
-        cleanupOutdatedCaches: true,
-      },
-    }),
     federation({
       name: 'mos-host',
       remotes: {},

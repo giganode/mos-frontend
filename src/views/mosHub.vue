@@ -23,6 +23,27 @@
               "
               @keyup.enter="getMosHub(searchOnlineTemplate)"
             ></v-text-field>
+            <v-menu offset-y >
+              <template #activator="{ props }" >
+                <v-btn v-bind="props" color="secondary" dense variant="outlined" class="ma-2 ml-4" style="min-width:150px">
+                  {{ $t('type') }} <v-icon right size="18">mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list dense >
+                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', '')">
+                  <v-list-item-title>{{ $t('all') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'docker')">
+                  <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'compose')">
+                  <v-list-item-title>{{ $t('compose') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'plugin')">
+                  <v-list-item-title>{{ $t('plugin') }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
             <v-divider class="mt-2" />
             <v-container fluid class="pa-4" v-if="!hubLoading">
               <v-row class="ma-n2">
@@ -350,10 +371,21 @@ onMounted(() => {
   getMosServices();
 });
 
-const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name') => {
+const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name', type = '', category = '') => {
   hubLoading.value = true;
   try {
-    const res = await fetch(`/api/v1/mos/hub/index?search=${encodeURIComponent(search || '')}&order=${order}&sort=${sort}&limit=${limit}&skip=${skip}`, {
+    const url = new URL('/api/v1/mos/hub/index', window.location.origin);
+    url.searchParams.append('search', search || '');
+    url.searchParams.append('order', order);
+    url.searchParams.append('sort', sort);
+    url.searchParams.append('limit', limit);
+    url.searchParams.append('skip', skip);
+    if (category) url.searchParams.append('category', category);
+    if (type) url.searchParams.append('type', type);
+
+    const res = await fetch(url.toString(), {
+      search: order,
+
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),

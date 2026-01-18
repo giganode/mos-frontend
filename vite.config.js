@@ -16,10 +16,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         cleanupOutdatedCaches: true,
-        navigateFallback: '/index.html',
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-      },
-})    
+      }
+    }),
   ],
   server: {
     host: '0.0.0.0',

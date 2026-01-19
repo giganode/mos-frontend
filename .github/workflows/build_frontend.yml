@@ -34,17 +34,18 @@ jobs:
     - name: Get next version
       id: version
       run: |
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+        LAST_TAG=$(curl -s --request GET \
+            --url "https://api.github.com/repos/ich777/mos-frontend/releases?per_page=50" \
+            --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" | jq -r '.[].tag_name' | sort -V | tail -1)
         echo "Last tag: $LAST_TAG"
 
         if [[ $LAST_TAG =~ ([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
           MAJOR=${BASH_REMATCH[1]}
-          MINOR=${BASH_REMATCH[2]}
-          PATCH=${BASH_REMATCH[3]}
-          NEXT_PATCH=$((PATCH + 1))
+          MINOR=1
+          PATCH=0
+          NEXT_PATCH=0
           NEXT_TAG="${MAJOR}.${MINOR}.${NEXT_PATCH}"
-        else
-          NEXT_TAG="0.0.1"
         fi
 
         echo "Next tag: $NEXT_TAG"

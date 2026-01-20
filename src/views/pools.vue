@@ -329,10 +329,12 @@
             v-model="createPoolDialog.devices"
             :items="
               Array.isArray(unassignedDisks)
-                ? unassignedDisks.map((disk) => ({
-                    title: `${disk.device} (${disk.size_human})`,
-                    value: disk.device,
-                  }))
+                ? unassignedDisks
+                    .filter((disk) => createPoolDialog.type !== 'mergerfs' || !createPoolDialog.snapraidDevice.includes(disk.device))
+                    .map((disk) => ({
+                      title: `${disk.device} (${disk.size_human})`,
+                      value: disk.device,
+                    }))
                 : []
             "
             item-title="title"
@@ -346,10 +348,12 @@
             v-model="createPoolDialog.snapraidDevice"
             :items="
               Array.isArray(unassignedDisks)
-                ? unassignedDisks.map((disk) => ({
-                    title: `${disk.device} (${disk.size_human})`,
-                    value: disk.device,
-                  }))
+                ? unassignedDisks
+                    .filter((disk) => !createPoolDialog.devices.includes(disk.device))
+                    .map((disk) => ({
+                      title: `${disk.device} (${disk.size_human})`,
+                      value: disk.device,
+                    }))
                 : []
             "
             item-title="title"
@@ -690,7 +694,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, watch } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import draggable from 'vuedraggable';
@@ -830,6 +834,35 @@ onMounted(async () => {
   getUnassignedDisks();
   getPoolTypes();
 });
+
+// Watcher to ensure mutual exclusion between devices and snapraidDevice
+watch(
+  () => createPoolDialog.devices,
+  (newDevices) => {
+    if (createPoolDialog.type === 'mergerfs' && Array.isArray(newDevices) && newDevices.length > 0) {
+      const filtered = createPoolDialog.snapraidDevice.filter(
+        (device) => !newDevices.includes(device)
+      );
+      if (filtered.length !== createPoolDialog.snapraidDevice.length) {
+        createPoolDialog.snapraidDevice = filtered;
+      }
+    }
+  }
+);
+
+watch(
+  () => createPoolDialog.snapraidDevice,
+  (newSnapraidDevices) => {
+    if (createPoolDialog.type === 'mergerfs' && Array.isArray(newSnapraidDevices) && newSnapraidDevices.length > 0) {
+      const filtered = createPoolDialog.devices.filter(
+        (device) => !newSnapraidDevices.includes(device)
+      );
+      if (filtered.length !== createPoolDialog.devices.length) {
+        createPoolDialog.devices = filtered;
+      }
+    }
+  }
+);
 const openAddMergerfsDevicesDialog = (pool) => {
   addMergerfsDevicesDialog.value = true;
   addMergerfsDevicesDialog.pool = pool;
@@ -1471,6 +1504,11 @@ const removeMergerfsParityDevice = async (poolId, devices, unmount) => {
 };
 
 const switchPoolType = async () => {
+  // Reset device selections when switching pool type to prevent conflicts
+  createPoolDialog.devices = [];
+  createPoolDialog.snapraidDevice = [];
+  createPoolDialog.parity = [];
+  
   createPoolDialog.filesystems = await getFilesystems(createPoolDialog.type);
   if (createPoolDialog.type === 'single' || createPoolDialog.type === 'mergerfs') {
     createPoolDialog.filesystem = 'xfs';

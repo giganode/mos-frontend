@@ -690,7 +690,7 @@ const getLxcIconSrc = (lxc) => {
   if (lxc.custom_icon) {
     return `/lxc_custom/${lxc.name}.png`;
   } else {
-    return `/lxc_icons/${lxc.distribution}.png`;
+    return `/os_icons/${lxc.distribution}.png`;
   }
 };
 

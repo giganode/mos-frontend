@@ -23,24 +23,31 @@
               "
               @keyup.enter="getMosHub(searchOnlineTemplate)"
             ></v-text-field>
-            <v-menu offset-y >
-              <template #activator="{ props }" >
-                <v-btn v-bind="props" color="secondary" dense variant="outlined" class="ma-2 ml-4" style="min-width:150px">
-                  {{ $t('type') }} <v-icon right size="18">mdi-menu-down</v-icon>
+            <v-menu offset-y>
+              <template #activator="{ props }">
+                <v-btn v-bind="props" color="secondary" dense variant="outlined" class="ma-2 ml-4" style="min-width: 150px">
+                  {{ $t('type') }}
+                  <v-icon right size="18">mdi-menu-down</v-icon>
                 </v-btn>
               </template>
-              <v-list dense >
-                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', '')">
+              <v-list dense>
+                <v-list-item
+                  @click="
+                    currentPage = 1;
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', '');
+                  "
+                >
                   <v-list-item-title>{{ $t('all') }}</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'docker')">
-                  <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'compose')">
-                  <v-list-item-title>{{ $t('compose') }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="currentPage = 1; getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', 'plugin')">
-                  <v-list-item-title>{{ $t('plugin') }}</v-list-item-title>
+                <v-list-item
+                  v-for="type in hubTypes"
+                  :key="type"
+                  @click="
+                    currentPage = 1;
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', type);
+                  "
+                >
+                  <v-list-item-title>{{ $t(type) }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -349,6 +356,7 @@ const mosServices = ref({});
 const searchOnlineTemplate = ref('');
 const hubLoading = ref(true);
 const releasesLoading = ref(false);
+const hubTypes = ref([]);
 const installDialog = reactive({
   value: false,
   tpl: null,
@@ -369,6 +377,7 @@ const pageLimit = 24;
 onMounted(() => {
   getMosHub();
   getMosServices();
+  getHubTypes();
 });
 
 const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name', type = '', category = '') => {
@@ -533,6 +542,28 @@ const getPluginReleases = async (repository) => {
     return [];
   } finally {
     releasesLoading.value = false;
+  }
+};
+
+const getHubTypes = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/hub/types', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('hub types could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    hubTypes.value = await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return [];
   }
 };
 

@@ -16,7 +16,7 @@
           <v-card fluid style="margin-bottom: 80px" class="pa-0">
             <v-card-text>
               <v-form>
-                <v-switch :label="$t('lxc service')" color="green" inset density="compact" v-model="settingsLXC.enabled"></v-switch>
+                <v-switch :label="$t('lxc service')" color="green" inset density="compact" v-model="settingsLXC.enabled" hide-details="auto"></v-switch>
                 <v-switch :label="$t('bridge')" color="green" inset density="compact" v-model="settingsLXC.bridge"></v-switch>
                 <v-text-field
                   :label="$t('directory')"
@@ -65,7 +65,8 @@ const settingsLXC = ref({
   bridge: '',
   directory: '',
   start_wait: '0',
-  lxc_registry: null
+  lxc_registry: null,
+  backing_storage: 'directory'
 });
 const overlay = ref(false);
 const { t } = useI18n();

@@ -1034,5 +1034,6 @@
   "MAC Address": "MAC-Adresse",
   "Host Device": "Host-Gerät",
   "all": "Alle",
-  "no cron jobs have been created yet": "Es wurden noch keine Cron-Jobs erstellt"
+  "no cron jobs have been created yet": "Es wurden noch keine Cron-Jobs erstellt",
+  "iommu active": "IOMMU aktiv"
 }

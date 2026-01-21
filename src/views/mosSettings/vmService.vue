@@ -37,6 +37,13 @@
                 "
                 hide-details="auto"
               ></v-text-field>
+              <v-checkbox
+                :label="$t('iommu active')"
+                color="green"
+                v-model="vmSettings.iommu_active"
+                readonly
+                hide-details="auto"
+              />
               <v-divider class="my-4"></v-divider>
               <span class="text-subtitle-1 font-weight-medium">{{ $t('virtio isos') }}</span>
               <v-row>
@@ -95,13 +102,14 @@ const vmSettings = ref({
   enabled: false,
   directory: '',
   vdisk_directory: '',
+  iommu_active: false,
 });
 const virtioIsos = ref([]);
 const { t } = useI18n();
 const overlay = ref(false);
 const vmServiceLoading = ref(true);
 const loadingVirtioIsos = ref(false);
-const selectedVirtioIso = ref("");
+const selectedVirtioIso = ref('');
 const installedVirtioIsos = ref([]);
 
 onMounted(() => {

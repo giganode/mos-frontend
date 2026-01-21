@@ -196,6 +196,7 @@ import draggable from 'vuedraggable';
 import { useI18n } from 'vue-i18n';
 import { openTerminalPopup } from '@/composables/terminalpopup';
 import FileEditDialog from '@/components/fileEditDialog.vue';
+import { io } from 'socket.io-client';
 
 const editFileDialogVisible = ref(false);
 const selectedFilePath = ref('');
@@ -204,9 +205,6 @@ const lxcs = ref([]);
 const images = ref([]);
 const overlay = ref(false);
 const { t } = useI18n();
-const lxcInterval = ref(null);
-const lxcRefreshInterval = 3000;
-const lxcIsRefreshing = ref(false);
 const createDialog = reactive({
   value: false,
   name: '',
@@ -223,34 +221,20 @@ const deleteDialog = reactive({
   lxc: null,
 });
 const lxcsLoading = ref(true);
+let socket = null;
 
 onMounted(() => {
   getLXCs();
   getImages();
-  startPolling();
+  getLXCWS();
 });
 
-const pollTick = async () => {
-  if (lxcIsRefreshing.value) return;
-  lxcIsRefreshing.value = true;
-  try {
-    await getLXCs();
-  } finally {
-    lxcIsRefreshing.value = false;
-  }
-};
-const startPolling = () => {
-  if (lxcInterval.value) return;
-  lxcInterval.value = setInterval(pollTick, lxcRefreshInterval);
-};
-const stopPolling = () => {
-  if (!lxcInterval.value) return;
-  clearInterval(lxcInterval.value);
-  lxcInterval.value = null;
-};
-
 onUnmounted(() => {
-  stopPolling();
+  if (socket) {
+    socket.removeAllListeners();
+    socket.disconnect();
+    socket = null;
+  }
 });
 
 const openFileEditor = (path) => {
@@ -727,4 +711,63 @@ const showWebui = (lxc) => {
 
   window.open(webui, '_blank');
 };
+
+// Websocket to listen for lxc
+const getLXCWS = () => {
+  const authToken = localStorage.getItem('authToken');
+  if (!authToken) {
+    showSnackbarError(t('unknown error'), 'No auth token found');
+    return;
+  }
+
+  if (socket) {
+    socket.removeAllListeners();
+    socket.disconnect();
+    socket = null;
+  }
+
+  socket = io('/lxc', { path: '/api/v1/socket.io/', transports: ['websocket'], upgrade: false });
+
+  socket.on('connect', () => {
+    socket.emit('subscribe-container-usage', { token: authToken });
+  });
+
+  socket.on('connect_error', (err) => {
+    showSnackbarError(t('unknown error'), `Connection error: ${err}`);
+  });
+
+  const apply = (data) => {
+    if (!data) return;
+
+    const updates = Array.isArray(data)
+      ? data
+      : data.containers && Array.isArray(data.containers)
+      ? data.containers
+      : [data];
+
+    updates.forEach((update) => {
+      if (!update || !update.name) return;
+
+      const lxc = lxcs.value.find((x) => x.name === update.name);
+      if (!lxc) return;
+
+      if (update.cpu) lxc.cpu = update.cpu;
+      if (update.memory) lxc.memory = update.memory;
+
+      if (update.network) {
+        if (Array.isArray(update.network.ipv4)) lxc.ipv4 = update.network.ipv4;
+        if (Array.isArray(update.network.ipv6)) lxc.ipv6 = update.network.ipv6;
+      }
+
+      if (typeof update.state === 'string') lxc.state = update.state;
+      if (typeof update.autostart === 'boolean') lxc.autostart = update.autostart;
+    });
+  };
+
+  socket.on('container-usage-update', apply);
+  socket.on('error', (err) => { console.log(err);
+    showSnackbarError(t('unknown error'), `Socket error: ${String(err)}`);
+  });
+};
+
 </script>

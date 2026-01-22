@@ -1050,5 +1050,21 @@
   "could not check for plugin updates": "Konnte nicht nach Plugin-Updates suchen",
   "plugin update check completed": "Plugin Update Prüfung abgeschlossen",
   "vnc console": "VNC Konsole",
-  "vnc connection failed": "VNC verbindung fehlgeschlagen!"
+  "vnc connection failed": "VNC verbindung fehlgeschlagen!",
+  "client token could not be validated": "Client Token konnte nicht validiert werden",
+  "client token validated successfully": "Client Token erfolgreich validiert",
+  "client token validation": "Client Token Validierung",
+  "github": "GitHub",
+  "dockerhub": "DockerHub",
+  "configured": "Konfiguriert",
+  "valid": "Gültig",
+  "rate limit": "Ratenbegrenzung",
+  "rate used": "Verbraucht",
+  "rate remaining": "Verbleibend",
+  "rate reset": "Zurücksetzen",
+  "github token not configured": "GitHub Token nicht konfiguriert",
+  "dockerhub token not configured": "DockerHub Token nicht konfiguriert",
+  "yes": "Ja",
+  "no": "Nein",
+  "validate": "Validieren"
 }

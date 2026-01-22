@@ -63,7 +63,7 @@ const props = defineProps({
   },
 });
 
-const { plugins, fetchPlugins, loadPluginComponent, pluginsLoaded } = usePlugins();
+const { plugins, getPlugins, loadPluginComponent, pluginsLoaded } = usePlugins();
 
 const loading = ref(true);
 const error = ref(false);
@@ -79,7 +79,7 @@ const loadPlugin = async () => {
 
   try {
     if (!pluginsLoaded.value) {
-      await fetchPlugins();
+      await getPlugins();
     }
 
     plugin.value = plugins.value.find((p) => p.name === props.pluginName || p.name.toLowerCase() === props.pluginName.toLowerCase());

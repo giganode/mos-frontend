@@ -66,28 +66,35 @@
 
           <v-divider class="my-2"></v-divider>
 
-          <v-card-text class="pt-0">
+          <v-card-text class="pt-0 pb-0">
             <v-row class="mt-2 mb-4">
               <v-col cols="12" class="d-flex align-center justify-space-between py-0">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('client token') }}</span>
               </v-col>
             </v-row>
-                <v-text-field
-                  v-model="clientToken.github"
-                  :type="showPasswortGithub ? 'text' : 'password'"
-                  :label="$t('github token')"
-                  :append-inner-icon="showPasswortGithub ? 'mdi-eye-off' : 'mdi-eye'"
-                  @click:append-inner="showPasswortGithub = !showPasswortGithub"
-                />
-                <v-text-field
-                  v-model="clientToken.dockerhub"
-                  :type="showPasswortDockerhub ? 'text' : 'password'"
-                  :label="$t('dockerhub token')"
-                  hide-details="auto"
-                  :append-inner-icon="showPasswortDockerhub ? 'mdi-eye-off' : 'mdi-eye'"
-                  @click:append-inner="showPasswortDockerhub = !showPasswortDockerhub"
-                />
+            <v-text-field
+              v-model="clientToken.github"
+              :type="showPasswortGithub ? 'text' : 'password'"
+              :label="$t('github token')"
+              :append-inner-icon="showPasswortGithub ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPasswortGithub = !showPasswortGithub"
+            />
+            <v-text-field
+              v-model="clientToken.dockerhub"
+              :type="showPasswortDockerhub ? 'text' : 'password'"
+              :label="$t('dockerhub token')"
+              hide-details="auto"
+              :append-inner-icon="showPasswortDockerhub ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPasswortDockerhub = !showPasswortDockerhub"
+            />
           </v-card-text>
+          <v-card-actions>
+            <v-row class="d-flex justify-end mt-0">
+              <v-btn variant="text" @click="validateClientToken()" class="mr-4">
+                {{ $t('validate') }}
+              </v-btn>
+            </v-row>
+          </v-card-actions>
         </v-card>
       </v-container>
     </v-container>
@@ -109,11 +116,52 @@
     </v-card>
   </v-dialog>
 
+  <!-- Token Validation Dialog -->
+  <v-dialog v-model="showValidateResult.value" max-width="600">
+    <v-card class="pa-0">
+      <v-card-title>{{ $t('client token validation') }}</v-card-title>
+      <v-card-text style="max-height: 60vh; overflow-y: auto; padding-right: 12px">
+          <div>
+            <h3>{{ $t('github') }}</h3>
+            <div v-if="showValidateResult.github.configured">
+              <p>{{ $t('configured') }}: {{ showValidateResult.github.configured ? $t('yes') : $t('no') }}</p>
+              <p>{{ $t('valid') }}: {{ showValidateResult.github.valid ? $t('yes') : $t('no') }}</p>
+              <p>{{ $t('rate limit') }}: {{ showValidateResult.github.rate.limit }}</p>
+              <p>{{ $t('rate used') }}: {{ showValidateResult.github.rate.used }}</p>
+              <p>{{ $t('rate remaining') }}: {{ showValidateResult.github.rate.remaining }}</p>
+              <p>{{ $t('rate reset') }}: {{ new Date(showValidateResult.github.rate.reset * 1000).toLocaleString() }}</p>
+            </div>
+            <div v-else>
+              {{ $t('github token not configured') }}
+            </div>
+          </div>
+          <v-divider class="my-4"></v-divider>
+          <div>
+            <h3>{{ $t('dockerhub') }}</h3>
+            <div v-if="showValidateResult.dockerhub.configured">
+              <p>{{ $t('configured') }}: {{ showValidateResult.dockerhub.configured ? $t('yes') : $t('no') }}</p>
+              <p>{{ $t('valid') }}: {{ showValidateResult.dockerhub.valid ? $t('yes') : $t('no') }}</p>
+              <p>{{ $t('username') }}: {{ showValidateResult.dockerhub.username }}</p>
+              <p>{{ $t('rate limit') }}: {{ showValidateResult.dockerhub.rate.limit }}</p>
+              <p>{{ $t('rate remaining') }}: {{ showValidateResult.dockerhub.rate.remaining }}</p>
+            </div>
+            <div v-else>
+              {{ $t('dockerhub token not configured') }}
+            </div>
+          </div>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="onPrimary" variant="text" @click="showValidateResult.value = false">{{ $t('close') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
-  <v-fab @click="setClientToken()" color="primary"
-    style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;" size="large" icon>
+  <v-fab @click="setClientToken()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
-  </v-fab>  
+  </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -138,8 +186,30 @@ const createAdminTokenDialog = reactive({
   description: '',
 });
 const clientToken = ref({
-  github: "",
-  dockerhub: ""
+  github: '',
+  dockerhub: '',
+});
+const showValidateResult = reactive({
+  value: false,
+  github: {
+    configured: false,
+    valid: false,
+    rate: {
+      limit: 0,
+      used: 0,
+      remaining: 0,
+      reset: 0,
+    },
+  },
+  dockerhub: {
+    configured: false,
+    valid: false,
+    username: '',
+    rate: {
+      limit: 0,
+      remaining: 0,
+    },
+  },
 });
 
 onMounted(() => {
@@ -267,6 +337,34 @@ const deleteAdminToken = async (id) => {
     }
     showSnackbarSuccess(t('admin api token deleted'));
     getAdminToken();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const validateClientToken = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/mos/validatetokens`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('client token could not be validated')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
+    const result = await res.json();
+    showValidateResult.value = true;
+    showValidateResult.github = result.github;
+    showValidateResult.dockerhub = result.dockerhub;
+
+    showSnackbarSuccess(t('client token validated successfully'));
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

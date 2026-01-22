@@ -4,14 +4,13 @@
       <v-container fluid class="pt-0 pr-0 pl-0 pb-4">
         <h2>{{ $t('plugins') }}</h2>
       </v-container>
-
       <v-container fluid class="pa-0">
-        <v-card fluid style="margin-bottom: 80px" class="pa-0">
+        <v-card style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-container fluid class="pa-4" v-if="!loading">
               <v-row class="ma-n2">
                 <v-col v-if="plugins.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="plugin in plugins" :key="plugin.name" class="pa-2">
-                  <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0 plugin-card" @click="openPlugin(plugin)">
+                  <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0" @click="openPlugin(plugin)">
                     <v-card-text class="pa-0 pt-4">
                       <div class="d-flex justify-center">
                         <v-icon v-if="hasMdiIcon(plugin)" :icon="plugin.icon" size="60" color="primary"></v-icon>
@@ -88,7 +87,9 @@
     <v-card class="pa-0">
       <v-card-title class="text-h6">{{ $t('delete') }} {{ deleteDialog.plugin?.displayName || deleteDialog.plugin?.name }}</v-card-title>
       <v-card-text>
-        {{ $t('are you sure you want to delete') }} <strong>{{ deleteDialog.plugin?.displayName || deleteDialog.plugin?.name }}</strong>?
+        {{ $t('are you sure you want to delete') }}
+        <strong>{{ deleteDialog.plugin?.displayName || deleteDialog.plugin?.name }}</strong>
+        ?
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -100,6 +101,11 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Floating Action Button -->
+  <v-fab @click="checkUpdatePlugins()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+    <v-icon>mdi-refresh</v-icon>
+  </v-fab>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -115,7 +121,7 @@ import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const { t } = useI18n();
-const { plugins, fetchPlugins } = usePlugins();
+const { plugins, getPlugins } = usePlugins();
 const loading = ref(true);
 const overlay = ref(false);
 const iconErrors = ref({});
@@ -126,8 +132,7 @@ const deleteDialog = reactive({
 
 onMounted(async () => {
   try {
-    await updateCheckPlugins();
-    await fetchPlugins();
+    await getPlugins();
   } catch {
     showSnackbarError(t('error loading plugins'));
   } finally {
@@ -167,14 +172,13 @@ const deletePlugin = async (plugin) => {
       },
     });
 
-
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('plugin could not be deleted')}|$| ${error.error || t('unknown error')}`);
     }
 
     showSnackbarSuccess(t('plugin deleted successfully'));
-    await fetchPlugins();
+    await getPlugins();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -203,7 +207,7 @@ const updatePlugin = async (plugin) => {
     }
 
     showSnackbarSuccess(t('plugin update started successfully'));
-    await fetchPlugins();
+    await getPlugins();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -212,7 +216,7 @@ const updatePlugin = async (plugin) => {
   }
 };
 
-const updateCheckPlugins = async () => {
+const checkUpdatePlugins = async () => {
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/mos/plugins/updatecheck`, {
@@ -227,6 +231,8 @@ const updateCheckPlugins = async () => {
       throw new Error(`${t('could not check for plugin updates')}|$| ${error.error || t('unknown error')}`);
     }
 
+    showSnackbarSuccess(t('plugin update check completed'));
+    await getPlugins();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -234,17 +240,4 @@ const updateCheckPlugins = async () => {
     overlay.value = false;
   }
 };
-
 </script>
-
-<style scoped>
-.plugin-card {
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.plugin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-}
-</style>

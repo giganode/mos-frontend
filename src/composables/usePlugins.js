@@ -33,7 +33,7 @@ const initSharedScope = async () => {
   };
 };
 
-export const fetchPlugins = async () => {
+export const getPlugins = async () => {
   try {
     const res = await fetch('/api/v1/mos/plugins', {
       method: 'GET',
@@ -115,7 +115,7 @@ export const usePlugins = () => {
     plugins,
     pluginsLoaded,
     loadedComponents,
-    fetchPlugins,
+    getPlugins,
     loadPluginComponent,
     getPluginIconUrl,
     hasMdiIcon,

@@ -1048,5 +1048,21 @@
   "plugin could not be updated": "Plugin could not be updated",
   "plugin update started successfully": "Plugin update started successfully",
   "could not check for plugin updates": "Could not check for plugin updates",
-  "plugin update check completed": "Plugin update check completed"
+  "plugin update check completed": "Plugin update check completed",
+  "client token could not be validated": "Client Token could not be validated",
+  "client token validated successfully": "Client Token validated successfully",
+  "client token validation": "Client Token Validation",  
+  "github": "GitHub",
+  "dockerhub": "DockerHub",
+  "configured": "Configured",
+  "valid": "Valid",
+  "rate limit": "Rate Limit",
+  "rate used": "Rate Used",
+  "rate remaining": "Rate Remaining",
+  "rate reset": "Rate Reset",
+  "github token not configured": "GitHub Token not configured",
+  "dockerhub token not configured": "DockerHub Token not configured",
+  "yes": "Yes",
+  "no": "No",
+  "validate": "Validate"
 }

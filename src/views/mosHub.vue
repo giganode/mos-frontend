@@ -52,7 +52,7 @@
               </v-list>
             </v-menu>
             <v-divider class="mt-2" />
-            <v-container fluid class="pa-4" v-if="!hubLoading">
+            <v-container class="pa-4" v-if="!hubLoading">
               <v-row class="ma-n2">
                 <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2">
                   <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0">

@@ -28,7 +28,7 @@ jobs:
         wget https://github.com/novnc/noVNC/archive/refs/heads/master.tar.gz -O novnc.tar.gz
         mkdir -p public/novnc
         tar -C public/novnc/ --strip-components=1 -xf novnc.tar.gz
-        rm -rf public/novnc/{docs,eslint.config.mjs,karma.conf.cjs,po,README.md,snap,tests,utils}
+        rm -rf public/novnc/{.github,.gitignore,.gitmodules,docs,eslint.config.mjs,karma.conf.cjs,po,README.md,snap,tests,utils}
         awk '/EMBEDDING.md/ {
             print;
             print ""

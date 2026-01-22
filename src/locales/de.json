@@ -1048,5 +1048,7 @@
   "plugin could not be updated": "Plugin konnte nicht aktualisiert werden",
   "plugin update started successfully": "Plugin Aktualisierung erfolgreich gestartet",
   "could not check for plugin updates": "Konnte nicht nach Plugin-Updates suchen",
-  "plugin update check completed": "Plugin Update Prüfung abgeschlossen"
+  "plugin update check completed": "Plugin Update Prüfung abgeschlossen",
+  "vnc console": "VNC Konsole",
+  "vnc connection failed": "VNC verbindung fehlgeschlagen!"
 }

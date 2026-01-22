@@ -1044,5 +1044,9 @@
   "bios": "BIOS",
   "target": "Target",
   "address": "Address",
-  "backing storage": "Backing Storage"
+  "backing storage": "Backing Storage",
+  "plugin could not be updated": "Plugin could not be updated",
+  "plugin update started successfully": "Plugin update started successfully",
+  "could not check for plugin updates": "Could not check for plugin updates",
+  "plugin update check completed": "Plugin update check completed"
 }

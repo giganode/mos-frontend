@@ -53,6 +53,9 @@
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                       <v-spacer />
+                      <v-btn v-if="plugin.update_available" color="secondary" prepend-icon="mdi-update" size="small" @click.stop="updatePlugin(plugin)">
+                        {{ $t('update') }}
+                      </v-btn>
                       <v-btn color="secondary" prepend-icon="mdi-open-in-app" size="small" @click.stop="openPlugin(plugin)">
                         {{ $t('open') }}
                       </v-btn>
@@ -123,6 +126,7 @@ const deleteDialog = reactive({
 
 onMounted(async () => {
   try {
+    await updateCheckPlugins();
     await fetchPlugins();
   } catch {
     showSnackbarError(t('error loading plugins'));
@@ -179,6 +183,58 @@ const deletePlugin = async (plugin) => {
     deleteDialog.plugin = null;
   }
 };
+
+const updatePlugin = async (plugin) => {
+  deleteDialog.value = false;
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/mos/plugins/update`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ plugin: plugin.name }),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('plugin could not be updated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('plugin update started successfully'));
+    await fetchPlugins();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateCheckPlugins = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/mos/plugins/updatecheck`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('could not check for plugin updates')}|$| ${error.error || t('unknown error')}`);
+    }
+
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 </script>
 
 <style scoped>

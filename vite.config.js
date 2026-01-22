@@ -42,6 +42,11 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/api/v1/vm/vnc/ws': {
+        target: 'ws://192.168.1.2:3000',
+        changeOrigin: true,
+        ws: true,
+      },
       '/_plugins': {
         target: 'http://192.168.1.2',
         changeOrigin: true,

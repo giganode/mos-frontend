@@ -23,7 +23,7 @@ jobs:
         node-version: '22.19.0'
 
     - name: Get latest noVNC and add it to public
-      id: version
+      id: novnc
       run: |
         wget https://github.com/novnc/noVNC/archive/refs/heads/master.tar.gz -O novnc.tar.gz
         mkdir -p public/novnc

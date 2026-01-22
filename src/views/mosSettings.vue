@@ -2,7 +2,7 @@
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('settings') }}</h2>
+        <h2 @click="showSpecialActions++">{{ $t('settings') }}</h2>
       </v-container>
       <v-container class="pa-0" fluid>
         <v-row>
@@ -174,8 +174,7 @@
             </v-card>
           </v-col>
 
-          <!-- Special Actions Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
+          <v-col v-if="showSpecialActions >= 3" cols="12" md="6" lg="4" xl="3" class="pb-0">
             <v-card class="pa-0">
               <v-card-title class="text-h6 mb-3">
                 <v-icon color="primary" class="mr-2">mdi-star-face</v-icon>
@@ -437,6 +436,7 @@ const updateKernelDialog = reactive({
   value: false,
   version: null,
 });
+const showSpecialActions = ref(0);
 
 onMounted(() => {
   getMosReleases();
@@ -724,4 +724,5 @@ const clearUpdateOsDialog = () => {
 const openUpdateKernelDialog = () => {
   updateKernelDialog.value = true;
 };
+
 </script>

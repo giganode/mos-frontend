@@ -42,6 +42,13 @@
                           </template>
                           <v-list-item-title>{{ $t('start') }}</v-list-item-title>
                         </v-list-item>
+                        <v-list-item v-if="vm.state === 'running' && vm.vncPort" @click="openVnc(vm.name)">
+                          <template #prepend>
+                            <v-icon>mdi-monitor</v-icon>
+                          </template>
+                          <v-list-item-title>{{ $t('vnc console') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-divider v-if="vm.state === 'running' && vm.vncPort"/>
                         <v-list-item v-if="vm.state === 'running'" @click="stopVM(vm.name)">
                           <template #prepend>
                             <v-icon>mdi-stop-circle</v-icon>
@@ -1047,6 +1054,42 @@ const getLoadWS = () => {
   socket.on('error', (err) => {
     error.value = `Socket error: ${err}`;
   });
+};
+
+const openVnc = async (vmName) => {
+  try {
+    const res = await fetch('/api/v1/vm/vnc/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ vmName })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to get VNC token');
+    }
+
+    const { wsPath, token } = await res.json();
+    const width = 1280;
+    const height = 1024;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const host = window.location.hostname;
+    const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+    const path = wsPath.substring(1); 
+
+    window.open(
+      `/novnc/vnc.html?host=${host}&port=${port}&path=${encodeURIComponent(path)}&autoconnect=true&resize=scale`,
+      `vnc-${vmName}`,
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no`
+    );
+  } catch (err) {
+    showSnackbarError(t('vnc connection failed'), err.message);
+  }
 };
 
 const stopVM = async (name) => {

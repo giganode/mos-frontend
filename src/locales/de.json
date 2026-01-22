@@ -1049,6 +1049,8 @@
   "plugin update started successfully": "Plugin Aktualisierung erfolgreich gestartet",
   "could not check for plugin updates": "Konnte nicht nach Plugin-Updates suchen",
   "plugin update check completed": "Plugin Update Prüfung abgeschlossen",
+  "vnc console": "VNC Konsole",
+  "vnc connection failed": "VNC verbindung fehlgeschlagen!",
   "client token could not be validated": "Client Token konnte nicht validiert werden",
   "client token validated successfully": "Client Token erfolgreich validiert",
   "client token validation": "Client Token Validierung",

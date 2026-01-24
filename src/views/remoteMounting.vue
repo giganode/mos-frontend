@@ -5,7 +5,13 @@
         <h2>{{ $t('remote mounting') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-card fluid style="margin-bottom: 80px" class="pa-0">
+        <v-skeleton-loader v-if="loadingRemotes" type="card"></v-skeleton-loader>
+        <v-card v-else-if="remotes.length === 0 && !loadingRemotes" fluid class="mb-4 ml-0 mr-0 pa-0">
+          <v-card-text class="pa-4">
+            {{ $t('no remote mounts have been created yet') }}
+          </v-card-text>
+        </v-card>
+        <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-title>{{ $t('overview') }}</v-card-title>
           <v-card-text class="pa-0">
             <v-list>
@@ -180,6 +186,7 @@ import { useI18n } from 'vue-i18n';
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const overlay = ref(false);
 const loadingShares = ref(false);
+const loadingRemotes = ref(false);
 const listAllShares = ref([]);
 const sharesDialog = ref(false);
 const { t } = useI18n();
@@ -275,6 +282,7 @@ const clearChangeDialog = () => {
 };
 
 const getRemotes = async () => {
+  loadingRemotes.value = true;
   try {
     const res = await fetch('/api/v1/remotes', {
       headers: {
@@ -290,6 +298,8 @@ const getRemotes = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    loadingRemotes.value = false;
   }
 };
 

@@ -1066,5 +1066,6 @@
   "dockerhub token not configured": "DockerHub Token nicht konfiguriert",
   "yes": "Ja",
   "no": "Nein",
-  "validate": "Validieren"
+  "validate": "Validieren",
+  "no remote mounts have been created yet": "Es wurden noch keine Remote Mounts angelegt"
 }

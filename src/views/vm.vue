@@ -14,7 +14,7 @@
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
                   <th style="min-width: 150px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
                   <th style="min-width: 200px; padding: 4px 8px; vertical-align: middle">{{ $t('description') }}</th>
-                  <th style="padding: 4px 8px; vertical-align: middle">{{ $t('cpu load') }}</th>
+                  <th style="min-width: 40px; padding: 4px 8px; vertical-align: middle">{{ $t('cpu load') }}</th>
                   <th style="padding: 4px 8px; vertical-align: middle">{{ $t('disks') }}</th>
                   <th style="padding: 4px 8px; vertical-align: middle">{{ $t('port') }}</th>
                   <th style="width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('autostart') }}</th>
@@ -106,7 +106,7 @@
                     </div>
                     <span v-else>-</span>
                   </td>
-                  <td style="padding: 4px 8px; vertical-align: middle">{{ vm.vncPort || '-' }}</td>
+                  <td style="padding: 4px 8px; vertical-align: middle">{{ vm.state === 'running' ? (vm.vncPort || '-') : '-' }}</td>
                   <td style="padding: 4px 8px; vertical-align: middle">
                     <v-switch v-model="vm.autostart" color="green" hide-details density="compact" @change="switchAutostart(vm)" />
                   </td>
@@ -145,13 +145,60 @@
     <v-card>
       <v-card-title>{{ $t('create vm') }}</v-card-title>
       <v-card-text>
-        <v-text-field
-          v-model="newVm.name"
-          :label="$t('name')"
-          variant="outlined"
-          class="mb-3"
-        />
-        <v-slider
+        <v-row dense>
+          <v-col cols="11">
+            <v-text-field
+              v-model="newVm.name"
+              :label="$t('name')"
+              variant="outlined"
+              hide-details
+            />
+          </v-col>
+          <v-col cols="1">
+            <v-menu :close-on-content-click="true" location="bottom end">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="outlined" class="iconPicker">
+                  <v-img
+                    v-if="newVm.icon"
+                    :src="`/os_icons/${newVm.icon}.png`"
+                    width="24"
+                    height="24"
+                  >
+                    <template #error>
+                      <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                    </template>
+                  </v-img>
+                  <v-icon v-else color="grey-darken-1">mdi-image-plus</v-icon>
+                </v-btn>
+              </template>
+              <v-card max-width="350" max-height="400" style="overflow-x: hidden; overflow-y: auto;">
+                <v-card-text class="pa-2">
+                  <div class="icon-grid">
+                    <div
+                      v-for="iconItem in vmCapabilities.icons || []"
+                      :key="iconItem.icon"
+                      class="icon-tile"
+                      :class="{ 'icon-tile-selected': newVm.icon === iconItem.icon }"
+                      @click="newVm.icon = iconItem.icon"
+                    >
+                      <v-img
+                        :src="`/os_icons/${iconItem.icon}.png`"
+                        width="32"
+                        height="32"
+                      >
+                        <template #error>
+                          <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                        </template>
+                      </v-img>
+                      <span class="icon-tile-label">{{ iconItem.namePretty }}</span>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-menu>
+          </v-col>
+        </v-row>
+        <v-slider style="margin-top: 12px;"
           v-model="newVm.memorySize"
           :label="$t('Memory Size (GB)')"
           step="1"
@@ -496,7 +543,7 @@
           <h3 class="text-h6 mb-2">{{ $t('graphics') }}</h3>
           <v-card class="pa-3" variant="outlined">
             <v-row dense>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="3">
                 <v-select
                   v-model="newVm.graphics.type"
                   :items="vmCapabilities.graphicsTypes"
@@ -506,17 +553,27 @@
                   hide-details
                 />
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="3">
+                <v-select
+                  v-model="newVm.graphics.keymap"
+                  :items="vmCapabilities.vncKeymaps"
+                  :label="$t('keymap')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="3">
                 <v-text-field
                   v-model="newVm.graphics.port"
                   :label="$t('port')"
                   variant="outlined"
                   density="compact"
                   hide-details
-                  placeholder="leave empty for auto"
+                  placeholder="auto if empty"
                 />
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="3">
                 <v-text-field
                   v-model="newVm.graphics.listen"
                   :label="$t('listen')"
@@ -919,8 +976,11 @@ const fsDialogCallback = ref(null);
 const fsDialogInitialPath = ref('/');
 const newVm = ref({
   name: '',
-  machineTypeCategory: '',
-  machineType: '',
+  icon: '',
+  memorySize: 1,
+  machineTypeArchitecture: 'q35',
+  machineType: 'q35',
+  biosType: 'ovmf',
   selectedCores: [],
   disks: [],
   cdroms: [],
@@ -928,7 +988,8 @@ const newVm = ref({
   graphics: {
     type: 'vnc',
     port: null,
-    listen: '0.0.0.0'
+    listen: '0.0.0.0',
+    vncKeymap: null
   },
   hostdevices: [],
   usbdevices: []
@@ -952,9 +1013,9 @@ onMounted(() => {
   getVmUsage();
   getLoadWS();
   getSystemInfo();
+  getVmCapabilities();
   getPCIeDevices();
   getUSBDevices();
-  getVmCapabilities();
 });
 
 onUnmounted(() => {
@@ -1543,6 +1604,13 @@ const selectedMachineTypeVersions = computed(() => {
   return [];
 });
 
+watch(() => newVm.value.machineTypeArchitecture, () => {
+  const versions = selectedMachineTypeVersions.value;
+  if (versions.length) {
+    newVm.value.machineType = versions[0].value;
+  }
+});
+
 const virtioIsoOptions = computed(() => {
   if (!vmCapabilities.value?.virtioIsos) return [];
   return vmCapabilities.value.virtioIsos.map(iso => ({
@@ -1554,9 +1622,11 @@ const virtioIsoOptions = computed(() => {
 const openCreateVmDialog = async () => {
   newVm.value = {
     name: '',
-    memory: '',
-    machineTypeCategory: '',
-    machineType: '',
+    icon: '',
+    memorySize: 1,
+    machineTypeArchitecture: 'q35',
+    machineType: 'q35',
+    biosType: 'ovmf',
     selectedCores: [],
     disks: [],
     cdroms: [],
@@ -1564,7 +1634,8 @@ const openCreateVmDialog = async () => {
     graphics: {
       type: 'vnc',
       port: null,
-      listen: '0.0.0.0'
+      listen: '0.0.0.0',
+      keymap: 'en-us'
     },
     hostdevices: [],
     usbdevices: []
@@ -1689,6 +1760,7 @@ const createVM = async () => {
 
   const payload = {
     name: newVm.value.name,
+    icon: newVm.value.icon,
     memory: `${newVm.value.memorySize}G`,
     cpus: newVm.value.selectedCores.length || 1,
     cpuPins: newVm.value.selectedCores,
@@ -1774,5 +1846,46 @@ const createVM = async () => {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
+}
+
+.iconPicker {
+  min-width: 48px;
+  height: 48px;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-tile:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.icon-tile-selected {
+  background-color: rgba(var(--v-theme-primary), 0.12);
+  outline: 2px solid rgb(var(--v-theme-primary));
+}
+
+.icon-tile-label {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

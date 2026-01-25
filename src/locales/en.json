@@ -1085,5 +1085,12 @@
   "write operations": "Write Operations",
   "mapping": "Mapping",
   "secure": "Secure",
-  "smb": "SMB"
+  "smb": "SMB",
+  "nfs share could not be deleted": "NFS Freigabe konnte nicht gelöscht werden",
+  "nfs share deleted successfully": "NFS Freigabe erfolgreich gelöscht",
+  "smb share could not be deleted": "SMB Freigabe konnte nicht gelöscht werden",
+  "smb share deleted successfully": "SMB Freigabe erfolgreich gelöscht",
+  "are you sure you want to delete this nfs share?": "Bist du sicher, dass du diese NFS Freigabe löschen möchtest?",
+  "are you sure you want to delete this smb share?": "Bist du sicher, dass du diese SMB Freigabe löschen möchtest?",
+  "remote mounts": "Remote Mounts"
 }

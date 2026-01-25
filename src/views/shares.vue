@@ -56,7 +56,7 @@
                     </v-menu>
                   </template>
                 </v-list-item>
-                <v-divider v-if="index < shares.smb.length - 1 || shares.nfs.length > 0" />
+                <v-divider v-if="index < shares.smb.length - 1 || (shares.smb.length > 0 && shares.nfs.length > 0)" />
               </template>
               <template v-for="(share, index) in shares.nfs" :key="share.id">
                 <v-list-item>
@@ -78,7 +78,7 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item @click="openDeleteSmbDialog(share)">
+                        <v-list-item @click="openDeleteNfsDialog(share)">
                           <template #prepend>
                             <v-icon>mdi-delete</v-icon>
                           </template>
@@ -212,6 +212,23 @@
       <v-card-actions>
         <v-btn color="onPrimary" @click="deleteSmbDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deleteShareSmb(deleteSmbDialog.share, deleteSmbDialog.deleteDirectory)">
+          {{ $t('delete') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Delete Nfs Dialog -->
+  <v-dialog v-model="deleteNfsDialog.value" max-width="400">
+    <v-card class="pa-0">
+      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
+      <v-card-text>
+        {{ $t('are you sure you want to delete this nfs share?') }}
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-btn color="onPrimary" @click="deleteNfsDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="red" @click="deleteShareNfs(deleteNfsDialog.share)">
           {{ $t('delete') }}
         </v-btn>
       </v-card-actions>
@@ -395,6 +412,10 @@ const deleteSmbDialog = reactive({
   share: null,
   deleteDirectory: false,
 });
+const deleteNfsDialog = reactive({
+  value: false,
+  share: null,
+});
 const sharesLoading = ref(true);
 const openFsDialog = (cb, mntPoint = '/') => {
   fsDialogCallback.value = cb;
@@ -439,13 +460,8 @@ const getShares = async () => {
     if (!res.ok) throw new Error('API-Error');
     const result = await res.json();
 
-    if (result.length > 0) {
-      shares.value = { smb: [], nfs: [] };
-      shares.value.smb = result[0].smb || [];
-      shares.value.nfs = result[1].nfs || [];
-    } else {
-      shares.value = [];
-    }
+    shares.value.smb = result.smb || [];
+    shares.value.nfs = result.nfs || [];
   } catch (e) {
     showSnackbarError(e.message);
   }
@@ -637,6 +653,29 @@ const deleteShareSmb = async () => {
   }
 };
 
+const deleteShareNfs = async () => {
+  deleteNfsDialog.value = false;
+
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/shares/nfs/${encodeURIComponent(deleteNfsDialog.share.id)}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    overlay.value = false;
+
+    if (!res.ok) throw new Error(t('nfs share could not be deleted'));
+    showSnackbarSuccess(t('nfs share deleted successfully'));
+    getShares();
+    clearDeleteNfsDialog();
+  } catch (e) {
+    overlay.value = false;
+    showSnackbarError(e.message);
+  }
+};
+
 const getTargetDevicesSmb = async (share) => {
   try {
     const res = await fetch(`/api/v1/shares/smb/${encodeURIComponent(share.id)}/target-devices`, {
@@ -720,6 +759,10 @@ const openDeleteSmbDialog = (share) => {
   deleteSmbDialog.value = true;
   deleteSmbDialog.share = share;
 };
+const openDeleteNfsDialog = (share) => {
+  deleteNfsDialog.value = true;
+  deleteNfsDialog.share = share;
+};
 const openEditSmbDialog = (share) => {
   editSmbDialog.value = true;
   editSmbDialog.share = share;
@@ -782,6 +825,10 @@ const clearDeleteSmbDialog = () => {
   deleteSmbDialog.value = false;
   deleteSmbDialog.share = null;
   deleteSmbDialog.deleteDirectory = false;
+};
+const clearDeleteNfsDialog = () => {
+  deleteNfsDialog.value = false;
+  deleteNfsDialog.share = null;
 };
 const clearCreateNfsDialog = () => {
   createNfsDialog.shareName = '';

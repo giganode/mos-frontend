@@ -186,7 +186,7 @@ import { useI18n } from 'vue-i18n';
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const overlay = ref(false);
 const loadingShares = ref(false);
-const loadingRemotes = ref(false);
+const loadingRemotes = ref(true);
 const listAllShares = ref([]);
 const sharesDialog = ref(false);
 const { t } = useI18n();
@@ -225,8 +225,9 @@ const changeDialog = reactive({
   auto_mount: true,
 });
 
-onMounted(() => {
-  getRemotes();
+onMounted( async () => {
+  await getRemotes();
+  loadingRemotes.value = false;
 });
 
 const openCreateMountDialog = () => {
@@ -282,7 +283,6 @@ const clearChangeDialog = () => {
 };
 
 const getRemotes = async () => {
-  loadingRemotes.value = true;
   try {
     const res = await fetch('/api/v1/remotes', {
       headers: {
@@ -298,8 +298,6 @@ const getRemotes = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
-    loadingRemotes.value = false;
   }
 };
 

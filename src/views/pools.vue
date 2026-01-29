@@ -199,6 +199,12 @@
                       <v-list-item-title>{{ $t('replace parity device') }}</v-list-item-title>
                     </v-list-item>
                     <v-divider v-if="pool.type === 'mergerfs'"></v-divider>
+                    <v-list-item v-if="pool.type === 'mergerfs'" @click="openMergerfsPolicyDialog(pool)">
+                      <template #prepend>
+                        <v-icon>mdi-shape-outline</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('change mergerfs policy') }}</v-list-item-title>
+                    </v-list-item>
                     <v-list-item v-if="pool.type === 'mergerfs' && pool.parity_devices.length > 0" @click="openSnapraidOperationDialog(pool)">
                       <template #prepend>
                         <v-icon>mdi-database-check</v-icon>
@@ -711,6 +717,27 @@
     </v-card>
   </v-dialog>
 
+  <!-- Mergerfs Policy -->
+  <v-dialog v-model="mergerfsPolicyDialog.value" max-width="600">
+    <v-card class="pa-0">
+      <v-card-title>{{ $t('mergerfs policies') }}</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
+          <v-select v-model="mergerfsPolicyDialog.policies.read" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('read policy')" dense />
+          <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
+        </v-form>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-btn @click="mergerfsPolicyDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+        <v-btn @click="changeMergerfsPolicies(mergerfsPolicyDialog.pool.id, mergerfsPolicyDialog.policies)" color="onPrimary">
+          {{ $t('save') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -856,6 +883,28 @@ const addNonRaidParityDialog = reactive({
   pool: null,
   device: '',
 });
+const mergerfsPolicyDialog = reactive({
+  value: false,
+  pool: null,
+  policies: {
+    create: 'epmfs',
+    read: 'ff',
+    search: 'ff',
+  },
+  availablePolicies: [
+    'epmfs',
+    'ff',
+    'lfs',
+    'mcfs',
+    'mfs',
+    'rand',
+    'roth',
+    'rr',
+    'simfs',
+    'eplfs',
+    'epff',
+  ],
+});
 
 onMounted(async () => {
   getPools();
@@ -863,7 +912,6 @@ onMounted(async () => {
   getPoolTypes();
 });
 
-// Watcher to ensure mutual exclusion between devices and snapraidDevice
 watch(
   () => createPoolDialog.devices,
   (newDevices) => {
@@ -1000,6 +1048,16 @@ const openAddNonRaidParityDialog = (pool) => {
   addNonRaidParityDialog.value = true;
   addNonRaidParityDialog.pool = pool;
   addNonRaidParityDialog.device = '';
+};
+const openMergerfsPolicyDialog = async (pool) => {
+  mergerfsPolicyDialog.value = true;
+  mergerfsPolicyDialog.pool = pool;
+  const policies = await getMergerfsPolicies(pool.id);
+  mergerfsPolicyDialog.policies = {
+    create: policies.create ? policies.create : 'epmfs',
+    read: policies.read ? policies.read : 'ff',
+    search: policies.search ? policies.search : 'ff',
+  };
 };
 
 const getPools = async () => {
@@ -1531,29 +1589,6 @@ const removeMergerfsParityDevice = async (poolId, devices, unmount) => {
   }
 };
 
-const switchPoolType = async () => {
-  // Reset device selections when switching pool type to prevent conflicts
-  createPoolDialog.devices = [];
-  createPoolDialog.snapraidDevice = [];
-  createPoolDialog.parity = [];
-  
-  createPoolDialog.filesystems = await getFilesystems(createPoolDialog.type);
-  if (createPoolDialog.type === 'single' || createPoolDialog.type === 'mergerfs') {
-    createPoolDialog.filesystem = 'xfs';
-  } else {
-    createPoolDialog.filesystem = 'btrfs';
-  }
-  if (createPoolDialog.type === 'nonraid') {
-    createPoolDialog.filesystem = 'xfs';
-    if (pools.value.some((p) => p.type === 'nonraid')) {
-      showSnackbarError(t('only one nonraid pool allowed'), t('you can only create one nonraid pool per system'));
-      createPoolDialog.type = 'single';
-      createPoolDialog.filesystem = 'xfs';
-      return;
-    }
-  }
-};
-
 const replaceMergerfsParityDevice = async (poolId, oldDevice, newDevice, format) => {
   overlay.value = true;
   const replaceParityData = {
@@ -1944,6 +1979,61 @@ const addNonRaidParity = async (device) => {
   }
 };
 
+const getMergerfsPolicies = async (poolId) => {
+  overlay.value = true;
+
+  try {
+    const res = await fetch(`/api/v1/pools/${poolId}/config`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('mergerfs policies could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const result = await res.json();
+    return result.policies || [];
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const changeMergerfsPolicies = async (poolId, policies) => {
+  overlay.value = true;
+  const payload = {
+    policies: policies,
+  };
+
+  try {
+    const res = await fetch(`/api/v1/pools/${poolId}/config`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('mergerfs policies could not be changed')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('mergerfs policies changed successfully'));
+    getPools();
+    mergerfsPolicyDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const onDragEndPool = async () => {
   const payload = {
     order: pools.value.map((pool, index) => ({
@@ -1987,6 +2077,28 @@ const getDiskIcon = (type) => {
       return 'mdi-memory';
     default:
       return 'mdi-help-circle';
+  }
+};
+
+const switchPoolType = async () => {
+  createPoolDialog.devices = [];
+  createPoolDialog.snapraidDevice = [];
+  createPoolDialog.parity = [];
+  
+  createPoolDialog.filesystems = await getFilesystems(createPoolDialog.type);
+  if (createPoolDialog.type === 'single' || createPoolDialog.type === 'mergerfs') {
+    createPoolDialog.filesystem = 'xfs';
+  } else {
+    createPoolDialog.filesystem = 'btrfs';
+  }
+  if (createPoolDialog.type === 'nonraid') {
+    createPoolDialog.filesystem = 'xfs';
+    if (pools.value.some((p) => p.type === 'nonraid')) {
+      showSnackbarError(t('only one nonraid pool allowed'), t('you can only create one nonraid pool per system'));
+      createPoolDialog.type = 'single';
+      createPoolDialog.filesystem = 'xfs';
+      return;
+    }
   }
 };
 

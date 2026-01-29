@@ -1098,5 +1098,14 @@
   "eta": "ETA",
   "stripes": "Stripes",
   "height": "Höhe",
-  "snapraid operation executed successfully": "SnapRAID Operation erfolgreich ausgeführt"
+  "snapraid operation executed successfully": "SnapRAID Operation erfolgreich ausgeführt",
+  "change mergerfs policy": "MergerFS Richtlinie ändern",
+  "mergerfs policies could not be changed": "MergerFS Richtlinien konnten nicht geändert werden",
+  "mergerfs policies changed successfully": "MergerFS Richtlinien erfolgreich geändert",
+  "mergerfs policies": "MergerFS Richtlinien",
+  "mergerfs policies could not be loaded": "MergerFS Richtlinien konnten nicht geladen werden",
+  "select mergerfs policy": "Wähle MergerFS Richtlinie aus",
+  "create policy": "Richtlinie erstellen",
+  "read policy": "Lese-Richtlinie",
+  "search policy": "Such-Richtlinie"
 }

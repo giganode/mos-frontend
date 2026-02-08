@@ -75,6 +75,7 @@
           <v-card-actions class="d-flex align-center">
             <v-btn rounded variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">{{ $t('create folder') }}</v-btn>
             <v-btn rounded variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">{{ $t('create file') }}</v-btn>
+            <v-btn rounded variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">{{ $t('edit') }}</v-btn>
             <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openDeleteFileDialog(activeItem)">{{ $t('delete') }}</v-btn>
             <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChModDialog(activeItem)">{{ $t('adjust permissions') }}</v-btn>
             <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChOwnDialog(activeItem)">{{ $t('adjust ownership') }}</v-btn>

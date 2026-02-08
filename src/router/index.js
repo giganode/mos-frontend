@@ -4,13 +4,14 @@ import Pools from '../views/pools.vue';
 import Disks from '../views/disks.vue';
 import Shares from '../views/shares.vue';
 import Docker from '../views/docker.vue';
-import LXC from '../views/lxc.vue';
+import Lxc from '../views/lxc.vue';
 import Vm from '../views/vm.vue';
 import Login from '../views/login.vue';
 import FirstSetup from '../views/firstSetup.vue';
 import DockerCreate from '../views/docker/dockerCreate.vue';
 import DockerChange from '../views/docker/dockerChange.vue';
 import DockerCompose from '../views/docker/dockerCompose.vue';
+import LxcBackups from '../views/lxc/lxcBackups.vue';
 import mosHub from '../views/mosHub.vue';
 import profile from '../views/profile.vue';
 import mosTools from '../views/mosTools.vue';
@@ -70,7 +71,8 @@ const routes = [
     meta: { hideAppBar: false, title: 'Docker Compose', description: 'Manage Docker Compose stacks' },
   },
   { path: '/mosHub', component: mosHub, meta: { hideAppBar: false, title: 'MOS Hub', description: 'Manage MOS Hub' } },
-  { path: '/lxc', component: LXC, meta: { hideAppBar: false, title: 'LXC', description: 'Manage LXC containers' } },
+  { path: '/lxc', component: Lxc, meta: { hideAppBar: false, title: 'LXC', description: 'Manage LXC containers' } },
+  { path: '/lxc/backups/:lxc', component: LxcBackups, props: true, meta: { hideAppBar: false, title: 'LXC Backups', description: 'Manage LXC backups' } },
   { path: '/vm', component: Vm, meta: { hideAppBar: false, title: 'VM', description: 'Manage virtual machines' } },
   { path: '/mosTools', component: mosTools, meta: { hideAppBar: false, title: 'MOS Tools', description: 'Manage MOS tools' } },
   { path: '/mosTools/webterminal', component: mosToolsWebterminal, meta: { hideAppBar: false, title: 'Web Terminal', description: 'Access the web terminal' } },

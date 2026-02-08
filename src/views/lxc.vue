@@ -7,19 +7,18 @@
 
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="lxcsLoading" type="card" :width="'100%'" :height="'60px'" class="mb-2" />
-
         <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
           <v-card-text class="pa-0">
             <v-table class="bg-transparent">
               <thead>
                 <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
-                  <th style="min-width: 250px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
+                  <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
                   <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('distribution') }}</th>
+                  <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('backup') }}</th>
                   <th style="min-width: 100px; padding: 4px 8px; vertical-align: middle">{{ $t('cpu') }}</th>
-                  <th style="min-width: 220px; padding: 4px 8px; vertical-align: middle">{{ $t('memory') }}</th>
-                  <th style="min-width: 220px; padding: 4px 8px; vertical-align: middle">{{ $t('ipv4') }}</th>
-                  <th style="min-width: 220px; padding: 4px 8px; vertical-align: middle">{{ $t('ipv6') }}</th>
+                  <th style="min-width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('memory') }}</th>
+                  <th style="min-width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('ip') }}</th>
                   <th style="width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('autostart') }}</th>
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
                 </tr>
@@ -97,13 +96,22 @@
                     </td>
 
                     <td style="padding: 4px 8px; vertical-align: middle">
-                      <div class="text-caption-2">{{ lxc.name }} <v-chip v-if="lxc.unprivileged" :style="{ fontSize: '10px' }" size="little" class="mr-2">{{ $t('unprivileged') }}</v-chip></div>
+                      <div class="text-caption-2">
+                        {{ lxc.name }}
+                        <v-chip v-if="lxc.unprivileged" :style="{ fontSize: '10px' }" size="little" class="mr-2">{{ $t('unprivileged') }}</v-chip>
+                      </div>
                       <div class="text-caption" :style="{ color: lxc.state === 'running' ? 'green' : 'red' }">{{ lxc.state }}</div>
                     </td>
 
                     <td style="padding: 4px 8px; vertical-align: middle">
                       {{ lxc.distribution || '-' }}
-                      <v-chip :style="{ fontSize: '10px', color: lxc.architecture === 'amd64' ? 'green' : 'blue'}" size="small">{{ lxc.architecture }}</v-chip>
+                      <v-chip :style="{ fontSize: '10px', color: lxc.architecture === 'amd64' ? 'green' : 'blue' }" size="small">{{ lxc.architecture }}</v-chip>
+                    </td>
+
+                    <td style="padding: 4px 8px; vertical-align: middle">
+                      <v-btn :disabled="!lxc.name" color="primary" size="x-small" @click.stop="$router.push(`/lxc/backups/${lxc.name}`)">
+                        {{ $t('backups') }}
+                      </v-btn>
                     </td>
 
                     <td style="padding: 4px 8px; vertical-align: middle">{{ lxc.cpu.usage ? lxc.cpu.usage.toFixed(2) : '0' }} {{ lxc.cpu.unit ? lxc.cpu.unit : '%' }}</td>
@@ -113,11 +121,12 @@
                     </td>
 
                     <td style="padding: 4px 8px; vertical-align: middle">
-                      {{ Array.isArray(lxc.ipv4) && lxc.ipv4.length ? lxc.ipv4.join(', ') : '-' }}
-                    </td>
-
-                    <td style="padding: 4px 8px; vertical-align: middle">
-                      {{ Array.isArray(lxc.ipv6) && lxc.ipv6.length ? lxc.ipv6.join(', ') : '-' }}
+                      <div class="text-caption-2 mt-1" v-if="Array.isArray(lxc.ipv4) && lxc.ipv4.length">
+                        {{ Array.isArray(lxc.ipv4) && lxc.ipv4.length ? lxc.ipv4.join(', ') : '' }}
+                      </div>
+                      <div class="text-caption-2 mt-1" v-if="Array.isArray(lxc.ipv6) && lxc.ipv6.length">
+                        {{ Array.isArray(lxc.ipv6) && lxc.ipv6.length ? lxc.ipv6.join(', ') : '' }}
+                      </div>
                     </td>
 
                     <td style="padding: 4px 8px; vertical-align: middle">
@@ -165,7 +174,9 @@
   <!-- Delete LXC Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="500">
     <v-card class="pa-0">
-      <v-card-title class="text-h6">{{ $t('delete') }} {{ deleteDialog.lxc.name }}</v-card-title>
+      <v-card-title class="text-h6">
+        {{ $t('delete') }} {{ deleteDialog.lxc ? deleteDialog.lxc.name : '' }}
+      </v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to delete this lxc container?') }}
       </v-card-text>
@@ -555,7 +566,7 @@ const onDragEnd = async () => {
         autostart: lxc.autostart,
       };
       return obj;
-    })
+    }),
   );
 
   try {
@@ -743,11 +754,7 @@ const getLXCWS = () => {
   const apply = (data) => {
     if (!data) return;
 
-    const updates = Array.isArray(data)
-      ? data
-      : data.containers && Array.isArray(data.containers)
-      ? data.containers
-      : [data];
+    const updates = Array.isArray(data) ? data : data.containers && Array.isArray(data.containers) ? data.containers : [data];
 
     updates.forEach((update) => {
       if (!update || !update.name) return;
@@ -769,9 +776,9 @@ const getLXCWS = () => {
   };
 
   socket.on('container-usage-update', apply);
-  socket.on('error', (err) => { console.log(err);
+  socket.on('error', (err) => {
+    console.log(err);
     showSnackbarError(t('unknown error'), `Socket error: ${String(err)}`);
   });
 };
-
 </script>

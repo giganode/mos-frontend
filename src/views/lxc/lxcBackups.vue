@@ -7,11 +7,12 @@
             <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
           </v-col>
           <v-col>
-            <h2 class="mb-0">{{ $t('backups') }} - {{ props.lxc }}</h2>
+            <h2 class="mb-0">{{ props.lxc }}</h2>
           </v-col>
         </v-row>
       </v-container>
       <v-container fluid class="pa-0">
+        <span class="text-subtitle-1 font-weight-medium">{{ $t('backups') }}</span>
         <v-skeleton-loader v-if="backupsLoading" type="card" :loading="backupsLoading" class="mb-4" />
         <v-card v-if="!backupsLoading && backups.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0">
           <v-card-text class="pa-4">
@@ -118,7 +119,7 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab @click="createBackupDialog.value = true" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+  <v-fab @click="openCreateBackupDialog()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-plus</v-icon>
   </v-fab>
 
@@ -128,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, h } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -283,4 +284,37 @@ const restoreBackup = async (backup, newName) => {
     overlay.value = false;
   }
 };
+
+const getLXCService = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/settings/lxc', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('lxc service could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    const lxcSettings = await res.json();
+    return lxcSettings;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const openCreateBackupDialog = async () => {
+  createBackupDialog.value = true;
+  overlay.value = true;
+  const lxcSettings = await getLXCService();
+  overlay.value = false;
+  createBackupDialog.use_snapshot = lxcSettings.use_snapshot || true;
+  createBackupDialog.compression = lxcSettings.compression || 0;
+  createBackupDialog.threads = lxcSettings.threads || 0;
+  createBackupDialog.allow_running = false;
+};
+
 </script>

@@ -1203,5 +1203,7 @@
   "ips": "IPs",
   "delete backup": "Delete Backup",
   "are you sure you want to delete this backup?": "Are you sure you want to delete this backup?",
-  "new container name": "New container name"
+  "new container name": "New container name",
+  "snapshots": "Snapshots",
+  "manage": "Manage"
 }

@@ -14,8 +14,8 @@
                 <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
                   <th style="width: 42px; padding: 4px 8px; vertical-align: middle"></th>
                   <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('name') }}</th>
-                  <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('distribution') }}</th>
-                  <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('backup') }}</th>
+                  <th style="min-width: 120px; padding: 4px 8px; vertical-align: middle">{{ $t('distribution') }}</th>
+                  <th style="min-width: 160px; padding: 4px 8px; vertical-align: middle">{{ $t('backups') }} / {{ $t('snapshots') }}</th>
                   <th style="min-width: 100px; padding: 4px 8px; vertical-align: middle">{{ $t('cpu') }}</th>
                   <th style="min-width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('memory') }}</th>
                   <th style="min-width: 90px; padding: 4px 8px; vertical-align: middle">{{ $t('ip') }}</th>
@@ -110,7 +110,7 @@
 
                     <td style="padding: 4px 8px; vertical-align: middle">
                       <v-btn :disabled="!lxc.name" color="primary" size="x-small" @click.stop="$router.push(`/lxc/backups/${lxc.name}`)">
-                        {{ $t('backups') }}
+                        {{ $t('manage') }}
                       </v-btn>
                     </td>
 

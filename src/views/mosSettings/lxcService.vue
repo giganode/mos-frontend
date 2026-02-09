@@ -55,7 +55,7 @@
               ></v-text-field>
               <v-text-field :label="$t('backups to keep')" type="number" v-model.number="settingsLXC.backups_to_keep" :min="0" :max="50" />
               <v-slider v-model="settingsLXC.compression" :min="0" :max="9" step="1" :label="$t('compression')" thumb-label />
-              <v-text-field :label="$t('threads')" type="number" v-model="settingsLXC.threads" :min="0"></v-text-field>
+              <v-text-field :label="$t('threads')" type="number" v-model.number="settingsLXC.threads" :min="0" :max="100"></v-text-field>
               <v-switch :label="$t('use snapshot for backups')" color="green" inset density="compact" v-model="settingsLXC.use_snapshot" hide-details="auto"></v-switch>
             </v-card-text>
           </v-card>
@@ -132,7 +132,10 @@ const getLXCService = async () => {
       throw new Error(`${t('lxc service could not be loaded')}|$| ${error.error || t('unknown error')}`);
     }
 
-    settingsLXC.value = await res.json();
+    const data = await res.json();
+    // Ensure threads is an integer
+    data.threads = Number.isInteger(data.threads) ? data.threads : parseInt(data.threads) || 0;
+    settingsLXC.value = data;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -144,13 +147,15 @@ const getLXCService = async () => {
 const setLXCService = async () => {
   overlay.value = true;
   try {
+    // ensure threads is sent as integer
+    const payload = { ...settingsLXC.value, threads: parseInt(settingsLXC.value.threads) || 0 };
     const res = await fetch('/api/v1/mos/settings/lxc', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(settingsLXC.value),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {

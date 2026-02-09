@@ -1207,5 +1207,7 @@
   "backup restore started successfully": "Backup Wiederherstellung erfolgreich gestartet",
   "restore backup": "Backup wiederherstellen",
   "are you sure you want to restore this backup": "Bist du sicher, dass du dieses Backup wiederherstellen möchtest",
-  "new container name": "Neuer Containername"
+  "new container name": "Neuer Containername",
+  "snapshots": "Snapshots",
+  "manage": "Verwalten"
 }

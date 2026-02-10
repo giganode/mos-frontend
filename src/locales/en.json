@@ -1194,7 +1194,7 @@
   "enable binfmt": "Enable Binfmt",
   "binfmt architectures": "Binfmt Architectures",
   "lxc backups could not be loaded": "LXC backups could not be loaded",
-  "allow running container during backup": "Erlaube laufende Container während des Backups",
+  "allow running container during backup": "Allow running container during backup",
   "backups": "Backups",
   "no backups have been created yet": "No backups have been created yet",
   "restore": "Restore",
@@ -1205,5 +1205,18 @@
   "are you sure you want to delete this backup?": "Are you sure you want to delete this backup?",
   "new container name": "New container name",
   "snapshots": "Snapshots",
-  "manage": "Manage"
+  "manage": "Manage",
+  "lxc snapshots could not be loaded": "LXC Snapshots could not be loaded",
+  "create snapshot": "Create Snapshot",
+  "snapshot": "Snapshot",
+  "snapshot created successfully": "Snapshot created successfully",
+  "snapshot could not be created": "Snapshot could not be created",
+  "snapshot deleted successfully": "Snapshot deleted successfully",
+  "snapshot could not be deleted": "Snapshot could not be deleted",
+  "snapshot could not be restored": "Snapshot could not be restored",
+  "snapshot restore started successfully": "Snapshot restore started successfully",
+  "snapshot could not be cloned": "Snapshot could not be cloned",
+  "snapshot cloned successfully": "Snapshot cloned successfully",
+  "clone": "Clone",
+  "no snapshots have been created yet": "No snapshots have been created yet"
 }

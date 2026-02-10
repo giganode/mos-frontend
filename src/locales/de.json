@@ -1209,5 +1209,18 @@
   "are you sure you want to restore this backup": "Bist du sicher, dass du dieses Backup wiederherstellen möchtest",
   "new container name": "Neuer Containername",
   "snapshots": "Snapshots",
-  "manage": "Verwalten"
+  "manage": "Verwalten",
+  "lxc snapshots could not be loaded": "LXC Snapshots konnten nicht geladen werden",
+  "create snapshot": "Snapshot erstellen",
+  "snapshot": "Snapshot",
+  "snapshot created successfully": "Snapshot erfolgreich erstellt",
+  "snapshot could not be created": "Snapshot konnte nicht erstellt werden",
+  "snapshot deleted successfully": "Snapshot erfolgreich gelöscht",
+  "snapshot could not be deleted": "Snapshot konnte nicht gelöscht werden",
+  "snapshot could not be restored": "Snapshot konnte nicht wiederhergestellt werden",
+  "snapshot restore started successfully": "Snapshot Wiederherstellung erfolgreich gestartet",
+  "snapshot could not be cloned": "Snapshot konnte nicht geklont werden",
+  "snapshot cloned successfully": "Snapshot erfolgreich geklont",
+  "clone": "Klonen",
+  "no snapshots have been created yet": "Es wurden noch keine Snapshots angelegt"
 }

@@ -12,9 +12,67 @@
         </v-row>
       </v-container>
       <v-container fluid class="pa-0">
+        <span class="text-subtitle-1 font-weight-medium">{{ $t('snapshots') }}</span>
+        <v-skeleton-loader v-if="snapshotsLoading" type="card" :loading="snapshotsLoading" class="mb-4" style="margin-bottom: 20px" />
+        <v-card v-if="!snapshotsLoading && snapshots.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 20px">
+          <v-card-text class="pa-4">
+            {{ $t('no snapshots have been created yet') }}
+          </v-card-text>
+        </v-card>
+        <v-card v-else fluid style="margin-bottom: 20px" class="pa-0">
+          <v-card-text class="pa-0">
+            <v-list>
+              <template v-for="(snapshot, index) in snapshots" :key="snapshot.name">
+                <v-list-item>
+                  <template v-slot:prepend>
+                    <v-icon class="cursor-pointer">mdi-camera</v-icon>
+                  </template>
+                  <v-list-item-title>{{ snapshot.name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ new Date(snapshot.created).toLocaleString() }}</v-list-item-subtitle>
+                  <template v-slot:append>
+                    <v-menu>
+                      <template #activator="{ props }">
+                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item
+                          @click="
+                            restoreSnapshotDialog.value = true;
+                            restoreSnapshotDialog.snapshot = snapshot;
+                          "
+                        >
+                          <v-list-item-title>{{ $t('restore') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                          @click="
+                            cloneSnapshotDialog.value = true;
+                            cloneSnapshotDialog.snapshot = snapshot;
+                          "
+                        >
+                          <v-list-item-title>{{ $t('clone') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                          @click="
+                            deleteSnapshotDialog.value = true;
+                            deleteSnapshotDialog.snapshot = snapshot;
+                          "
+                        >
+                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-list-item>
+                <v-divider v-if="index < snapshots.length - 1" />
+              </template>
+            </v-list>
+          </v-card-text>
+        </v-card>
         <span class="text-subtitle-1 font-weight-medium">{{ $t('backups') }}</span>
-        <v-skeleton-loader v-if="backupsLoading" type="card" :loading="backupsLoading" class="mb-4" />
-        <v-card v-if="!backupsLoading && backups.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0">
+        <v-skeleton-loader v-if="backupsLoading" type="card" :loading="backupsLoading" class="mb-4" style="margin-bottom: 80px" />
+        <v-card v-if="!backupsLoading && backups.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 80px">
           <v-card-text class="pa-4">
             {{ $t('no backups have been created yet') }}
           </v-card-text>
@@ -80,7 +138,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="createBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createBackup">{{ $t('create') }}</v-btn>
+        <v-btn color="primary" @click="createBackup(createBackupDialog.use_snapshot, createBackupDialog.compression, createBackupDialog.threads, createBackupDialog.allow_running)">
+          {{ $t('create') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -144,6 +204,8 @@ const { t } = useI18n();
 const overlay = ref(false);
 const backups = ref([]);
 const backupsLoading = ref(true);
+const snapshots = ref([]);
+const snapshotsLoading = ref(true);
 const createBackupDialog = reactive({
   value: false,
   use_snapshot: true,
@@ -161,12 +223,26 @@ const restoreBackupDialog = reactive({
   backup_file: '',
   new_name: '',
 });
+const createSnapshotDialog = reactive({
+  value: false,
+});
+const deleteSnapshotDialog = reactive({
+  value: false,
+  snapshot: null,
+});
+const restoreSnapshotDialog = reactive({
+  value: false,
+  snapshot: null,
+});
+const cloneSnapshotDialog = reactive({
+  value: false,
+  snapshot: null,
+  new_name: '',
+});
 
 onMounted(() => {
-  if (!props.lxc) {
-    showSnackbarError(t('lxc.noContainerSelected'));
-  }
   getLxcBackups();
+  getLxcSnapshots();
 });
 
 const getLxcBackups = async () => {
@@ -193,7 +269,14 @@ const getLxcBackups = async () => {
   }
 };
 
-const createBackup = async () => {
+const createBackup = async (use_snapshot, compression, threads, allow_running) => {
+  const payload = {
+    use_snapshot: use_snapshot,
+    compression: compression,
+    threads: threads,
+    allow_running: allow_running,
+  };
+
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/backups`, {
@@ -202,12 +285,7 @@ const createBackup = async () => {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
-      body: JSON.stringify({
-        use_snapshot: createBackupDialog.use_snapshot,
-        compression: createBackupDialog.compression,
-        threads: createBackupDialog.threads,
-        allow_running: createBackupDialog.allow_running,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -306,6 +384,134 @@ const getLXCService = async () => {
   }
 };
 
+const getLxcSnapshots = async () => {
+  try {
+    const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('lxc snapshots could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    snapshots.value = await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    snapshotsLoading.value = false;
+  }
+};
+
+const createSnapshot = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('snapshot could not be created')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('snapshot created successfully'));
+    getLxcSnapshots();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const deleteSnapshot = async (snapshot) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots/${snapshot.name}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('snapshot could not be deleted')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('snapshot deleted successfully'));
+    getLxcSnapshots();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const restoreSnapshot = async (snapshot) => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots/${snapshot.name}/restore`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('snapshot could not be restored')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('snapshot restore started successfully'));
+    getLxcSnapshots();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const cloneSnapshot = async (snapshot, newName) => {
+  const payload = {
+    new_name: newName,
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots/${snapshot.name}/clone`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('snapshot could not be cloned')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('snapshot cloned successfully'));
+    getLxcSnapshots();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const openCreateBackupDialog = async () => {
   createBackupDialog.value = true;
   overlay.value = true;
@@ -316,5 +522,4 @@ const openCreateBackupDialog = async () => {
   createBackupDialog.threads = lxcSettings.threads || 0;
   createBackupDialog.allow_running = false;
 };
-
 </script>

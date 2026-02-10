@@ -1222,5 +1222,7 @@
   "snapshot could not be cloned": "Snapshot konnte nicht geklont werden",
   "snapshot cloned successfully": "Snapshot erfolgreich geklont",
   "clone": "Klonen",
-  "no snapshots have been created yet": "Es wurden noch keine Snapshots angelegt"
+  "no snapshots have been created yet": "Es wurden noch keine Snapshots angelegt",
+  "snapshot name": "Snapshot Name",
+  "allow running container": "Erlaube laufenden Container"
 }

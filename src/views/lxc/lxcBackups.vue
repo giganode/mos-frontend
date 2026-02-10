@@ -28,7 +28,7 @@
                     <v-icon class="cursor-pointer">mdi-camera</v-icon>
                   </template>
                   <v-list-item-title>{{ snapshot.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ new Date(snapshot.created).toLocaleString() }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ new Date(snapshot.timestamp).toLocaleString() }}</v-list-item-subtitle>
                   <template v-slot:append>
                     <v-menu>
                       <template #activator="{ props }">
@@ -37,28 +37,13 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item
-                          @click="
-                            restoreSnapshotDialog.value = true;
-                            restoreSnapshotDialog.snapshot = snapshot;
-                          "
-                        >
+                        <v-list-item @click="openRestoreSnapshotDialog(snapshot)">
                           <v-list-item-title>{{ $t('restore') }}</v-list-item-title>
                         </v-list-item>
-                        <v-list-item
-                          @click="
-                            cloneSnapshotDialog.value = true;
-                            cloneSnapshotDialog.snapshot = snapshot;
-                          "
-                        >
+                        <v-list-item @click="openCloneSnapshotDialog(snapshot)">
                           <v-list-item-title>{{ $t('clone') }}</v-list-item-title>
                         </v-list-item>
-                        <v-list-item
-                          @click="
-                            deleteSnapshotDialog.value = true;
-                            deleteSnapshotDialog.snapshot = snapshot;
-                          "
-                        >
+                        <v-list-item @click="openDeleteSnapshotDialog(snapshot)">
                           <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -95,20 +80,10 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item
-                          @click="
-                            restoreBackupDialog.value = true;
-                            restoreBackupDialog.backup = backup;
-                          "
-                        >
+                        <v-list-item @click="openRestoreBackupDialog(backup)">
                           <v-list-item-title>{{ $t('restore') }}</v-list-item-title>
                         </v-list-item>
-                        <v-list-item
-                          @click="
-                            deleteBackupDialog.value = true;
-                            deleteBackupDialog.backup = backup;
-                          "
-                        >
+                        <v-list-item @click="openDeleteBackupDialog(backup)">
                           <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -126,8 +101,7 @@
 
   <!-- Create Backup Dialog -->
   <v-dialog v-model="createBackupDialog.value" max-width="600px">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('create backup') }}</v-card-title>
+    <v-card class="pa-0" :title="$t('create backup')" prepend-icon="mdi-plus">
       <v-card-text>
         <v-switch v-model="createBackupDialog.use_snapshot" :label="$t('use snapshot for backups')" inset density="compact" hide-details="auto" color="green"></v-switch>
         <v-switch v-model="createBackupDialog.allow_running" :label="$t('allow running container during backup')" inset density="compact" color="green"></v-switch>
@@ -147,8 +121,7 @@
 
   <!-- Delete Backup Dialog -->
   <v-dialog v-model="deleteBackupDialog.value" max-width="600px">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('delete backup') }}</v-card-title>
+    <v-card class="pa-0" :title="$t('delete backup')" prepend-icon="mdi-delete">
       <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to delete the backup') }}?</v-card-text>
       <v-card-text class="py-0 pb-4">{{ deleteBackupDialog.backup ? deleteBackupDialog.backup.filename : '' }}</v-card-text>
       <v-divider></v-divider>
@@ -162,8 +135,7 @@
 
   <!-- Restore Backup Dialog -->
   <v-dialog v-model="restoreBackupDialog.value" max-width="600px">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('restore backup') }}</v-card-title>
+    <v-card class="pa-0" :title="$t('restore backup')" prepend-icon="mdi-backup-restore">
       <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to restore this backup') }}?</v-card-text>
       <v-card-text class="py-0 pb-4">{{ restoreBackupDialog.backup ? restoreBackupDialog.backup.filename : '' }}</v-card-text>
       <v-card-text class="py-0 pt-2">
@@ -178,10 +150,44 @@
     </v-card>
   </v-dialog>
 
-  <!-- Floating Action Button -->
-  <v-fab @click="openCreateBackupDialog()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-icon>mdi-plus</v-icon>
-  </v-fab>
+  <!-- Create Snapshot Dialog -->
+  <v-dialog v-model="createSnapshotDialog.value" max-width="600px">
+    <v-card class="pa-0" :title="$t('create snapshot')" prepend-icon="mdi-camera-plus">
+      <v-card-text>
+        <v-text-field v-model="createSnapshotDialog.snapshot_name" :label="$t('snapshot name')" hide-details="auto"></v-text-field>
+        <v-switch v-model="createSnapshotDialog.allow_running" :label="$t('allow running container')" inset color="green" hide-details="auto"></v-switch>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="createSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="createSnapshot(createSnapshotDialog.snapshot_name, createSnapshotDialog.allow_running)">{{ $t('create') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Floating Action Button with Menu -->
+  <v-menu location="top">
+    <template v-slot:activator="{ props }">
+      <v-fab v-bind="props" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+        <v-icon>mdi-plus</v-icon>
+      </v-fab>
+    </template>
+    <v-list>
+      <v-list-item @click="openCreateBackupDialog()">
+        <template v-slot:prepend>
+          <v-icon>mdi-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('create backup') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="openCreateSnapshotDialog()">
+        <template v-slot:prepend>
+          <v-icon>mdi-camera-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('create snapshot') }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -225,6 +231,8 @@ const restoreBackupDialog = reactive({
 });
 const createSnapshotDialog = reactive({
   value: false,
+  snapshot_name: '',
+  allow_running: false,
 });
 const deleteSnapshotDialog = reactive({
   value: false,
@@ -294,8 +302,8 @@ const createBackup = async (use_snapshot, compression, threads, allow_running) =
     }
 
     showSnackbarSuccess(t('backup creation started successfully'));
-    createBackupDialog.value = false;
     getLxcBackups();
+    createBackupDialog.value = false;
   } catch (error) {
     const [userMessage, apiErrorMessage] = error.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -321,11 +329,11 @@ const deleteBackup = async (backup) => {
 
     showSnackbarSuccess(t('backup deleted successfully'));
     getLxcBackups();
+    deleteBackupDialog.value = false;
   } catch (error) {
     const [userMessage, apiErrorMessage] = error.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
-    deleteBackupDialog.value = false;
     overlay.value = false;
   }
 };
@@ -354,11 +362,11 @@ const restoreBackup = async (backup, newName) => {
 
     showSnackbarSuccess(t('backup restore started successfully'));
     getLxcBackups();
+    restoreBackupDialog.value = false;
   } catch (error) {
     const [userMessage, apiErrorMessage] = error.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   } finally {
-    restoreBackupDialog.value = false;
     overlay.value = false;
   }
 };
@@ -406,14 +414,21 @@ const getLxcSnapshots = async () => {
   }
 };
 
-const createSnapshot = async () => {
+const createSnapshot = async (snapshotName, allowRunning) => {
+  const payload = {
+    snapshot_name: snapshotName,
+    allow_running: allowRunning,
+  };
+
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -423,6 +438,7 @@ const createSnapshot = async () => {
 
     showSnackbarSuccess(t('snapshot created successfully'));
     getLxcSnapshots();
+    createSnapshotDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -521,5 +537,32 @@ const openCreateBackupDialog = async () => {
   createBackupDialog.compression = lxcSettings.compression || 0;
   createBackupDialog.threads = lxcSettings.threads || 0;
   createBackupDialog.allow_running = false;
+};
+const openCreateSnapshotDialog = () => {
+  createSnapshotDialog.value = true;
+  createSnapshotDialog.snapshot_name = '';
+  createSnapshotDialog.allow_running = false;
+};
+const openDeleteBackupDialog = (backup) => {
+  deleteBackupDialog.value = true;
+  deleteBackupDialog.backup = backup;
+};
+const openRestoreBackupDialog = (backup) => {
+  restoreBackupDialog.value = true;
+  restoreBackupDialog.backup = backup;
+  restoreBackupDialog.new_name = '';
+};
+const openRestoreSnapshotDialog = (snapshot) => {
+  cloneSnapshotDialog.value = true;
+  cloneSnapshotDialog.snapshot = snapshot;
+};
+const openCloneSnapshotDialog = (snapshot) => {
+  cloneSnapshotDialog.value = true;
+  cloneSnapshotDialog.snapshot = snapshot;
+  cloneSnapshotDialog.new_name = '';
+};
+const openDeleteSnapshotDialog = (snapshot) => {
+  deleteSnapshotDialog.value = true;
+  deleteSnapshotDialog.snapshot = snapshot;
 };
 </script>

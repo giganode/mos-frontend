@@ -99,6 +99,7 @@
                       <div class="text-caption-2">
                         {{ lxc.name }}
                         <v-chip v-if="lxc.unprivileged" :style="{ fontSize: '10px' }" size="little" class="mr-2">{{ $t('unprivileged') }}</v-chip>
+                        <v-chip v-if="lxc.active_operation" :style="{ fontSize: '10px' }" size="little" class="mr-2">{{ lxc.active_operation }} {{ $t('running') }}</v-chip>
                       </div>
                       <div class="text-caption" :style="{ color: lxc.state === 'running' ? 'green' : 'red' }">{{ lxc.state }}</div>
                     </td>

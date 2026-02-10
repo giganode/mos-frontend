@@ -1224,5 +1224,11 @@
   "clone": "Clone",
   "no snapshots have been created yet": "No snapshots have been created yet",
   "snapshot name": "Snapshot Name",
-  "allow running container": "Allow running container"
+  "allow running container": "Allow running container",
+  "are you sure you want to delete the snapshot": "Are you sure you want to delete the snapshot",
+  "delete snapshot": "Delete snapshot",
+  "restore snapshot": "Restore snapshot",
+  "clone snapshot": "Clone snapshot",
+  "are you sure you want to restore this snapshot": "Are you sure you want to restore this snapshot",
+  "are you sure you want to clone this snapshot": "Are you sure you want to clone this snapshot"  
 }

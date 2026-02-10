@@ -1224,5 +1224,11 @@
   "clone": "Klonen",
   "no snapshots have been created yet": "Es wurden noch keine Snapshots angelegt",
   "snapshot name": "Snapshot Name",
-  "allow running container": "Erlaube laufenden Container"
+  "allow running container": "Erlaube laufenden Container",
+  "are you sure you want to delete the snapshot": "Bist du sicher, dass du diesen Snapshot löschen möchtest",
+  "delete snapshot": "Snapshot löschen",
+  "restore snapshot": "Snapshot wiederherstellen",
+  "clone snapshot": "Snapshot klonen",
+  "are you sure you want to restore this snapshot": "Bist du sicher, dass du diesen Snapshot wiederherstellen möchtest",
+  "are you sure you want to clone this snapshot": "Bist du sicher, dass du diesen Snapshot klonen möchtest"
 }

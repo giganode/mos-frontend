@@ -166,6 +166,51 @@
     </v-card>
   </v-dialog>
 
+  <!-- Delete Snapshot Dialog -->
+  <v-dialog v-model="deleteSnapshotDialog.value" max-width="600px">
+    <v-card class="pa-0" :title="$t('delete snapshot')" prepend-icon="mdi-delete">
+      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to delete the snapshot') }}?</v-card-text>
+      <v-card-text class="py-0 pb-4">{{ deleteSnapshotDialog.snapshot ? deleteSnapshotDialog.snapshot.name : '' }}</v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="deleteSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="red" @click="deleteSnapshot(deleteSnapshotDialog.snapshot)">{{ $t('delete') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Restore Snapshot Dialog -->
+  <v-dialog v-model="restoreSnapshotDialog.value" max-width="600px">
+    <v-card class="pa-0" :title="$t('restore snapshot')" prepend-icon="mdi-backup-restore">
+      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to restore this snapshot') }}?</v-card-text>
+      <v-card-text class="py-0 pb-4">{{ restoreSnapshotDialog.snapshot ? restoreSnapshotDialog.snapshot.name : '' }}</v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="restoreSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="restoreSnapshot(restoreSnapshotDialog.snapshot)">{{ $t('restore') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Clone Snapshot Dialog -->
+  <v-dialog v-model="cloneSnapshotDialog.value" max-width="600px">
+    <v-card class="pa-0" :title="$t('clone snapshot')" prepend-icon="mdi-content-copy">
+      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to clone this snapshot') }}?</v-card-text>
+      <v-card-text class="py-0 pb-4">{{ cloneSnapshotDialog.snapshot ? cloneSnapshotDialog.snapshot.name : '' }}</v-card-text>
+      <v-card-text class="py-0 pt-2">
+        <v-text-field v-model="cloneSnapshotDialog.new_name" :label="$t('new container name')"></v-text-field>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="cloneSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="cloneSnapshot(cloneSnapshotDialog.snapshot, cloneSnapshotDialog.new_name)">{{ $t('clone') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button with Menu -->
   <v-menu location="top">
     <template v-slot:activator="{ props }">
@@ -464,6 +509,7 @@ const deleteSnapshot = async (snapshot) => {
 
     showSnackbarSuccess(t('snapshot deleted successfully'));
     getLxcSnapshots();
+    deleteSnapshotDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -489,6 +535,7 @@ const restoreSnapshot = async (snapshot) => {
 
     showSnackbarSuccess(t('snapshot restore started successfully'));
     getLxcSnapshots();
+    restoreSnapshotDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -520,6 +567,7 @@ const cloneSnapshot = async (snapshot, newName) => {
 
     showSnackbarSuccess(t('snapshot cloned successfully'));
     getLxcSnapshots();
+    cloneSnapshotDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -538,11 +586,6 @@ const openCreateBackupDialog = async () => {
   createBackupDialog.threads = lxcSettings.threads || 0;
   createBackupDialog.allow_running = false;
 };
-const openCreateSnapshotDialog = () => {
-  createSnapshotDialog.value = true;
-  createSnapshotDialog.snapshot_name = '';
-  createSnapshotDialog.allow_running = false;
-};
 const openDeleteBackupDialog = (backup) => {
   deleteBackupDialog.value = true;
   deleteBackupDialog.backup = backup;
@@ -552,9 +595,14 @@ const openRestoreBackupDialog = (backup) => {
   restoreBackupDialog.backup = backup;
   restoreBackupDialog.new_name = '';
 };
+const openCreateSnapshotDialog = () => {
+  createSnapshotDialog.value = true;
+  createSnapshotDialog.snapshot_name = '';
+  createSnapshotDialog.allow_running = false;
+};
 const openRestoreSnapshotDialog = (snapshot) => {
-  cloneSnapshotDialog.value = true;
-  cloneSnapshotDialog.snapshot = snapshot;
+  restoreSnapshotDialog.value = true;
+  restoreSnapshotDialog.snapshot = snapshot;
 };
 const openCloneSnapshotDialog = (snapshot) => {
   cloneSnapshotDialog.value = true;

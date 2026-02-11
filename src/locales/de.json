@@ -1232,5 +1232,6 @@
   "are you sure you want to restore this snapshot": "Bist du sicher, dass du diesen Snapshot wiederherstellen möchtest",
   "are you sure you want to clone this snapshot": "Bist du sicher, dass du diesen Snapshot klonen möchtest",
   "are you sure you want to create a new snapshot": "Bist du sicher, dass du einen neuen Snapshot erstellen möchtest",
-  "container will be restarted": "Container wird neu gestartet"
+  "container will be restarted": "Container wird neu gestartet",
+  "labels": "Labels"
 }

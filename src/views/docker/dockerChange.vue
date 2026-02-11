@@ -362,6 +362,86 @@
                 </v-col>
               </v-row>
             </div>
+            <v-divider class="my-2"></v-divider>
+            <v-row>
+              <v-col cols="12" class="d-flex align-center justify-space-between">
+                <span class="text-subtitle-1 font-weight-medium">{{ $t('labels') }}</span>
+                <v-btn
+                  variant="text"
+                  size="small"
+                  color="green"
+                  class="ma-1 pa-0 float-right"
+                  style="min-width: 0"
+                  @click="form.labels.push({ name: '', key: '', value: '', mask: false })"
+                  title="Add label"
+                  aria-label="add label"
+                >
+                  <v-icon size="18" class="mr-1">mdi-plus</v-icon>
+                  {{ $t('add') }}
+                </v-btn>
+              </v-col>
+            </v-row>
+            <div v-for="(label, i) in form.labels" :key="i">
+              <v-divider v-if="i > 0" class="my-2"></v-divider>
+              <v-row>
+                <v-col cols="1" class="d-flex flex-column justify-center align-center">
+                  <div class="d-flex flex-column align-center">
+                    <v-btn
+                      icon
+                      size="x-small"
+                      color="green"
+                      class="pa-0"
+                      style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
+                      @click="form.labels.splice(i + 1, 0, { name: '', key: '', value: '', mask: false })"
+                      title="Add label"
+                      aria-label="add label"
+                    >
+                      <v-icon size="18">mdi-plus</v-icon>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      size="x-small"
+                      color="error"
+                      class="pa-0"
+                      style="width: 24px; height: 24px; min-width: 24px"
+                      @click="removeLabel(i)"
+                      title="Remove label"
+                      aria-label="remove label"
+                    >
+                      <v-icon size="18">mdi-delete</v-icon>
+                    </v-btn>
+                  </div>
+                </v-col>
+                <v-col cols="11">
+                  <v-row>
+                    <v-col cols="6">
+                      <v-text-field :label="$t('name')" v-model="label.name" density="compact" hide-details></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-switch :label="$t('masked')" v-model="label.mask" inset color="green" density="compact" hide-details></v-switch>
+                    </v-col>
+                  </v-row>
+                  <v-row class="mt-n4">
+                    <v-col cols="6">
+                      <v-text-field :label="$t('key')" v-model="label.key" density="compact" hide-details></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field :label="$t('value')" v-model="label.value" density="compact" :type="label.mask ? 'password' : 'text'" hide-details></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row class="mt-n4">
+                    <v-col cols="12">
+                      <v-text-field
+                        :label="$t('description')"
+                        v-model="label.description"
+                        density="compact"
+                        hide-details
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </div>            
           </v-card-text>
         </v-card>
       </v-container>
@@ -469,6 +549,7 @@ const form = reactive({
   devices: [],
   variables: [],
   gpus: [],
+  labels: [],
 });
 
 const props = defineProps({
@@ -574,6 +655,15 @@ const getDockerTemplate = async () => {
           host: device.host,
           container: device.container,
           description: device.description || '',
+        }))
+      : [];
+    form.labels = Array.isArray(getDocker.value.labels)
+      ? getDocker.value.labels.map((label) => ({
+          name: label.name,
+          key: label.key,
+          value: label.value,
+          mask: label.mask || false,
+          description: label.description || '',
         }))
       : [];
     form.gpus = Array.isArray(getDocker.value.gpus) ? getDocker.value.gpus : [];
@@ -700,6 +790,13 @@ const updateDocker = async () => {
     mask: variable.mask,
     description: variable.description,
   }));
+  changeDocker.labels = form.labels.map((label) => ({
+    name: label.name,
+    key: label.key,
+    value: label.value,
+    mask: label.mask,
+    description: label.description,
+  }));
   const newDocker = { template: changeDocker };
   sendDockerWSCommand('create', newDocker);
 };
@@ -752,17 +849,17 @@ const goBackSafely = () => {
 const removePath = (index) => {
   form.paths.splice(index, 1);
 };
-
 const removePort = (index) => {
   form.ports.splice(index, 1);
 };
-
 const removeDevice = (index) => {
   form.devices.splice(index, 1);
 };
-
 const removeVariable = (index) => {
   form.variables.splice(index, 1);
+};
+const removeLabel = (index) => {
+  form.labels.splice(index, 1);
 };
 
 const onNetworkChange = (value) => {

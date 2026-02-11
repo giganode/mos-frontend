@@ -1230,5 +1230,7 @@
   "restore snapshot": "Restore snapshot",
   "clone snapshot": "Clone snapshot",
   "are you sure you want to restore this snapshot": "Are you sure you want to restore this snapshot",
-  "are you sure you want to clone this snapshot": "Are you sure you want to clone this snapshot"  
+  "are you sure you want to clone this snapshot": "Are you sure you want to clone this snapshot",
+  "are you sure you want to create a new snapshot": "Are you sure you want to create a new snapshot",
+  "container will be restarted": "Container will be restarted"
 }

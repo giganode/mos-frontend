@@ -12,57 +12,14 @@
         </v-row>
       </v-container>
       <v-container fluid class="pa-0">
-        <span class="text-subtitle-1 font-weight-medium">{{ $t('snapshots') }}</span>
-        <v-skeleton-loader v-if="snapshotsLoading" type="card" :loading="snapshotsLoading" class="mb-4" style="margin-bottom: 20px" />
-        <v-card v-if="!snapshotsLoading && snapshots.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 20px">
-          <v-card-text class="pa-4">
-            {{ $t('no snapshots have been created yet') }}
-          </v-card-text>
-        </v-card>
-        <v-card v-else fluid style="margin-bottom: 20px" class="pa-0">
-          <v-card-text class="pa-0">
-            <v-list>
-              <template v-for="(snapshot, index) in snapshots" :key="snapshot.name">
-                <v-list-item>
-                  <template v-slot:prepend>
-                    <v-icon class="cursor-pointer">mdi-camera</v-icon>
-                  </template>
-                  <v-list-item-title>{{ snapshot.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ new Date(snapshot.timestamp).toLocaleString() }}</v-list-item-subtitle>
-                  <template v-slot:append>
-                    <v-menu>
-                      <template #activator="{ props }">
-                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item @click="openRestoreSnapshotDialog(snapshot)">
-                          <v-list-item-title>{{ $t('restore') }}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item @click="openCloneSnapshotDialog(snapshot)">
-                          <v-list-item-title>{{ $t('clone') }}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item @click="openDeleteSnapshotDialog(snapshot)">
-                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </template>
-                </v-list-item>
-                <v-divider v-if="index < snapshots.length - 1" />
-              </template>
-            </v-list>
-          </v-card-text>
-        </v-card>
         <span class="text-subtitle-1 font-weight-medium">{{ $t('backups') }}</span>
-        <v-skeleton-loader v-if="backupsLoading" type="card" :loading="backupsLoading" class="mb-4" style="margin-bottom: 80px" />
-        <v-card v-if="!backupsLoading && backups.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 80px">
+        <v-skeleton-loader v-if="backupsLoading" type="card" :loading="backupsLoading" class="mb-4" style="margin-bottom: 20px" />
+        <v-card v-if="!backupsLoading && backups.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 20px">
           <v-card-text class="pa-4">
             {{ $t('no backups have been created yet') }}
           </v-card-text>
         </v-card>
-        <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
+        <v-card v-else fluid style="margin-bottom: 20px" class="pa-0">
           <v-card-text class="pa-0">
             <v-list>
               <template v-if="backups.length > 0" v-for="(backup, index) in backups" :key="backup.container">
@@ -95,6 +52,49 @@
             </v-list>
           </v-card-text>
         </v-card>
+        <span class="text-subtitle-1 font-weight-medium">{{ $t('snapshots') }}</span>
+        <v-skeleton-loader v-if="snapshotsLoading" type="card" :loading="snapshotsLoading" class="mb-4" style="margin-bottom: 80px" />
+        <v-card v-if="!snapshotsLoading && snapshots.length === 0" fluid class="mb-4 ml-0 mr-0 pa-0" style="margin-bottom: 80px">
+          <v-card-text class="pa-4">
+            {{ $t('no snapshots have been created yet') }}
+          </v-card-text>
+        </v-card>
+        <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
+          <v-card-text class="pa-0">
+            <v-list>
+              <template v-for="(snapshot, index) in snapshots" :key="snapshot.name">
+                <v-list-item>
+                  <template v-slot:prepend>
+                    <v-icon class="cursor-pointer">mdi-camera</v-icon>
+                  </template>
+                  <v-list-item-title>{{ new Date(snapshot.timestamp).toLocaleString() }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ snapshot.name }}</v-list-item-subtitle>
+                  <template v-slot:append>
+                    <v-menu>
+                      <template #activator="{ props }">
+                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item @click="openRestoreSnapshotDialog(snapshot)">
+                          <v-list-item-title>{{ $t('restore') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="openCloneSnapshotDialog(snapshot)">
+                          <v-list-item-title>{{ $t('clone') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="openDeleteSnapshotDialog(snapshot)">
+                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-list-item>
+                <v-divider v-if="index < snapshots.length - 1" />
+              </template>
+            </v-list>
+          </v-card-text>
+        </v-card>
       </v-container>
     </v-container>
   </v-container>
@@ -102,17 +102,17 @@
   <!-- Create Backup Dialog -->
   <v-dialog v-model="createBackupDialog.value" max-width="600px">
     <v-card class="pa-0" :title="$t('create backup')" prepend-icon="mdi-plus">
-      <v-card-text>
-        <v-switch v-model="createBackupDialog.use_snapshot" :label="$t('use snapshot for backups')" inset density="compact" hide-details="auto" color="green"></v-switch>
-        <v-switch v-model="createBackupDialog.allow_running" :label="$t('allow running container during backup')" inset density="compact" color="green"></v-switch>
+      <v-card-text class="py-0 pb-4" style="max-height: 60vh; overflow-y: auto">
+        <div class="pb-2">{{ $t('container will be restarted') }}</div>
+        <v-switch v-model="createBackupDialog.use_snapshot" :label="$t('use snapshot for backups')" inset density="compact" color="green"></v-switch>
         <v-text-field v-model.number="createBackupDialog.threads" :label="$t('threads')" type="number" min="0"></v-text-field>
-        <v-slider v-model="createBackupDialog.compression" :min="0" :max="9" step="1" :label="$t('compression')" thumb-label />
+        <v-slider v-model="createBackupDialog.compression" :min="0" :max="9" step="1" :label="$t('compression')" thumb-label hide-details="auto" />
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="createBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createBackup(createBackupDialog.use_snapshot, createBackupDialog.compression, createBackupDialog.threads, createBackupDialog.allow_running)">
+        <v-btn color="onPrimary" text @click="createBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="createBackup(createBackupDialog.use_snapshot, createBackupDialog.compression, createBackupDialog.threads)">
           {{ $t('create') }}
         </v-btn>
       </v-card-actions>
@@ -121,13 +121,12 @@
 
   <!-- Delete Backup Dialog -->
   <v-dialog v-model="deleteBackupDialog.value" max-width="600px">
-    <v-card class="pa-0" :title="$t('delete backup')" prepend-icon="mdi-delete">
-      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to delete the backup') }}?</v-card-text>
-      <v-card-text class="py-0 pb-4">{{ deleteBackupDialog.backup ? deleteBackupDialog.backup.filename : '' }}</v-card-text>
+    <v-card class="pa-0" :title="$t('delete backup') + ' - ' + (deleteBackupDialog.backup ? deleteBackupDialog.backup.filename : '')" prepend-icon="mdi-delete">
+      <v-card-text class="py-0 pt-2 pb-4" style="max-height: 60vh; overflow-y: auto">{{ $t('are you sure you want to delete the backup') }}?</v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="deleteBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" text @click="deleteBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deleteBackup(deleteBackupDialog.backup)">{{ $t('delete') }}</v-btn>
       </v-card-actions>
     </v-card>
@@ -135,17 +134,18 @@
 
   <!-- Restore Backup Dialog -->
   <v-dialog v-model="restoreBackupDialog.value" max-width="600px">
-    <v-card class="pa-0" :title="$t('restore backup')" prepend-icon="mdi-backup-restore">
-      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to restore this backup') }}?</v-card-text>
-      <v-card-text class="py-0 pb-4">{{ restoreBackupDialog.backup ? restoreBackupDialog.backup.filename : '' }}</v-card-text>
-      <v-card-text class="py-0 pt-2">
-        <v-text-field v-model="restoreBackupDialog.new_name" :label="$t('new container name')"></v-text-field>
+    <v-card class="pa-0" :title="$t('restore backup') + ' - ' + (restoreBackupDialog.backup ? restoreBackupDialog.backup.filename : '')" prepend-icon="mdi-backup-restore">
+      <v-card-text class="py-0 pt-2 pb-2" style="max-height: 60vh; overflow-y: auto">
+        <div class="py-0 pt-2">{{ $t('are you sure you want to restore this backup') }}?</div>
+        <div class="py-0 pt-2">
+          <v-text-field v-model="restoreBackupDialog.new_name" :label="$t('new container name')"></v-text-field>
+        </div>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="restoreBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="restoreBackup(restoreBackupDialog.backup, restoreBackupDialog.new_name)">{{ $t('restore') }}</v-btn>
+        <v-btn color="onPrimary" text @click="restoreBackupDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="restoreBackup(restoreBackupDialog.backup, restoreBackupDialog.new_name)">{{ $t('restore') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -153,28 +153,24 @@
   <!-- Create Snapshot Dialog -->
   <v-dialog v-model="createSnapshotDialog.value" max-width="600px">
     <v-card class="pa-0" :title="$t('create snapshot')" prepend-icon="mdi-camera-plus">
-      <v-card-text>
-        <v-text-field v-model="createSnapshotDialog.snapshot_name" :label="$t('snapshot name')" hide-details="auto"></v-text-field>
-        <v-switch v-model="createSnapshotDialog.allow_running" :label="$t('allow running container')" inset color="green" hide-details="auto"></v-switch>
-      </v-card-text>
+      <v-card-text class="py-0 pt-2 pb-4" style="max-height: 60vh; overflow-y: auto">{{ $t('are you sure you want to create a new snapshot') }}? <br /> {{ $t('container will be restarted') }}</v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="createSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="createSnapshot(createSnapshotDialog.snapshot_name, createSnapshotDialog.allow_running)">{{ $t('create') }}</v-btn>
+        <v-btn color="onPrimary" text @click="createSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="createSnapshot()">{{ $t('create') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
   <!-- Delete Snapshot Dialog -->
   <v-dialog v-model="deleteSnapshotDialog.value" max-width="600px">
-    <v-card class="pa-0" :title="$t('delete snapshot')" prepend-icon="mdi-delete">
-      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to delete the snapshot') }}?</v-card-text>
-      <v-card-text class="py-0 pb-4">{{ deleteSnapshotDialog.snapshot ? deleteSnapshotDialog.snapshot.name : '' }}</v-card-text>
+    <v-card class="pa-0" :title="$t('delete snapshot') + ' - ' + (deleteSnapshotDialog.snapshot ? deleteSnapshotDialog.snapshot.name : '')" prepend-icon="mdi-delete">
+      <v-card-text class="py-0 pt-2 pb-4" style="max-height: 60vh; overflow-y: auto">{{ $t('are you sure you want to delete the snapshot') }}?</v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="deleteSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" text @click="deleteSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deleteSnapshot(deleteSnapshotDialog.snapshot)">{{ $t('delete') }}</v-btn>
       </v-card-actions>
     </v-card>
@@ -182,31 +178,31 @@
 
   <!-- Restore Snapshot Dialog -->
   <v-dialog v-model="restoreSnapshotDialog.value" max-width="600px">
-    <v-card class="pa-0" :title="$t('restore snapshot')" prepend-icon="mdi-backup-restore">
-      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to restore this snapshot') }}?</v-card-text>
-      <v-card-text class="py-0 pb-4">{{ restoreSnapshotDialog.snapshot ? restoreSnapshotDialog.snapshot.name : '' }}</v-card-text>
+    <v-card class="pa-0" :title="$t('restore snapshot') + ' - ' + (restoreSnapshotDialog.snapshot ? restoreSnapshotDialog.snapshot.name : '')" prepend-icon="mdi-backup-restore">
+      <v-card-text class="py-0 pt-2 pb-4" style="max-height: 60vh; overflow-y: auto">{{ $t('are you sure you want to restore this snapshot') }}?</v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="restoreSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="restoreSnapshot(restoreSnapshotDialog.snapshot)">{{ $t('restore') }}</v-btn>
+        <v-btn color="onPrimary" text @click="restoreSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="restoreSnapshot(restoreSnapshotDialog.snapshot)">{{ $t('restore') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
   <!-- Clone Snapshot Dialog -->
   <v-dialog v-model="cloneSnapshotDialog.value" max-width="600px">
-    <v-card class="pa-0" :title="$t('clone snapshot')" prepend-icon="mdi-content-copy">
-      <v-card-text class="py-0 pt-2">{{ $t('are you sure you want to clone this snapshot') }}?</v-card-text>
-      <v-card-text class="py-0 pb-4">{{ cloneSnapshotDialog.snapshot ? cloneSnapshotDialog.snapshot.name : '' }}</v-card-text>
-      <v-card-text class="py-0 pt-2">
-        <v-text-field v-model="cloneSnapshotDialog.new_name" :label="$t('new container name')"></v-text-field>
+    <v-card class="pa-0" :title="$t('clone snapshot') + ' - ' + (cloneSnapshotDialog.snapshot ? cloneSnapshotDialog.snapshot.name : '')" prepend-icon="mdi-content-copy">
+      <v-card-text class="py-0 pt-2 pb-4" style="max-height: 60vh; overflow-y: auto">
+        <div class="py-0 pt-2">{{ $t('are you sure you want to clone this snapshot') }}?</div>
+        <div class="py-0 pt-2">
+          <v-text-field v-model="cloneSnapshotDialog.new_name" :label="$t('new container name')"></v-text-field>
+        </div>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="cloneSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="cloneSnapshot(cloneSnapshotDialog.snapshot, cloneSnapshotDialog.new_name)">{{ $t('clone') }}</v-btn>
+        <v-btn color="onPrimary" text @click="cloneSnapshotDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="cloneSnapshot(cloneSnapshotDialog.snapshot, cloneSnapshotDialog.new_name)">{{ $t('clone') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -262,7 +258,6 @@ const createBackupDialog = reactive({
   use_snapshot: true,
   compression: 0,
   threads: 0,
-  allow_running: false,
 });
 const deleteBackupDialog = reactive({
   value: false,
@@ -276,8 +271,6 @@ const restoreBackupDialog = reactive({
 });
 const createSnapshotDialog = reactive({
   value: false,
-  snapshot_name: '',
-  allow_running: false,
 });
 const deleteSnapshotDialog = reactive({
   value: false,
@@ -322,12 +315,11 @@ const getLxcBackups = async () => {
   }
 };
 
-const createBackup = async (use_snapshot, compression, threads, allow_running) => {
+const createBackup = async (use_snapshot, compression, threads) => {
   const payload = {
     use_snapshot: use_snapshot,
     compression: compression,
     threads: threads,
-    allow_running: allow_running,
   };
 
   try {
@@ -459,21 +451,14 @@ const getLxcSnapshots = async () => {
   }
 };
 
-const createSnapshot = async (snapshotName, allowRunning) => {
-  const payload = {
-    snapshot_name: snapshotName,
-    allow_running: allowRunning,
-  };
-
+const createSnapshot = async () => {
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/lxc/containers/${props.lxc}/snapshots`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
-      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -584,7 +569,6 @@ const openCreateBackupDialog = async () => {
   createBackupDialog.use_snapshot = lxcSettings.use_snapshot || true;
   createBackupDialog.compression = lxcSettings.compression || 0;
   createBackupDialog.threads = lxcSettings.threads || 0;
-  createBackupDialog.allow_running = false;
 };
 const openDeleteBackupDialog = (backup) => {
   deleteBackupDialog.value = true;
@@ -597,8 +581,6 @@ const openRestoreBackupDialog = (backup) => {
 };
 const openCreateSnapshotDialog = () => {
   createSnapshotDialog.value = true;
-  createSnapshotDialog.snapshot_name = '';
-  createSnapshotDialog.allow_running = false;
 };
 const openRestoreSnapshotDialog = (snapshot) => {
   restoreSnapshotDialog.value = true;

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Waiting for reboot..</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          'Helvetica Neue',
+          Arial;
+      }
+      .wrap {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f7f7f7;
+        color: #111;
+      }
+      .msg {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+      }
+      .time {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .note {
+        font-size: 0.9rem;
+        color: #555;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+        border: 0;
+        border-radius: 6px;
+        background: #0078d4;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      let remaining = 120;
+      let timer;
+      function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+      }
+      function update() {
+        const el = document.getElementById('countdown');
+        if (!el) return;
+        el.textContent = formatTime(Math.max(0, remaining));
+        if (remaining <= 0) {
+          clearInterval(timer);
+          window.location.href = '/';
+        }
+        remaining--;
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        update();
+        timer = setInterval(update, 1000);
+      });
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div><img src="mos_icon.svg" alt="MOS Icon" width="350" style="padding-bottom: 20px;"/></div>
+      <div class="msg">Server gets restarted...</div>
+      <div id="countdown" class="time">02:00</div>
+      <div class="note">Please wait until the countdown ends. </div>
+      <div class="note">You will then be redirected to MOS Web UI.</div>
+    </div>
+  </body>
+</html>

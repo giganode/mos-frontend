@@ -63,11 +63,7 @@ const routes = [
   {
     path: '/docker/compose',
     component: DockerCompose,
-    props: (route) => ({
-      template: route.query.template || '',
-      yaml: route.query.yaml || '',
-      env: route.query.env || '',
-    }),
+    props: (route) => ({ template: route.query.template || '', yaml: route.query.yaml || '', env: route.query.env || '' }),
     meta: { hideAppBar: false, title: 'Docker Compose', description: 'Manage Docker Compose stacks' },
   },
   { path: '/mosHub', component: mosHub, meta: { hideAppBar: false, title: 'MOS Hub', description: 'Manage MOS Hub' } },

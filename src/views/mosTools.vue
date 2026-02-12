@@ -128,6 +128,8 @@ const rebootOS = async () => {
     }
 
     showSnackbarSuccess(t('reboot initiated successfully'));
+    window.location.href = '/reboot.html';
+    
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

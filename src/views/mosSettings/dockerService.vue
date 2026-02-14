@@ -111,6 +111,7 @@ import { onMounted, ref } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
+import { f } from 'vue-router/dist/router-CWoNjPRp.mjs';
 
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
@@ -163,10 +164,15 @@ const getDockerService = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('docker service could not be loaded'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker service could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
     settingsDocker.value = await res.json();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     dockerServiceLoading.value = false;
   }
@@ -183,14 +189,20 @@ const setDockerService = async () => {
       },
       body: JSON.stringify(settingsDocker.value),
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('docker service could not be changed'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('docker service could not be changed')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('docker service changed successfully'));
     emit('refresh-drawer');
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
+
 };
 </script>

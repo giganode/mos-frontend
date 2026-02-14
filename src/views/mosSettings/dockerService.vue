@@ -111,7 +111,6 @@ import { onMounted, ref } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
-import { f } from 'vue-router/dist/router-CWoNjPRp.mjs';
 
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);

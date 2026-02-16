@@ -31,7 +31,8 @@
         </v-col>
     </v-row>
     <div v-else class="text-body-2 text-medium-emphasis pa-4 text-center">
-        {{ $t('no temperature data available') }}
+        <div>{{ $t('no temperature data available') }}</div>
+        <div>{{ $t('please add temperature sensors in mos settings') }}</div>
     </div>
 </template>
 

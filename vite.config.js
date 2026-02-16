@@ -29,12 +29,12 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/api/v1/socket.io': {
-        target: 'http://192.168.1.2:3000',
+        target: 'http://192.168.1.2:998',
         changeOrigin: true,
         ws: true,
       },
       '/ws': {
-        target: 'ws://192.168.1.2:3000',
+        target: 'ws://192.168.1.2:998',
         ws: true,
       },
       '/api/v1/notify': {
@@ -43,7 +43,7 @@ export default defineConfig({
         ws: true,
       },
       '/api/v1/vm/vnc/ws': {
-        target: 'ws://192.168.1.2:3000',
+        target: 'ws://192.168.1.2:998',
         changeOrigin: true,
         ws: true,
       },

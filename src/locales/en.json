@@ -1233,5 +1233,11 @@
   "are you sure you want to clone this snapshot": "Are you sure you want to clone this snapshot",
   "are you sure you want to create a new snapshot": "Are you sure you want to create a new snapshot",
   "container will be restarted": "Container will be restarted",
-  "labels": "Labels"
+  "labels": "Labels",
+  "please add temperature sensors in mos settings": "Please add temperature sensors in MOS settings",
+  "please add voltage sensors in mos settings": "Please add voltage sensors in MOS settings",
+  "please add psu sensors in mos settings": "Please add PSU sensors in MOS settings",
+  "please add custom sensors in mos settings": "Please add custom sensors in MOS settings",
+  "please add power sensors in mos settings": "Please add power sensors in MOS settings",
+  "please add fan sensors in mos settings": "Please add fan sensors in MOS settings"
 }

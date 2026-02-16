@@ -13,8 +13,8 @@
       </v-container>
       <v-container fluid class="pa-0">
           <v-skeleton-loader v-if="sensorsLoading" type="card" />
-          <v-card v-else class="pa-4 mb-4">
-            <v-row>
+          <v-card v-else class="pa-0" style="margin-bottom: 80px">
+            <v-row class="pa-4 pb-0">
                 <v-col cols="12">
                     <v-text-field v-model="searchQuery"
                                 :label="$t('search')"
@@ -25,12 +25,13 @@
                                 clearable />
                 </v-col>
             </v-row>
+            <v-card-text class="pa-0">
               <v-data-table v-model:sort-by="sortedBy"
                             :headers="allSensorsHeaders"
                             :items="filteredAllSensors"
                             :items-per-page="25"
                             density="compact"
-                            class="mt-4">
+                            class="sensors-table bg-transparent mt-4">
                   <template #item.name="{ item }">
                       <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px">
                           {{ item.name }}
@@ -64,6 +65,7 @@
                       </div>
                   </template>
               </v-data-table>
+            </v-card-text>
           </v-card>
       </v-container>
     </v-container>
@@ -803,12 +805,24 @@ const sections = computed(() => {
 </script>
 
 <style scoped>
+.sensors-table :deep(thead tr) {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
 .sensors-table :deep(th) {
   font-weight: 600;
   white-space: nowrap;
+  padding: 4px 8px !important;
+  vertical-align: middle;
 }
 
 .sensors-table :deep(td) {
+  padding: 4px 8px !important;
   vertical-align: middle;
+}
+
+.sensors-table :deep(th:first-child),
+.sensors-table :deep(td:first-child) {
+  padding-left: 16px !important;
 }
 </style>

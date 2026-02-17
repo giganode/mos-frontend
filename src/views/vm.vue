@@ -142,22 +142,20 @@
 
   <!-- Create VM Dialog -->
   <v-dialog v-model="createVmDialog" max-width="800">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('create vm') }}</v-card-title>
       <v-card-text>
-        <v-row dense>
-          <v-col cols="11">
-            <v-text-field
-              v-model="newVm.name"
-              :label="$t('name')"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
-          <v-col cols="1">
+        <v-text-field
+          v-model="newVm.name"
+          :label="$t('name')",
+          variant="outlined"
+          hide-details
+          class="mb-3"
+        >
+          <template #append-inner>
             <v-menu :close-on-content-click="true" location="bottom end">
               <template #activator="{ props }">
-                <v-btn v-bind="props" variant="outlined" class="iconPicker">
+                <div v-bind="props" class="icon-picker">
                   <v-img
                     v-if="newVm.icon"
                     :src="`/os_icons/${newVm.icon}.png`"
@@ -169,7 +167,7 @@
                     </template>
                   </v-img>
                   <v-icon v-else color="grey-darken-1">mdi-image-plus</v-icon>
-                </v-btn>
+                </div>
               </template>
               <v-card max-width="350" max-height="400" style="overflow-x: hidden; overflow-y: auto;">
                 <v-card-text class="pa-2">
@@ -196,8 +194,8 @@
                 </v-card-text>
               </v-card>
             </v-menu>
-          </v-col>
-        </v-row>
+          </template>
+        </v-text-field>
         <v-slider style="margin-top: 12px;"
           v-model="newVm.memorySize"
           :label="$t('Memory Size (GB)')"
@@ -206,7 +204,7 @@
           :max="availableSystemMemory - 4"
           thumb-label="always"
           variant="outlined"
-          class="mb-3"
+          class="mb-3 thumb-bottom"
         />
         <details>
           <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('core pinning') }}</summary>
@@ -693,7 +691,7 @@
 
   <!-- Edit XML Dialog -->
   <v-dialog v-model="editXmlDialog" max-width="1500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('edit xml') }} {{ $t('for') }} {{ editXmlVmData.name }}</v-card-title>
       <v-card-text>
         <xmlEditor v-model="editXmlVmData.xml" />
@@ -708,7 +706,7 @@
 
   <!-- Delete VM Dialog -->
   <v-dialog v-model="deleteVmDialog" max-width="500">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ $t('delete vm') }}</v-card-title>
       <v-card-text>
         <p class="mb-4">{{ $t('Are you sure you want to delete') }} <strong>{{ deleteVmData.name }}</strong>?</p>
@@ -735,7 +733,7 @@
 
   <!-- VM Info Dialog -->
   <v-dialog v-model="infoDialog" max-width="700">
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title>{{ infoDialogData.name }}</v-card-title>
       <v-card-text>
         <v-skeleton-loader v-if="infoDialogLoading"/>
@@ -1570,6 +1568,13 @@ const i440fxVersions = computed(() => {
       if (b.isAlias) return 1;
       if (a.isDefault) return -1;
       if (b.isDefault) return 1;
+      const versionA = a.value.match(/(\d+)\.(\d+)/);
+      const versionB = b.value.match(/(\d+)\.(\d+)/);
+      if (versionA && versionB) {
+        const majorDiff = parseInt(versionB[1]) - parseInt(versionA[1]);
+        if (majorDiff !== 0) return majorDiff;
+        return parseInt(versionB[2]) - parseInt(versionA[2]);
+      }
       return b.value.localeCompare(a.value);
     });
 });
@@ -1591,6 +1596,13 @@ const q35Versions = computed(() => {
       if (b.isAlias) return 1;
       if (a.isDefault) return -1;
       if (b.isDefault) return 1;
+      const versionA = a.value.match(/(\d+)\.(\d+)/);
+      const versionB = b.value.match(/(\d+)\.(\d+)/);
+      if (versionA && versionB) {
+        const majorDiff = parseInt(versionB[1]) - parseInt(versionA[1]);
+        if (majorDiff !== 0) return majorDiff;
+        return parseInt(versionB[2]) - parseInt(versionA[2]);
+      }
       return b.value.localeCompare(a.value);
     });
 });
@@ -1848,9 +1860,13 @@ const createVM = async () => {
   flex: 0 0 auto;
 }
 
-.iconPicker {
-  min-width: 48px;
-  height: 48px;
+.icon-picker {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
 }
 
 .icon-grid {
@@ -1888,4 +1904,14 @@ const createVM = async () => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.thumb-bottom :deep(.v-slider-thumb__label-container) {
+  top: calc(var(--v-slider-thumb-size) - 4px);
+  transform: rotate(180deg);
+}
+
+.thumb-bottom :deep(.v-slider-thumb__label > div:first-child) {
+  transform: rotate(180deg);
+}
+
 </style>

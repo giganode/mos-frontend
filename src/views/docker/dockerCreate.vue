@@ -508,6 +508,10 @@ import { useRouter } from 'vue-router';
 import { useDockerWebSocket } from '@/composables/useDockerWebSocket';
 import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 
+const props = defineProps({
+  template: String,
+});
+
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 const router = useRouter();
@@ -518,7 +522,6 @@ const containerOptions = ref([]);
 const loadingContainers = ref(false);
 const selectedContainer = ref('');
 const networkMode = ref('');
-const dockerUrl = ref('');
 const gpus = ref([]);
 const gpuIds = ref([]);
 const form = ref({
@@ -544,9 +547,6 @@ const allTemplates = ref({});
 const allTemplatesMixed = ref([]);
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
-const props = defineProps({
-  template: String,
-});
 
 onMounted(() => {
   window.scrollTo(0, 0);

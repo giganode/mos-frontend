@@ -1239,5 +1239,6 @@
   "please add psu sensors in mos settings": "Bitte füge PSU-Sensoren in den MOS Einstellungen hinzu",
   "please add custom sensors in mos settings": "Bitte füge benutzerdefinierte Sensoren in den MOS Einstellungen hinzu",
   "please add power sensors in mos settings": "Bitte füge Leistungssensoren in den MOS Einstellungen hinzu",
-  "please add fan sensors in mos settings": "Bitte füge Lüftersensoren in den MOS Einstellungen hinzu"
+  "please add fan sensors in mos settings": "Bitte füge Lüftersensoren in den MOS Einstellungen hinzu",
+  "add plugins": "Plugins hinzufügen"
 }

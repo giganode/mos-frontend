@@ -382,7 +382,7 @@
                         {{
                           getContainerIPAddress(
                             dockers.find((d) => d.Names && d.Names[0] === containerName),
-                            'none'
+                            'none',
                           )
                         }}
                       </template>
@@ -390,7 +390,7 @@
                         {{
                           getContainerIPAddress(
                             dockers.find((d) => d.Names && d.Names[0] === containerName),
-                            'none'
+                            'none',
                           )
                         }}
                       </template>
@@ -398,7 +398,7 @@
                         {{
                           getContainerIPAddress(
                             dockers.find((d) => d.Names && d.Names[0] === containerName),
-                            'none'
+                            'none',
                           )
                         }}
                       </template>
@@ -525,8 +525,15 @@
                       </v-menu>
                     </td>
                     <td>
-                      <div class="text-caption-2">{{ docker.Names[0] }}</div>
-                      <div class="text-caption" :style="{ color: docker.State === 'running' ? 'green' : 'red' }">{{ docker.State }}</div>
+                      <div class="d-flex align-center">
+                        <div class="mr-2">
+                          <div style="font-size: 0.9rem">
+                            {{ docker.Names[0] }}
+                          </div>
+                          <div class="text-caption" :style="{ color: docker.State === 'running' ? 'green' : 'red' }">{{ docker.State }}</div>
+                        </div>
+                        <v-chip v-if="docker.privileged" size="small">{{ $t('privileged') }}</v-chip>
+                      </div>
                     </td>
                     <td>
                       <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)" color="red" @click="updateDocker(docker.Names[0])">
@@ -1349,7 +1356,7 @@ const setGroupOrder = async () => {
         index: idx + 1,
       };
       return obj;
-    })
+    }),
   );
 
   try {
@@ -1383,7 +1390,7 @@ const onDragEnd = async () => {
         autostart: docker.autostart,
       };
       return obj;
-    })
+    }),
   );
 
   try {

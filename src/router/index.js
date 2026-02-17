@@ -42,9 +42,9 @@ import Plugins from '../views/plugins.vue';
 import PluginView from '../views/pluginView.vue';
 
 const routes = [
+  { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
   { path: '/login', component: Login, meta: { hideAppBar: false, title: 'MOS Login', description: 'Login to your account' } },
   { path: '/firstSetup', component: FirstSetup, props: true, meta: { hideAppBar: false, title: 'MOS First Setup', description: 'Set up your account for the first time' } },
-  { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
   { path: '/dashboard', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
   { path: '/pools', component: Pools, meta: { hideAppBar: false, title: 'Pools', description: 'Manage storage pools' } },
   { path: '/disks', component: Disks, meta: { hideAppBar: false, title: 'Disks', description: 'Manage disks in your account' } },
@@ -66,7 +66,7 @@ const routes = [
     props: (route) => ({ template: route.query.template || '', yaml: route.query.yaml || '', env: route.query.env || '' }),
     meta: { hideAppBar: false, title: 'Docker Compose', description: 'Manage Docker Compose stacks' },
   },
-  { path: '/mosHub', component: mosHub, meta: { hideAppBar: false, title: 'MOS Hub', description: 'Manage MOS Hub' } },
+  { path: '/mosHub', component: mosHub, props: (route) => ({ hubType: route.query.hubType || '' }), meta: { hideAppBar: false, title: 'MOS Hub', description: 'Manage MOS Hub' } },
   { path: '/lxc', component: Lxc, meta: { hideAppBar: false, title: 'LXC', description: 'Manage LXC containers' } },
   { path: '/lxc/backups/:lxc', component: LxcBackups, props: true, meta: { hideAppBar: false, title: 'LXC Backups', description: 'Manage LXC backups' } },
   { path: '/vm', component: Vm, meta: { hideAppBar: false, title: 'VM', description: 'Manage virtual machines' } },

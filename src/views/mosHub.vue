@@ -350,6 +350,10 @@ import { useI18n } from 'vue-i18n';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useRouter } from 'vue-router';
 
+const props = defineProps({
+  hubType: String,
+});
+
 const $router = useRouter();
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
@@ -378,6 +382,14 @@ const mosHubRepositoriesDialog = reactive({
 const currentPage = ref(1);
 const pageLimit = 24;
 onMounted(() => {
+  console.log('abC', props.hubType);
+  if (props.hubType === 'docker') {
+    hubTypeSel.value = 'docker';
+  } else if (props.hubType === 'compose') {
+    hubTypeSel.value = 'compose';
+  } else if (props.hubType === 'plugin') {
+    hubTypeSel.value = 'plugin';
+  }
   getMosHub();
   getMosServices();
   getHubTypes();

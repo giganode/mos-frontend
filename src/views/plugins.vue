@@ -102,10 +102,28 @@
     </v-card>
   </v-dialog>
 
-  <!-- Floating Action Button -->
-  <v-fab @click="checkUpdatePlugins()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
-    <v-icon>mdi-refresh</v-icon>
-  </v-fab>
+  <!-- Floating Action Button with Menu -->
+  <v-menu location="top">
+    <template v-slot:activator="{ props }">
+      <v-fab v-bind="props" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+        <v-icon color="onPrimary">mdi-dots-vertical</v-icon>
+      </v-fab>
+    </template>
+    <v-list>
+      <v-list-item @click="addPlugins()">
+        <template v-slot:prepend>
+          <v-icon>mdi-plus</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('add plugins') }}</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="checkUpdatePlugins()">
+        <template v-slot:prepend>
+          <v-icon>mdi-refresh</v-icon>
+        </template>
+        <v-list-item-title>{{ $t('check for updates') }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -240,5 +258,9 @@ const checkUpdatePlugins = async () => {
   } finally {
     overlay.value = false;
   }
+};
+
+const addPlugins = () => {
+  router.push('/mosHub?hubType=plugin');
 };
 </script>

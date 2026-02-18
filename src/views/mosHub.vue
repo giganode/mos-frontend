@@ -382,7 +382,6 @@ const mosHubRepositoriesDialog = reactive({
 const currentPage = ref(1);
 const pageLimit = 24;
 onMounted(() => {
-  console.log('abC', props.hubType);
   if (props.hubType === 'docker') {
     hubTypeSel.value = 'docker';
   } else if (props.hubType === 'compose') {

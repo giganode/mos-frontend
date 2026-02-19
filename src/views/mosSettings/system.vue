@@ -21,6 +21,9 @@
             <v-text-field :label="$t('global spindown (min)')" type="number" v-model="settingsSystem.global_spindown" hide-details="auto"></v-text-field>
             <v-switch :label="$t('persist history')" color="green" inset v-model="settingsSystem.persist_history" hide-details="auto"></v-switch>
             <v-divider class="my-2"></v-divider>
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('web ui') }}</span>            
+            <v-text-field class="mt-4 mb-4" :label="$t('http port')" type="number" v-model="settingsSystem.webui.ports.http" hide-details="auto"></v-text-field>
+            <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('display settings') }}</span>
             <v-switch
               :label="$t('powersave')"
@@ -33,7 +36,7 @@
               density="compact"
             />
             <v-text-field :label="$t('powerdown (min)')" type="number" v-model="settingsSystem.display.powerdown"></v-text-field>
-            <v-text-field :label="$t('timeout (min)')" type="number" v-model="settingsSystem.display.timeout"></v-text-field>
+            <v-text-field :label="$t('timeout (min)')" type="number" v-model="settingsSystem.display.timeout" hide-details="auto" class="mb-4"></v-text-field>
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('notification sounds') }}</span>
             <v-switch :label="$t('sound on reboot')" color="green" inset v-model="settingsSystem.notification_sound.reboot" hide-details="auto"></v-switch>
@@ -75,7 +78,7 @@
             ></v-text-field>
             <v-divider class="my-4"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('binfmt') }}</span>
-            <v-switch :label="$t('enable binfmt')" color="green" inset v-model="settingsSystem.binfmt.enabled" hide-details="auto"></v-switch>
+            <v-switch :label="$t('enable binfmt')" color="green" inset v-model="settingsSystem.binfmt.enabled" hide-details="auto" class="mb-2"></v-switch>
             <v-select multiple chips :items="architectures" :label="$t('binfmt architectures')" v-model="settingsSystem.binfmt.architectures" :disabled="!settingsSystem.binfmt.enabled" hide-details="auto"></v-select>
             <v-divider class="my-4"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('date & time') }}</span>
@@ -202,6 +205,11 @@ const settingsSystem = ref({
     enabled: false,
     architectures: [],
   },
+  webui: {
+    ports: {
+      http: 80,
+    }
+  }
 });
 const zswapAlgorithms = ref([]);
 const keymaps = ref([]);

@@ -1240,5 +1240,7 @@
   "please add custom sensors in mos settings": "Please add custom sensors in MOS settings",
   "please add power sensors in mos settings": "Please add power sensors in MOS settings",
   "please add fan sensors in mos settings": "Please add fan sensors in MOS settings",
-  "add plugins": "Add Plugins"
+  "add plugins": "Add Plugins",
+  "http port": "HTTP Port",
+  "https port": "HTTPS Port"  
 }

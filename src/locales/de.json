@@ -1243,5 +1243,7 @@
   "add plugins": "Plugins hinzufügen",
   "http port": "HTTP Port",
   "https port": "HTTPS Port",
-  "owner": "Eigentümer"
+  "owner": "Eigentümer",
+  "fs": "FS",
+  "usage": "Nutzung"
 }

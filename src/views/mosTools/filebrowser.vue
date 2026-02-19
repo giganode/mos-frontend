@@ -30,14 +30,15 @@
             <v-table density="compact">
               <thead>
                 <tr>
-                  <th>{{ t('name') }}</th>
-                  <th style="width: 40%">{{ t('path') }}</th>
-                  <th style="width: 60px" class="text-center">{{ t('action') }}</th>
+                  <th style="width: 30%">{{ t('name') }}</th>
+                  <th style="width: 20%">{{ t('path') }}</th>
+                  <th style="min-width: 100px">{{ t('owner') }}</th>
+                  <th style="min-width: 50px">{{ t('permissions') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="!loading && items.length === 0">
-                  <td colspan="3" class="text-center text-medium-emphasis">
+                  <td colspan="4" class="text-center text-medium-emphasis">
                     {{ t('no entries') }}
                   </td>
                 </tr>
@@ -59,20 +60,18 @@
                   <td>
                     <span class="text-caption">{{ item.displayPath || item.path }}</span>
                   </td>
-                  <td class="text-center">
-                    <div v-if="item.type === 'directory'">
-                      <v-icon size="18" class="cursor-pointer" @click.stop="navigateInto(item)" :disabled="loading">mdi-folder-open</v-icon>
-                    </div>
-                    <div v-else>
-                      <v-icon size="18" class="cursor-pointer" @click.stop="openEditFileDialog(item)" :disabled="loading">mdi-file-edit</v-icon>
-                    </div>
+                  <td>
+                    <span class="text-caption">{{ item.permissions.owner }}:{{ item.permissions.group }}</span>
+                  </td>
+                  <td>
+                    <span class="text-caption">{{ item.permissions.octal }}</span>
                   </td>
                 </tr>
               </tbody>
             </v-table>
           </v-card-text>
           <v-divider />
-          <v-card-actions class="d-flex align-center">
+          <v-card-actions class="d-flex align-center py-2" style="flex-wrap: wrap; gap: 8px;">
             <v-btn rounded variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">{{ $t('create folder') }}</v-btn>
             <v-btn rounded variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">{{ $t('create file') }}</v-btn>
             <v-btn rounded variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">{{ $t('edit') }}</v-btn>
@@ -118,7 +117,7 @@
             @update:modelValue="
               (val) => {
                 if (val === 'mos') createFolderDialog.user = createFolderDialog.group = '500';
-                else if (val === 'admin') createFolderDialog.user = createFolderDialog.group = '0';
+                else if (val === 'root') createFolderDialog.user = createFolderDialog.group = '0';
                 else createFolderDialog.user = createFolderDialog.group = '';
               }
             "
@@ -154,7 +153,7 @@
             @update:modelValue="
               (val) => {
                 if (val === 'mos') createFileDialog.user = createFileDialog.group = '500';
-                else if (val === 'admin') createFileDialog.user = createFileDialog.group = '0';
+                else if (val === 'root') createFileDialog.user = createFileDialog.group = '0';
                 else createFileDialog.user = createFileDialog.group = '';
               }
             "
@@ -183,7 +182,7 @@
     <v-card class="pa-0" :title="$t('adjust permissions')" prepend-icon="mdi-lock">
       <v-card-text class="py-0">
         <v-container class="px-0">
-          <v-text-field v-model="setChmodDialog.permissions" :label="$t('permissions')" :disabled="loading" />
+          <v-text-field v-model="setChmodDialog.permissions" :label="$t('permissions')" :disabled="loading"/>
           <v-checkbox v-model="setChmodDialog.recursive" :label="$t('recursive')" :disabled="loading" hide-details="auto" density="compact" />
         </v-container>
       </v-card-text>
@@ -211,7 +210,7 @@
             @update:modelValue="
               (val) => {
                 if (val === 'mos') setChownDialog.user = setChownDialog.group = '500';
-                else if (val === 'admin') setChownDialog.user = setChownDialog.group = '0';
+                else if (val === 'root') setChownDialog.user = setChownDialog.group = '0';
                 else setChownDialog.user = setChownDialog.group = '';
               }
             "
@@ -271,7 +270,7 @@ const createFolderDialog = reactive({
   folderName: '',
   currentPath: '',
   userddsel: 'mos',
-  userdd: ['mos', 'admin', 'custom'],
+  userdd: ['mos', 'root', 'custom'],
   user: '500',
   group: '500',
   permissions: '777',
@@ -282,7 +281,7 @@ const createFileDialog = reactive({
   currentPath: '',
   content: '',
   userddsel: 'mos',
-  userdd: ['mos', 'admin', 'custom'],
+  userdd: ['mos', 'root', 'custom'],
   user: '500',
   group: '500',
   permissions: '777',
@@ -297,7 +296,7 @@ const setChownDialog = reactive({
   value: false,
   path: '',
   userddsel: 'mos',
-  userdd: ['mos', 'admin', 'custom'],
+  userdd: ['mos', 'root', 'custom'],
   user: '500',
   group: '500',
   recursive: false,
@@ -630,15 +629,15 @@ const openCreateFileDialog = (currentPath) => {
 const openChModDialog = (item) => {
   setChmodDialog.value = true;
   setChmodDialog.path = item.path;
-  setChmodDialog.permissions = '777';
+  setChmodDialog.permissions = item.permissions.octal;
   setChmodDialog.recursive = false;
 };
 const openChOwnDialog = (item) => {
   setChownDialog.value = true;
   setChownDialog.path = item.path;
-  setChownDialog.userddsel = 'mos';
-  setChownDialog.user = '500';
-  setChownDialog.group = '500';
+  setChownDialog.userddsel = item.permissions.owner === 'mos' ? 'mos' : item.permissions.owner === 'root' ? 'root' : 'custom';
+  setChownDialog.user = item.permissions.owner == 'mos' ? '500' : item.permissions.owner == 'root' ? '0' : '';
+  setChownDialog.group = item.permissions.owner == 'mos' ? '500' : item.permissions.owner == 'root' ? '0' : '';
   setChownDialog.recursive = false;
 };
 </script>

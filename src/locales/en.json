@@ -1242,5 +1242,6 @@
   "please add fan sensors in mos settings": "Please add fan sensors in MOS settings",
   "add plugins": "Add Plugins",
   "http port": "HTTP Port",
-  "https port": "HTTPS Port"  
+  "https port": "HTTPS Port",
+  "owner": "Owner"
 }

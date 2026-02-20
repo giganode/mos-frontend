@@ -1245,5 +1245,6 @@
   "https port": "HTTPS Port",
   "owner": "Owner",
   "fs": "FS",
-  "usage": "Usage"  
+  "usage": "Usage",
+  "see mergerfs documentation for policy descriptions": "See MergerFS documentation for policy descriptions"
 }

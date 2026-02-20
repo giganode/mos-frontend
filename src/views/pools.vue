@@ -756,11 +756,11 @@
     <v-card class="pa-0">
       <v-card-title>{{ $t('mergerfs policies') }}</v-card-title>
       <v-card-text>
-        <v-form>
           <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
-          <v-select v-model="mergerfsPolicyDialog.policies.read" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('read policy')" dense />
           <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
-        </v-form>
+          <a href="https://trapexit.github.io/mergerfs/latest/config/functions_categories_policies/#policy-descriptions" target="_blank" class="mt-2">
+            {{ $t('see mergerfs documentation for policy descriptions') }}
+          </a>
       </v-card-text>
       <v-divider />
       <v-card-actions>

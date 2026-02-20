@@ -190,9 +190,7 @@
                             style="min-width: 40px"
                           />
                           <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.7rem !important">
-                            <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.7rem !important">
-                              {{ Math.round(data_device.storage.usagePercent) }}%
-                            </span>
+                            <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.7rem !important">{{ Math.round(data_device.storage.usagePercent) }}%</span>
                             <span v-if="data_device.storage.usagePercent != null" class="ml-1">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</span>
                           </div>
                         </div>
@@ -255,7 +253,9 @@
                             <v-progress-linear :model-value="parity_device.storage.usagePercent" height="4" color="grey darken-1" rounded class="flex-grow-1" style="min-width: 40px" />
                             <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.7rem !important">
                               <span class="text-caption text-medium-emphasis">{{ Math.round(parity_device.storage.usagePercent) }}%</span>
-                              <span class="text-caption text-medium-emphasis text-right" v-if="parity_device.storage.usagePercent != null">{{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}</span>
+                              <span class="text-caption text-medium-emphasis text-right" v-if="parity_device.storage.usagePercent != null">
+                                {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
+                              </span>
                             </div>
                           </div>
                         </td>
@@ -756,11 +756,11 @@
     <v-card class="pa-0">
       <v-card-title>{{ $t('mergerfs policies') }}</v-card-title>
       <v-card-text>
-          <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
-          <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
-          <a href="https://trapexit.github.io/mergerfs/latest/config/functions_categories_policies/#policy-descriptions" target="_blank" class="mt-2">
-            {{ $t('see mergerfs documentation for policy descriptions') }}
-          </a>
+        <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
+        <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
+        <a href="https://trapexit.github.io/mergerfs/latest/config/functions_categories_policies/#policy-descriptions" target="_blank" class="mt-2">
+          {{ $t('see mergerfs documentation for policy descriptions') }}
+        </a>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -827,8 +827,7 @@ const createPoolDialog = reactive({
   parity: [],
   parity_valid: false,
   policies: {
-    create: 'epmfs',
-    read: 'ff',
+    create: 'pfrd',
     search: 'ff',
   },
 });
@@ -921,11 +920,10 @@ const mergerfsPolicyDialog = reactive({
   value: false,
   pool: null,
   policies: {
-    create: 'epmfs',
-    read: 'ff',
+    create: 'pfrd',
     search: 'ff',
   },
-  availablePolicies: ['epmfs', 'ff', 'lfs', 'mcfs', 'mfs', 'rand', 'roth', 'rr', 'simfs', 'eplfs', 'epff'],
+  availablePolicies: ['pfrd', 'rand', 'mfs', 'ff', 'lfs', 'lup', 'lus', 'all', 'msppfrd', 'mspmfs', 'msplfs', 'msplus', 'eppfrd', 'epmfs', 'eprand', 'epff', 'eplfs', 'eplus', 'epall', 'newest'],
 });
 
 onMounted(async () => {
@@ -1072,8 +1070,7 @@ const openMergerfsPolicyDialog = async (pool) => {
   mergerfsPolicyDialog.pool = pool;
   const policies = await getMergerfsPolicies(pool.id);
   mergerfsPolicyDialog.policies = {
-    create: policies.create ? policies.create : 'epmfs',
-    read: policies.read ? policies.read : 'ff',
+    create: policies.create ? policies.create : 'pfrd',
     search: policies.search ? policies.search : 'ff',
   };
 };

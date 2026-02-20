@@ -154,7 +154,7 @@
                 <v-divider />
                 <v-table density="compact" class="pool-devices-table" style="background-color: transparent">
                   <thead>
-                    <tr>
+                    <tr style="background-color: rgba(0, 0, 0, 0.04)">
                       <th class="text-caption" style="width: 42px"></th>
                       <th class="text-caption">{{ $t('disks') }}</th>
                       <th class="text-caption" style="width: 60%">{{ $t('usage') }}</th>
@@ -208,7 +208,7 @@
                   <v-divider />
                   <v-table density="compact" class="pool-devices-table" style="background-color: transparent">
                     <thead>
-                      <tr>
+                      <tr style="background-color: rgba(0, 0, 0, 0.04)">
                         <th class="text-caption" style="width: 42px"></th>
                         <th class="text-caption">
                           {{ $t('parities') }}
@@ -221,7 +221,7 @@
                             </template>
                             {{ $t('status') }}: {{ pool.status.parity_progress.status }}
                             <br />
-                            {{ $t('speed') }}: {{ pool.status.parity_progress.sspeed }}
+                            {{ $t('speed') }}: {{ pool.status.parity_progress.speed }}
                             <br />
                             {{ $t('height') }}: {{ pool.status.parity_progress.height }}
                             <br />

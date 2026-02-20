@@ -1246,5 +1246,8 @@
   "owner": "Owner",
   "fs": "FS",
   "usage": "Usage",
-  "see mergerfs documentation for policy descriptions": "See MergerFS documentation for policy descriptions"
+  "see mergerfs documentation for policy descriptions": "See MergerFS documentation for policy descriptions",
+  "rotational": "Rotational",
+  "serial": "Serial",
+  "mountpoint": "Mountpoint"  
 }

@@ -5,69 +5,106 @@
         <h2>{{ $t('disks') }}</h2>
       </v-container>
       <v-container fluid class="pa-0">
-        <v-skeleton-loader v-if="!disksLoaded" type="list-item-avatar-two-line" :loading="!disksLoaded" class="mb-4" />
+        <v-skeleton-loader v-if="!disksLoaded" type="table-heading, table-row@5" :loading="!disksLoaded" class="mb-4" />
         <v-card v-else-if="disksLoaded && disks.length === 0" fluid class="pa-4 mb-4">
           <v-card-text class="pa-0">
             {{ $t('no disks found') }}
           </v-card-text>
         </v-card>
         <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
-          <v-card-text class="pa-0">
-            <v-list class="bg-transparent">
-              <template v-for="(disk, index) in disks" :key="disk.device">
-                <v-list-item>
-                  <template v-slot:prepend>
-                    <v-icon class="cursor-pointer" :color="disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? 'blue' : 'red'" @dblclick="disk.powerStatus === 'active' ? sleepDisk(disk) : wakeDisk(disk)">
-                      {{ getDiskIcon(disk.type) }}
-                    </v-icon>
+          <v-table density="comfortable" style="overflow-x: auto">
+            <thead>
+              <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                <th style="white-space: nowrap; width: 32px;">{{ $t('status') }}</th>
+                <th style="white-space: nowrap">{{ $t('device') }}</th>
+                <th style="white-space: nowrap">{{ $t('size') }}</th>
+                <th style="white-space: nowrap">{{ $t('usage') }}</th>
+                <th style="white-space: nowrap">{{ $t('model') }}</th>
+                <th style="white-space: nowrap">{{ $t('partitions') }}</th>
+                <th style="white-space: nowrap">{{ $t('type') }}</th>
+                <th style="white-space: nowrap">{{ $t('filesystem') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="disk in disks" :key="disk.device">
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-icon
+                        v-bind="props"
+                        class="cursor-pointer"
+                        :color="disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? 'blue' : 'red'"
+                      >
+                        {{ getDiskIcon(disk.type) }}
+                      </v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="sleepDisk(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-motion-pause</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('sleep') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="wakeDisk(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-motion-play</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('wake up') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openFormatDialog(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-broom</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('format') }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.device }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.size_human }}</td>
+                <td style="min-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <template v-if="disk.partitions?.some((p) => p.status?.mounted)">
+                    <div v-for="p in disk.partitions.filter((p) => p.status?.mounted)" :key="p.device" class="my-1">
+                      <v-progress-linear
+                        :model-value="p.status.totalSpace ? (p.status.usedSpace / p.status.totalSpace) * 100 : 0"
+                        :color="p.status.totalSpace && p.status.usedSpace / p.status.totalSpace > 0.9 ? 'red' : p.status.usedSpace / p.status.totalSpace > 0.7 ? 'orange' : 'green'"
+                        height="16"
+                        rounded
+                      >
+                        <template #default>
+                          <span class="text-caption">{{ p.status.totalSpace ? Math.round((p.status.usedSpace / p.status.totalSpace) * 100) : 0 }}%</span>
+                        </template>
+                      </v-progress-linear>
+                    </div>
                   </template>
-                  <v-list-item-title>
-                    {{ disk.name }}
-                    <v-chip v-if="disk.partitions?.some((p) => p.mountpoint === '/boot')" color="onPrimary" size="small" class="ml-2" label>
-                      {{ $t('boot') }}
+                  <span v-else>—</span>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.model }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <template v-if="disk.partitions?.length">
+                    <div v-for="p in disk.partitions" :key="p.device" class="text-caption" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                      {{ p.device || '—' }}
+                    </div>
+                  </template>
+                  <span v-else>—</span>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <v-chip size="small" label>{{ disk.type?.toUpperCase() }}</v-chip>
+                  <v-chip v-if="disk.partitions?.some((p) => p.mountpoint === '/boot')" color="onPrimary" size="x-small" class="ml-1" label>
+                    {{ $t('boot') }}
+                  </v-chip>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <template v-if="disk.partitions?.length">
+                    <v-chip v-for="p in disk.partitions" :key="p.device" size="small" class="mr-1 mb-1" label>
+                      {{ p.filesystem || '—' }}
                     </v-chip>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>{{ disk.device }}, Size {{ disk.size_human }}</v-list-item-subtitle>
-                  <template v-slot:append>
-                    <v-menu>
-                      <template #activator="{ props }">
-                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item>
-                          <template #prepend>
-                            <v-icon>mdi-motion-pause</v-icon>
-                          </template>
-                          <v-list-item-title @click="sleepDisk(disk)">
-                            {{ $t('sleep') }}
-                          </v-list-item-title>
-                        </v-list-item>
-                        <v-list-item>
-                          <template #prepend>
-                            <v-icon>mdi-motion-play</v-icon>
-                          </template>
-                          <v-list-item-title @click="wakeDisk(disk)">
-                            {{ $t('wake up') }}
-                          </v-list-item-title>
-                        </v-list-item>
-                        <v-list-item>
-                          <template #prepend>
-                            <v-icon>mdi-broom</v-icon>
-                          </template>
-                          <v-list-item-title @click="openFormatDialog(disk)">
-                            {{ $t('format') }}
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
                   </template>
-                </v-list-item>
-                <v-divider v-if="index < disks.length - 1" />
-              </template>
-            </v-list>
-          </v-card-text>
+                  <span v-else>—</span>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-card>
       </v-container>
     </v-container>

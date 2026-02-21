@@ -330,9 +330,9 @@
 
   <!-- Format Dialog -->
   <v-dialog v-model="formatDialog.value" max-width="400">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('confirm format') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('confirm format')" prepend-icon="mdi-broom" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         {{ $t('are you sure you want to format this disk?') }}
         <v-row class="mt-4">
           <v-col cols="12">
@@ -347,7 +347,7 @@
         </v-row>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn color="onPrimary" text @click="formatDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" :disabled="!formatDialog.filesystem" @click="formatDisk()">
           {{ $t('format') }}
@@ -358,13 +358,13 @@
 
   <!-- Delete Pool Dialog -->
   <v-dialog v-model="deletePoolDialog.value" max-width="400">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('confirm delete')" prepend-icon="mdi-delete" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         {{ $t('are you sure you want to delete this pool?') }}
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn color="onPrimary" @click="deletePoolDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deletePool(deletePoolDialog.pool.id)">
           {{ $t('delete') }}
@@ -375,9 +375,9 @@
 
   <!-- Create Pool Dialog -->
   <v-dialog v-model="createPoolDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('create pool') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('create pool')" prepend-icon="mdi-plus" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <v-form>
           <v-text-field v-model="createPoolDialog.name" :label="$t('name')" />
           <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType" />
@@ -458,7 +458,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="createPoolDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="createPool()" color="onPrimary">
           {{ $t('create') }}
@@ -469,15 +469,15 @@
 
   <!-- Passphrase Dialog -->
   <v-dialog v-model="passphraseDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('enter passphrase') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('enter passphrase')" prepend-icon="mdi-key" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <v-form>
           <v-text-field v-model="passphraseDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="passphraseDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="mountPoolWithPassphrase(passphraseDialog.pool, passphraseDialog.passphrase)" color="onPrimary">
           {{ $t('mount') }}
@@ -488,9 +488,9 @@
 
   <!-- Add Mergerfs Device Dialog -->
   <v-dialog v-model="addMergerfsDevicesDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('add devices') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('add devices')" prepend-icon="mdi-harddisk-plus" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select devices to add to pool') }}</p>
         <v-form>
           <v-select
@@ -505,7 +505,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="addMergerfsDevicesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="addMergerfsDevices(addMergerfsDevicesDialog.pool.id, addMergerfsDevicesDialog.devices, addMergerfsDevicesDialog.format, addMergerfsDevicesDialog.passphrase)" color="onPrimary">
           {{ $t('add') }}
@@ -516,9 +516,9 @@
 
   <!-- Remove MergerfsDevice Dialog -->
   <v-dialog v-model="removeMergerfsDevicesDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('remove devices') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('remove devices')" prepend-icon="mdi-harddisk-remove" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select devices to remove from pool') }}</p>
         <v-form>
           <v-select
@@ -532,7 +532,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="removeMergerfsDevicesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="removeMergerfsDevice(removeMergerfsDevicesDialog.pool.id, removeMergerfsDevicesDialog.devices, removeMergerfsDevicesDialog.unmount)" color="red">
           {{ $t('remove') }}
@@ -543,9 +543,9 @@
 
   <!-- Replace Mergerfs Device Dialog -->
   <v-dialog v-model="replaceMergerfsDeviceDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('replace device') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('replace device')" prepend-icon="mdi-file-replace" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <v-form>
           <v-select
             v-model="replaceMergerfsDeviceDialog.oldDevice"
@@ -558,7 +558,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="replaceMergerfsDeviceDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn
           @click="replaceMergerfsDevice(replaceMergerfsDeviceDialog.pool.id, replaceMergerfsDeviceDialog.oldDevice, replaceMergerfsDeviceDialog.newDevice, replaceMergerfsDeviceDialog.format)"
@@ -572,9 +572,9 @@
 
   <!-- Add Parity Devices Dialog -->
   <v-dialog v-model="addParityDevicesDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('add parity devices') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('add parity devices')" prepend-icon="mdi-harddisk-plus" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
           <v-select v-model="addParityDevicesDialog.devices" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('devices')" :multiple="true" dense />
@@ -582,7 +582,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="addParityDevicesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="addMergerfsParityDevice(addParityDevicesDialog.pool.id, addParityDevicesDialog.devices, addParityDevicesDialog.format)" color="onPrimary">
           {{ $t('add') }}
@@ -593,9 +593,9 @@
 
   <!-- Remove Parity Devices Dialog -->
   <v-dialog v-model="removeParityDevicesDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('remove parity devices') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('remove parity devices')" prepend-icon="mdi-harddisk-remove" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select parity devices to remove') }}</p>
         <v-form>
           <v-select
@@ -609,7 +609,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="removeParityDevicesDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="removeMergerfsParityDevice(removeParityDevicesDialog.pool.id, removeParityDevicesDialog.devices, removeParityDevicesDialog.unmount)" color="onPrimary">
           {{ $t('remove') }}
@@ -620,9 +620,9 @@
 
   <!-- Replace Parity Device Dialog -->
   <v-dialog v-model="replaceParityDeviceDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('replace parity device') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('replace parity device')" prepend-icon="mdi-file-replace" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <v-form>
           <v-select
             v-model="replaceParityDeviceDialog.oldDevice"
@@ -635,7 +635,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="replaceParityDeviceDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn
           @click="replaceMergerfsParityDevice(replaceParityDeviceDialog.pool.id, replaceParityDeviceDialog.oldDevice, replaceParityDeviceDialog.newDevice, replaceParityDeviceDialog.format)"
@@ -649,9 +649,9 @@
 
   <!-- SnapRAID Operation Dialog -->
   <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('snapraid operations') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('snapraid operations')" prepend-icon="mdi-database-check" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select the snapraid operation to be performed') }}</p>
         <v-form>
           <v-select
@@ -667,7 +667,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="snapraidOperationDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="performSnapraidOperation(snapraidOperationDialog.pool.id, snapraidOperationDialog.operation)" color="onPrimary">
           {{ $t('perform') }}
@@ -678,9 +678,9 @@
 
   <!-- SnapRAID Schedules Dialog -->
   <v-dialog v-model="snapraidSchedulesDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('snapraid schedules') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('snapraid schedules')" prepend-icon="mdi-clock-outline" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <v-form>
           <v-switch v-model="snapraidSchedulesDialog.sync.enabled" :label="$t('sync')" hide-details="auto" density="compact" color="green" inset />
           <v-text-field v-model="snapraidSchedulesDialog.sync.schedule" :label="$t('sync schedule (cron)')" hide-details="auto" class="mt-2 mb-4" />
@@ -691,7 +691,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="snapraidSchedulesDialog.value = false" color="onPrimary">
           {{ $t('cancel') }}
         </v-btn>
@@ -704,9 +704,9 @@
 
   <!-- Add Non-Raid Devices Dialog -->
   <v-dialog v-model="addNonRaidDeviceDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('add device') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('add device')" prepend-icon="mdi-harddisk-plus" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select device to add to pool') }}</p>
         <v-form>
           <v-select v-model="addNonRaidDeviceDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" dense />
@@ -717,7 +717,7 @@
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="addNonRaidDeviceDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn
           @click="
@@ -733,16 +733,16 @@
 
   <!-- Add Non-Raid Parity Dialog -->
   <v-dialog v-model="addNonRaidParityDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('add parity devices') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('add parity devices')" prepend-icon="mdi-harddisk-plus" style="max-height:60vh; display:flex; flex-direction:column;">
+      
+      <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
           <v-select v-model="addNonRaidParityDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" dense />
         </v-form>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="addNonRaidParityDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="addNonRaidParity(addNonRaidParityDialog.pool.id, addNonRaidParityDialog.device)" color="onPrimary">
           {{ $t('add') }}
@@ -753,9 +753,8 @@
 
   <!-- Mergerfs Policy -->
   <v-dialog v-model="mergerfsPolicyDialog.value" max-width="600">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('mergerfs policies') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="t('mergerfs policies')" prepend-icon="mdi-shape-outline" style="max-height:60vh; display:flex; flex-direction:column;">
+      <v-card-text style="overflow:auto;">
         <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
         <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
         <a href="https://trapexit.github.io/mergerfs/latest/config/functions_categories_policies/#policy-descriptions" target="_blank" class="mt-2">
@@ -763,7 +762,7 @@
         </a>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink:0;">
         <v-btn @click="mergerfsPolicyDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
         <v-btn @click="changeMergerfsPolicies(mergerfsPolicyDialog.pool.id, mergerfsPolicyDialog.policies)" color="onPrimary">
           {{ $t('save') }}

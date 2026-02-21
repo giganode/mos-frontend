@@ -147,7 +147,7 @@
       <v-card-text>
         <v-text-field
           v-model="newVm.name"
-          :label="$t('name')",
+          :label="$t('name')"
           variant="outlined"
           hide-details
           class="mb-3"

@@ -51,7 +51,7 @@
     </style>
     <script>
       let remaining = 120;
-      let timer;
+      let timer = null;
       function formatTime(s) {
         const m = Math.floor(s / 60);
         const sec = s % 60;
@@ -59,17 +59,38 @@
       }
       function update() {
         const el = document.getElementById('countdown');
-        if (!el) return;
+        if (!el) {
+          if (timer) { clearInterval(timer); timer = null; }
+          return;
+        }
         el.textContent = formatTime(Math.max(0, remaining));
         if (remaining <= 0) {
-          clearInterval(timer);
-          window.location.href = '/';
+          if (timer) { clearInterval(timer); timer = null; }
+          (async () => {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3000);
+            try {
+              const res = await fetch('/', { method: 'HEAD', signal: controller.signal, cache: 'no-store' });
+              if (res && res.ok) {
+                window.location.href = '/';
+                return;
+              }
+            } catch (e) {
+              // ignore
+            } finally {
+              clearTimeout(timeout);
+            }
+            remaining = 120;
+            el.textContent = formatTime(remaining);
+            if (!timer) timer = setInterval(update, 1000);
+          })();
+          return;
         }
         remaining--;
       }
       window.addEventListener('DOMContentLoaded', () => {
         update();
-        timer = setInterval(update, 1000);
+        if (!timer) timer = setInterval(update, 1000);
       });
     </script>
   </head>

@@ -1249,5 +1249,9 @@
   "see mergerfs documentation for policy descriptions": "Siehe MergerFS Dokumentation für Richtlinienbeschreibungen",
   "rotational": "Rotational",
   "serial": "Serial",
-  "mountpoint": "Mountpunkt"
+  "mountpoint": "Mountpunkt",
+  "could not load system info": "Systeminformationen konnten nicht geladen werden",
+  "could not load pools info": "Poolinformationen konnten nicht geladen werden",
+  "could not load os info": "OS Informationen konnten nicht geladen werden",
+  "could not load sensors info": "Sensorinformationen konnten nicht geladen werden"
 }

@@ -383,21 +383,38 @@ const getData = async () => {
       }),
     ]);
 
-    if (!res.ok) throw new Error('API-Error');
-    const result = await res.json();
-    network.value = result.network;
-    cpu.value = result.cpu;
-    memory.value = result.memory;
-    temperature.value = result.temperature;
+    if (res.ok) {
+      const result = await res.json();
+      network.value = result.network;
+      cpu.value = result.cpu;
+      memory.value = result.memory;
+      temperature.value = result.temperature;
+    } else {
+      const error = await res.json();
+      throw new Error(`${t('could not load system info')}|$| ${error.error || t('unknown error')}`);
+    }
 
-    if (!resPools.ok) throw new Error('API-Error');
-    pools.value = await resPools.json();
+    if (resPools.ok) {
+      pools.value = await resPools.json();
+    } else {
+      const error = await resPools.json();
+      throw new Error(`${t('could not load pools info')}|$| ${error.error || t('unknown error')}`);
+    }
 
-    if (!resOs.ok) throw new Error('API-Error');
-    osInfo.value = await resOs.json();
+    if (resOs.ok) {
+      osInfo.value = await resOs.json();
+    } else {
+      const error = await resOs.json();
+      throw new Error(`${t('could not load os info')}|$| ${error.error || t('unknown error')}`);
+    }
 
-    if (!resSensors.ok) throw new Error('API-Error');
-    sensors.value = await resSensors.json();
+    if (resSensors.ok) {
+      sensors.value = await resSensors.json();
+    } else {
+      const error = await resSensors.json();
+      throw new Error(`${t('could not load sensors info')}|$| ${error.error || t('unknown error')}`);
+    }
+
   } catch (e) {
     error.value = e.message;
   } finally {

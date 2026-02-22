@@ -12,11 +12,11 @@
           </v-card-text>
         </v-card>
         <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
-          <v-table density="comfortable" style="overflow-x: auto">
+          <v-table density="comfortable" style="overflow-x: auto; table-layout:fixed;">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
                 <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
-                <th style="white-space: nowrap">{{ $t('device') }}</th>
+                <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('device') }}</th>
                 <th style="white-space: nowrap">{{ $t('size') }}</th>
                 <th style="white-space: nowrap">{{ $t('usage') }}</th>
                 <th style="white-space: nowrap">{{ $t('model') }}</th>
@@ -56,9 +56,9 @@
                     </v-list>
                   </v-menu>
                 </td>
-                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
-                  <div>{{ disk.device }}</div>
-                  <div v-if="disk.serial" class="text-caption text-medium-emphasis text-truncate">{{ disk.serial }}</div>
+                <td style="max-width: 200px">
+                  <div class="text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.device }}</div>
+                  <div v-if="disk.serial" class="text-caption text-medium-emphasis text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.serial }}</div>
                 </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.size_human }}</td>
                 <td style="min-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">

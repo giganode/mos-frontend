@@ -15,7 +15,7 @@
           <v-table density="comfortable" style="overflow-x: auto">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
-                <th style="white-space: nowrap; width: 32px;">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
                 <th style="white-space: nowrap">{{ $t('device') }}</th>
                 <th style="white-space: nowrap">{{ $t('size') }}</th>
                 <th style="white-space: nowrap">{{ $t('usage') }}</th>
@@ -30,11 +30,7 @@
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon
-                        v-bind="props"
-                        class="cursor-pointer"
-                        :color="disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? 'blue' : 'red'"
-                      >
+                      <v-icon v-bind="props" class="cursor-pointer" :color="disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? 'blue' : 'red'">
                         {{ getDiskIcon(disk.type) }}
                       </v-icon>
                     </template>
@@ -60,7 +56,10 @@
                     </v-list>
                   </v-menu>
                 </td>
-                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.device }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <div>{{ disk.device }}</div>
+                  <div v-if="disk.serial" class="text-caption text-medium-emphasis text-truncate">{{ disk.serial }}</div>
+                </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ disk.size_human }}</td>
                 <td style="min-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <template v-if="disk.partitions?.some((p) => p.status?.mounted)">

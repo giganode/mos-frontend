@@ -275,54 +275,79 @@
             {{ $t('no pools have been created yet') }}
           </v-card-text>
         </v-card>
-        <v-card fluid style="margin-bottom: 80px" class="pa-0">
-          <v-card-title>{{ $t('unassigned disks') }}</v-card-title>
-          <v-skeleton-loader v-if="unassignedDisksLoading" :loading="true" type="list-item" />
-          <v-card-text class="pa-0">
-            <v-list class="pa-0" style="background-color: transparent">
-              <template v-if="unassignedDisks.length === 0 && !unassignedDisksLoading">
-                <v-list-item>
-                  <v-list-item-title>{{ $t('no unassigned disks found') }}</v-list-item-title>
-                </v-list-item>
-              </template>
-              <v-list-item v-for="unassignedDisk in unassignedDisks" :key="unassignedDisk.name">
-                <template v-slot:prepend>
-                  <v-icon
-                    class="cursor-pointer"
-                    :color="unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? 'blue' : 'red'"
-                    @dblclick="unassignedDisk.powerStatus === 'active' ? sleepDisk(unassignedDisk) : wakeDisk(unassignedDisk)"
-                  >
-                    {{ getDiskIcon(unassignedDisk.type) }}
-                  </v-icon>
-                </template>
-                <v-list-item-title>{{ unassignedDisk.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ unassignedDisk.type }} ({{ unassignedDisk.size_human }})</v-list-item-subtitle>
-                <template v-slot:append>
-                  <v-menu>
-                    <template #activator="{ props }">
-                      <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
+        <div class="text-subtitle-1 font-weight-medium" style="margin-top: 20px;">{{ $t('unassigned disks') }}</div>        
+        <v-card fluid style="margin-bottom: 80px" variant="outlined" rounded="lg" class="pa-0">
+          <v-skeleton-loader v-if="unassignedDisksLoading" :loading="true" type="table-row@3" />
+          <template v-if="unassignedDisks.length === 0 && !unassignedDisksLoading">
+            <v-divider />
+            <div class="pa-4 text-medium-emphasis">{{ $t('no unassigned disks found') }}</div>
+          </template>
+          <template v-if="unassignedDisks.length > 0">
+            <v-divider />
+            <v-table density="compact" class="pool-devices-table" style="background-color: transparent">
+              <thead>
+                <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                  <th class="text-caption" style="width: 42px"></th>
+                  <th class="text-caption">{{ $t('device') }}</th>
+                  <th class="text-caption d-none d-md-table-cell">{{ $t('model') }}</th>
+                  <th class="text-caption">{{ $t('size') }}</th>
+                  <th class="text-caption d-none d-sm-table-cell">{{ $t('partitions') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="unassignedDisk in unassignedDisks" :key="unassignedDisk.name">
+                  <td class="pa-1 text-center">
+                    <v-menu>
+                      <template #activator="{ props }">
+                        <v-icon
+                          v-bind="props"
+                          size="16"
+                          class="cursor-pointer"
+                          :color="unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? 'blue' : 'red'"
+                          @dblclick="unassignedDisk.powerStatus === 'active' ? sleepDisk(unassignedDisk) : wakeDisk(unassignedDisk)"
+                        >
+                          {{ getDiskIcon(unassignedDisk.type) }}
+                        </v-icon>
+                      </template>
+                      <v-list density="compact">
+                        <v-list-item @click="openCreatePoolDialog(unassignedDisk)">
+                          <template #prepend>
+                            <v-icon size="18">mdi-plus-circle</v-icon>
+                          </template>
+                          <v-list-item-title>{{ $t('create pool') }}</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="openFormatDialog(unassignedDisk)">
+                          <template #prepend>
+                            <v-icon size="18">mdi-broom</v-icon>
+                          </template>
+                          <v-list-item-title>{{ $t('format') }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </td>
+                  <td class="pa-1 text-body-2 text-truncate" style="max-width: 120px">
+                    <div>{{ unassignedDisk.device }}</div>
+                    <div v-if="unassignedDisk.serial" class="text-caption text-medium-emphasis text-truncate">{{ unassignedDisk.serial }}</div>
+                  </td>
+                  <td class="pa-1 text-body-2 text-truncate d-none d-md-table-cell" style="max-width: 180px">
+                    <span>{{ unassignedDisk.model || '—' }}</span>
+                  </td>
+                  <td class="pa-1 text-body-2" style="white-space: nowrap">
+                    {{ unassignedDisk.sizeHuman || unassignedDisk.size_human }}
+                  </td>
+                  <td class="pa-1 d-none d-sm-table-cell">
+                    <template v-if="unassignedDisk.partitions && unassignedDisk.partitions.length > 0">
+                      <v-chip v-for="partition in unassignedDisk.partitions" :key="partition.device" size="x-small" variant="tonal" label class="mr-1">
+                        {{ partition.device.replace('/dev/', '') }}
+                        <span v-if="partition.filesystem" class="ml-1 text-medium-emphasis">{{ partition.filesystem }}</span>
+                      </v-chip>
                     </template>
-                    <v-list>
-                      <v-list-item @click="openCreatePoolDialog(unassignedDisk)">
-                        <template #prepend>
-                          <v-icon>mdi-plus-circle</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('create pool') }}</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="openFormatDialog(unassignedDisk)">
-                        <template #prepend>
-                          <v-icon>mdi-broom</v-icon>
-                        </template>
-                        <v-list-item-title>{{ $t('format') }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
+                    <span v-else class="text-caption text-medium-emphasis">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </template>
         </v-card>
       </v-container>
     </v-container>

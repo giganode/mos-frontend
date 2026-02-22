@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container fluid class="pt-0 pr-0 pl-0 pb-4">
+      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
         <v-row>
           <v-col cols="auto" class="d-flex align-center">
             <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
@@ -9,51 +9,63 @@
           <v-col>
             <h2>{{ $t('users') }}</h2>
           </v-col>
-        </v-row>        
+        </v-row>
       </v-container>
-      <v-card fluid style="margin-bottom: 80px" class="pa-0">
-        <v-list class="bg-transparent">
-          <template v-for="(user, idx) in users" :key="user.id">
-            <v-list-item>
-              <v-list-item-title>
-                {{ user.username }}
-                <v-chip v-if="user.samba_user" color="onPrimary" size="small" class="ml-2" label>
-                  {{ $t('samba') }}
-                </v-chip>
-              </v-list-item-title>
-              <v-list-item-subtitle>{{ user.role }}</v-list-item-subtitle>
-              <template v-slot:prepend>
-                <v-icon>mdi-account</v-icon>
-              </template>
-              <template v-slot:append>
-                <v-menu>
-                  <template #activator="{ props }">
-                    <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item @click="openChangeDialog(user)">
-                      <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="openDeleteDialog(user)">
-                      <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </template>
-            </v-list-item>
-            <v-divider v-if="idx < users.length - 1" />
-          </template>
-        </v-list>
-      </v-card>
+      <v-container fluid class="pa-0">
+        <v-skeleton-loader v-if="!usersLoaded" type="table-heading, table-row@5" :loading="!usersLoaded" class="mb-4" />
+        <v-card v-else-if="usersLoaded && users.length === 0" fluid class="pa-4 mb-4">
+          <v-card-text class="pa-0">
+            {{ $t('no users found') }}
+          </v-card-text>
+        </v-card>
+        <v-card v-else-if="usersLoaded && users.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
+          <v-table density="comfortable" style="overflow-x: auto">
+            <thead>
+              <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                <th style="white-space: nowrap; width: 32px"></th>
+                <th style="white-space: nowrap">{{ $t('username') }}</th>
+                <th style="white-space: nowrap">{{ $t('role') }}</th>
+                <th style="white-space: nowrap">{{ $t('language') }}</th>
+                <th style="white-space: nowrap">{{ $t('samba') }}</th>
+                <th style="white-space: nowrap">{{ $t('created at') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in users" :key="user.id">
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-icon v-bind="props" style="cursor: pointer">mdi-account</v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="openChangeDialog(user)">
+                        <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openDeleteDialog(user)">
+                        <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ user.username }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ user.role }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ user.language }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <v-icon v-if="user.samba_user" color="green">mdi-check-circle</v-icon>
+                  <v-icon v-else color="red">mdi-close-circle</v-icon>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ new Date(user.createdAt).toLocaleDateString() }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+        </v-card>
+      </v-container>
     </v-container>
   </v-container>
 
   <!-- Delete User Dialog -->
   <v-dialog v-model="deleteDialog.value" max-width="400">
-    <v-card>
-      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
+    <v-card :title="$t('confirm delete')" prepend-icon="mdi-delete" class="pa-0">
       <v-card-text>
         {{ $t('are you sure you want to delete this user?') }}
       </v-card-text>
@@ -71,10 +83,8 @@
 
   <!-- Add User Dialog -->
   <v-dialog v-model="addDialog.value" max-width="400">
-    <v-card>
-      <v-card-title>{{ $t('add user') }}</v-card-title>
-      <v-card-text>
-        <form @submit.prevent="addUser()">
+    <v-card class="pa-0" :title="$t('add user')" prepend-icon="mdi-account-plus" style="max-height:70vh; overflow:hidden">
+      <v-card-text style="max-height:420px; overflow-y:auto; padding:16px">
           <v-text-field
             v-model="addDialog.username"
             :label="$t('username')"
@@ -114,14 +124,13 @@
               }
             "
           />
-          <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="green" />
-        </form>
+          <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact"/>
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-btn color="onPrimary" @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="onAddSubmit">
+          <v-btn color="onPrimary" @click="onAddSubmit()">
             {{ $t('save') }}
           </v-btn>
         </v-row>
@@ -131,10 +140,8 @@
 
   <!-- Change User Dialog -->
   <v-dialog v-model="changeDialog.value" max-width="400">
-    <v-card>
-      <v-card-title>{{ $t('change user') }}</v-card-title>
-      <v-card-text>
-        <form @submit.prevent="changeUser(changeDialog.user)">
+    <v-card class="pa-0" :title="$t('change user')" prepend-icon="mdi-account-edit" style="max-height:70vh; overflow:hidden">
+      <v-card-text style="max-height:420px; overflow-y:auto; padding:16px">
           <v-text-field v-model="changeDialog.user.username" :label="$t('username')" readonly />
           <v-text-field
             v-model="changeDialog.password"
@@ -145,8 +152,7 @@
             :required="changeDialog.samba_user"
           />
           <v-select v-model="changeDialog.role" :items="['admin', 'samba_only']" :label="$t('role')" required />
-          <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" />
-        </form>
+          <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact"/>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -174,11 +180,10 @@
 import { ref, onMounted, reactive } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
-import { fi } from 'vuetify/locale';
-
 const showPassword = ref(false);
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const users = ref([]);
+const usersLoaded = ref(false);
 const { t } = useI18n();
 const overlay = ref(false);
 const deleteDialog = reactive({
@@ -238,6 +243,8 @@ const getUsers = async () => {
     users.value = await res.json();
   } catch (e) {
     showSnackbarError(e.message);
+  } finally {
+    usersLoaded.value = true;
   }
 };
 

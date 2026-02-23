@@ -12,92 +12,119 @@
           </v-card-text>
         </v-card>
         <v-card v-else style="margin-bottom: 80px" class="pa-0">
-          <v-card-text class="pa-0">
-            <v-list class="bg-transparent">
-              <template v-for="(share, index) in shares.smb" :key="share.id">
-                <v-list-item>
-                  <template v-slot:prepend>
-                    <v-icon>mdi-folder</v-icon>
+          <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
+            <thead>
+              <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('name') }}</th>
+                <th style="white-space: nowrap">{{ $t('pool') }}</th>
+                <th style="white-space: nowrap">{{ $t('path') }}</th>
+                <th style="white-space: nowrap">{{ $t('type') }}</th>
+                <th style="white-space: nowrap">{{ $t('read rights') }}</th>
+                <th style="white-space: nowrap">{{ $t('write rights') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="share in shares.smb" :key="share.id">
+                <td style="white-space: nowrap">
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" style="cursor: pointer">
+                        mdi-share
+                      </v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="openEditSmbDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-text-box-edit</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="checkMergerFs(share.pool)" @click="openTargetDevicesDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-target</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('target devices') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openDeleteSmbDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-delete</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+                <td style="max-width: 200px">
+                  <div class="text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.name }}</div>
+                  <div v-if="share.comment" class="text-caption text-medium-emphasis text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.comment }}</div>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.pool }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.path }}</td>
+                <td style="white-space: nowrap">
+                  <v-chip size="small" label>{{ $t('smb') }}</v-chip>
+                  <v-chip v-if="share.guest_ok" color="onPrimary" size="x-small" class="ml-1" label>{{ $t('guest ok') }}</v-chip>
+                  <v-chip v-if="share.read_only" color="onPrimary" size="x-small" class="ml-1" label>{{ $t('read only') }}</v-chip>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <template v-if="share.valid_users?.length">
+                    <v-chip v-for="user in share.valid_users" :key="user" size="small" class="mr-1 mb-1" label>{{ user }}</v-chip>
                   </template>
-                  <v-list-item-title>
-                    {{ share.name }}
-                    <v-chip color="onPrimary" size="small" class="ml-2" label>
-                      {{ $t('smb') }}
-                    </v-chip>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>{{ share.path }}</v-list-item-subtitle>
-                  <template v-slot:append>
-                    <v-menu>
-                      <template #activator="{ props }">
-                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item @click="openDeleteSmbDialog(share)">
-                          <template #prepend>
-                            <v-icon>mdi-delete</v-icon>
-                          </template>
-                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item @click="openEditSmbDialog(share)">
-                          <template #prepend>
-                            <v-icon>mdi-text-box-edit</v-icon>
-                          </template>
-                          <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item v-if="checkMergerFs(share.pool)" @click="openTargetDevicesDialog(share)">
-                          <template #prepend>
-                            <v-icon>mdi-target</v-icon>
-                          </template>
-                          <v-list-item-title>{{ $t('target devices') }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
+                  <span v-else>—</span>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <template v-if="share.write_list?.length">
+                    <v-chip v-for="user in share.write_list" :key="user" size="small" class="mr-1 mb-1" label>{{ user }}</v-chip>
                   </template>
-                </v-list-item>
-                <v-divider v-if="index < shares.smb.length - 1 || (shares.smb.length > 0 && shares.nfs.length > 0)" />
-              </template>
-              <template v-for="(share, index) in shares.nfs" :key="share.id">
-                <v-list-item>
-                  <template v-slot:prepend>
-                    <v-icon>mdi-folder</v-icon>
-                  </template>
-                  <v-list-item-title>
-                    {{ share.name }}
-                    <v-chip color="onPrimary" size="small" class="ml-2" label>
-                      {{ $t('nfs') }}
-                    </v-chip>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>{{ share.path }}</v-list-item-subtitle>
-                  <template v-slot:append>
-                    <v-menu>
-                      <template #activator="{ props }">
-                        <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item @click="openDeleteNfsDialog(share)">
-                          <template #prepend>
-                            <v-icon>mdi-delete</v-icon>
-                          </template>
-                          <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item @click="openEditNfsDialog(share)">
-                          <template #prepend>
-                            <v-icon>mdi-text-box-edit</v-icon>
-                          </template>
-                          <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </template>
-                </v-list-item>
-                <v-divider v-if="index < shares.nfs.length - 1" />
-              </template>
-            </v-list>
-          </v-card-text>
+                  <span v-else>—</span>
+                </td>
+              </tr>
+              <tr v-for="share in shares.nfs" :key="share.id">
+                <td style="white-space: nowrap">
+                  <v-menu>
+                    <template #activator="{ props }">
+                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" size="small" style="cursor: pointer">
+                        {{ share.enabled ? 'mdi-check-circle' : 'mdi-close-circle' }}
+                      </v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="openEditNfsDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-text-box-edit</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="checkMergerFs(share.pool)" @click="openTargetDevicesDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-target</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('target devices') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openDeleteNfsDialog(share)">
+                        <template #prepend>
+                          <v-icon>mdi-delete</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+                <td style="max-width: 200px">
+                  <div class="text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.name }}</div>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.pool || '—' }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ share.path }}</td>
+                <td style="white-space: nowrap">
+                  <v-chip size="small" label>{{ $t('nfs') }}</v-chip>
+                  <v-chip v-if="share.read_only" color="onPrimary" size="x-small" class="ml-1" label>{{ $t('read only') }}</v-chip>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                  <span>{{ share.source || '—' }}</span>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">—</td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-card>
       </v-container>
     </v-container>
@@ -686,7 +713,7 @@ const updateShareSmb = async (shareDialog) => {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(`${t('share could not be updated')}|$| ${error.error || t('unknown error')}`);
-    } 
+    }
 
     showSnackbarSuccess(t('share updated successfully'));
     clearEditSmbDialog();

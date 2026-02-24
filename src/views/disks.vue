@@ -196,10 +196,15 @@ const getDisks = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('disks could not be loaded'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disks could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
     disks.value = (await res.json()) || [];
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     disksLoaded.value = true;
   }
@@ -231,14 +236,19 @@ const wakeDisk = async (disk) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('disk could not be woken up'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be woken up')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('disk successfully woken up'));
     getDisks();
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -251,14 +261,19 @@ const sleepDisk = async (disk) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
     });
-    overlay.value = false;
 
-    if (!res.ok) throw new Error(t('disk could not be put to sleep'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be put to sleep')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('disk successfully put to sleep'));
     getDisks();
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -282,15 +297,20 @@ const formatDisk = async (disk) => {
       },
       body: JSON.stringify(formatDiskData),
     });
-    overlay.value = false;
-    if (!res.ok) throw new Error(t('disk could not be formatted'));
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be formatted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
     showSnackbarSuccess(t('disk formatted successfully'));
 
     clearFormatDialog();
     getDisks();
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -302,11 +322,16 @@ const getFilesystems = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('filesystems could not be loaded'));
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('filesystems could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
     const Result = await res.json();
     filesystems.value = Result || [];
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 

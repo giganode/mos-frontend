@@ -51,7 +51,7 @@
           <v-list-item v-if="mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker">
             <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-arrange-send-backward">
+          <v-list-item v-if="mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant">
             <v-list-item-title>{{ $t('lxc') }}</v-list-item-title>
           </v-list-item>
           <v-list-item v-if="mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account">

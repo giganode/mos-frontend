@@ -7,63 +7,105 @@
       <v-container class="pa-0" fluid>
         <v-row>
           <!-- Power Management Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-power</v-icon>
-                {{ $t('power management') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded @click="rebootDialog = true">
-                  <v-icon start>mdi-restart</v-icon>
-                  {{ $t('reboot') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded @click="shutdownDialog = true">
-                  <v-icon start>mdi-power</v-icon>
-                  {{ $t('shutdown') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-power</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('power management') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" @click="rebootDialog = true" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-restart" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('reboot') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="shutdownDialog = true" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-power" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('shutdown') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- Tools -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-tools</v-icon>
-                {{ $t('tools') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosTools/webterminal">
-                  <v-icon start>mdi-powershell</v-icon>
-                  {{ $t('webterminal') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosTools/filebrowser">
-                  <v-icon start>mdi-folder</v-icon>
-                  {{ $t('filebrowser') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-tools</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('tools') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" to="/mosTools/webterminal" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-powershell" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('webterminal') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosTools/filebrowser" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-folder" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('filebrowser') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- Special Actions Card -->
-          <v-col v-if="showSpecialActions >= 3" cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-star-face</v-icon>
-                {{ $t('special') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded @click="updateAPI()">
-                  <v-icon start>mdi-api</v-icon>
-                  {{ $t('update api') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded @click="updateUI()">
-                  <v-icon start>mdi-monitor</v-icon>
-                  {{ $t('update ui') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col v-if="showSpecialActions >= 3" cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-star-face</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('special') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" @click="updateAPI()" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-api" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update api') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="updateUI()" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-monitor" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update ui') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -213,3 +255,31 @@ const updateUI = async () => {
 };
 
 </script>
+
+<style scoped>
+.card {
+  background: rgb(var(--v-theme-background));
+  border-radius: 12px;
+  padding: 8px 12px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid color-mix(in srgb, rgb(var(--v-theme-on-surface)) 15%, transparent);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+@supports not (color: color-mix(in srgb, #000 50%, #fff)) {
+  .card {
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+  :global(.v-theme--dark) .card {
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+}
+</style>

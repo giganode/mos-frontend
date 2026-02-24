@@ -80,7 +80,7 @@
             } finally {
               clearTimeout(timeout);
             }
-            remaining = 120;
+            remaining = 60;
             el.textContent = formatTime(remaining);
             if (!timer) timer = setInterval(update, 1000);
           })();

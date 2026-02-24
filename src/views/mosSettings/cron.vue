@@ -18,49 +18,83 @@
           </v-card-text>
         </v-card>
         <v-card v-else fluid style="margin-bottom: 80px" class="pa-0">
-          <v-card-text class="pa-0">
-            <v-list>
-              <v-list-item v-for="(cronJob, index) in cronJobs" :key="index">
-                <template v-slot:prepend>
-                  <v-icon class="cursor-pointer" :color="cronJob.enabled ? 'green' : 'blue'">mdi-calendar-clock</v-icon>
-                </template>
-                <v-list-item-title class="d-flex align-center">
-                  {{ cronJob.name }}
-                  <v-chip v-if="cronJob.status === 'running'" class="ml-2" small color="green" text-color="white">
-                    {{ t('running') }}
-                  </v-chip>
-                </v-list-item-title>
-                <v-list-item-subtitle>{{ cronJob.schedule }} - {{ cronJob.command }}</v-list-item-subtitle>
-                <template v-slot:append>
+          <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
+            <thead>
+              <tr style="background-color: rgba(0, 0, 0, 0.04)">
+                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('name') }}</th>
+                <th style="white-space: nowrap">{{ $t('schedule') }}</th>
+                <th style="white-space: nowrap">{{ $t('command') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(cronJob, index) in cronJobs" :key="index">
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-btn variant="text" icon v-bind="props" color="onPrimary">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
+                      <v-icon v-bind="props" class="cursor-pointer" :color="cronJob.enabled ? 'green' : 'blue'">mdi-calendar-clock</v-icon>
                     </template>
                     <v-list>
+                      <v-list-item v-if="!cronJob.enabled" @click="changeCronJob(cronJob.id, undefined, undefined, undefined, true)">
+                        <template #prepend>
+                          <v-icon>mdi-play-circle</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('enable') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item v-if="cronJob.enabled" @click="changeCronJob(cronJob.id, undefined, undefined, undefined, false)">
+                        <template #prepend>
+                          <v-icon>mdi-stop-circle</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('disable') }}</v-list-item-title>
+                      </v-list-item>
+
                       <v-list-item @click="openChangeCronJobDialog(cronJob)">
+                        <template #prepend>
+                          <v-icon>mdi-pencil</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('edit') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="openDeleteCronJobDialog(cronJob)">
+                        <template #prepend>
+                          <v-icon>mdi-delete</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('delete') }}</v-list-item-title>
                       </v-list-item>
                       <v-divider></v-divider>
                       <v-list-item @click="openChangeScriptDialog(cronJob)">
+                        <template #prepend>
+                          <v-icon>mdi-script-text</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('change script') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="startScript(cronJob.id)">
+                        <template #prepend>
+                          <v-icon>mdi-play</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('start script') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="stopScript(cronJob.id)">
+                        <template #prepend>
+                          <v-icon>mdi-stop</v-icon>
+                        </template>
                         <v-list-item-title>{{ $t('stop script') }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
+                </td>
+                <td style="max-width: 200px">
+                  <div class="d-flex align-center text-ellipsis" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                    {{ cronJob.name }}
+                    <v-chip v-if="cronJob.status === 'running'" class="ml-2" size="x-small" color="green" text-color="white" label>
+                      {{ t('running') }}
+                    </v-chip>
+                  </div>
+                </td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ cronJob.schedule }}</td>
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ cronJob.command }}</td>
+              </tr>
+            </tbody>
+          </v-table>
         </v-card>
       </v-container>
     </v-container>
@@ -104,7 +138,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="onPrimary" @click="changeCronJobDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="onPrimary" @click="changeCronJob()">{{ $t('save') }}</v-btn>
+        <v-btn color="onPrimary" @click="changeCronJob(changeCronJobDialog.id, changeCronJobDialog.name, changeCronJobDialog.schedule, changeCronJobDialog.command, changeCronJobDialog.enabled)">{{ $t('save') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -244,15 +278,14 @@ const createCronJob = async () => {
   }
 };
 
-const changeCronJob = async () => {
-  const changeCronJob = {
-    name: changeCronJobDialog.name,
-    schedule: changeCronJobDialog.schedule,
-    command: changeCronJobDialog.command,
-    enabled: changeCronJobDialog.enabled,
-  };
+const changeCronJob = async (id, name, schedule, command, enabled) => {
+  const changeCronJob = {};
+  if (name !== undefined) changeCronJob.name = name;
+  if (schedule !== undefined) changeCronJob.schedule = schedule;
+  if (command !== undefined) changeCronJob.command = command;
+  if (enabled !== undefined) changeCronJob.enabled = enabled;
   try {
-    const res = await fetch('/api/v1/cron/' + changeCronJobDialog.id, {
+    const res = await fetch('/api/v1/cron/' + encodeURIComponent(id), {
       method: 'PUT',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),

@@ -1259,5 +1259,7 @@
   "disk mounted successfully": "Festplatte erfolgreich gemountet",
   "disk could not be unmounted": "Festplatte konnte nicht ausgehängt werden",
   "disk unmounted successfully": "Festplatte erfolgreich ausgehängt",
-  "created at": "Erstellt am"
+  "created at": "Erstellt am",
+  "disable": "Deaktivieren",
+  "enable": "Aktivieren"
 }

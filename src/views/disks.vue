@@ -12,7 +12,7 @@
           </v-card-text>
         </v-card>
         <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
-          <v-table density="comfortable" style="overflow-x: auto; table-layout:fixed;">
+          <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
                 <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
@@ -46,6 +46,18 @@
                           <v-icon>mdi-motion-play</v-icon>
                         </template>
                         <v-list-item-title>{{ $t('wake up') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="mountDisk(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-play</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('mount') }}</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="unmountDisk(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-eject</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('unmount') }}</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="openFormatDialog(disk)">
                         <template #prepend>
@@ -83,6 +95,9 @@
                   <template v-if="disk.partitions?.length">
                     <div v-for="p in disk.partitions" :key="p.device" class="text-caption" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                       {{ p.device || '—' }}
+                      <v-chip v-if="p.status?.mounted" size="x-small" color="green" label class="ml-2">
+                        {{ $t('mounted') }}
+                      </v-chip>
                     </div>
                   </template>
                   <span v-else>—</span>
@@ -292,6 +307,56 @@ const getFilesystems = async () => {
     filesystems.value = Result || [];
   } catch (e) {
     showSnackbarError(e.message);
+  }
+};
+
+const mountDisk = async (disk) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/disks/${disk.name}/mount`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be mounted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('disk mounted successfully'));
+    getDisks();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const unmountDisk = async (disk) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/disks/${disk.name}/unmount`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('disk could not be unmounted')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('disk unmounted successfully'));
+    getDisks();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 

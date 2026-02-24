@@ -569,6 +569,7 @@
   "parity device could not be removed": "Parity device could not be removed",
   "parity device removed successfully": "Parity device removed successfully",
   "select parity devices to remove": "Select parity devices to remove",
+  "mount": "Mount",
   "unmount": "Unmount",
   "remove": "Remove",
   "snapraid operations": "SnapRAID operations",
@@ -1250,8 +1251,12 @@
   "rotational": "Rotational",
   "serial": "Serial",
   "mountpoint": "Mountpoint",
-  "could not load system info": "Systeminformationen konnten nicht geladen werden",
-  "could not load pools info": "Poolinformationen konnten nicht geladen werden",
-  "could not load os info": "OS Informationen konnten nicht geladen werden",
-  "could not load sensors info": "Sensorinformationen konnten nicht geladen werden"  
+  "could not load system info": "Could not load system info",
+  "could not load pools info": "Could not load pools info",
+  "could not load os info": "Could not load OS info",
+  "could not load sensors info": "Could not load sensors info",
+  "disk could not be mounted": "Could not mount disk",
+  "disk mounted successfully": "Disk mounted successfully",
+  "disk could not be unmounted": "Disk could not be unmounted",
+  "disk unmounted successfully": "Disk unmounted successfully"  
 }

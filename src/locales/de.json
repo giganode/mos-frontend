@@ -569,6 +569,7 @@
   "parity device could not be removed": "Paritätsgerät konnte nicht entfernt werden",
   "parity device removed successfully": "Paritätsgerät erfolgreich entfernt",
   "select parity devices to remove": "Wähle Paritätsgeräte zum Entfernen aus",
+  "mount": "Einhängen",
   "unmount": "Aushängen",
   "remove": "Entfernen",
   "snapraid operations": "SnapRAID Operationen",
@@ -1253,5 +1254,9 @@
   "could not load system info": "Systeminformationen konnten nicht geladen werden",
   "could not load pools info": "Poolinformationen konnten nicht geladen werden",
   "could not load os info": "OS Informationen konnten nicht geladen werden",
-  "could not load sensors info": "Sensorinformationen konnten nicht geladen werden"
+  "could not load sensors info": "Sensorinformationen konnten nicht geladen werden",
+  "disk could not be mounted": "Festplatte konnte nicht gemountet werden",
+  "disk mounted successfully": "Festplatte erfolgreich gemountet",
+  "disk could not be unmounted": "Festplatte konnte nicht ausgehängt werden",
+  "disk unmounted successfully": "Festplatte erfolgreich ausgehängt"
 }

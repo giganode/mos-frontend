@@ -7,165 +7,298 @@
       <v-container class="pa-0" fluid>
         <v-row>
           <!-- System Updates Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-update</v-icon>
-                {{ $t('system updates') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded @click="openUpdateOsDialog()">
-                  <v-icon start>mdi-package-up</v-icon>
-                  {{ $t('update system') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded @click="openUpdateKernelDialog()">
-                  <v-icon start>mdi-engine</v-icon>
-                  {{ $t('update kernel') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded @click="rollbackKernelDialog = true">
-                  <v-icon start>mdi-undo</v-icon>
-                  {{ $t('rollback kernel') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-update</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('system updates') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" @click="openUpdateOsDialog()" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-package-up" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update system') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="openUpdateKernelDialog()" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-engine" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update kernel') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="rollbackKernelDialog = true" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-undo" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('rollback kernel') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- System Configuration Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-cog</v-icon>
-                {{ $t('system configuration') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/users">
-                  <v-icon start>mdi-account</v-icon>
-                  {{ $t('users') }}
-                </v-btn>                
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/system">
-                  <v-icon start>mdi-desktop-classic</v-icon>
-                  {{ $t('system') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/cron">
-                  <v-icon start>mdi-clock-outline</v-icon>
-                  {{ $t('cron jobs') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/logs">
-                  <v-icon start>mdi-text-box-outline</v-icon>
-                  {{ $t('logs') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/mosHub">
-                  <v-icon start>mdi-hub</v-icon>
-                  {{ $t('mos hub') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-cog</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('system configuration') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" to="/mosSettings/users" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-account" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('users') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/system" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-desktop-classic" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('system') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/cron" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-clock-outline" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('cron jobs') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/logs" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-text-box-outline" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('logs') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/mosHub" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-hub" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('mos hub') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- Hardware Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-chip</v-icon>
-                {{ $t('hardware') }}
-              </v-card-title>
-              <v-card-text>
-                <!--<v-btn color="primary" block class="mb-2" rounded to="/mosSettings/drivers">
-                  <v-icon start>mdi-expansion-card</v-icon>
-                  {{ $t('drivers') }}
-                </v-btn>-->
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/boot">
-                  <v-icon start>mdi-usb-flash-drive</v-icon>
-                  {{ $t('boot') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/usbDevices">
-                  <v-icon start>mdi-usb</v-icon>
-                  {{ $t('usb devices') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/pciDevices">
-                  <v-icon start>mdi-chip</v-icon>
-                  {{ $t('pci devices') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/sensors">
-                  <v-icon start>mdi-thermometer</v-icon>
-                  {{ $t('sensors') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/zram">
-                  <v-icon start>mdi-memory</v-icon>
-                  {{ $t('zram') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
-          </v-col>          
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-chip</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('hardware') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <!--<v-list-item rounded="lg" to="/mosSettings/drivers" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-expansion-card" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('drivers') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>-->
+                  <v-list-item rounded="lg" to="/mosSettings/boot" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-usb-flash-drive" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('boot') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/usbDevices" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-usb" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('usb devices') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/pciDevices" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-chip" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('pci devices') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/sensors" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-thermometer" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('sensors') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/zram" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-memory" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('zram') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
+          </v-col>
 
           <!-- Virtualization Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-server</v-icon>
-                {{ $t('virtualization') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/docker">
-                  <v-icon start>mdi-docker</v-icon>
-                  {{ $t('docker service') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/lxc">
-                  <v-icon start>mdi-package-variant</v-icon>
-                  {{ $t('lxc service') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/vm">
-                  <v-icon start>mdi-desktop-tower</v-icon>
-                  {{ $t('vm service') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-server</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('virtualization') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" to="/mosSettings/docker" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-docker" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('docker service') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/lxc" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-package-variant" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('lxc service') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/vm" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-desktop-tower" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('vm service') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- Network Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-network</v-icon>
-                {{ $t('network') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/networkInterfaces">
-                  <v-icon start>mdi-ethernet</v-icon>
-                  {{ $t('network interfaces') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/networkServices">
-                  <v-icon start>mdi-network-outline</v-icon>
-                  {{ $t('network services') }}
-                </v-btn>
-                <v-btn color="primary" block class="mb-2" rounded to="/mosSettings/token">
-                  <v-icon start>mdi-key</v-icon>
-                  {{ $t('token') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-network</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('network') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" to="/mosSettings/networkInterfaces" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-ethernet" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('network interfaces') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/networkServices" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-network-outline" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('network services') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" to="/mosSettings/token" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-key" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('token') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
 
           <!-- Others Card -->
-          <v-col cols="12" md="6" lg="4" xl="3" class="pb-0">
-            <v-card class="pa-0">
-              <v-card-title class="text-h6 mb-3">
-                <v-icon color="primary" class="mr-2">mdi-help-box</v-icon>
-                {{ $t('others') }}
-              </v-card-title>
-              <v-card-text>
-                <v-btn color="primary" class="mb-2" block rounded @click="thanksDialog = true">
-                  <v-icon start>mdi-handshake</v-icon>
-                  {{ $t('thanks') }}
-                </v-btn>
-                <v-btn color="primary" class="mb-2" block rounded @click="aboutDialog = true">
-                  <v-icon start>mdi-information</v-icon>
-                  {{ $t('about') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
+          <v-col cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-help-box</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('others') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" @click="thanksDialog = true" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-handshake" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('thanks') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="aboutDialog = true" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-information" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('about') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
           </v-col>
-
         </v-row>
       </v-container>
     </v-container>
@@ -572,5 +705,32 @@ const clearUpdateOsDialog = () => {
 const openUpdateKernelDialog = () => {
   updateKernelDialog.value = true;
 };
-
 </script>
+
+<style scoped>
+.card {
+  background: rgb(var(--v-theme-background));
+  border-radius: 12px;
+  padding: 8px 12px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid color-mix(in srgb, rgb(var(--v-theme-on-surface)) 15%, transparent);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+@supports not (color: color-mix(in srgb, #000 50%, #fff)) {
+  .card {
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+  :global(.v-theme--dark) .card {
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+}
+</style>

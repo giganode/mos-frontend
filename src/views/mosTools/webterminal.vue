@@ -21,6 +21,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
 import { io } from 'socket.io-client';
 import { showSnackbarError } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
@@ -30,6 +31,8 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
 let socket;
 let term;
+let fitAddon = new FitAddon();
+let joined = false;
 const sessions = ref([]);
 
 onMounted(async () => {
@@ -39,24 +42,30 @@ onMounted(async () => {
   }
 
   term = new Terminal({ cursorBlink: true, fontFamily: 'monospace', fontSize: 14 });
+  term.loadAddon(fitAddon);
   term.open(document.getElementById('terminal'));
+  fitAddon.fit();
 
   // Websocket connection through proxy
   socket = io('/terminal', { path: '/api/v1/socket.io/' });
 
   socket.on('connect', () => {
-    // Session-Infos senden
-    socket.emit('join-session', {
-      sessionId: sessions.value[0].sessionId,
-      token: localStorage.getItem('authToken'),
-    });
+    if (!joined) {
+      joined = true;
+      term.write(t('connection to mos terminal established') + '\r\n');
+      // Session-Infos senden
+      socket.emit('join-session', {
+        sessionId: sessions.value[0].sessionId,
+        token: localStorage.getItem('authToken'),
+      });
+    }
   });
 
   // Wait for join confirmation
   socket.on('session-joined', (data) => {
-    term.write(t('connection to mos terminal established') + '\r\n');
-    // Trigger initial prompt
-    socket.emit('terminal-input', '\n');
+    fitAddon.fit();
+    // Aktuelle Größe nach fit() an Server senden
+    socket.emit('terminal-resize', { cols: term.cols, rows: term.rows });
   });
 
   // Display output
@@ -64,7 +73,7 @@ onMounted(async () => {
     term.write(data);
   });
 
-  // Send input to Sevrer
+  // Send input to Server
   term.onData((data) => {
     socket.emit('terminal-input', data);
   });
@@ -72,6 +81,11 @@ onMounted(async () => {
   // Resize handling
   term.onResize(({ cols, rows }) => {
     socket.emit('terminal-resize', { cols, rows });
+  });
+
+  // Window Resize - Resize Terminal
+  window.addEventListener('resize', () => {
+    fitAddon.fit();
   });
 
   // Error handling
@@ -92,6 +106,7 @@ onBeforeUnmount(() => {
     socket.disconnect();
   }
   if (term) term.dispose();
+  if (fitAddon) fitAddon.dispose();
 });
 
 const createTerminalSession = async () => {

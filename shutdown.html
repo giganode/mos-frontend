@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Shutting down...</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+      }
+      .wrap {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f7f7f7;
+        color: #111;
+      }
+      .msg {
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+      }
+      .note {
+        font-size: 0.9rem;
+        color: #555;
+        margin-top: 0.8rem;
+      }
+      .logo {
+        padding-bottom: 28px;
+      }
+
+      .wave {
+        font-size: 4rem;
+        display: inline-block;
+        animation: wave 1.6s ease-in-out infinite;
+        transform-origin: 70% 70%;
+      }
+      @keyframes wave {
+        0%   { transform: rotate(  0deg); }
+        10%  { transform: rotate(-10deg); }
+        20%  { transform: rotate( 12deg); }
+        30%  { transform: rotate(-10deg); }
+        40%  { transform: rotate(  9deg); }
+        50%  { transform: rotate(  0deg); }
+        100% { transform: rotate(  0deg); }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .wrap  { background: #1a1a1a; color: #eee; }
+        .note  { color: #aaa; }
+        .logo  { filter: invert(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div><img class="logo" src="mos_icon.svg" alt="MOS Icon" width="350" /></div>
+      <div class="wave">👋</div>
+      <div class="msg">Server is shutting down...</div>
+      <div class="note">You can safely close this tab.</div>
+    </div>
+  </body>
+</html>

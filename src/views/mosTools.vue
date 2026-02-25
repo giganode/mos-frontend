@@ -198,6 +198,8 @@ const shutdownOS = async () => {
     }
 
     showSnackbarSuccess(t('shutdown initiated successfully'));
+    window.location.href = '/shutdown.html';
+
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

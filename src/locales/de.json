@@ -1261,5 +1261,8 @@
   "disk unmounted successfully": "Festplatte erfolgreich ausgehängt",
   "created at": "Erstellt am",
   "disable": "Deaktivieren",
-  "enable": "Aktivieren"
+  "enable": "Aktivieren",
+  "update checks": "Update Prüfungen",
+  "update settings": "Update Einstellungen",
+  "update check schedule (cron)": "Update Prüfungszeitplan (Cron)"
 }

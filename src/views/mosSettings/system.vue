@@ -24,6 +24,10 @@
             <span class="text-subtitle-1 font-weight-medium">{{ $t('web ui') }}</span>            
             <v-text-field class="mt-4 mb-4" :label="$t('http port')" type="number" v-model="settingsSystem.webui.ports.http" hide-details="auto"></v-text-field>
             <v-divider class="my-2"></v-divider>
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('update settings') }}</span>
+            <v-switch :label="$t('update checks')" color="green" inset v-model="settingsSystem.update_check.enabled" class="pt-4" density="compact"></v-switch>
+            <v-text-field :label="$t('update check schedule (cron)')" v-model="settingsSystem.update_check.update_check_schedule" :disabled="!settingsSystem.update_check.enabled" hide-details="auto"></v-text-field>
+            <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('display settings') }}</span>
             <v-switch
               :label="$t('powersave')"
@@ -200,6 +204,10 @@ const settingsSystem = ref({
       compressor: 'zstd',
       accept_threshold_percent: 90,
     },
+  },
+  update_check: {
+    enabled: true,
+    update_check_schedule: "0 1 * * *"
   },
   binfmt: {
     enabled: false,

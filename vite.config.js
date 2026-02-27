@@ -62,7 +62,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     rollupOptions: {
-      input: ['./reboot.html', './index.html']
+      input: ['./reboot.html', './index.html', './shutdown.html']
     }
   }  
 });

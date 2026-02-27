@@ -1261,5 +1261,8 @@
   "disk unmounted successfully": "Disk unmounted successfully",
   "created at": "Created at",
   "disable": "Disable",
-  "enable": "Enable"
+  "enable": "Enable",
+  "update checks": "Update Checks",
+  "update settings": "Update Settings",
+  "update check schedule (cron)": "Update Check Schedule (Cron)"  
 }

@@ -42,7 +42,7 @@
                 </div>
                 <v-row v-if="iface.ipv4.length > 0">
                   <v-col cols="12">
-                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="primary" hide-details="auto"></v-switch>
+                    <v-switch :label="$t('ipv4 dhcp')" v-model="iface.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                   </v-col>
                   <template v-if="!iface.ipv4[0].dhcp">
                     <v-col cols="12" md="6">
@@ -62,7 +62,7 @@
                   <span class="text-subtitle-1 font-weight-medium mr-4">{{ $t('ipv6') }}</span>
                   <v-switch
                     :label="$t('enable ipv6')"
-                    color="primary"
+                    color="green"
                     inset
                     density="compact"
                     hide-details="auto"
@@ -72,7 +72,7 @@
                 </div>
                 <v-row v-if="iface.ipv6.length > 0">
                   <v-col cols="12">
-                    <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="primary" hide-details="auto"></v-switch>
+                    <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                   </v-col>
                   <template v-if="!iface.ipv6[0].dhcp">
                     <v-col cols="12" md="6">
@@ -103,7 +103,7 @@
                   </div>
                   <v-row v-if="bridge.ipv4.length > 0">
                     <v-col cols="12">
-                      <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="primary" hide-details="auto"></v-switch>
+                      <v-switch :label="$t('ipv4 dhcp')" v-model="bridge.ipv4[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                     </v-col>
                     <template v-if="!bridge.ipv4[0].dhcp">
                       <v-col cols="12" md="6">
@@ -123,7 +123,7 @@
                     <span class="text-subtitle-1 font-weight-medium mr-4">{{ $t('ipv6') }}</span>
                     <v-switch
                       :label="$t('enable ipv6')"
-                      color="primary"
+                      color="green"
                       hide-details="auto"
                       inset
                       density="compact"
@@ -133,7 +133,7 @@
                   </div>
                   <v-row v-if="bridge.ipv6.length > 0">
                     <v-col cols="12">
-                      <v-switch :label="$t('ipv6 dhcp')" v-model="bridge.ipv6[0].dhcp" inset density="compact" color="primary" hide-details="auto"></v-switch>
+                      <v-switch :label="$t('ipv6 dhcp')" v-model="bridge.ipv6[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
                     </v-col>
                     <template v-if="!bridge.ipv6[0].dhcp">
                       <v-col cols="12" md="6">

@@ -118,12 +118,7 @@
                   </v-row>
                   <v-row class="mt-n4">
                     <v-col cols="12">
-                      <v-text-field
-                        :label="$t('description')"
-                        v-model="path.description"
-                        density="compact"
-                        hide-details
-                      ></v-text-field>
+                      <v-text-field :label="$t('description')" v-model="path.description" density="compact" hide-details></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -203,14 +198,9 @@
                   </v-row>
                   <v-row class="mt-n4">
                     <v-col cols="12">
-                      <v-text-field
-                        :label="$t('description')"
-                        v-model="port.description"
-                        density="compact"
-                        hide-details
-                      ></v-text-field>
+                      <v-text-field :label="$t('description')" v-model="port.description" density="compact" hide-details></v-text-field>
                     </v-col>
-                  </v-row>                  
+                  </v-row>
                 </v-col>
               </v-row>
             </div>
@@ -271,12 +261,7 @@
                   </v-row>
                   <v-row class="mt-n4">
                     <v-col cols="12">
-                      <v-text-field
-                        :label="$t('description')"
-                        v-model="device.description"
-                        density="compact"
-                        hide-details
-                      ></v-text-field>
+                      <v-text-field :label="$t('description')" v-model="device.description" density="compact" hide-details></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -351,12 +336,7 @@
                   </v-row>
                   <v-row class="mt-n4">
                     <v-col cols="12">
-                      <v-text-field
-                        :label="$t('description')"
-                        v-model="variable.description"
-                        density="compact"
-                        hide-details
-                      ></v-text-field>
+                      <v-text-field :label="$t('description')" v-model="variable.description" density="compact" hide-details></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -398,16 +378,7 @@
                     >
                       <v-icon size="18">mdi-plus</v-icon>
                     </v-btn>
-                    <v-btn
-                      icon
-                      size="x-small"
-                      color="error"
-                      class="pa-0"
-                      style="width: 24px; height: 24px; min-width: 24px"
-                      @click="removeLabel(i)"
-                      title="Remove label"
-                      aria-label="remove label"
-                    >
+                    <v-btn icon size="x-small" color="error" class="pa-0" style="width: 24px; height: 24px; min-width: 24px" @click="removeLabel(i)" title="Remove label" aria-label="remove label">
                       <v-icon size="18">mdi-delete</v-icon>
                     </v-btn>
                   </div>
@@ -431,17 +402,12 @@
                   </v-row>
                   <v-row class="mt-n4">
                     <v-col cols="12">
-                      <v-text-field
-                        :label="$t('description')"
-                        v-model="label.description"
-                        density="compact"
-                        hide-details
-                      ></v-text-field>
+                      <v-text-field :label="$t('description')" v-model="label.description" density="compact" hide-details></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
               </v-row>
-            </div>            
+            </div>
           </v-card-text>
         </v-card>
       </v-container>
@@ -483,6 +449,8 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
+        <v-progress-circular v-if="wsOperationDialog.loading" color="primary" class="ma-0" indeterminate />
+        <v-spacer />
         <v-btn
           color="onPrimary"
           text

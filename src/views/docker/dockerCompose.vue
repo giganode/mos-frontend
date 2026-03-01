@@ -60,6 +60,8 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
+        <v-progress-circular v-if="wsOperationDialog.loading" color="primary" class="ma-0" indeterminate />
+        <v-spacer />
         <v-btn
           color="onPrimary"
           text

@@ -28,6 +28,7 @@ export function useDockerWebSocket(options: DockerWsOptions = {}) {
     value: false,
     operationId: '',
     data: [] as WsLine[],
+    loading: false,
   });
 
   let socket: Socket | null = null;
@@ -47,11 +48,13 @@ export function useDockerWebSocket(options: DockerWsOptions = {}) {
   const clearWsOperationDialog = () => {
     wsOperationDialog.operationId = '';
     wsOperationDialog.data = [];
+    wsOperationDialog.loading = false;
   };
 
   const openWsOperationDialog = () => {
     wsOperationDialog.value = true;
     clearWsOperationDialog();
+    wsOperationDialog.loading = true;
   };
 
   const cleanupSocket = () => {
@@ -60,6 +63,7 @@ export function useDockerWebSocket(options: DockerWsOptions = {}) {
       socket = null;
     }
     wsIsConnected.value = false;
+    wsOperationDialog.loading = false;
   };
 
   const closeWsDialog = () => {
@@ -119,13 +123,15 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
         wsOperationDialog.operationId = data.operationId;
         wsOperationDialog.data.push({
           timestamp: data.timestamp,
-          output: `${command} ${data.status}\n--------------------------------------\n`,
+          output: `${command} ${data.status}\n------------------------------------\n`,
         });
+        wsOperationDialog.loading = true;
       } else if (data.status === 'running') {
         wsOperationDialog.data.push({
           timestamp: data.timestamp,
           output: data.output,
         });
+        wsOperationDialog.loading = true;
       } else if (data.status === 'error') {
         onErrorSnackbar(t('docker command error occurred'), data.message);
         cleanupSocket();
@@ -133,11 +139,12 @@ const sendDockerWSCommand = (command: string, params?: DockerWsParams) => {
         onSuccessSnackbar(t('docker command completed successfully'));
         wsOperationDialog.data.push({
           timestamp: data.timestamp,
-          output: `--------------------------------------\n${command} ${data.status}`,
+          output: `------------------------------------\n${command} ${data.status}`,
         });
         cleanupSocket();
 
         if (onCompleted) {
+          wsOperationDialog.loading = false;
           onCompleted();
         }
       }

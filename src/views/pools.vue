@@ -683,7 +683,7 @@
             :items="
               snapraidOperationDialog.pool && snapraidOperationDialog.pool.status && snapraidOperationDialog.pool.status.parity_operation
                 ? ['sync', 'check', 'scrub', 'status', 'force_stop']
-                : ['sync', 'check', 'scrub', 'status', 'fix']
+                : ['sync', 'check', 'scrub', 'status']
             "
             :label="$t('operation')"
             dense

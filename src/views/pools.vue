@@ -13,7 +13,7 @@
                 <span class="drag-handle mr-2" style="cursor: grab; line-height: 1" aria-label="drag handle" aria-hidden>
                   <v-icon size="18">mdi-drag</v-icon>
                 </span>
-                <span class="text-subtitle-1 font-weight-medium text-truncate">{{ pool.name }}</span>
+                <span class="font-weight-medium text-truncate text-h6">{{ pool.name }}</span>
                 <v-icon v-if="pool.config.encrypted" size="16" class="ml-1" color="grey" aria-label="locked">mdi-lock</v-icon>
                 <span v-if="pool.mountPoint" class="text-caption text-medium-emphasis ml-2 d-none d-sm-inline text-truncate" style="max-width: 200px">{{ pool.mountPoint }}</span>
                 <v-spacer />
@@ -136,7 +136,7 @@
                 <div class="mb-1">
                   <v-progress-linear
                     :model-value="pool.status.usagePercent"
-                    height="6"
+                    height="8"
                     :color="getUsageColor(pool.status.usagePercent)"
                     rounded
                     bg-opacity="0.25"
@@ -183,7 +183,7 @@
                         <div v-if="data_device.storage">
                           <v-progress-linear
                             :model-value="data_device.storage.usagePercent"
-                            height="4"
+                            height="6"
                             :color="getUsageColor(data_device.storage.usagePercent)"
                             rounded
                             class="flex-grow-1"
@@ -250,7 +250,7 @@
                         </td>
                         <td class="pa-1" style="vertical-align: bottom">
                           <div v-if="parity_device.storage">
-                            <v-progress-linear :model-value="parity_device.storage.usagePercent" height="4" color="grey darken-1" rounded class="flex-grow-1" style="min-width: 40px" />
+                            <v-progress-linear :model-value="parity_device.storage.usagePercent" height="6" color="grey darken-1" rounded class="flex-grow-1" style="min-width: 40px" />
                             <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.7rem !important">
                               <span class="text-caption text-medium-emphasis">{{ Math.round(parity_device.storage.usagePercent) }}%</span>
                               <span class="text-caption text-medium-emphasis text-right" v-if="parity_device.storage.usagePercent != null">
@@ -675,7 +675,6 @@
   <!-- SnapRAID Operation Dialog -->
   <v-dialog v-model="snapraidOperationDialog.value" max-width="600">
     <v-card class="pa-0" :title="t('snapraid operations')" prepend-icon="mdi-database-check" style="max-height:60vh; display:flex; flex-direction:column;">
-      
       <v-card-text style="overflow:auto;">
         <p class="mb-4">{{ $t('select the snapraid operation to be performed') }}</p>
         <v-form>
@@ -684,7 +683,7 @@
             :items="
               snapraidOperationDialog.pool && snapraidOperationDialog.pool.status && snapraidOperationDialog.pool.status.parity_operation
                 ? ['sync', 'check', 'scrub', 'status', 'force_stop']
-                : ['sync', 'check', 'scrub', 'status']
+                : ['sync', 'check', 'scrub', 'status', 'fix']
             "
             :label="$t('operation')"
             dense
@@ -694,7 +693,7 @@
       <v-divider />
       <v-card-actions style="flex-shrink:0;">
         <v-btn @click="snapraidOperationDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
-        <v-btn @click="performSnapraidOperation(snapraidOperationDialog.pool.id, snapraidOperationDialog.operation)" color="onPrimary">
+        <v-btn @click="snapraidOperationDialog.operation === 'fix' ? snapraidFixWarningDialog.value = true : performSnapraidOperation(snapraidOperationDialog.pool.id, snapraidOperationDialog.operation)" color="onPrimary">
           {{ $t('perform') }}
         </v-btn>
       </v-card-actions>
@@ -796,6 +795,22 @@
     </v-card>
   </v-dialog>
 
+  <!-- Snapraid Fix Warning -->
+  <v-dialog v-model="snapraidFixWarningDialog.value" max-width="400">
+    <v-card class="pa-0" :title="t('warning')" prepend-icon="mdi-alert" style="max-height:60vh; display:flex; flex-direction:column;">
+      <v-card-text style="overflow:auto;">
+        {{ $t('are you sure you want to perform a fix on your pool') }}?
+      </v-card-text>
+      <v-divider />
+      <v-card-actions style="flex-shrink:0;">
+        <v-btn @click="snapraidFixWarningDialog.value = false" color="onPrimary">{{ $t('cancel') }}</v-btn>
+        <v-btn @click="performSnapraidOperation(snapraidFixWarningDialog.pool.id, 'fix')" color="red">
+          {{ $t('perform') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon @click="openCreatePoolDialog()">
     <v-icon>mdi-plus</v-icon>
@@ -882,6 +897,10 @@ const snapraidOperationDialog = reactive({
   value: false,
   pool: null,
   operation: '',
+});
+const snapraidFixWarningDialog = reactive({
+  value: false,
+  pool: null,
 });
 const replaceParityDeviceDialog = reactive({
   value: false,

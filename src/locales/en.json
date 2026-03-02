@@ -1264,5 +1264,7 @@
   "enable": "Enable",
   "update checks": "Update Checks",
   "update settings": "Update Settings",
-  "update check schedule (cron)": "Update Check Schedule (Cron)"  
+  "update check schedule (cron)": "Update Check Schedule (Cron)",
+  "warning": "Warning",
+  "are you sure you want to perform a fix on your pool": "Are you sure you want to perform a fix on your pool"  
 }

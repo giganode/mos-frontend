@@ -1264,5 +1264,7 @@
   "enable": "Aktivieren",
   "update checks": "Update Prüfungen",
   "update settings": "Update Einstellungen",
-  "update check schedule (cron)": "Update Prüfungszeitplan (Cron)"
+  "update check schedule (cron)": "Update Prüfungszeitplan (Cron)",
+  "warning": "Warnung",
+  "are you sure you want to perform a fix on your pool": "Bist du sicher, dass du eine Reparatur an deinem Pool durchführen möchtest"
 }

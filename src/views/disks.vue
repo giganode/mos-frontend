@@ -107,6 +107,9 @@
                   <v-chip v-if="disk.partitions?.some((p) => p.mountpoint === '/boot')" color="onPrimary" size="x-small" class="ml-1" label>
                     {{ $t('boot') }}
                   </v-chip>
+                  <v-chip v-if="disk.preclearRunning" color="onPrimary" size="x-small" class="ml-1" label>
+                    {{ $t('preclear running') }}
+                  </v-chip>
                 </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <template v-if="disk.partitions?.length">
@@ -129,17 +132,16 @@
       <v-card-title>{{ $t('confirm format') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to format this disk?') }}
-        <v-row class="mt-4">
-          <v-col cols="12">
-            <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" />
-          </v-col>
-          <v-col cols="12">
-            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
-          </v-col>
-          <v-col cols="12">
-            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="green" />
-          </v-col>
-        </v-row>
+        <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
+        <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
+        <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="green" />
+        <v-switch v-model="formatDialog.preClearEnabled" :label="$t('preclear')" inset density="compact" color="green" />
+        <template v-if="formatDialog.preClearEnabled">
+          <v-select v-model="formatDialog.preClear.algorithm" :items="formatAlgorithms" :label="$t('preclear algorithm')" dense />
+          <v-text-field v-model.number="formatDialog.preClear.wipes" :label="$t('number of wipes')" type="number" min="1" dense />
+          <v-switch v-model="formatDialog.preClear.readCheck" :label="$t('read check after wipe')" inset hide-details density="compact" color="green" />
+          <v-switch v-model="formatDialog.preClear.log" :label="$t('log preclear output')" inset hide-details density="compact" color="green" />
+        </template>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -169,12 +171,20 @@ const { t } = useI18n();
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const overlay = ref(false);
 const disksLoaded = ref(false);
+const formatAlgorithms = ['zero', 'one-zero', 'random', 'one'];
 const formatDialog = reactive({
   value: false,
   disk: null,
   filesystem: '',
   partition: true,
   wipeExisting: true,
+  preClearEnabled: false,
+  preClear: {
+    wipes: 2,
+    algorithm: 'zero',
+    readCheck: false,
+    log: false,
+  },
 });
 const filesystems = ref([]);
 
@@ -285,6 +295,14 @@ const formatDisk = async (disk) => {
     filesystem: formatDialog.filesystem,
     partition: formatDialog.partition,
     wipeExisting: formatDialog.wipeExisting,
+    preClear: formatDialog.preClearEnabled
+      ? {
+          algorithm: formatDialog.preClear.algorithm,
+          wipes: formatDialog.preClear.wipes,
+          readCheck: formatDialog.preClear.readCheck,
+          log: formatDialog.preClear.log,
+        }
+      : null
   };
 
   try {

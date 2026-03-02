@@ -1266,5 +1266,11 @@
   "update settings": "Update Settings",
   "update check schedule (cron)": "Update Check Schedule (Cron)",
   "warning": "Warning",
-  "are you sure you want to perform a fix on your pool": "Are you sure you want to perform a fix on your pool"  
+  "are you sure you want to perform a fix on your pool": "Are you sure you want to perform a fix on your pool",
+  "preclear running": "Preclear running",
+  "preclear": "Preclear",
+  "preclear algorithm": "Preclear Algorithm",
+  "number of wipes": "Number of Wipes",
+  "read check after wipe": "Read Check After Wipe",
+  "log preclear output": "Log Preclear Output"  
 }

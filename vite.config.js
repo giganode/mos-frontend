@@ -2,8 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import federation from '@originjs/vite-plugin-federation';
-import { VitePWA } from 'vite-plugin-pwa';
-
+  
 export default defineConfig({
   plugins: [
     vue(),
@@ -11,13 +10,6 @@ export default defineConfig({
       name: 'mos-host',
       remotes: {},
       shared: ['vue', 'vue-router', 'vuetify'],
-    }),
-    VitePWA({
-      registerType: 'autoUpdate',
-      workbox: {
-        cleanupOutdatedCaches: true,
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-      }
     }),
   ],
   server: {

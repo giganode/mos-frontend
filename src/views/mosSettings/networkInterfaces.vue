@@ -102,18 +102,6 @@
 
             <!-- BRIDGE -->
             <template v-else-if="iface.type === 'bridge'" v-for="(bridge, b1Idx) in settingsNetwork.interfaces.filter((i) => ['bridge'].includes(i.type))" :key="b1Idx">
-              <v-select
-                :label="$t('type')"
-                v-model="iface.type"
-                :items="['bridge']"
-                item-title="type"
-                item-value="type"
-                variant="outlined"
-                hide-details="auto"
-                @update:model-value="changeInterfaceType(iface)"
-              ></v-select>
-
-              <v-divider class="my-4"></v-divider>
               <div class="d-flex align-center mb-4">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
               </div>

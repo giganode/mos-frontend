@@ -6,7 +6,7 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="sharesLoading" :loading="true" type="card" />
-        <v-card v-else-if="shares.length === 0 && !poolsLoading" fluid class="mb-4 ml-0 mr-0 pa-0">
+        <v-card v-else-if="shares.smb.length === 0 && shares.nfs.length === 0 && !sharesLoading" fluid class="mb-4 ml-0 mr-0 pa-0">
           <v-card-text class="pa-4">
             {{ $t('no shares have been created yet') }}
           </v-card-text>
@@ -125,7 +125,7 @@
               </tr>
             </tbody>
           </v-table>
-        </v-card>
+        </v-card>     
       </v-container>
     </v-container>
   </v-container>

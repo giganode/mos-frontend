@@ -279,8 +279,9 @@
         <v-card fluid style="margin-bottom: 80px" variant="outlined" rounded="lg" class="pa-0">
           <v-skeleton-loader v-if="unassignedDisksLoading" :loading="true" type="table-row@3" />
           <template v-if="unassignedDisks.length === 0 && !unassignedDisksLoading">
-            <v-divider />
-            <div class="pa-4 text-medium-emphasis">{{ $t('no unassigned disks found') }}</div>
+            <v-card-text class="pa-4">
+              {{ $t('no unassigned disks found') }}
+            </v-card-text>            
           </template>
           <template v-if="unassignedDisks.length > 0">
             <v-divider />

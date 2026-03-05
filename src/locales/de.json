@@ -1272,5 +1272,9 @@
   "preclear algorithm": "Preclear Algorithmus",
   "number of wipes": "Anzahl der Durchläufe",
   "read check after wipe": "Leseprüfung nach Durchlauf",
-  "log preclear output": "Preclear Ausgabe protokollieren"
+  "log preclear output": "Preclear Ausgabe protokollieren",
+  "hub types could not be loaded": "Hub Typen konnten nicht geladen werden",
+  "passwords do not match": "Passwörter stimmen nicht überein",
+  "hide password": "Passwort verstecken",
+  "change password": "Passwort ändern"
 }

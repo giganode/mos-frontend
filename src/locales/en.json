@@ -1272,5 +1272,9 @@
   "preclear algorithm": "Preclear Algorithm",
   "number of wipes": "Number of Wipes",
   "read check after wipe": "Read Check After Wipe",
-  "log preclear output": "Log Preclear Output"  
+  "log preclear output": "Log Preclear Output"  ,
+  "hub types could not be loaded": "Hub types could not be loaded",
+  "passwords do not match": "Passwords do not match",
+  "hide password": "Hide password",
+  "change password": "Change password"
 }

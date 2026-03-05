@@ -83,54 +83,56 @@
 
   <!-- Add User Dialog -->
   <v-dialog v-model="addDialog.value" max-width="400">
-    <v-card class="pa-0" :title="$t('add user')" prepend-icon="mdi-account-plus" style="max-height:70vh; overflow:hidden">
-      <v-card-text style="max-height:420px; overflow-y:auto; padding:16px">
-          <v-text-field
-            v-model="addDialog.username"
-            :label="$t('username')"
-            :error="addDialog.submitted && addDialog.username === ''"
-            :error-messages="addDialog.submitted && addDialog.username === '' ? [$t('this field is required')] : []"
-            required
-          />
-          <v-text-field
-            v-model="addDialog.password"
-            :type="showPassword ? 'text' : 'password'"
-            :label="$t('password')"
-            :error="addDialog.submitted && addDialog.password === ''"
-            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            @click:append-inner="showPassword = !showPassword"
-            :error-messages="addDialog.submitted && addDialog.password === '' ? [$t('this field is required')] : []"
-            required
-          />
-          <v-text-field
-            v-model="addDialog.password2"
-            :label="$t('confirm password')"
-            required
-            :type="showPassword ? 'text' : 'password'"
-            :error="addDialog.submitted && addDialog.password2 === ''"
-            :error-messages="
-              addDialog.submitted ? (addDialog.password2 === '' ? [$t('this field is required')] : addDialog.password2 !== addDialog.password ? [$t('password is not the same')] : []) : []
-            "
-          />
-          <v-select
-            v-model="addDialog.role"
-            :items="['admin', 'samba_only']"
-            :label="$t('role')"
-            required
-            @update:modelValue="
-              (val) => {
-                addDialog.role = val;
-                if (val === 'samba_only') addDialog.samba_user = true;
-              }
-            "
-          />
-          <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact"/>
+    <v-card class="pa-0" :title="$t('add user')" prepend-icon="mdi-account-plus" style="max-height: 70vh; overflow: hidden">
+      <v-card-text style="max-height: 420px; overflow-y: auto; padding: 16px">
+        <v-text-field
+          v-model="addDialog.username"
+          :label="$t('username')"
+          :error="addDialog.submitted && addDialog.username === ''"
+          :error-messages="addDialog.submitted && addDialog.username === '' ? [$t('this field is required')] : []"
+          required
+        />
+        <v-text-field
+          v-model="addDialog.password"
+          :type="showPassword ? 'text' : 'password'"
+          :label="$t('password')"
+          :error="addDialog.submitted && addDialog.password === ''"
+          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"
+          :error-messages="addDialog.submitted && addDialog.password === '' ? [$t('this field is required')] : []"
+          required
+        />
+        <v-text-field
+          v-model="addDialog.password2"
+          :label="$t('confirm password')"
+          required
+          :type="showPassword ? 'text' : 'password'"
+          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"
+          :error="addDialog.submitted && addDialog.password2 === ''"
+          :error-messages="
+            addDialog.submitted ? (addDialog.password2 === '' ? [$t('this field is required')] : addDialog.password2 !== addDialog.password ? [$t('password is not the same')] : []) : []
+          "
+        />
+        <v-select
+          v-model="addDialog.role"
+          :items="['admin', 'samba_only']"
+          :label="$t('role')"
+          required
+          @update:modelValue="
+            (val) => {
+              addDialog.role = val;
+              if (val === 'samba_only') addDialog.samba_user = true;
+            }
+          "
+        />
+        <v-switch v-model="addDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact" />
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-row class="d-flex justify-end">
           <v-btn color="onPrimary" @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="onAddSubmit()">
+          <v-btn color="onPrimary" @click="addUser()">
             {{ $t('save') }}
           </v-btn>
         </v-row>
@@ -140,9 +142,17 @@
 
   <!-- Change User Dialog -->
   <v-dialog v-model="changeDialog.value" max-width="400">
-    <v-card class="pa-0" :title="$t('change user')" prepend-icon="mdi-account-edit" style="max-height:70vh; overflow:hidden">
-      <v-card-text style="max-height:420px; overflow-y:auto; padding:16px">
-          <v-text-field v-model="changeDialog.user.username" :label="$t('username')" readonly />
+    <v-card class="pa-0" :title="$t('change user')" prepend-icon="mdi-account-edit" style="max-height: 70vh; overflow: hidden">
+      <v-card-text style="max-height: 420px; overflow-y: auto; padding: 16px">
+        <v-text-field v-model="changeDialog.user.username" :label="$t('username')" readonly />
+        <v-select v-model="changeDialog.role" :items="['admin', 'samba_only']" :label="$t('role')" required />
+        <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact" hide-details="auto" />
+        <div class="d-flex justify-end">
+          <v-btn color="primary" variant="text" prepend-icon="mdi-password" @click="changeDialog.showPasswordFields = !changeDialog.showPasswordFields">
+            {{ changeDialog.showPasswordFields ? $t('hide password') : $t('change password') }}
+          </v-btn>
+        </div>
+        <template v-if="changeDialog.showPasswordFields">
           <v-text-field
             v-model="changeDialog.password"
             :type="showPassword ? 'text' : 'password'"
@@ -151,17 +161,22 @@
             @click:append-inner="showPassword = !showPassword"
             :required="changeDialog.samba_user"
           />
-          <v-select v-model="changeDialog.role" :items="['admin', 'samba_only']" :label="$t('role')" required />
-          <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact"/>
+          <v-text-field
+            v-model="changeDialog.password2"
+            :type="showPassword ? 'text' : 'password'"
+            :label="$t('confirm password')"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showPassword = !showPassword"
+            :required="changeDialog.samba_user"
+          />
+        </template>
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-row class="d-flex justify-end">
-          <v-btn color="onPrimary" @click="changeDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="changeUser(changeDialog.user)">
-            {{ $t('save') }}
-          </v-btn>
-        </v-row>
+        <v-btn color="onPrimary" @click="changeDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="changeUser(changeDialog.user)">
+          {{ $t('save') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -194,8 +209,10 @@ const changeDialog = reactive({
   value: false,
   user: null,
   password: '',
+  password2: '',
   role: '',
   samba_user: false,
+  showPasswordFields: false,
 });
 const addDialog = reactive({
   value: false,
@@ -215,6 +232,7 @@ const openChangeDialog = (user) => {
   changeDialog.value = true;
   changeDialog.user = user;
   changeDialog.password = '';
+  changeDialog.password2 = '';
   changeDialog.role = user.role;
   changeDialog.samba_user = user.samba_user;
 };
@@ -222,6 +240,7 @@ const openAddDialog = () => {
   addDialog.value = true;
   addDialog.username = '';
   addDialog.password = '';
+  addDialog.password2 = '';
   addDialog.role = 'admin';
   addDialog.samba_user = false;
   addDialog.submitted = false;
@@ -249,8 +268,13 @@ const getUsers = async () => {
 };
 
 const addUser = async () => {
-  addDialog.value = false;
-  addDialog.submitted = false;
+  if (addDialog.username === '' || addDialog.password === '' || addDialog.password2 === '' || addDialog.role === '') {
+    return;
+  }
+  if (addDialog.password !== addDialog.password2) {
+    showSnackbarError(t('passwords do not match'));
+    return;
+  }
 
   const newUser = {
     username: addDialog.username,
@@ -277,6 +301,7 @@ const addUser = async () => {
 
     showSnackbarSuccess(t('user successfully created'));
     getUsers();
+    addDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -310,7 +335,11 @@ const deleteUser = async (user) => {
 };
 
 const changeUser = async () => {
-  changeDialog.value = false;
+  if (changeDialog.password !== changeDialog.password2) {
+    showSnackbarError(t('passwords do not match'));
+    return;
+  }
+
   const userData = {
     username: changeDialog.user.username,
     password: changeDialog.password,
@@ -337,20 +366,10 @@ const changeUser = async () => {
 
     showSnackbarSuccess(t('user successfully updated'));
     getUsers();
+    changeDialog.value = false;
   } catch (e) {
     showSnackbarError(e.message);
   }
-};
-
-const onAddSubmit = () => {
-  addDialog.submitted = true;
-  if (addDialog.username === '' || addDialog.password === '' || addDialog.password2 === '' || addDialog.role === '') {
-    return;
-  }
-  if (addDialog.password !== addDialog.password2) {
-    return;
-  }
-  addUser();
 };
 
 onMounted(() => {

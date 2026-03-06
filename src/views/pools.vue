@@ -780,7 +780,7 @@
   <v-dialog v-model="mergerfsPolicyDialog.value" max-width="600">
     <v-card class="pa-0" :title="t('mergerfs policies')" prepend-icon="mdi-shape-outline" style="max-height:60vh; display:flex; flex-direction:column;">
       <v-card-text style="overflow:auto;">
-        <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense />
+        <v-select v-model="mergerfsPolicyDialog.policies.create" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('create policy')" dense class="mt-2"/>
         <v-select v-model="mergerfsPolicyDialog.policies.search" :items="mergerfsPolicyDialog.availablePolicies" :label="$t('search policy')" dense />
         <a href="https://trapexit.github.io/mergerfs/latest/config/functions_categories_policies/#policy-descriptions" target="_blank" class="mt-2">
           {{ $t('see mergerfs documentation for policy descriptions') }}

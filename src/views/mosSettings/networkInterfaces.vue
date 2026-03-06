@@ -89,6 +89,7 @@
                 hide-details="auto"
                 @update:model-value="changeInterfaceType(iface)"
               ></v-select>
+
               <v-divider class="my-4"></v-divider>
               <div class="d-flex align-center mb-4">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('bridge') }}</span>
@@ -102,6 +103,8 @@
 
             <!-- BRIDGE -->
             <template v-else-if="iface.type === 'bridge'" v-for="(bridge, b1Idx) in settingsNetwork.interfaces.filter((i) => ['bridge'].includes(i.type))" :key="b1Idx">
+              <v-switch :label="$t('vlan filtering')" v-model="bridge.vlan_filtering" inset density="compact" color="green" hide-details="auto"></v-switch>
+              <v-divider class="my-2"></v-divider>
               <div class="d-flex align-center mb-4">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
               </div>
@@ -158,6 +161,17 @@
     </v-container>
   </v-container>
 
+  <!-- Accept Changed Settings -->
+  <v-dialog v-model="settingsNetworkCountdown.value" persistent width="600">
+    <v-card class="pa-0" :title="$t('apply network settings')">
+      <v-card-text>{{ $t('please check if your network settings are working correctly') }}! {{ $t('do you want to keep these settings') }}?</v-card-text>
+      <v-card-actions>
+        <v-btn color="onPrimary" text @click="revertChanges()">{{ $t('revert') }} ({{ settingsNetworkCountdown.remaining_seconds }})</v-btn>
+        <v-btn color="onPrimary" @click="acceptChanges()">{{ $t('accept') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab @click="setNetworkSettings()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
@@ -169,7 +183,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, reactive, watch, onBeforeUnmount } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 
@@ -177,6 +191,29 @@ const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const settingsNetwork = ref({ interfaces: [] });
 const overlay = ref(false);
 const { t } = useI18n();
+const settingsNetworkCountdown = reactive({
+  value: false,
+  remaining_seconds: 0
+});
+
+let countdownInterval = null;
+
+watch(
+  () => settingsNetworkCountdown.value,
+  (val) => {
+    if (!val && countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+  }
+);
+
+onBeforeUnmount(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+});
 
 const getIfaceIpDnsString = (iface, type) => {
   return computed({
@@ -214,6 +251,9 @@ const getNetworkSettings = async () => {
       if (!iface.ipv4 || iface.ipv4.length === 0) iface.ipv4 = [{ dhcp: false, address: null, gateway: null, dns: [] }];
       if (!iface.ipv6) iface.ipv6 = [];
     });
+    if (settingsNetwork.value.pending_changes) {
+      opensettingsNetworkCountdownDialog(settingsNetwork.value);
+    }
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -236,7 +276,7 @@ const setNetworkSettings = async () => {
       const error = await res.json();
       throw new Error(`${t('network settings could not be changed')}|$| ${error.error || t('unknown error')}`);
     }
-
+    await getNetworkSettings();
     showSnackbarSuccess(t('network settings changed successfully'));
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -245,6 +285,58 @@ const setNetworkSettings = async () => {
     overlay.value = false;
   }
 };
+
+const acceptChanges = async () => {
+  settingsNetworkCountdown.value = false;
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/settings/network/apply', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('network settings could not be accepted')}|$| ${error.error || t('unknown error')}`);
+    }
+    await getNetworkSettings();
+    showSnackbarSuccess(t('network settings accepted successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const revertChanges = async () => {
+  settingsNetworkCountdown.value = false;
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/settings/network/revert', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('network settings could not be reverted')}|$| ${error.error || t('unknown error')}`);
+    }
+    await getNetworkSettings();
+    showSnackbarSuccess(t('network settings reverted successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+
 
 const changeInterfaceType = (iface) => {
   if (iface.type === 'ethernet') {
@@ -269,6 +361,7 @@ const changeInterfaceType = (iface) => {
           },
         ],
         ipv6: [],
+        vlan_filtering: false,
         interfaces: [iface.name],
       });
     }
@@ -288,5 +381,24 @@ const changeIPv6Enabled = (iface, enabled) => {
   } else {
     iface.ipv6 = [];
   }
+};
+
+const opensettingsNetworkCountdownDialog = (networkSettings) => {
+  settingsNetworkCountdown.value = true;
+  settingsNetworkCountdown.remaining_seconds = networkSettings.remaining_seconds;
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  countdownInterval = setInterval(() => {
+    if (settingsNetworkCountdown.remaining_seconds > 0) {
+      settingsNetworkCountdown.remaining_seconds -= 1;
+    } else {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      settingsNetworkCountdown.value = false;
+      getNetworkSettings();
+    }
+  }, 1000);
 };
 </script>

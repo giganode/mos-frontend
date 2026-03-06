@@ -1277,5 +1277,15 @@
   "passwords do not match": "Passwörter stimmen nicht überein",
   "hide password": "Passwort verstecken",
   "change password": "Passwort ändern",
-  "password is required for samba users": "Passwort ist für Samba Benutzer erforderlich"
+  "password is required for samba users": "Passwort ist für Samba Benutzer erforderlich",
+  "vlan filtering": "VLAN Filterung",
+  "apply network settings": "Netzwerkeinstellungen anwenden",
+  "please check if your network settings are working correctly": "Bitte überprüfe, ob deine Netzwerkeinstellungen korrekt funktionieren",
+  "do you want to keep these settings": "Möchtest du diese Einstellungen beibehalten",
+  "network settings could not be accepted": "Netzwerkeinstellungen konnten nicht akzeptiert werden",
+  "network settings accepted successfully": "Netzwerkeinstellungen erfolgreich akzeptiert",
+  "network settings could not be reverted": "Netzwerkeinstellungen konnten nicht zurückgesetzt werden",
+  "network settings reverted successfully": "Netzwerkeinstellungen erfolgreich zurückgesetzt",
+  "revert": "Zurücksetzen",
+  "accept": "Akzeptieren"
 }

@@ -1277,5 +1277,15 @@
   "passwords do not match": "Passwords do not match",
   "hide password": "Hide password",
   "change password": "Change password",
-  "password is required for samba users": "Password is required for samba users"
+  "password is required for samba users": "Password is required for samba users",
+  "vlan filtering": "VLAN filtering",
+  "apply network settings": "Apply network settings",
+  "please check if your network settings are working correctly": "Please check if your network settings are working correctly",
+  "do you want to keep these settings": "Do you want to keep these settings",
+  "network settings could not be accepted": "Network settings could not be accepted",
+  "network settings accepted successfully": "Network settings accepted successfully",
+  "network settings could not be reverted": "Network settings could not be reverted",
+  "network settings reverted successfully": "Network settings reverted successfully",
+  "revert": "Revert",
+  "accept": "Accept"
 }

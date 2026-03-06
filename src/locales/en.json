@@ -1276,5 +1276,6 @@
   "hub types could not be loaded": "Hub types could not be loaded",
   "passwords do not match": "Passwords do not match",
   "hide password": "Hide password",
-  "change password": "Change password"
+  "change password": "Change password",
+  "password is required for samba users": "Password is required for samba users"
 }

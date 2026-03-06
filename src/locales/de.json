@@ -1276,5 +1276,6 @@
   "hub types could not be loaded": "Hub Typen konnten nicht geladen werden",
   "passwords do not match": "Passwörter stimmen nicht überein",
   "hide password": "Passwort verstecken",
-  "change password": "Passwort ändern"
+  "change password": "Passwort ändern",
+  "password is required for samba users": "Passwort ist für Samba Benutzer erforderlich"
 }

@@ -130,12 +130,10 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-row class="d-flex justify-end">
-          <v-btn color="onPrimary" @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="addUser()">
-            {{ $t('save') }}
-          </v-btn>
-        </v-row>
+        <v-btn color="onPrimary" @click="addDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="addUser()">
+          {{ $t('save') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -146,13 +144,13 @@
       <v-card-text style="max-height: 420px; overflow-y: auto; padding: 16px">
         <v-text-field v-model="changeDialog.user.username" :label="$t('username')" readonly />
         <v-select v-model="changeDialog.role" :items="['admin', 'samba_only']" :label="$t('role')" required />
-        <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact" hide-details="auto" />
-        <div class="d-flex justify-end">
-          <v-btn color="primary" variant="text" prepend-icon="mdi-password" @click="changeDialog.showPasswordFields = !changeDialog.showPasswordFields">
-            {{ changeDialog.showPasswordFields ? $t('hide password') : $t('change password') }}
+        <v-switch v-model="changeDialog.samba_user" :label="$t('samba user')" inset color="green" density="compact" hide-details="auto" @update:model-value="changeSambaUser()" />
+        <div class="d-flex justify-end" v-if="!changeDialog.samba_user">
+          <v-btn color="primary" variant="text" prepend-icon="mdi-password" @click="changePasswordVisibility()">
+            {{ changeDialog.showPasswordFields || changeDialog.samba_user ? $t('hide password') : $t('change password') }}
           </v-btn>
         </div>
-        <template v-if="changeDialog.showPasswordFields">
+        <template v-if="changeDialog.showPasswordFields || changeDialog.samba_user">
           <v-text-field
             v-model="changeDialog.password"
             :type="showPassword ? 'text' : 'password'"
@@ -160,6 +158,7 @@
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
             :required="changeDialog.samba_user"
+            class="mt-4"
           />
           <v-text-field
             v-model="changeDialog.password2"
@@ -340,6 +339,11 @@ const changeUser = async () => {
     return;
   }
 
+  if (changeDialog.samba_user && changeDialog.password === '') {
+    showSnackbarError(t('password is required for samba users'));
+    return;
+  }
+
   const userData = {
     username: changeDialog.user.username,
     password: changeDialog.password,
@@ -369,6 +373,25 @@ const changeUser = async () => {
     changeDialog.value = false;
   } catch (e) {
     showSnackbarError(e.message);
+  }
+};
+
+const changePasswordVisibility = () => {
+  changeDialog.showPasswordFields = !changeDialog.showPasswordFields;
+  if (!changeDialog.showPasswordFields) {
+    changeDialog.password = '';
+    changeDialog.password2 = '';
+  }
+};
+
+const changeSambaUser = () => {
+  if (changeDialog.samba_user) {
+    changeDialog.password = '';
+    changeDialog.password2 = '';
+  } else {
+    changeDialog.showPasswordFields = false;
+    changeDialog.password = '';
+    changeDialog.password2 = '';
   }
 };
 

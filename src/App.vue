@@ -120,9 +120,11 @@ import { Toaster } from 'vue-sonner';
 import mosBlack from '/mos_black.png';
 import mosWhite from '/mos_white.png';
 import { useDisplay } from 'vuetify';
+import { useRoute } from 'vue-router';
 
 const display = useDisplay()
 const theme = useTheme();
+const route = useRoute();
 const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
@@ -145,6 +147,14 @@ let reconnectAttempts = 0;
 watch(drawer, (val) => {
   localStorage.setItem('drawer', String(val))
 })
+
+watch(
+  () => [hostname.value, route.path],
+  () => {
+    const title = route.meta?.title || 'MOS';
+    document.title = hostname.value ? `${title} - ${hostname.value}` : title;
+  },
+)
 
 onMounted(async () => {
   if (tab.value === '') {

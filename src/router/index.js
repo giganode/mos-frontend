@@ -125,7 +125,7 @@ router.beforeEach((to) => {
   const defaultTitle = 'MOS';
   const defaultDescription = 'MOS - Modern Operating System for your home server';
 
-  document.title = title || defaultTitle;
+//  document.title = title || defaultTitle;
 
   const descriptionElement = document.querySelector('head meta[name="description"]');
 

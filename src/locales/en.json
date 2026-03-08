@@ -1292,5 +1292,8 @@
   "nonraid operation executed successfully": "NonRAID operation executed successfully",
   "nonraid operation": "NonRAID Operation",
   "nonraid operations": "NonRAID Operations",
-  "options": "Options"
+  "options": "Options",
+  "check schedule could not be saved": "Check schedule could not be saved",
+  "check schedule saved successfully": "Check schedule saved successfully",
+  "nonraid schedules": "NonRAID Schedules"
 }

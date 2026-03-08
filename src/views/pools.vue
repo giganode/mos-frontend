@@ -135,6 +135,12 @@
                       </template>
                       <v-list-item-title>{{ $t('nonraid operation') }}</v-list-item-title>
                     </v-list-item>
+                    <v-list-item v-if="pool.type === 'nonraid' && pool.parity_devices.length > 0" @click="openNonRaidSchedulesDialog(pool)">
+                      <template #prepend>
+                        <v-icon size="18">mdi-clock-outline</v-icon>
+                      </template>
+                      <v-list-item-title>{{ $t('nonraid schedules') }}</v-list-item-title>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
@@ -734,18 +740,35 @@
     </v-card>
   </v-dialog>
 
+  <!-- NonRaid Schedules Dialog -->
+  <v-dialog v-model="nonRaidSchedulesDialog.value" max-width="600">
+    <v-card class="pa-0" :title="t('nonraid schedules')" prepend-icon="mdi-clock-outline" style="max-height: 60vh; display: flex; flex-direction: column">
+      <v-card-text style="overflow: auto">
+        <v-switch v-model="nonRaidSchedulesDialog.check.enabled" :label="$t('check')" hide-details="auto" density="compact" color="green" inset />
+        <v-text-field v-model="nonRaidSchedulesDialog.check.schedule" :label="$t('check schedule (cron)')" hide-details="auto" class="mt-2 mb-4" />
+      </v-card-text>
+      <v-divider />
+      <v-card-actions style="flex-shrink: 0">
+        <v-btn @click="nonRaidSchedulesDialog.value = false" color="onPrimary">
+          {{ $t('cancel') }}
+        </v-btn>
+        <v-btn color="onPrimary" @click="saveNonRaidCheckSchedule(nonRaidSchedulesDialog.pool.id, nonRaidSchedulesDialog.check)">
+          {{ $t('save') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Add Non-Raid Devices Dialog -->
   <v-dialog v-model="addNonRaidDeviceDialog.value" max-width="600">
     <v-card class="pa-0" :title="t('add device')" prepend-icon="mdi-harddisk-plus" style="max-height: 60vh; display: flex; flex-direction: column">
       <v-card-text style="overflow: auto">
         <p class="mb-4">{{ $t('select device to add to pool') }}</p>
-        <v-form>
-          <v-select v-model="addNonRaidDeviceDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" dense />
-          <v-select v-model="addNonRaidDeviceDialog.filesystem" :items="addNonRaidDeviceDialog.filesystems" :label="$t('filesystem')" dense />
-          <v-text-field v-model="addNonRaidDeviceDialog.passphrase" :label="$t('passphrase (if encrypted)')" type="password" />
-          <v-switch v-model="addNonRaidDeviceDialog.format" :label="$t('format')" density="compact" color="red" inset hide-details="auto" />
-          <v-switch v-model="addNonRaidDeviceDialog.parity_valid" :label="$t('parity valid')" hide-details="auto" density="compact" color="green" inset />
-        </v-form>
+        <v-select v-model="addNonRaidDeviceDialog.device" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('device')" dense />
+        <v-select v-model="addNonRaidDeviceDialog.filesystem" :items="addNonRaidDeviceDialog.filesystems" :label="$t('filesystem')" dense />
+        <v-text-field v-model="addNonRaidDeviceDialog.passphrase" :label="$t('passphrase (if encrypted)')" type="password" />
+        <v-switch v-model="addNonRaidDeviceDialog.format" :label="$t('format')" density="compact" color="red" inset hide-details="auto" />
+        <v-switch v-model="addNonRaidDeviceDialog.parity_valid" :label="$t('parity valid')" hide-details="auto" density="compact" color="green" inset />
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -948,6 +971,13 @@ const snapraidSchedulesDialog = reactive({
     },
   },
 });
+const nonRaidSchedulesDialog = reactive({
+  value: false,
+  check: {
+    enabled: false,
+    schedule: '0 0 * */3 SUN',
+  },
+});
 const addNonRaidDeviceDialog = reactive({
   value: false,
   pool: null,
@@ -1056,6 +1086,14 @@ const openSnapraidSchedulesDialog = (pool) => {
       enabled: false,
       schedule: '0 4 * * WED',
     },
+  };
+};
+const openNonRaidSchedulesDialog = (pool) => {
+  nonRaidSchedulesDialog.value = true;
+  nonRaidSchedulesDialog.pool = pool;
+  nonRaidSchedulesDialog.check = pool.config.check || {
+    enabled: false,
+    schedule: '0 5 * * SUN',
   };
 };
 const openPassphraseDialog = (pool) => {
@@ -1791,6 +1829,38 @@ const saveSnapraidSchedules = async (id, sync) => {
     getPools();
     getUnassignedDisks();
     snapraidSchedulesDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const saveNonRaidCheckSchedule = async (id, check) => {
+  overlay.value = true;
+  const configData = {
+    check: check,
+  };
+
+  try {
+    const res = await fetch(`/api/v1/pools/${id}/config`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(configData),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('check schedule could not be saved')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('check schedule saved successfully'));
+    getPools();
+    getUnassignedDisks();
+    nonRaidSchedulesDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

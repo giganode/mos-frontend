@@ -137,6 +137,8 @@ router.beforeEach((to) => {
     meta.content = description || defaultDescription;
     document.head.appendChild(meta);
   }
+
+  return true;
 });
 
 export default router;

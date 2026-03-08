@@ -10,7 +10,7 @@
         </div>
         <div class="text-body-2" :title="osInfo.base[0].os_id" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.cpu.manufacturer }}, {{ osInfo.cpu.brand }}</div>
       </v-col>
-      <v-col cols="6" sm="6" md="6" xl="6" v-if="cpu.info.architecture !== undefined">
+      <v-col cols="6" sm="6" md="6" xl="6" v-if="cpu.info.architecture !== undefined && cpu.info.architecture !== null && cpu.info.architecture !== '' && cpu.info.architecture !== 'unknown' && cpu.info.architecture !== 'Unknown'">
         <div class="text-caption text-medium-emphasis">
           <strong>{{ $t('architecture') }}</strong>
         </div>

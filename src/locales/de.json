@@ -1295,5 +1295,6 @@
   "options": "Optionen",
   "check schedule could not be saved": "Check Zeitplan konnte nicht gespeichert werden",
   "check schedule saved successfully": "Check Zeitplan erfolgreich gespeichert",
-  "nonraid schedules": "NonRAID Zeitpläne"
+  "nonraid schedules": "NonRAID Zeitpläne",
+  "adapter": "Adapter"
 }

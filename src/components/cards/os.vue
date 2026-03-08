@@ -36,6 +36,12 @@
         </div>
         <div class="text-body-2" :title="osInfo.uptime.pretty" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.uptime.pretty }}</div>
       </v-col>
+      <v-col cols="6" sm="6" md="4" xl="3" v-if="osInfo?.arch">
+        <div class="text-caption text-medium-emphasis">
+          <strong>{{ $t('architecture') }}</strong>
+        </div>
+        <div class="text-body-2" :title="osInfo.arch" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ osInfo.arch }}</div>
+      </v-col>
       <v-col cols="12" v-if="osInfo?.mos"><v-divider></v-divider></v-col>
       <v-col cols="6" sm="6" md="4" xl="3" v-if="osInfo?.mos?.version">
         <div class="text-caption text-medium-emphasis">

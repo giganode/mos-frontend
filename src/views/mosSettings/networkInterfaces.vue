@@ -13,11 +13,26 @@
       </v-container>
       <v-container fluid class="pa-0" style="margin-bottom: 80px">
         <v-card v-for="(iface, idx) in settingsNetwork.interfaces" :key="idx" class="mb-6 pa-0">
-          <v-card-title class="d-flex align-center py-3">{{ $t('interface') }}: {{ iface.name || $t('new interface') }}</v-card-title>
+          <v-card-title class="d-flex align-center py-3">
+            {{ $t('interface') }}: {{ iface.name || $t('new interface') }}
+            <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ iface.link_state }}</v-chip>
+            <v-chip v-if="iface.mac" class="ml-2" size="small">{{ iface.mac }}</v-chip>
+          </v-card-title>
+          <v-card-subtitle v-if="iface.adapter !== '' && iface.adapter != null && iface.adapter != undefined" class="pt-0 pb-2">{{ iface.adapter }}</v-card-subtitle>
+          <v-divider class="mb-0"></v-divider>
           <v-card-text class="pt-2">
             <!-- ETHERNET -->
             <template v-if="iface.type === 'ethernet'">
-              <v-switch v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined" :label="$t('enabled')" :model-value="iface.status === 'enabled'" @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')" :readonly="readonlyInterfaceEnabled()" inset density="compact" color="green"></v-switch>
+              <v-switch
+                v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined"
+                :label="$t('enabled')"
+                :model-value="iface.status === 'enabled'"
+                @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')"
+                :readonly="readonlyInterfaceEnabled()"
+                inset
+                density="compact"
+                color="green"
+              ></v-switch>
               <v-select
                 :label="$t('type')"
                 v-model="iface.type"
@@ -28,7 +43,6 @@
                 hide-details="auto"
                 @update:model-value="changeInterfaceType(iface)"
               ></v-select>
-
               <v-divider class="my-4"></v-divider>
               <div class="d-flex align-center mb-4">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
@@ -80,7 +94,16 @@
 
             <!-- BRIDGED -->
             <template v-else-if="iface.type === 'bridged'">
-              <v-switch v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined" :label="$t('enabled')" :model-value="iface.status === 'enabled'" @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')" :readonly="readonlyInterfaceEnabled()" inset density="compact" color="green"></v-switch>              
+              <v-switch
+                v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined"
+                :label="$t('enabled')"
+                :model-value="iface.status === 'enabled'"
+                @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')"
+                :readonly="readonlyInterfaceEnabled()"
+                inset
+                density="compact"
+                color="green"
+              ></v-switch>
               <v-select
                 :label="$t('type')"
                 v-model="iface.type"
@@ -105,7 +128,16 @@
 
             <!-- BRIDGE -->
             <template v-else-if="iface.type === 'bridge'">
-              <v-switch v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined" :label="$t('enabled')" :model-value="iface.status === 'enabled'" @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')" :readonly="readonlyInterfaceEnabled()" inset density="compact" color="green"></v-switch>
+              <v-switch
+                v-if="iface.mac !== '' && iface.mac !== null && iface.mac !== undefined"
+                :label="$t('enabled')"
+                :model-value="iface.status === 'enabled'"
+                @update:model-value="(val) => (iface.status = val ? 'enabled' : 'disabled')"
+                :readonly="readonlyInterfaceEnabled()"
+                inset
+                density="compact"
+                color="green"
+              ></v-switch>
               <v-switch :label="$t('vlan filtering')" v-model="iface.vlan_filtering" inset density="compact" color="green" hide-details="auto"></v-switch>
               <v-divider class="my-2"></v-divider>
               <div class="d-flex align-center mb-4">
@@ -196,7 +228,7 @@ const overlay = ref(false);
 const { t } = useI18n();
 const settingsNetworkCountdown = reactive({
   value: false,
-  remaining_seconds: 0
+  remaining_seconds: 0,
 });
 
 let countdownInterval = null;
@@ -208,7 +240,7 @@ watch(
       clearInterval(countdownInterval);
       countdownInterval = null;
     }
-  }
+  },
 );
 
 onBeforeUnmount(() => {
@@ -339,8 +371,6 @@ const revertChanges = async () => {
   }
 };
 
-
-
 const changeInterfaceType = (iface) => {
   if (iface.type === 'ethernet') {
     const bridgeIdx = settingsNetwork.value.interfaces.findIndex((i) => i.type === 'bridge' && i.interfaces.includes(iface.name));
@@ -414,5 +444,4 @@ const readonlyInterfaceEnabled = () => {
   if (ifaces.length <= 1) return true;
   return false;
 };
-
 </script>

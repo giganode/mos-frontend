@@ -164,7 +164,7 @@
   <!-- Accept Changed Settings -->
   <v-dialog v-model="settingsNetworkCountdown.value" persistent width="600">
     <v-card class="pa-0" :title="$t('apply network settings')">
-      <v-card-text>{{ $t('please check if your network settings are working correctly') }}! {{ $t('do you want to keep these settings') }}?</v-card-text>
+      <v-card-text>{{ $t('your network settings were changed, do you want to keep these settings') }}?</v-card-text>
       <v-card-actions>
         <v-btn color="onPrimary" text @click="revertChanges()">{{ $t('revert') }} ({{ settingsNetworkCountdown.remaining_seconds }})</v-btn>
         <v-btn color="onPrimary" @click="acceptChanges()">{{ $t('accept') }}</v-btn>

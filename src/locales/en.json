@@ -1280,12 +1280,16 @@
   "password is required for samba users": "Password is required for samba users",
   "vlan filtering": "VLAN filtering",
   "apply network settings": "Apply network settings",
-  "please check if your network settings are working correctly": "Please check if your network settings are working correctly",
-  "do you want to keep these settings": "Do you want to keep these settings",
+  "your network settings were changed, do you want to keep these settings": "Your network settings were changed, do you want to keep these settings",
   "network settings could not be accepted": "Network settings could not be accepted",
   "network settings accepted successfully": "Network settings accepted successfully",
   "network settings could not be reverted": "Network settings could not be reverted",
   "network settings reverted successfully": "Network settings reverted successfully",
   "revert": "Revert",
-  "accept": "Accept"
+  "accept": "Accept",
+  "select the nonraid operation to be performed": "Select the NonRAID operation to be performed",
+  "nonraid operation could not be executed": "NonRAID operation could not be executed",
+  "nonraid operation executed successfully": "NonRAID operation executed successfully",
+  "nonraid operation": "NonRAID Operation",
+  "nonraid operations": "NonRAID Operations"
 }

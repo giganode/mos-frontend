@@ -134,7 +134,7 @@
                         <v-icon size="18">mdi-harddisk-plus</v-icon>
                       </template>
                       <v-list-item-title>{{ $t('nonraid operation') }}</v-list-item-title>
-                    </v-list-item>                    
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
@@ -366,17 +366,9 @@
     <v-card class="pa-0" :title="t('confirm format')" prepend-icon="mdi-broom" style="max-height: 60vh; display: flex; flex-direction: column">
       <v-card-text style="overflow: auto">
         {{ $t('are you sure you want to format this disk?') }}
-        <v-row class="mt-4">
-          <v-col cols="12">
-            <v-select v-model="formatDialog.filesystem" :items="formatDialog.filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" />
-          </v-col>
-          <v-col cols="12">
-            <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
-          </v-col>
-          <v-col cols="12">
-            <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="red" />
-          </v-col>
-        </v-row>
+        <v-select v-model="formatDialog.filesystem" :items="formatDialog.filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
+        <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
+        <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="red" />
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -408,82 +400,82 @@
   <v-dialog v-model="createPoolDialog.value" max-width="600">
     <v-card class="pa-0" :title="t('create pool')" prepend-icon="mdi-plus" style="max-height: 60vh; display: flex; flex-direction: column">
       <v-card-text style="overflow: auto">
-          <v-text-field v-model="createPoolDialog.name" :label="$t('name')" class="pt-2"/>
-          <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType" />
-          <v-select
-            v-model="createPoolDialog.devices"
-            :items="
-              Array.isArray(unassignedDisks)
-                ? unassignedDisks
-                    .filter((disk) => createPoolDialog.type !== 'mergerfs' || !createPoolDialog.snapraidDevice.includes(disk.device))
-                    .map((disk) => ({
-                      title: `${disk.device} (${disk.size_human})`,
-                      value: disk.device,
-                    }))
-                : []
-            "
-            item-title="title"
-            item-value="value"
-            :label="$t('devices')"
-            :multiple="createPoolDialog.type !== 'single'"
-            dense
-          />
-          <v-select
-            v-if="createPoolDialog.type === 'mergerfs'"
-            v-model="createPoolDialog.snapraidDevice"
-            :items="
-              Array.isArray(unassignedDisks)
-                ? unassignedDisks
-                    .filter((disk) => !createPoolDialog.devices.includes(disk.device))
-                    .map((disk) => ({
-                      title: `${disk.device} (${disk.size_human})`,
-                      value: disk.device,
-                    }))
-                : []
-            "
-            item-title="title"
-            item-value="value"
-            :label="$t('snapraid device')"
-            dense
-            :multiple="true"
-          />
-          <v-select
-            v-if="createPoolDialog.type === 'nonraid'"
-            v-model="createPoolDialog.parity"
-            :items="
-              Array.isArray(unassignedDisks)
-                ? unassignedDisks.map((disk) => ({
+        <v-text-field v-model="createPoolDialog.name" :label="$t('name')" class="pt-2" />
+        <v-select v-model="createPoolDialog.type" :items="poolTypes" :label="$t('type')" dense @update:model-value="switchPoolType" />
+        <v-select
+          v-model="createPoolDialog.devices"
+          :items="
+            Array.isArray(unassignedDisks)
+              ? unassignedDisks
+                  .filter((disk) => createPoolDialog.type !== 'mergerfs' || !createPoolDialog.snapraidDevice.includes(disk.device))
+                  .map((disk) => ({
                     title: `${disk.device} (${disk.size_human})`,
                     value: disk.device,
                   }))
-                : []
-            "
-            item-title="title"
-            item-value="value"
-            :label="$t('parity')"
-            :multiple="true"
-            dense
-          />
-          <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="raidLevels" :label="$t('raid level')" dense />
-          <v-select v-model="createPoolDialog.filesystem" :items="createPoolDialog.filesystems" :label="$t('filesystem')" dense />
-          <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.comment" :label="$t('comment')" />
-          <div v-if="createPoolDialog.type === 'mergerfs'">
-            <v-divider></v-divider>
-            <v-btn variant="text" @click="createPoolDialog.showAdvanced = !createPoolDialog.showAdvanced" class="mb-4">
-              {{ createPoolDialog.showAdvanced ? $t('hide advanced options') : $t('show advanced options') }}
-            </v-btn>
-            <v-slide-y-transition>
-              <div v-if="createPoolDialog.showAdvanced">
-                <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.mergerfsOptions" :label="$t('mergerfs options')" />
-              </div>
-            </v-slide-y-transition>
-          </div>
-          <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="green" inset />
-          <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
-          <v-switch v-model="createPoolDialog.shared" :label="$t('shared')" hide-details density="compact" color="green" inset />
-          <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" density="compact" color="red" inset />
-          <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
-          <v-switch v-if="createPoolDialog.encrypted" v-model="createPoolDialog.create_keyfile" :label="$t('create keyfile')" hide-details density="compact" color="red" inset />
+              : []
+          "
+          item-title="title"
+          item-value="value"
+          :label="$t('devices')"
+          :multiple="createPoolDialog.type !== 'single'"
+          dense
+        />
+        <v-select
+          v-if="createPoolDialog.type === 'mergerfs'"
+          v-model="createPoolDialog.snapraidDevice"
+          :items="
+            Array.isArray(unassignedDisks)
+              ? unassignedDisks
+                  .filter((disk) => !createPoolDialog.devices.includes(disk.device))
+                  .map((disk) => ({
+                    title: `${disk.device} (${disk.size_human})`,
+                    value: disk.device,
+                  }))
+              : []
+          "
+          item-title="title"
+          item-value="value"
+          :label="$t('snapraid device')"
+          dense
+          :multiple="true"
+        />
+        <v-select
+          v-if="createPoolDialog.type === 'nonraid'"
+          v-model="createPoolDialog.parity"
+          :items="
+            Array.isArray(unassignedDisks)
+              ? unassignedDisks.map((disk) => ({
+                  title: `${disk.device} (${disk.size_human})`,
+                  value: disk.device,
+                }))
+              : []
+          "
+          item-title="title"
+          item-value="value"
+          :label="$t('parity')"
+          :multiple="true"
+          dense
+        />
+        <v-select v-if="createPoolDialog.type === 'multi'" v-model="createPoolDialog.raidLevel" :items="raidLevels" :label="$t('raid level')" dense />
+        <v-select v-model="createPoolDialog.filesystem" :items="createPoolDialog.filesystems" :label="$t('filesystem')" dense />
+        <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.comment" :label="$t('comment')" />
+        <div v-if="createPoolDialog.type === 'mergerfs'">
+          <v-divider></v-divider>
+          <v-btn variant="text" @click="createPoolDialog.showAdvanced = !createPoolDialog.showAdvanced" class="mb-4">
+            {{ createPoolDialog.showAdvanced ? $t('hide advanced options') : $t('show advanced options') }}
+          </v-btn>
+          <v-slide-y-transition>
+            <div v-if="createPoolDialog.showAdvanced">
+              <v-text-field v-if="createPoolDialog.type === 'mergerfs'" v-model="createPoolDialog.mergerfsOptions" :label="$t('mergerfs options')" />
+            </div>
+          </v-slide-y-transition>
+        </div>
+        <v-switch v-model="createPoolDialog.automount" :label="$t('automount')" hide-details density="compact" color="green" inset />
+        <v-switch v-model="createPoolDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
+        <v-switch v-model="createPoolDialog.shared" :label="$t('shared')" hide-details density="compact" color="green" inset />
+        <v-switch v-model="createPoolDialog.encrypted" :label="$t('encrypt')" density="compact" color="red" inset />
+        <v-text-field v-if="createPoolDialog.encrypted" v-model="createPoolDialog.passphrase" :label="$t('passphrase')" type="password" :rules="[(v) => !!v || $t('passphrase is required')]" />
+        <v-switch v-if="createPoolDialog.encrypted" v-model="createPoolDialog.create_keyfile" :label="$t('create keyfile')" hide-details density="compact" color="red" inset />
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -704,10 +696,8 @@
     <v-card class="pa-0" :title="t('nonraid operations')" prepend-icon="mdi-database-check" style="max-height: 60vh; display: flex; flex-direction: column">
       <v-card-text style="overflow: auto">
         <p class="mb-4">{{ $t('select the nonraid operation to be performed') }}</p>
-        <v-form>
-          <v-select v-model="nonRaidOperationDialog.operation" :items="nonRaidOperationDialog.operations" :label="$t('operation')" dense />
-          <v-select v-model="nonRaidOperationDialog.option" :items="nonRaidOperationDialog.options" :label="$t('options')" dense v-if="nonRaidOperationDialog.operation === 'check'" />
-        </v-form>
+        <v-select v-model="nonRaidOperationDialog.operation" :items="nonRaidOperationDialog.operations" :label="$t('operation')" dense />
+        <v-select v-model="nonRaidOperationDialog.option" :items="nonRaidOperationDialog.options" :label="$t('options')" dense v-if="nonRaidOperationDialog.operation === 'check'" />
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -1748,7 +1738,7 @@ const performNonRaidOperation = async (poolId, operation, option) => {
 
   const payload = {
     operation: operation,
-    ...(option !== null && { option: option })
+    ...(option !== null && { option: option }),
   };
 
   try {
@@ -1768,7 +1758,7 @@ const performNonRaidOperation = async (poolId, operation, option) => {
     showSnackbarSuccess(t('nonraid operation executed successfully'));
     getPools();
     getUnassignedDisks();
-    snapraidOperationDialog.value = false;
+    nonRaidOperationDialog.value = false;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

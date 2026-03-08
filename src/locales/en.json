@@ -1291,5 +1291,6 @@
   "nonraid operation could not be executed": "NonRAID operation could not be executed",
   "nonraid operation executed successfully": "NonRAID operation executed successfully",
   "nonraid operation": "NonRAID Operation",
-  "nonraid operations": "NonRAID Operations"
+  "nonraid operations": "NonRAID Operations",
+  "options": "Options"
 }

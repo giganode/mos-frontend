@@ -2258,6 +2258,8 @@ const getDiskIcon = (type) => {
       return 'mdi-chip';
     case 'ramdisk':
       return 'mdi-memory';
+    case 'emmc':
+      return 'mdi-micro-sd'; 
     default:
       return 'mdi-help-circle';
   }

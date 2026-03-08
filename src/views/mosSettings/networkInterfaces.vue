@@ -13,7 +13,7 @@
       </v-container>
       <v-container fluid class="pa-0" style="margin-bottom: 80px">
         <v-card v-for="(iface, idx) in settingsNetwork.interfaces" :key="idx" class="mb-6 pa-0">
-          <v-card-title class="d-flex align-center py-3">
+          <v-card-title class="d-flex align-center py-3 pb-1">
             {{ $t('interface') }}: {{ iface.name || $t('new interface') }}
             <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ iface.link_state }}</v-chip>
             <v-chip v-if="iface.mac" class="ml-2" size="small">{{ iface.mac }}</v-chip>

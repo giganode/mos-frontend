@@ -44,7 +44,7 @@
                 @update:model-value="changeInterfaceType(iface)"
               ></v-select>
               <v-divider class="my-4"></v-divider>
-              <div class="d-flex align-center mb-4">
+              <div class="d-flex align-center mb-2">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
               </div>
               <v-row v-if="iface.ipv4.length > 0">
@@ -63,20 +63,19 @@
                   </v-col>
                 </template>
               </v-row>
-
-              <v-divider class="my-4"></v-divider>
-              <div class="d-flex align-center mb-4">
+              <div class="d-flex align-center mb-2 mt-4">
                 <span class="text-subtitle-1 font-weight-medium mr-4">{{ $t('ipv6') }}</span>
-                <v-switch
-                  :label="$t('enable ipv6')"
-                  color="green"
-                  inset
-                  density="compact"
-                  hide-details="auto"
-                  :model-value="iface.ipv6.length > 0"
-                  @update:model-value="changeIPv6Enabled(iface, $event)"
-                ></v-switch>
               </div>
+              <v-switch
+                :label="$t('enable ipv6')"
+                color="green"
+                inset
+                density="compact"
+                hide-details="auto"
+                :model-value="iface.ipv6.length > 0"
+                @update:model-value="changeIPv6Enabled(iface, $event)"
+              ></v-switch>
+
               <v-row v-if="iface.ipv6.length > 0">
                 <v-col cols="12">
                   <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
@@ -90,6 +89,72 @@
                   </v-col>
                 </template>
               </v-row>
+
+              <v-divider class="my-4"></v-divider>
+              <v-row>
+                <v-col cols="12" class="d-flex align-center justify-space-between">
+                  <span class="text-subtitle-1 font-weight-medium">{{ $t('vlan') }}</span>
+                  <v-btn
+                    variant="text"
+                    size="small"
+                    color="green"
+                    class="ma-1 pa-0 float-right"
+                    style="min-width: 0"
+                    @click="openVlanDialog(iface)"
+                    :title="$t('add vlan')"
+                    :aria-label="$t('add vlan')"
+                  >
+                    <v-icon size="18" class="mr-1">mdi-plus</v-icon>
+                    {{ $t('add vlan') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <v-table class="ma-0 pa-0" hide-default-footer>
+                <thead>
+                  <tr>
+                    <th class="text-start" style="width:1px; white-space:nowrap;"></th>
+                    <th class="text-start">{{ $t('vlan id') }}</th>
+                    <th class="text-start">{{ $t('mtu') }}</th>
+                    <th class="text-start">{{ $t('ipv4') }}</th>
+                    <th class="text-start">{{ $t('ipv6') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(vlan, vIdx) in iface.vlans || []" :key="vIdx">
+                    <td style="width:1px; white-space:nowrap; padding:0;">
+                      <v-btn
+                        icon
+                        size="small"
+                        variant="text"
+                        color="red"
+                        @click="removeVlan(iface, vIdx)"
+                        :title="$t('remove')"
+                        :aria-label="$t('remove')"
+                      >
+                        <v-icon>mdi-delete</v-icon>
+                      </v-btn>
+                    </td>
+                    <td>{{ vlan.vlan_id }}</td>
+                    <td>{{ vlan.mtu || '' }}</td>
+                    <td>
+                      <div v-if="vlan.ipv4 && vlan.ipv4.length">
+                        <div v-if="vlan.ipv4[0].dhcp">{{ $t('dhcp') }}</div>
+                        <div v-else>{{ vlan.ipv4[0].address || '' }}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div v-if="vlan.ipv6 && vlan.ipv6.length">
+                        <div v-if="vlan.ipv6[0].dhcp">{{ $t('dhcp') }}</div>
+                        <div v-else>{{ vlan.ipv6[0].address || '' }}</div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr v-if="!(iface.vlans && iface.vlans.length)">
+                    <td colspan="5" class="text-center">{{ $t('no vlans') }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
             </template>
 
             <!-- BRIDGED -->
@@ -140,7 +205,7 @@
               ></v-switch>
               <v-switch :label="$t('vlan filtering')" v-model="iface.vlan_filtering" inset density="compact" color="green" hide-details="auto"></v-switch>
               <v-divider class="my-2"></v-divider>
-              <div class="d-flex align-center mb-4">
+              <div class="d-flex align-center mb-2">
                 <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
               </div>
               <v-row v-if="iface.ipv4.length > 0">
@@ -160,19 +225,18 @@
                 </template>
               </v-row>
 
-              <v-divider class="my-4"></v-divider>
-              <div class="d-flex align-center mb-4">
+              <div class="d-flex align-center mb-2 mt-4">
                 <span class="text-subtitle-1 font-weight-medium mr-4">{{ $t('ipv6') }}</span>
-                <v-switch
-                  :label="$t('enable ipv6')"
-                  color="green"
-                  hide-details="auto"
-                  inset
-                  density="compact"
-                  :model-value="iface.ipv6.length > 0"
-                  @update:model-value="(val) => changeIPv6Enabled(iface, val)"
-                ></v-switch>
               </div>
+              <v-switch
+                :label="$t('enable ipv6')"
+                color="green"
+                hide-details="auto"
+                inset
+                density="compact"
+                :model-value="iface.ipv6.length > 0"
+                @update:model-value="changeIPv6Enabled(iface, $event)"
+              ></v-switch>
               <v-row v-if="iface.ipv6.length > 0">
                 <v-col cols="12">
                   <v-switch :label="$t('ipv6 dhcp')" v-model="iface.ipv6[0].dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
@@ -207,6 +271,74 @@
     </v-card>
   </v-dialog>
 
+  <!-- Add VLAN Dialog -->
+  <v-dialog v-model="addVlanDialog.value" persistent width="600">
+    <v-card class="pa-0" :title="$t('add vlan')" prepend-icon="mdi-plus" style="max-height: 80vh; display: flex; flex-direction: column">
+      <v-card-text style="overflow: auto" class="pt-2">
+        <v-text-field v-model="addVlanDialog.vlan_id" :label="$t('vlan id')" variant="outlined"></v-text-field>
+        <v-text-field v-model="addVlanDialog.mtu" :label="$t('mtu')" variant="outlined" hide-details="auto"></v-text-field>
+        <v-divider class="my-4"></v-divider>
+        <div class="d-flex align-center mb-2">
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('ipv4') }}</span>
+        </div>
+        <v-switch :label="$t('ipv4 dhcp')" v-model="addVlanDialog.ipv4.dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+        <template v-if="!addVlanDialog.ipv4.dhcp">
+          <v-text-field :label="$t('ipv4 address')" v-model="addVlanDialog.ipv4.address" variant="outlined" class="pt-2"></v-text-field>
+          <v-text-field :label="$t('ipv4 gateway')" v-model="addVlanDialog.ipv4.gateway" variant="outlined"></v-text-field>
+          <v-text-field :label="$t('ipv4 dns (comma separated)')" v-model="addVlanDialog.ipv4.dns" variant="outlined" hide-details="auto"></v-text-field>
+        </template>
+        <div class="d-flex align-center mb-2 mt-4">
+          <span class="text-subtitle-1 font-weight-medium mr-4">{{ $t('ipv6') }}</span>
+        </div>
+        <v-switch
+          :label="$t('enable ipv6')"
+          color="green"
+          inset
+          density="compact"
+          :model-value="addVlanDialog.ipv6 && addVlanDialog.ipv6.dhcp !== undefined"
+          @update:model-value="(val) => {
+            if (val) {
+              if (!addVlanDialog.ipv6) addVlanDialog.ipv6 = {};
+              addVlanDialog.ipv6.dhcp = true;
+            } else {
+              addVlanDialog.ipv6 = null;
+            }
+          }"
+          hide-details="auto"
+        ></v-switch>
+        <v-switch v-if="addVlanDialog.ipv6 && addVlanDialog.ipv6.dhcp !== undefined" :label="$t('ipv6 dhcp')" v-model="addVlanDialog.ipv6.dhcp" inset density="compact" color="green" hide-details="auto"></v-switch>
+        <template v-if="addVlanDialog.ipv6 && addVlanDialog.ipv6.dhcp !== undefined && !addVlanDialog.ipv6.dhcp">
+          <v-text-field :label="$t('ipv6 address')" v-model="addVlanDialog.ipv6.address" variant="outlined" class="pt-2"></v-text-field>
+          <v-text-field :label="$t('ipv6 gateway')" v-model="addVlanDialog.ipv6.gateway" variant="outlined"></v-text-field>
+          <v-text-field :label="$t('ipv6 dns (comma separated)')" v-model="addVlanDialog.ipv6.dns" variant="outlined" hide-details="auto"></v-text-field>
+        </template>
+      </v-card-text>
+      <v-divider class="my-0"></v-divider>
+      <v-card-actions style="flex-shrink: 0">
+        <v-btn color="onPrimary" text @click="addVlanDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn
+          color="onPrimary"
+          @click="() => {
+            if (!addVlanDialog.vlan_id) {
+              showSnackbarError($t('vlan id is required'));
+              return;
+            }
+            if (!addVlanDialog.iface.vlans) addVlanDialog.iface.vlans = [];
+            addVlanDialog.iface.vlans.push({
+              vlan_id: addVlanDialog.vlan_id,
+              mtu: addVlanDialog.mtu,
+              ipv4: addVlanDialog.ipv4 ? [{ ...addVlanDialog.ipv4 }] : [],
+              ipv6: addVlanDialog.ipv6 && addVlanDialog.ipv6.dhcp !== undefined ? [{ ...addVlanDialog.ipv6 }] : [],
+            });
+            addVlanDialog.value = false;
+          }"
+        >
+          {{ $t('add') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
   <v-fab @click="setNetworkSettings()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
@@ -229,6 +361,19 @@ const { t } = useI18n();
 const settingsNetworkCountdown = reactive({
   value: false,
   remaining_seconds: 0,
+});
+const addVlanDialog = reactive({
+  value: false,
+  iface: null,
+  vlan_id: '',
+  mtu: '',
+  ipv4: {
+    dhcp: true,
+    address: '',
+    gateway: '',
+    dns: '',
+  },
+  ipv6: null
 });
 
 let countdownInterval = null;
@@ -285,6 +430,7 @@ const getNetworkSettings = async () => {
     settingsNetwork.value.interfaces.forEach((iface) => {
       if (!iface.ipv4 || iface.ipv4.length === 0) iface.ipv4 = [{ dhcp: false, address: null, gateway: null, dns: [] }];
       if (!iface.ipv6) iface.ipv6 = [];
+      if (!iface.vlan) iface.vlan = [];
     });
     if (settingsNetwork.value.pending_changes) {
       opensettingsNetworkCountdownDialog(settingsNetwork.value);
@@ -443,5 +589,23 @@ const readonlyInterfaceEnabled = () => {
   let ifaces = settingsNetwork.value.interfaces.filter((i) => i.mac && i.mac !== '' && i.mac !== null && i.mac !== undefined);
   if (ifaces.length <= 1) return true;
   return false;
+};
+
+const openVlanDialog = (iface) => {
+  addVlanDialog.iface = iface;
+  addVlanDialog.vlan_id = '';
+  addVlanDialog.mtu = '';
+  addVlanDialog.ipv4 = {
+    dhcp: true,
+    address: '',
+    gateway: '',
+    dns: '',
+  };
+  addVlanDialog.ipv6 = null;
+  addVlanDialog.value = true;
+};
+
+const removeVlan = (iface, vIdx) => {
+  iface.vlans.splice(vIdx, 1);
 };
 </script>

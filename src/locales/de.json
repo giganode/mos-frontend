@@ -1296,5 +1296,10 @@
   "check schedule could not be saved": "Check Zeitplan konnte nicht gespeichert werden",
   "check schedule saved successfully": "Check Zeitplan erfolgreich gespeichert",
   "nonraid schedules": "NonRAID Zeitpläne",
-  "adapter": "Adapter"
+  "adapter": "Adapter",
+  "vlan": "VLAN",
+  "vlan id": "VLAN ID",
+  "no vlans": "Keine VLANs",
+  "mtu": "MTU",
+  "add vlan": "VLAN hinzufügen"
 }

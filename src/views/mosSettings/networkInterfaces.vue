@@ -89,72 +89,6 @@
                   </v-col>
                 </template>
               </v-row>
-
-              <v-divider class="my-4"></v-divider>
-              <v-row>
-                <v-col cols="12" class="d-flex align-center justify-space-between">
-                  <span class="text-subtitle-1 font-weight-medium">{{ $t('vlan') }}</span>
-                  <v-btn
-                    variant="text"
-                    size="small"
-                    color="green"
-                    class="ma-1 pa-0 float-right"
-                    style="min-width: 0"
-                    @click="openVlanDialog(iface)"
-                    :title="$t('add vlan')"
-                    :aria-label="$t('add vlan')"
-                  >
-                    <v-icon size="18" class="mr-1">mdi-plus</v-icon>
-                    {{ $t('add vlan') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
-
-              <v-table class="ma-0 pa-0" hide-default-footer>
-                <thead>
-                  <tr>
-                    <th class="text-start" style="width:1px; white-space:nowrap;"></th>
-                    <th class="text-start">{{ $t('vlan id') }}</th>
-                    <th class="text-start">{{ $t('mtu') }}</th>
-                    <th class="text-start">{{ $t('ipv4') }}</th>
-                    <th class="text-start">{{ $t('ipv6') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(vlan, vIdx) in iface.vlans || []" :key="vIdx">
-                    <td style="width:1px; white-space:nowrap; padding:0;">
-                      <v-btn
-                        icon
-                        size="small"
-                        variant="text"
-                        color="red"
-                        @click="removeVlan(iface, vIdx)"
-                        :title="$t('remove')"
-                        :aria-label="$t('remove')"
-                      >
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </td>
-                    <td>{{ vlan.vlan_id }}</td>
-                    <td>{{ vlan.mtu || '' }}</td>
-                    <td>
-                      <div v-if="vlan.ipv4 && vlan.ipv4.length">
-                        <div v-if="vlan.ipv4[0].dhcp">{{ $t('dhcp') }}</div>
-                        <div v-else>{{ vlan.ipv4[0].address || '' }}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <div v-if="vlan.ipv6 && vlan.ipv6.length">
-                        <div v-if="vlan.ipv6[0].dhcp">{{ $t('dhcp') }}</div>
-                        <div v-else>{{ vlan.ipv6[0].address || '' }}</div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr v-if="!(iface.vlans && iface.vlans.length)">
-                    <td colspan="5" class="text-center">{{ $t('no vlans') }}</td>
-                  </tr>
-                </tbody>
-              </v-table>
             </template>
 
             <!-- BRIDGED -->
@@ -254,6 +188,74 @@
                 </template>
               </v-row>
             </template>
+
+            <!-- VLANs -->
+              <v-divider class="my-4"></v-divider>
+              <v-row>
+                <v-col cols="12" class="d-flex align-center justify-space-between">
+                  <span class="text-subtitle-1 font-weight-medium">{{ $t('vlan') }}</span>
+                  <v-btn
+                    variant="text"
+                    size="small"
+                    color="green"
+                    class="ma-1 pa-0 float-right"
+                    style="min-width: 0"
+                    @click="openVlanDialog(iface)"
+                    :title="$t('add vlan')"
+                    :aria-label="$t('add vlan')"
+                  >
+                    <v-icon size="18" class="mr-1">mdi-plus</v-icon>
+                    {{ $t('add vlan') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <v-table class="ma-0 pa-0" hide-default-footer>
+                <thead>
+                  <tr>
+                    <th class="text-start" style="width:1px; white-space:nowrap;"></th>
+                    <th class="text-start">{{ $t('vlan id') }}</th>
+                    <th class="text-start">{{ $t('mtu') }}</th>
+                    <th class="text-start">{{ $t('ipv4') }}</th>
+                    <th class="text-start">{{ $t('ipv6') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(vlan, vIdx) in iface.vlans || []" :key="vIdx">
+                    <td style="width:1px; white-space:nowrap; padding:0;">
+                      <v-btn
+                        icon
+                        size="small"
+                        variant="text"
+                        color="red"
+                        @click="removeVlan(iface, vIdx)"
+                        :title="$t('remove')"
+                        :aria-label="$t('remove')"
+                      >
+                        <v-icon>mdi-delete</v-icon>
+                      </v-btn>
+                    </td>
+                    <td>{{ vlan.vlan_id }}</td>
+                    <td>{{ vlan.mtu || '' }}</td>
+                    <td>
+                      <div v-if="vlan.ipv4 && vlan.ipv4.length">
+                        <div v-if="vlan.ipv4[0].dhcp">{{ $t('dhcp') }}</div>
+                        <div v-else>{{ vlan.ipv4[0].address || '' }}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div v-if="vlan.ipv6 && vlan.ipv6.length">
+                        <div v-if="vlan.ipv6[0].dhcp">{{ $t('dhcp') }}</div>
+                        <div v-else>{{ vlan.ipv6[0].address || '' }}</div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr v-if="!(iface.vlans && iface.vlans.length)">
+                    <td colspan="5" class="text-center">{{ $t('no vlans') }}</td>
+                  </tr>
+                </tbody>
+              </v-table>             
+
           </v-card-text>
         </v-card>
       </v-container>

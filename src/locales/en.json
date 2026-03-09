@@ -1303,5 +1303,8 @@
   "mtu": "MTU",
   "add vlan": "Add VLAN",
   "no ip assignment": "No IP Assignment",
-  "vlan id is required": "VLAN ID is required"
+  "vlan id is required": "VLAN ID is required",
+  "your network settings will be saved and your network will be restarted": "Your network settings will be saved and your network will be restarted",
+  "do you want to continue": "Do you want to continue",
+  "save network settings": "Save network settings"
 }

@@ -320,8 +320,19 @@
     </v-card>
   </v-dialog>
 
+  <!-- Warning before save -->
+  <v-dialog v-model="saveNetworkSettingsDialog.value" persistent width="600">
+    <v-card class="pa-0" :title="$t('save network settings')">
+      <v-card-text>{{ $t('your network settings will be saved and your network will be restarted') }}. {{ $t('do you want to continue') }}?</v-card-text>
+      <v-card-actions>
+        <v-btn color="onPrimary" text @click="saveNetworkSettingsDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="onPrimary" @click="saveNetworkSettingsDialog.value = false; setNetworkSettings()">{{ $t('accept') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Floating Action Button -->
-  <v-fab @click="setNetworkSettings()" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+  <v-fab @click="saveNetworkSettingsDialog.value = true" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-content-save</v-icon>
   </v-fab>
 
@@ -337,6 +348,7 @@ import { useI18n } from 'vue-i18n';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const settingsNetwork = ref({ interfaces: [] });
+const saveNetworkSettingsDialog = reactive({ value: false });
 const overlay = ref(false);
 const { t } = useI18n();
 const settingsNetworkCountdown = reactive({

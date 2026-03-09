@@ -1301,5 +1301,7 @@
   "vlan id": "VLAN ID",
   "no vlans": "No VLANs",
   "mtu": "MTU",
-  "add vlan": "Add VLAN"
+  "add vlan": "Add VLAN",
+  "no ip assignment": "No IP Assignment",
+  "vlan id is required": "VLAN ID is required"
 }

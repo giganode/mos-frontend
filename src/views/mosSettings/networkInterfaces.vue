@@ -13,10 +13,23 @@
       </v-container>
       <v-container fluid class="pa-0" style="margin-bottom: 80px">
         <v-card v-for="(iface, idx) in settingsNetwork.interfaces" :key="idx" class="mb-6 pa-0">
-          <v-card-title class="d-flex align-center py-3 pb-1">
+          <v-card-title class="d-flex align-center py-3 pb-1" style="position: relative;">
             {{ $t('interface') }}: {{ iface.name || $t('new interface') }}
-            <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ iface.link_state }}</v-chip>
-            <v-chip v-if="iface.mac" class="ml-2" size="small">{{ iface.mac }}</v-chip>
+            <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ $t(iface.link_state) }}</v-chip>
+            <v-chip v-if="iface.status === 'orphaned'" class="ml-2" size="small" color="red">{{ $t('orphaned') }}</v-chip>
+            <v-btn
+              v-if="iface.status === 'orphaned'"
+              icon
+              class="ma-0"
+              :title="t('remove orphan')"
+              :aria-label="t('remove orphan')"
+              variant="text"
+              color="red"
+              @click="removeInterface(idx)"
+              style="position: absolute; right: 8px; top: 8px; height: 32px; width: 32px;"
+            >
+              <v-icon size="20">mdi-delete</v-icon>
+            </v-btn>
           </v-card-title>
           <v-card-subtitle v-if="iface.adapter !== '' && iface.adapter != null && iface.adapter != undefined" class="pt-0 pb-2">{{ iface.adapter }}</v-card-subtitle>
           <v-divider class="mb-0"></v-divider>
@@ -326,7 +339,15 @@
       <v-card-text>{{ $t('your network settings will be saved and your network will be restarted') }}. {{ $t('do you want to continue') }}?</v-card-text>
       <v-card-actions>
         <v-btn color="onPrimary" text @click="saveNetworkSettingsDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="onPrimary" @click="saveNetworkSettingsDialog.value = false; setNetworkSettings()">{{ $t('accept') }}</v-btn>
+        <v-btn
+          color="onPrimary"
+          @click="
+            saveNetworkSettingsDialog.value = false;
+            setNetworkSettings();
+          "
+        >
+          {{ $t('accept') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -540,6 +561,11 @@ const changeInterfaceType = (iface) => {
     }
   }
 };
+
+const removeInterface = (idx) => {
+  settingsNetwork.value.interfaces.splice(idx, 1);
+};
+
 const changeIPv6Enabled = (iface, enabled) => {
   if (enabled) {
     if (!iface.ipv6) iface.ipv6 = [];
@@ -620,14 +646,24 @@ const addVlanToInterfaces = () => {
       dhcp: addVlanDialog.ipv4.dhcp,
       address: addVlanDialog.ipv4.address,
       gateway: addVlanDialog.ipv4.gateway,
-      dns: addVlanDialog.ipv4.dns ? addVlanDialog.ipv4.dns.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      dns: addVlanDialog.ipv4.dns
+        ? addVlanDialog.ipv4.dns
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
     };
     if (addVlanDialog.ipv6) {
       newVlan.ipv6 = {
         dhcp: addVlanDialog.ipv6.dhcp,
         address: addVlanDialog.ipv6.address,
         gateway: addVlanDialog.ipv6.gateway,
-        dns: addVlanDialog.ipv6.dns ? addVlanDialog.ipv6.dns.split(',').map((s) => s.trim()).filter(Boolean) : [],
+        dns: addVlanDialog.ipv6.dns
+          ? addVlanDialog.ipv6.dns
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
       };
     }
   } else {

@@ -1306,5 +1306,8 @@
   "vlan id is required": "VLAN ID is required",
   "your network settings will be saved and your network will be restarted": "Your network settings will be saved and your network will be restarted",
   "do you want to continue": "Do you want to continue",
-  "save network settings": "Save network settings"
+  "save network settings": "Save network settings",
+  "orphaned": "Orphaned",
+  "up": "Up",
+  "down": "Down"  
 }

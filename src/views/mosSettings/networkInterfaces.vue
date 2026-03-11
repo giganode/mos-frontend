@@ -16,9 +16,9 @@
           <v-card-title class="d-flex align-center py-3 pb-1" style="position: relative;">
             {{ $t('interface') }}: {{ iface.name || $t('new interface') }}
             <v-chip v-if="iface.link_state" class="ml-2" size="small" :color="iface.link_state === 'up' ? 'green' : 'red'">{{ $t(iface.link_state) }}</v-chip>
-            <v-chip v-if="iface.status === 'orphaned'" class="ml-2" size="small" color="red">{{ $t('orphaned') }}</v-chip>
+            <v-chip v-if="iface.status === 'orphan'" class="ml-2" size="small" color="red">{{ $t('orphan') }}</v-chip>
             <v-btn
-              v-if="iface.status === 'orphaned'"
+              v-if="iface.status === 'orphan'"
               icon
               class="ma-0"
               :title="t('remove orphan')"

@@ -1307,7 +1307,7 @@
   "your network settings will be saved and your network will be restarted": "Your network settings will be saved and your network will be restarted",
   "do you want to continue": "Do you want to continue",
   "save network settings": "Save network settings",
-  "orphaned": "Orphaned",
+  "orphan": "Orphan",
   "up": "Up",
   "down": "Down"  
 }

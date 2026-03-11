@@ -1307,7 +1307,7 @@
   "your network settings will be saved and your network will be restarted": "Deine Netzwerkeinstellungen werden gespeichert und dein Netzwerk wird neu gestartet",
   "do you want to continue": "Möchtest du fortfahren",
   "save network settings": "Netzwerkeinstellungen speichern",
-  "orphaned": "Verwaist",
-  "up": "Up",
-  "down": "Down"
+  "orphan": "Verwaist",
+  "up": "Aktiv",
+  "down": "Inaktiv"
 }

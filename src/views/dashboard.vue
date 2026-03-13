@@ -447,7 +447,7 @@ const getLoadWS = () => {
   const apply = (data) => {
     if (data.cpu) cpu.value = data.cpu;
     if (data.memory) memory.value = data.memory;
-    if (data.network) network.value = data.network;
+    if (data.network) { network.value = data.network; console.log('Network update:', data.network); }
     if (data.temperature) temperature.value = data.temperature;
     if (data.pools) disks.value = pools.value = data.pools;
     if (data.sensors) sensors.value = data.sensors;

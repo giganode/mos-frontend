@@ -5,19 +5,19 @@
   <template v-else-if="network && network.interfaces && network.interfaces.length > 0">
     <v-row dense>
       <template v-if="nic">
-        <v-col cols="6" sm="6" md="3" xl="2" v-if="nic.interface">
+        <v-col cols="6" sm="6" md="3" xl="2" v-if="getInterfaceName(nic)">
           <div class="text-caption text-medium-emphasis">
             <strong>{{ $t('interface') }}</strong>
           </div>
           <div class="d-flex align-center">
-            <div class="text-body-2" :title="nic.interface" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 4px">{{ nic.interface }}</div>
+            <div class="text-body-2" :title="getInterfaceName(nic)" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 4px">{{ getInterfaceName(nic) }}</div>
             <v-menu>
               <template #activator="{ props }">
                 <v-icon v-bind="props" color="grey-darken-1" style="cursor: pointer; margin-left: 4px">mdi-chevron-down</v-icon>
               </template>
               <v-list>
-                <v-list-item v-for="intf in interfaces" :key="intf.name" @click="selectInterface(intf)">
-                  <v-list-item-title>{{ intf.name }}</v-list-item-title>
+                <v-list-item v-for="intf in interfaces" :key="getInterfaceName(intf)" @click="selectInterface(intf)">
+                  <v-list-item-title>{{ getInterfaceName(intf) }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { toRefs, ref, watch, onMounted, onBeforeUnmount, markRaw, reactive } from 'vue';
+import { toRefs, ref, watch, onMounted, onBeforeUnmount, markRaw } from 'vue';
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend } from 'chart.js';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend);
@@ -89,11 +89,20 @@ const chartEl = ref(null);
 const interfaces = ref([]);
 
 let chart = null;
+let chartCanvas = null;
 let themeObserver = null;
 let labels = [];
 let seriesRx = [];
 let seriesTx = [];
 let seriesTotal = [];
+
+function getInterfaceName(iface) {
+  return iface?.interface || iface?.name || null;
+}
+
+function setSelectedNic(iface) {
+  nic.value = iface ? { ...iface } : null;
+}
 
 function clampHistory() {
   const trim = (arr) => {
@@ -161,9 +170,17 @@ function observeThemeChanges() {
 }
 
 function initChart() {
-  if (chart || !chartEl.value) return;
+  if (!chartEl.value) return;
+  if (chart && chartCanvas === chartEl.value) return;
+
+  if (chart) {
+    chart.destroy();
+    chart = null;
+  }
+
   const ctx = chartEl.value.getContext && chartEl.value.getContext('2d');
   if (!ctx) return;
+  chartCanvas = chartEl.value;
   chart = markRaw(
     new Chart(ctx, {
       type: 'line',
@@ -209,10 +226,11 @@ function syncAndUpdateChart() {
 }
 
 watch(
-  () => network.value?.interfaces?.[0],
-  (newVal) => {
+  () => network.value?.interfaces,
+  (ifaces) => {
+    const newVal = ifaces?.[0] || null;
     if (!newVal) {
-      nic.value = null;
+      setSelectedNic(null);
       labels = [];
       seriesRx = [];
       seriesTx = [];
@@ -221,11 +239,7 @@ watch(
       return;
     }
 
-    if (!nic.value) nic.value = { ...newVal };
-    else
-      Object.keys(newVal).forEach((k) => {
-        nic.value[k] = newVal[k];
-      });
+    setSelectedNic(newVal);
 
     const rxB = newVal?.statistics?.rx?.speed_bps;
     const txB = newVal?.statistics?.tx?.speed_bps;
@@ -250,7 +264,7 @@ watch(
 watch(
   () => chartEl.value,
   (v) => {
-    if (v && !chart) initChart();
+    if (v) initChart();
   },
   { immediate: true },
 );
@@ -269,6 +283,7 @@ onBeforeUnmount(() => {
     chart.destroy();
     chart = null;
   }
+  chartCanvas = null;
 });
 
 const getAllInterfaces = async () => {
@@ -292,13 +307,38 @@ const getAllInterfaces = async () => {
   }
 };
 
+const setNewInterface = async (iface) => {
+  const payload = {
+    interface: iface,
+  };
+  try {
+    const res = await fetch('/api/v1/mos/dashboard/interface', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('network interface could not be set')}|$| ${error.error || t('unknown error')}`);
+    }
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
 const selectInterface = (iface) => {
   labels = [];
   seriesRx = [];
   seriesTx = [];
   seriesTotal = [];
+  setNewInterface(getInterfaceName(iface));
+  setSelectedNic(iface);
   syncAndUpdateChart();
-  nic.value = iface;
 };
 
 </script>

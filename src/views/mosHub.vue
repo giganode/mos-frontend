@@ -81,7 +81,7 @@
                       </v-chip>
                     </v-card-text>
                     <v-card-text class="py-2 px-4" style="min-height: 96px">
-                      <div class="text-h6 font-weight-bold mb-1" style="line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                      <div class="font-weight-bold mb-1" style="line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.1rem">
                         {{ tpl.name || $t('unknown') }}
                       </div>
                       <div

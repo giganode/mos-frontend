@@ -30,7 +30,7 @@
     "vue-sonner": "^2.0.9",
     "vue-web-terminal": "^3.4.1",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.11.8"
+    "vuetify": "^4.0.2"
   },
   "devDependencies": {
     "@originjs/vite-plugin-federation": "^1.4.1",

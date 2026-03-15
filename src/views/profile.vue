@@ -1,12 +1,15 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('user profile') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('user profile') }}</h2>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <v-card class="px-0" style="margin-bottom: 80px">
-          <v-card-text class="pt-0">
+          <v-card-text class="pt-2">
             <v-switch
               v-model="darkMode"
               :label="$t('dark mode')"

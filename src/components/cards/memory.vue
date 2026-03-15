@@ -3,7 +3,7 @@
     <p class="text-body-2">{{ $t('no memory data available') }}</p>
   </template>
   <template v-else-if="mem && Object.keys(mem).length > 0" class="memory-overview">
-    <v-row dense>
+    <v-row density="comfortable">
       <v-col cols="3" sm="3" md="3" xl="3" v-if="mem.total_human">
         <div class="text-caption text-medium-emphasis">
           <strong>{{ $t('installed') }}</strong>

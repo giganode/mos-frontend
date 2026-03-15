@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('mos hub') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('mos hub') }}</h2>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <v-card fluid style="margin-bottom: 80px" class="pa-0">
@@ -13,7 +16,7 @@
               clearable
               append-inner-icon="mdi-magnify"
               outlined
-              dense
+              density="comfortable"
               hide-details
               class="ma-4"
               @click:append-inner="getMosHub(searchOnlineTemplate)"
@@ -25,12 +28,12 @@
             ></v-text-field>
             <v-menu offset-y>
               <template #activator="{ props }">
-                <v-btn v-bind="props" color="secondary" dense variant="outlined" class="ma-2 ml-4" style="min-width: 150px">
+                <v-btn v-bind="props" color="secondary" density="comfortable" variant="outlined" class="ma-2 ml-4" style="min-width: 150px">
                   {{ $t('type') }}
                   <v-icon right size="18">mdi-menu-down</v-icon>
                 </v-btn>
               </template>
-              <v-list dense>
+              <v-list density="comfortable">
                 <v-list-item
                   @click="
                     currentPage = 1;
@@ -54,8 +57,8 @@
             </v-menu>
             <v-divider class="mt-2" />
             <v-container class="pa-4" v-if="!hubLoading">
-              <v-row class="ma-n2">
-                <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2">
+              <v-row class="ma-n2" style="gap: 0">
+                <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2" style="padding-bottom: 16px; padding-top: 16px">
                   <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0">
                     <v-card-text class="pa-0 pt-4">
                       <div class="d-flex justify-center">
@@ -187,7 +190,7 @@
                 v-model="mosHubRepositoriesDialog.repositories[index]"
                 :label="$t('repository') + ' ' + (index + 1)"
                 outlined
-                dense
+                density="comfortable"
                 class="flex-grow-1 mr-2"
                 append-icon="mdi-delete"
                 @click:append="mosHubRepositoriesDialog.repositories.splice(index, 1)"
@@ -237,7 +240,7 @@
       </v-card-title>
       <v-divider />
       <v-card-text class="px-3 py-3">
-        <v-row class="align-stretch" dense>
+        <v-row class="align-stretch" density="comfortable">
           <v-col cols="12" md="8">
             <div v-if="installDialog.tpl?.description" class="text-body-2 mb-4 pr-8" style="white-space: pre-line">
               {{ installDialog.tpl.description }}
@@ -651,3 +654,16 @@ const openPluginInstallDialog = (tpl) => {
   getPluginReleases(tpl?.repository);
 };
 </script>
+
+<style scoped>
+.v-row.ma-n2 {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+.v-col.pa-2 {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+</style>

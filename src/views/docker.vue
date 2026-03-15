@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('docker containers') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('docker containers') }}</h2>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="dockersLoading" type="card" :width="'100%'" :height="'60px'" class="mb-2" />
@@ -845,7 +848,7 @@
                 <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ d.name }}</div>
               </v-col>
               <v-col cols="4" class="px-2 py-0 ma-0 mb-2">
-                <v-text-field density="compact" dense hide-details="auto" readonly tabindex="-1" style="visibility: hidden; height: 40px" />
+                <v-text-field density="compact" hide-details="auto" readonly tabindex="-1" style="visibility: hidden; height: 40px" />
               </v-col>
             </v-row>
           </template>
@@ -859,7 +862,7 @@
                 <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ d.Names?.[0] }}</div>
               </v-col>
               <v-col cols="3" class="px-2 py-0 ma-0 mb-2">
-                <v-text-field density="compact" dense hide-details="auto" type="number" min="0" max="999" maxlength="3" v-model="d.wait" :label="$t('wait (sec)')" />
+                <v-text-field density="compact" hide-details="auto" type="number" min="0" max="999" maxlength="3" v-model="d.wait" :label="$t('wait (sec)')" />
               </v-col>
             </v-row>
           </template>

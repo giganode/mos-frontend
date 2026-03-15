@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('settings') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('settings') }}</h2>
+        </div>
       </v-container>
       <v-container class="pa-0" fluid>
         <v-row>
@@ -424,7 +427,7 @@
         <v-divider />
         <v-card-text class="py-4">
           <div class="font-weight-bold mb-2">{{ $t('the team') }}:</div>
-          <v-row class="d-flex" dense>
+          <v-row class="d-flex" density="comfortable">
             <v-col cols="12">
               <v-chip
                 v-for="(c, idx) in ['alturismo', 'anym001', 'giganode', 'Christoph Hummer (ich777)', 'j0k3r', 'Joly0', 'Mainfrezzer', 'RiDDiX', 'Harald Wiesinger (s3ppo)', 'Sonic6']"
@@ -442,7 +445,7 @@
         <v-divider />
         <v-card-text class="py-2">
           <div class="font-weight-bold mb-2">{{ $t('official channels') }}:</div>
-          <v-row dense class="align-center">
+          <v-row density="comfortable" class="align-center">
             <v-col cols="auto">
               <v-btn variant="text" icon size="small" href="https://discord.gg/fcTMbuygTV" target="_blank" rel="noopener" :aria-label="'Discord'" title="Discord">
                 <v-icon color="#7289DA">mdi-headphones</v-icon>
@@ -463,7 +466,7 @@
         <v-divider />
         <v-card-text class="py-2">
           <div class="font-weight-bold mb-2">{{ $t('source & license') }}:</div>
-          <v-row class="mt-2" dense>
+          <v-row class="mt-2" density="comfortable">
             <v-col cols="auto">
               <v-btn variant="outlined" size="small" href="https://github.com/ich777/mos-releases" target="_blank" rel="noopener">
                 <v-icon start>mdi-github</v-icon>

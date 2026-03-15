@@ -1,5 +1,5 @@
 <template>
-    <v-row dense v-if="psuSensors.length > 0">
+    <v-row density="comfortable" v-if="psuSensors.length > 0">
         <v-col cols="3" sm="3" md="3" xl="3">
             <div class="text-caption text-medium-emphasis"><strong>{{ $t('model') }}</strong></div>
             <div class="text-body-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
@@ -50,7 +50,7 @@
         </v-col>
     </v-row>
     <v-divider class="my-2" v-if="psuSensors.length > 0"></v-divider>
-    <v-row dense v-if="psuSensors.length > 0">
+    <v-row density="comfortable" v-if="psuSensors.length > 0">
         <v-col cols="12">
             <v-progress-linear :model-value="loadPercent"
                                height="16"

@@ -438,3 +438,35 @@ function cleanupWS(clearTimer = true) {
 }
 // WS ENDE --------------------------------------
 </script>
+
+<style>
+.v-btn--variant-flat.bg-primary,
+.v-btn--variant-elevated.bg-primary {
+  background: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
+  -webkit-text-fill-color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+.v-btn--variant-flat.bg-secondary,
+.v-btn--variant-elevated.bg-secondary {
+  background: rgb(var(--v-theme-secondary)) !important;
+  color: rgb(var(--v-theme-on-secondary)) !important;
+  -webkit-text-fill-color: rgb(var(--v-theme-on-secondary)) !important;
+}
+
+.v-btn--variant-flat.bg-error,
+.v-btn--variant-elevated.bg-error {
+  background: rgb(var(--v-theme-error)) !important;
+  color: rgb(var(--v-theme-on-error)) !important;
+  -webkit-text-fill-color: rgb(var(--v-theme-on-error)) !important;
+}
+
+.text-caption {
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+.text-body-2 {
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+</style>

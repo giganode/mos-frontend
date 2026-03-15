@@ -15,7 +15,7 @@
 
       <v-divider class="my-1" />
 
-      <v-row dense class="mb-0 py-0" style="flex-wrap: nowrap; overflow: hidden">
+      <v-row density="comfortable" class="mb-0 py-0" style="flex-wrap: nowrap; overflow: hidden">
         <v-col cols="4" sm="4" class="py-0" style="overflow: hidden">
           <div class="text-caption text-medium-emphasis" style="overflow: hidden">
             <strong>{{ $t('device') }}</strong>
@@ -39,7 +39,7 @@
       </v-row>
 
       <template v-if="(pool.data_devices && pool.data_devices.length) || (pool.parity_devices && pool.parity_devices.length)">
-        <v-row v-for="(data_device, devIdx) in pool.data_devices ?? []" :key="`data-${devIdx}`" dense class="py-0 mt-0" style="flex-wrap: nowrap; overflow: hidden">
+        <v-row v-for="(data_device, devIdx) in pool.data_devices ?? []" :key="`data-${devIdx}`" density="comfortable" class="py-0 mt-0" style="flex-wrap: nowrap; overflow: hidden">
           <v-col cols="4" sm="4" class="d-flex align-center py-1" style="gap: 3px; min-width: 0; overflow: hidden; line-height: 1.1;">
             <span
               :style="{
@@ -72,7 +72,7 @@
           </v-col>
         </v-row>
 
-        <v-row v-for="(parity_device, devIdx) in pool.parity_devices ?? []" :key="`parity-${devIdx}`" dense class="py-0 mt-0" style="flex-wrap: nowrap; overflow: hidden">
+        <v-row v-for="(parity_device, devIdx) in pool.parity_devices ?? []" :key="`parity-${devIdx}`" density="comfortable" class="py-0 mt-0" style="flex-wrap: nowrap; overflow: hidden">
           <v-col cols="4" sm="4" class="d-flex align-center py-1" style="gap: 3px; min-width: 0; overflow: hidden; line-height: 1.1;">
             <span
               :style="{

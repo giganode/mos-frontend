@@ -1,14 +1,15 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <v-row>
-          <v-col cols="auto" class="d-flex align-center">
-            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px;">
+            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle;">mdi-arrow-left</v-icon>
           </v-col>
-          <v-col>
-            <h2>{{ $t('sensors') }}</h2>
-          </v-col>
+          <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
+            <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('sensors') }}</h2>
+          </div>
         </v-row>
       </v-container>
       <v-container fluid class="pa-0">
@@ -107,12 +108,12 @@
                         <span>{{ $t('name') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-text-field>
-                <v-select v-model="createSensorDialog.type" :items="sensorTypes" dense>
+                <v-select v-model="createSensorDialog.type" :items="sensorTypes" density="comfortable">
                     <template #label>
                         <span>{{ $t('type') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-select>
-                <v-select v-model="createSensorDialog.subtype" :items="sensorSubtypes" dense>
+                <v-select v-model="createSensorDialog.subtype" :items="sensorSubtypes" density="comfortable">
                 <template #label>
                         <span>{{ $t('subtype') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
@@ -121,7 +122,7 @@
                                 :items="unmappedOptions"
                                 item-title="title"
                                 item-value="value"
-                                dense
+                                density="comfortable"
                                 hide-details="auto"
                                 clearable
                                 :loading="unmappedLoading">
@@ -179,12 +180,12 @@
                         <span>{{ $t('name') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-text-field>
-                <v-select v-model="editSensorDialog.type" :items="sensorTypes" dense>
+                <v-select v-model="editSensorDialog.type" :items="sensorTypes" density="comfortable">
                     <template #label>
                         <span>{{ $t('type') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
                 </v-select>
-                <v-select v-model="editSensorDialog.subtype" :items="sensorSubtypes" dense>
+                <v-select v-model="editSensorDialog.subtype" :items="sensorSubtypes" density="comfortable">
                 <template #label>
                         <span>{{ $t('subtype') }} <span style="color: red" aria-hidden="true">*</span></span>
                     </template>
@@ -193,7 +194,7 @@
                                 :items="unmappedOptions"
                                 item-title="title"
                                 item-value="value"
-                                dense
+                                density="comfortable"
                                 hide-details="auto"
                                 clearable
                                 :loading="unmappedLoading">

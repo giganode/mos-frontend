@@ -3,7 +3,7 @@
     <p class="text-body-2">{{ $t('no os data available') }}</p>
   </template>
   <template v-else-if="osInfo && Object.keys(osInfo).length > 0">
-    <v-row dense>
+    <v-row density="comfortable">
       <v-col cols="6" sm="6" md="4" xl="3" v-if="osInfo?.base?.[0]?.os_id">
         <div class="text-caption text-medium-emphasis">
           <strong>{{ $t('platform') }}</strong>

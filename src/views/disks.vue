@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('disks') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('disks') }}</h2>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="!disksLoaded" type="table-heading, table-row@5" :loading="!disksLoaded" class="mb-4" />
@@ -11,7 +14,7 @@
             {{ $t('no disks found') }}
           </v-card-text>
         </v-card>
-        <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
+        <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px;" class="pa-0">
           <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
@@ -132,13 +135,13 @@
       <v-card-title>{{ $t('confirm format') }}</v-card-title>
       <v-card-text>
         {{ $t('are you sure you want to format this disk?') }}
-        <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" dense :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
+        <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" density="comfortable" :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
         <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
         <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="green" />
         <v-switch v-model="formatDialog.preClearEnabled" :label="$t('preclear')" inset density="compact" color="green" />
         <template v-if="formatDialog.preClearEnabled">
-          <v-select v-model="formatDialog.preClear.algorithm" :items="formatAlgorithms" :label="$t('preclear algorithm')" dense />
-          <v-text-field v-model.number="formatDialog.preClear.wipes" :label="$t('number of wipes')" type="number" min="1" dense />
+          <v-select v-model="formatDialog.preClear.algorithm" :items="formatAlgorithms" :label="$t('preclear algorithm')" density="comfortable" />
+          <v-text-field v-model.number="formatDialog.preClear.wipes" :label="$t('number of wipes')" type="number" min="1" density="comfortable" />
           <v-switch v-model="formatDialog.preClear.readCheck" :label="$t('read check after wipe')" inset hide-details density="compact" color="green" />
           <v-switch v-model="formatDialog.preClear.log" :label="$t('log preclear output')" inset hide-details density="compact" color="green" />
         </template>

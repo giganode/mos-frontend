@@ -5,7 +5,7 @@
         <span class="text-h6">{{ titleComputed }}</span>
       </v-card-title>
       <v-card-text class="pa-2" style="max-height: 70vh; overflow: auto">
-        <v-row dense>
+        <v-row density="comfortable">
           <v-col cols="12" md="6">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
               <div class="text-subtitle-1 font-weight-medium mb-1">{{ t('info') }}</div>
@@ -75,7 +75,7 @@
           <v-col cols="12">
             <v-sheet rounded="lg" variant="tonal" class="pa-2">
               <div class="text-subtitle-1 font-weight-medium mb-1">{{ t('stats') }}</div>
-              <v-row dense>
+              <v-row density="comfortable">
                 <v-col cols="12" md="3">
                   <div class="text-subtitle-2 font-weight-bold mb-1">{{ t('cpu') }}</div>
                   <div class="text-body-2">Usage: {{ stats?.cpu_percent ?? '-' }}%</div>

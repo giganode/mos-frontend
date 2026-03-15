@@ -1,14 +1,15 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <v-row>
-          <v-col cols="auto" class="d-flex align-center">
-            <v-icon @click="$router.back()" class="mr-2">mdi-arrow-left</v-icon>
+          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px;">
+            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle;">mdi-arrow-left</v-icon>
           </v-col>
-          <v-col>
-            <h2>{{ $t('docker service') }}</h2>
-          </v-col>
+          <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
+            <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('docker service') }}</h2>
+          </div>
         </v-row>
       </v-container>
       <v-container fluid class="pa-0">
@@ -41,7 +42,7 @@
               <v-text-field v-model="settingsDocker.filesystem" :label="$t('filesystem')" required></v-text-field>
               <v-row>
                 <v-col cols="12" md="6">
-                  <v-select v-model="settingsDocker.docker_net.mode" :items="['ipvlan', 'macvlan']" :label="$t('docker network mode')" dense hide-details="auto"></v-select>
+                  <v-select v-model="settingsDocker.docker_net.mode" :items="['ipvlan', 'macvlan']" :label="$t('docker network mode')" density="comfortable" hide-details="auto"></v-select>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field v-model="settingsDocker.docker_options" :label="$t('docker start parameters')"></v-text-field>
@@ -59,7 +60,7 @@
                     v-model="settingsDocker.update_check.update_check_schedule"
                     :label="$t('update check schedule')"
                     :disabled="!settingsDocker.update_check.enabled"
-                    dense
+                    density="comfortable"
                     hide-details="auto"
                   ></v-text-field>
                 </v-col>
@@ -81,7 +82,7 @@
                     v-model="settingsDocker.update_check.auto_update.auto_update_schedule"
                     :label="$t('auto update schedule')"
                     :disabled="!settingsDocker.update_check.enabled || !settingsDocker.update_check.auto_update.enabled"
-                    dense
+                    density="comfortable"
                     hide-details="auto"
                   ></v-text-field>
                 </v-col>

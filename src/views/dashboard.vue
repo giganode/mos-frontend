@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ t('dashboard') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('dashboard') }}</h2>
+        </div>
       </v-container>
 
       <div class="masonry-grid" style="margin-bottom: 80px">
@@ -12,9 +15,9 @@
             <div class="card" v-show="widgetVisible(element.id)">
               <div class="card-head">
                 <span class="drag-handle" aria-hidden>
-                  <v-icon size="20">mdi-drag</v-icon>
+                  <v-icon size="25">mdi-drag</v-icon>
                 </span>
-                <span>{{ labelFor(element.id) }}</span>
+                <span style="font-size:20px;">{{ labelFor(element.id) }}</span>
               </div>
               <component :is="components[element.id]" v-bind="widgetProps(element.id)" />
             </div>
@@ -27,9 +30,9 @@
             <div class="card" v-show="widgetVisible(element.id)">
               <div class="card-head">
                 <span class="drag-handle" aria-hidden>
-                  <v-icon size="20">mdi-drag</v-icon>
+                  <v-icon size="25">mdi-drag</v-icon>
                 </span>
-                <span>{{ labelFor(element.id) }}</span>
+                <span style="font-size:20px;">{{ labelFor(element.id) }}</span>
               </div>
               <component :is="components[element.id]" v-bind="widgetProps(element.id)" />
             </div>
@@ -67,9 +70,10 @@
   </v-dialog>
 
   <!-- Floating Action Button -->
-  <v-fab @click="settingsDialog = true" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
+  <v-fab color="primary" @click="settingsDialog = true" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-tune</v-icon>
   </v-fab>
+
 </template>
 
 <script setup>
@@ -414,7 +418,6 @@ const getData = async () => {
       const error = await resSensors.json();
       throw new Error(`${t('could not load sensors info')}|$| ${error.error || t('unknown error')}`);
     }
-
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -447,7 +450,7 @@ const getLoadWS = () => {
   const apply = (data) => {
     if (data.cpu) cpu.value = data.cpu;
     if (data.memory) memory.value = data.memory;
-    if (data.network) { network.value = data.network; console.log('Network update:', data.network); }
+    if (data.network) network.value = data.network;
     if (data.temperature) temperature.value = data.temperature;
     if (data.pools) disks.value = pools.value = data.pools;
     if (data.sensors) sensors.value = data.sensors;

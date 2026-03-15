@@ -1,9 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <div class="d-flex align-center justify-space-between">
-          <h2>{{ $t('notifications') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('notifications') }}</h2>
+          <v-spacer></v-spacer>
           <v-btn text class="d-flex align-center" density="compact" @click="switchNotificationsOrder()">
             <v-icon small class="mr-1">{{ notificationsOrder === 'desc' ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}</v-icon>
             {{ notificationsOrder === 'desc' ? $t('newer') : $t('older') }}
@@ -91,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, onUnmounted  } from 'vue';
+import { ref, onMounted, reactive, onUnmounted } from 'vue';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 

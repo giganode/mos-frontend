@@ -1,9 +1,12 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2 @click="showSpecialActions++">{{ $t('tools') }}</h2>
-      </v-container>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+      <div class="d-flex align-center ga-3 mb-4">
+        <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+        <h2 @click="showSpecialActions++" class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('tools') }}</h2>
+      </div>
+      </v-container>      
       <v-container class="pa-0" fluid>
         <v-row>
           <!-- Power Management Card -->
@@ -132,7 +135,7 @@
         <v-btn color="onPrimary" :text="t('ok')" @click="shutdownOS"></v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>  
+  </v-dialog>
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -171,7 +174,6 @@ const rebootOS = async () => {
 
     showSnackbarSuccess(t('reboot initiated successfully'));
     window.location.href = '/reboot.html';
-    
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -199,7 +201,6 @@ const shutdownOS = async () => {
 
     showSnackbarSuccess(t('shutdown initiated successfully'));
     window.location.href = '/shutdown.html';
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -255,7 +256,6 @@ const updateUI = async () => {
     overlay.value = false;
   }
 };
-
 </script>
 
 <style scoped>

@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="d-flex justify-center">
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
-      <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-        <h2>{{ $t('vm') }}</h2>
+      <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
+        <div class="d-flex align-center ga-3 mb-4">
+          <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
+          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('vm') }}</h2>
+        </div>
       </v-container>
       <v-container fluid class="pa-0">
         <v-skeleton-loader v-if="vmsloading" :loading="true" type="card" :width="'100%'" :height="'60px'" class="mb-2" />
@@ -208,7 +211,7 @@
         />
         <details>
           <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('core pinning') }}</summary>
-        <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" dense>
+        <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" density="comfortable">
               <v-col>
                 <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
                   <v-checkbox
@@ -299,7 +302,7 @@
                 @click="removeDisk(index)"
               />
             </div>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12" md="12">
                 <v-text-field
                   v-model="disk.source"
@@ -395,7 +398,7 @@
                 @click="removeCdrom(index)"
               />
             </div>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12" md="12">
                 <v-text-field
                   v-model="cdrom.source"
@@ -490,7 +493,7 @@
                 @click="removeNetwork(index)"
               />
             </div>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12" md="6">
                 <v-select
                   v-model="network.type"
@@ -540,7 +543,7 @@
         <div class="mb-4">
           <h3 class="text-h6 mb-2">{{ $t('graphics') }}</h3>
           <v-card class="pa-3" variant="outlined">
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12" md="3">
                 <v-select
                   v-model="newVm.graphics.type"
@@ -617,7 +620,7 @@
                 @click="removeHostDevice(index)"
               />
             </div>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12">
                 <v-select
                   v-model="hostdevice.address"
@@ -665,7 +668,7 @@
                 @click="removeUsbDevice(index)"
               />
             </div>
-            <v-row dense>
+            <v-row density="comfortable">
               <v-col cols="12">
                 <v-select
                   v-model="usbdevice.device"

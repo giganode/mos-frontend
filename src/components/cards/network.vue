@@ -47,14 +47,21 @@
           </div>
           <div class="text-body-2" :title="nic.ip6" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ nic.ip6 }}</div>
         </v-col>
+        <v-col cols="6" sm="6" md="3" xl="2" v-if="nic.speed_human">
+          <div class="text-caption text-medium-emphasis">
+            <strong>{{ $t('speed') }}</strong>
+          </div>
+          <div class="text-body-2" :title="nic.speed_human" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ nic.speed_human }}</div>
+        </v-col>  
         <v-col cols="6" sm="6" md="3" xl="2" v-if="nic.mac">
           <div class="text-caption text-medium-emphasis">
             <strong>{{ $t('mac') }}</strong>
           </div>
           <div class="text-body-2" :title="nic.mac" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ nic.mac }}</div>
         </v-col>
+      
 
-        <v-divider class="my-2" />
+        <v-divider class="my-1" />
 
         <div class="chart-wrapper">
           <canvas ref="chartEl" aria-label="Network throughput history"></canvas>

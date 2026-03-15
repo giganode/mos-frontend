@@ -18,6 +18,7 @@
     "@uiw/codemirror-theme-duotone": "^4.25.4",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
+    "@xterm/addon-clipboard": "^0.2.0",
     "chart.js": "^4.5.1",
     "codemirror": "^6.0.2",
     "material-design-icons-iconfont": "^6.7.0",

@@ -3,10 +3,10 @@
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <v-row>
-          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px;">
-            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle;">mdi-arrow-left</v-icon>
+          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px">
+            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle">mdi-arrow-left</v-icon>
           </v-col>
-          <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
+          <div class="d-flex align-center ga-3 mb-4" style="height: 40px">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
             <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('webterminal') }}</h2>
           </div>
@@ -23,6 +23,7 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import { ClipboardAddon } from '@xterm/addon-clipboard';
 import { io } from 'socket.io-client';
 import { showSnackbarError } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
@@ -30,9 +31,10 @@ import '@xterm/xterm/css/xterm.css';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const { t } = useI18n();
+const clipboardAddon = new ClipboardAddon();
+const fitAddon = new FitAddon();
 let socket;
 let term;
-let fitAddon = new FitAddon();
 let joined = false;
 const sessions = ref([]);
 
@@ -44,8 +46,29 @@ onMounted(async () => {
 
   term = new Terminal({ cursorBlink: true, fontFamily: 'monospace', fontSize: 14 });
   term.loadAddon(fitAddon);
+  term.loadAddon(clipboardAddon);
   term.open(document.getElementById('terminal'));
   fitAddon.fit();
+
+  term.onSelectionChange(() => {
+    if (!term.hasSelection()) return;
+    const selected = term.getSelection();
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(selected);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = selected;
+      textarea.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {}
+      document.body.removeChild(textarea);
+    }
+  });
 
   // Websocket connection through proxy
   socket = io('/terminal', { path: '/api/v1/socket.io/' });
@@ -108,6 +131,7 @@ onBeforeUnmount(() => {
   }
   if (term) term.dispose();
   if (fitAddon) fitAddon.dispose();
+  if (clipboardAddon) clipboardAddon.dispose();
 });
 
 const createTerminalSession = async () => {

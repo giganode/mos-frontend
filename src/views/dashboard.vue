@@ -17,7 +17,7 @@
                 <span class="drag-handle" aria-hidden>
                   <v-icon size="25">mdi-drag</v-icon>
                 </span>
-                <span style="font-size:20px;">{{ labelFor(element.id) }}</span>
+                <span style="font-size: 20px">{{ labelFor(element.id) }}</span>
               </div>
               <component :is="components[element.id]" v-bind="widgetProps(element.id)" />
             </div>
@@ -32,7 +32,7 @@
                 <span class="drag-handle" aria-hidden>
                   <v-icon size="25">mdi-drag</v-icon>
                 </span>
-                <span style="font-size:20px;">{{ labelFor(element.id) }}</span>
+                <span style="font-size: 20px">{{ labelFor(element.id) }}</span>
               </div>
               <component :is="components[element.id]" v-bind="widgetProps(element.id)" />
             </div>
@@ -46,15 +46,24 @@
   <v-dialog v-model="settingsDialog" max-width="460">
     <v-card class="pa-0">
       <v-card-title class="text-h6">{{ t('visibility') }}</v-card-title>
-      <v-card-text>
-        <v-row class="pa-0">
-          <v-col cols="12" v-for="name in ALL_WIDGETS" :key="name" class="pa-0 my-1">
-            <v-checkbox hide-details="auto" :label="labelFor(name)" v-model="visibility[name]" :true-value="true" :false-value="false" density="compact" class="pa-0 ma-0" />
+      <v-card-text style="overflow: auto">
+        <v-row class="pa-0" style="gap: 0">
+          <v-col cols="12" v-for="name in ALL_WIDGETS" :key="name" class="pa-0" style="padding: 0; margin: 0">
+            <v-checkbox
+              hide-details="auto"
+              :label="labelFor(name)"
+              v-model="visibility[name]"
+              :true-value="true"
+              :false-value="false"
+              density="compact"
+              class="pa-0 ma-0"
+              style="margin-bottom: 0; padding: 0; min-height: 28px"
+            />
           </v-col>
         </v-row>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff)">
         <v-btn color="onPrimary" text @click="settingsDialog = false">{{ t('close') || 'Close' }}</v-btn>
         <v-btn
           color="onPrimary"
@@ -73,7 +82,6 @@
   <v-fab color="primary" @click="settingsDialog = true" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon>
     <v-icon>mdi-tune</v-icon>
   </v-fab>
-
 </template>
 
 <script setup>
@@ -124,22 +132,8 @@ const error = ref(null);
 const left = ref([]);
 const right = ref([]);
 const ALL_WIDGETS = ['os', 'processor', 'pools', 'network', 'memory', 'disks', 'fan', 'temperature', 'power', 'voltage', 'psu', 'other'];
-const DEFAULT_LEFT = [
-  { id: 'os', name: 'OS' },
-  { id: 'processor', name: 'Processor' },
-  { id: 'pools', name: 'Pools' },
-  { id: 'fan', name: 'Fan' },
-  { id: 'voltage', name: 'Voltage' },
-  { id: 'psu', name: 'PSU' },
-];
-const DEFAULT_RIGHT = [
-  { id: 'network', name: 'Network' },
-  { id: 'memory', name: 'Memory' },
-  { id: 'disks', name: 'Disks' },
-  { id: 'temperature', name: 'Temperature' },
-  { id: 'power', name: 'Power' },
-  { id: 'other', name: 'Other' },
-];
+const DEFAULT_LEFT = [{ id: 'os' }, { id: 'processor' }, { id: 'pools' }, { id: 'fan' }, { id: 'voltage' }, { id: 'psu' }];
+const DEFAULT_RIGHT = [{ id: 'network' }, { id: 'memory' }, { id: 'disks' }, { id: 'temperature' }, { id: 'power' }, { id: 'other' }];
 const DEFAULT_VISIBILITY = {
   os: true,
   processor: true,
@@ -169,24 +163,12 @@ const nameKeyMap = {
   Other: 'other',
 };
 const settingsDialog = ref(false);
-const visibility = ref({
-  os: true,
-  processor: true,
-  pools: true,
-  network: true,
-  memory: true,
-  disks: true,
-  fan: false,
-  temperature: false,
-  power: false,
-  voltage: false,
-  psu: false,
-  other: false,
-});
+const visibility = ref({ ...DEFAULT_VISIBILITY });
 let socket = null;
 
-onMounted(() => {
-  loadLayout();
+onMounted(async () => {
+  await loadLayout();
+  watch([left, right, visibility], saveLayout, { deep: true });
   getData();
   getLoadWS();
 });
@@ -207,20 +189,16 @@ const getDashboard = async () => {
   try {
     const res = await fetch(`/api/v1/mos/dashboard`, {
       method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
+      headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') },
     });
-
     if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('dashboard could not be loaded')}|$| ${error.error || t('unknown error')}`);
+      const err = await res.json();
+      throw new Error(`${t('dashboard could not be loaded')}|$| ${err.error || t('unknown error')}`);
     }
     return await res.json();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
   }
 };
 
@@ -234,19 +212,19 @@ const setDashboard = async (dashboard) => {
       },
       body: JSON.stringify(dashboard),
     });
-
     if (!res.ok) {
-      const error = await res.json();
-      throw new Error(`${t('dashboard could not be saved')}|$| ${error.error || t('unknown error')}`);
+      const err = await res.json();
+      throw new Error(`${t('dashboard could not be saved')}|$| ${err.error || t('unknown error')}`);
     }
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
-  } finally {
   }
 };
 
 const loadLayout = async () => {
+  const makeItem = (id) => ({ id, name: id });
+
   const toId = (item) => {
     const rawId = item?.id;
     if (typeof rawId === 'string' && rawId.trim()) return rawId.trim().toLowerCase();
@@ -258,68 +236,65 @@ const loadLayout = async () => {
     return null;
   };
 
-  const makeItem = (id) => ({ id, name: id });
+  const normalizeSide = (arr) => {
+    const seen = new Set();
+    const out = [];
+    if (Array.isArray(arr)) {
+      for (const it of arr) {
+        const id = toId(it);
+        if (!id || !ALL_WIDGETS.includes(id) || seen.has(id)) continue;
+        seen.add(id);
+        out.push(makeItem(id));
+      }
+    }
+    return { out, seen };
+  };
+
+  const normalizeVisibility = (v) => {
+    const out = { ...DEFAULT_VISIBILITY };
+    if (v && typeof v === 'object') {
+      for (const k of ALL_WIDGETS) {
+        if (v[k] !== undefined) out[k] = !!v[k];
+      }
+      for (const [oldName, id] of Object.entries(nameKeyMap)) {
+        if (v[oldName] !== undefined) out[id] = !!v[oldName];
+      }
+    }
+    return out;
+  };
 
   try {
     const saved = await getDashboard();
-    const normalizeVisibility = (v) => {
-      const out = { ...DEFAULT_VISIBILITY };
-      if (v && typeof v === 'object') {
-        for (const k of ALL_WIDGETS) {
-          if (v[k] !== undefined) out[k] = !!v[k];
-        }
-
-        for (const [oldName, id] of Object.entries(nameKeyMap)) {
-          if (v[oldName] !== undefined) out[id] = !!v[oldName];
-        }
-      }
-      return out;
-    };
-    const normalizeSide = (arr) => {
-      const seen = new Set();
-      const out = [];
-      if (Array.isArray(arr)) {
-        for (const it of arr) {
-          const id = toId(it);
-          if (!id) continue;
-          if (!ALL_WIDGETS.includes(id)) continue;
-          if (seen.has(id)) continue;
-          seen.add(id);
-          out.push(makeItem(id));
-        }
-      }
-      return { out, seen };
-    };
     if (!saved || typeof saved !== 'object') throw new Error('no saved');
+
     const leftRes = normalizeSide(saved.left);
     const rightRes = normalizeSide(saved.right);
     const seenAll = new Set([...leftRes.seen, ...rightRes.seen]);
     const normLeft = leftRes.out;
     const normRight = rightRes.out;
-    const missing = ALL_WIDGETS.filter((id) => !seenAll.has(id));
-    for (const id of missing) {
+
+    for (const id of ALL_WIDGETS.filter((id) => !seenAll.has(id))) {
       if (normLeft.length <= normRight.length) normLeft.push(makeItem(id));
       else normRight.push(makeItem(id));
     }
+
     left.value = normLeft.length ? normLeft : DEFAULT_LEFT.map(({ id }) => makeItem(id));
     right.value = normRight.length ? normRight : DEFAULT_RIGHT.map(({ id }) => makeItem(id));
     visibility.value = normalizeVisibility(saved.visibility);
-  } catch (e) {
+  } catch {
     left.value = DEFAULT_LEFT.map(({ id }) => ({ id, name: id }));
     right.value = DEFAULT_RIGHT.map(({ id }) => ({ id, name: id }));
     visibility.value = { ...DEFAULT_VISIBILITY };
   }
 };
 
-const saveLayout = async () => {
+const saveLayout = () => {
   setDashboard({
     left: left.value.map(({ id, name }) => ({ id, name })),
     right: right.value.map(({ id, name }) => ({ id, name })),
     visibility: visibility.value,
   });
 };
-
-watch([left, right, visibility], saveLayout, { deep: true });
 
 const widgetProps = (id) => {
   switch (id) {
@@ -336,15 +311,10 @@ const widgetProps = (id) => {
     case 'os':
       return { osInfo: osInfo.value };
     case 'fan':
-      return { sensors: sensors.value };
     case 'temperature':
-      return { sensors: sensors.value };
     case 'power':
-      return { sensors: sensors.value };
     case 'voltage':
-      return { sensors: sensors.value };
     case 'psu':
-      return { sensors: sensors.value };
     case 'other':
       return { sensors: sensors.value };
     default:
@@ -352,39 +322,16 @@ const widgetProps = (id) => {
   }
 };
 
-const widgetVisible = (id) => {
-  if (visibility.value && visibility.value[id] === false) return false;
-  if (id === 'os') return !!visibility.value?.os;
-  if (id === 'processor') return !!visibility.value?.processor;
-  if (id === 'network') return !!visibility.value?.network;
-  if (id === 'memory') return !!visibility.value?.memory;
-  if (id === 'pools') return !!visibility.value?.pools;
-  if (id === 'disks') return !!visibility.value?.disks;
-  if (id === 'fan') return !!visibility.value?.fan;
-  if (id === 'temperature') return !!visibility.value?.temperature;
-  if (id === 'power') return !!visibility.value?.power;
-  if (id === 'voltage') return !!visibility.value?.voltage;
-  if (id === 'psu') return !!visibility.value?.psu;
-  if (id === 'other') return !!visibility.value?.other;
-  return !!visibility.value?.[id];
-};
+const widgetVisible = (id) => !!visibility.value?.[id];
 
 const getData = async () => {
   try {
     const auth = localStorage.getItem('authToken');
     const [res, resPools, resOs, resSensors] = await Promise.all([
-      fetch('/api/v1/system/load', {
-        headers: { Authorization: 'Bearer ' + auth },
-      }),
-      fetch('/api/v1/pools', {
-        headers: { Authorization: 'Bearer ' + auth },
-      }),
-      fetch('/api/v1/mos/osinfo', {
-        headers: { Authorization: 'Bearer ' + auth },
-      }),
-      fetch('/api/v1/mos/sensors', {
-        headers: { Authorization: 'Bearer ' + auth },
-      }),
+      fetch('/api/v1/system/load', { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch('/api/v1/pools', { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch('/api/v1/mos/osinfo', { headers: { Authorization: 'Bearer ' + auth } }),
+      fetch('/api/v1/mos/sensors', { headers: { Authorization: 'Bearer ' + auth } }),
     ]);
 
     if (res.ok) {
@@ -394,33 +341,32 @@ const getData = async () => {
       memory.value = result.memory;
       temperature.value = result.temperature;
     } else {
-      const error = await res.json();
-      throw new Error(`${t('could not load system info')}|$| ${error.error || t('unknown error')}`);
+      const err = await res.json();
+      throw new Error(`${t('could not load system info')}|$| ${err.error || t('unknown error')}`);
     }
 
     if (resPools.ok) {
       pools.value = await resPools.json();
     } else {
-      const error = await resPools.json();
-      throw new Error(`${t('could not load pools info')}|$| ${error.error || t('unknown error')}`);
+      const err = await resPools.json();
+      throw new Error(`${t('could not load pools info')}|$| ${err.error || t('unknown error')}`);
     }
 
     if (resOs.ok) {
       osInfo.value = await resOs.json();
     } else {
-      const error = await resOs.json();
-      throw new Error(`${t('could not load os info')}|$| ${error.error || t('unknown error')}`);
+      const err = await resOs.json();
+      throw new Error(`${t('could not load os info')}|$| ${err.error || t('unknown error')}`);
     }
 
     if (resSensors.ok) {
       sensors.value = await resSensors.json();
     } else {
-      const error = await resSensors.json();
-      throw new Error(`${t('could not load sensors info')}|$| ${error.error || t('unknown error')}`);
+      const err = await resSensors.json();
+      throw new Error(`${t('could not load sensors info')}|$| ${err.error || t('unknown error')}`);
     }
   } catch (e) {
     error.value = e.message;
-  } finally {
   }
 };
 
@@ -438,7 +384,6 @@ const getLoadWS = () => {
     error.value = null;
     socket.emit('subscribe-load', { token: authToken });
   });
-
   socket.on('connect_error', (err) => {
     error.value = `Connection error: ${err.message}`;
     isConnected.value = false;
@@ -475,7 +420,6 @@ const getLoadWS = () => {
   gap: 16px;
   min-width: 0;
 }
-
 .card {
   background: rgb(var(--v-theme-background));
   border-radius: 12px;
@@ -483,7 +427,6 @@ const getLoadWS = () => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   border: 1px solid color-mix(in srgb, rgb(var(--v-theme-on-surface)) 15%, transparent);
 }
-
 .card-head {
   display: flex;
   align-items: center;
@@ -496,12 +439,10 @@ const getLoadWS = () => {
   cursor: grab;
   user-select: none;
 }
-
 .ghost {
   opacity: 0.5;
   transform: scale(0.98);
 }
-
 @supports not (color: color-mix(in srgb, #000 50%, #fff)) {
   .card {
     border-color: rgba(0, 0, 0, 0.15);
@@ -510,7 +451,6 @@ const getLoadWS = () => {
     border-color: rgba(255, 255, 255, 0.28);
   }
 }
-
 @media (max-width: 800px) {
   .masonry-grid {
     flex-direction: column;

@@ -811,7 +811,6 @@ const sections = computed(() => {
 }
 
 .sensors-table :deep(th) {
-  font-weight: 600;
   white-space: nowrap;
   padding: 4px 8px !important;
   vertical-align: middle;

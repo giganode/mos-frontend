@@ -1309,5 +1309,6 @@
   "save network settings": "Netzwerkeinstellungen speichern",
   "orphan": "Verwaist",
   "up": "Aktiv",
-  "down": "Inaktiv"
+  "down": "Inaktiv",
+  "network interfaces could not be loaded": "Netzwerkschnittstellen konnten nicht geladen werden"
 }

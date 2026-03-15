@@ -24,6 +24,7 @@
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('web ui') }}</span>            
             <v-text-field class="mt-4 mb-4" :label="$t('http port')" type="number" v-model="settingsSystem.webui.ports.http" hide-details="auto"></v-text-field>
+            <v-select :items="listenInterfaces" :label="$t('network interfaces')" v-model="settingsSystem.webui.listen_interfaces" item-title="interface" item-value="interface" multiple chips></v-select>
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('update settings') }}</span>
             <v-switch :label="$t('update checks')" color="green" inset v-model="settingsSystem.update_check.enabled" class="pt-4" density="compact"></v-switch>
@@ -217,9 +218,11 @@ const settingsSystem = ref({
   webui: {
     ports: {
       http: 80,
-    }
+    },
+    listen_interfaces: [],
   }
 });
+const listenInterfaces = ref([]);
 const zswapAlgorithms = ref([]);
 const keymaps = ref([]);
 const timezones = ref([]);
@@ -247,6 +250,7 @@ onMounted(() => {
   getGovernors();
   getZswapAlgorithms();
   getBinFmtArchitectures();
+  getInterfaces();
   dateTimeInterval = setInterval(updateDateTime, 1000);
 });
 
@@ -526,6 +530,27 @@ const getBinFmtArchitectures = async () => {
     
     architectures.value = await res.json();
   } catch (e) {    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  }
+};
+
+const getInterfaces = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/system/network/interfaces', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('network interfaces could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    
+    const data = await res.json();
+    listenInterfaces.value = data.map((iface) => ( iface.name ));
+  } catch (e) {    
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
   }
 };

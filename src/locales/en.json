@@ -1309,5 +1309,6 @@
   "save network settings": "Save network settings",
   "orphan": "Orphan",
   "up": "Up",
-  "down": "Down"  
+  "down": "Down",
+  "network interfaces could not be loaded": "Network interfaces could not be loaded"
 }

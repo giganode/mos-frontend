@@ -474,7 +474,6 @@
                         <template #activator="{ props }">
                           <v-img
                             v-if="docker.Names && docker.Names.length"
-                            class="drag-handle"
                             v-bind="props"
                             :src="`/docker_icons/${docker.Names[0]}.png`"
                             alt="docker image"

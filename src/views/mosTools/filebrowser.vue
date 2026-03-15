@@ -3,10 +3,10 @@
     <v-container style="width: 100%; max-width: 1920px" class="pa-0">
       <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <v-row>
-          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px;">
-            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle;">mdi-arrow-left</v-icon>
+          <v-col cols="auto" class="d-flex align-center justify-center" style="height: 40px">
+            <v-icon @click="$router.back()" class="mr-2" style="vertical-align: middle">mdi-arrow-left</v-icon>
           </v-col>
-          <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
+          <div class="d-flex align-center ga-3 mb-4" style="height: 40px">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
             <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('filebrowser') }}</h2>
           </div>
@@ -72,13 +72,33 @@
             </v-table>
           </v-card-text>
           <v-divider />
-          <v-card-actions class="d-flex align-center py-2" style="flex-wrap: wrap; gap: 8px;">
-            <v-btn rounded variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">{{ $t('create folder') }}</v-btn>
-            <v-btn rounded variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">{{ $t('create file') }}</v-btn>
-            <v-btn rounded variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">{{ $t('edit') }}</v-btn>
-            <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openDeleteFileDialog(activeItem)">{{ $t('delete') }}</v-btn>
-            <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChModDialog(activeItem)">{{ $t('adjust permissions') }}</v-btn>
-            <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChOwnDialog(activeItem)">{{ $t('adjust ownership') }}</v-btn>
+          <v-card-actions class="d-flex filebrowser-actions">
+            <div class="actions-wrapper">
+              <v-btn rounded variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">
+                <v-icon size="20" class="mr-2">mdi-folder-plus</v-icon>
+                <span>{{ $t('create folder') }}</span>
+              </v-btn>
+              <v-btn rounded variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">
+                <v-icon size="20" class="mr-2">mdi-file-plus</v-icon>
+                <span>{{ $t('create file') }}</span>
+              </v-btn>
+              <v-btn rounded variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">
+                <v-icon size="20" class="mr-2">mdi-pencil</v-icon>
+                <span>{{ $t('edit') }}</span>
+              </v-btn>
+              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openDeleteFileDialog(activeItem)">
+                <v-icon size="20" class="mr-2">mdi-delete</v-icon>
+                <span>{{ $t('delete') }}</span>
+              </v-btn>
+              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChModDialog(activeItem)">
+                <v-icon size="20" class="mr-2">mdi-shield-key-outline</v-icon>
+                <span>{{ $t('adjust permissions') }}</span>
+              </v-btn>
+              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChOwnDialog(activeItem)">
+                <v-icon size="20" class="mr-2">mdi-account-key</v-icon>
+                <span>{{ $t('adjust ownership') }}</span>
+              </v-btn>
+            </div>
           </v-card-actions>
         </v-card>
       </v-container>
@@ -183,7 +203,7 @@
     <v-card class="pa-0" :title="$t('adjust permissions')" prepend-icon="mdi-lock">
       <v-card-text class="py-0">
         <v-container class="px-0">
-          <v-text-field v-model="setChmodDialog.permissions" :label="$t('permissions')" :disabled="loading"/>
+          <v-text-field v-model="setChmodDialog.permissions" :label="$t('permissions')" :disabled="loading" />
           <v-checkbox v-model="setChmodDialog.recursive" :label="$t('recursive')" :disabled="loading" hide-details="auto" density="compact" />
         </v-container>
       </v-card-text>
@@ -646,5 +666,30 @@ const openChOwnDialog = (item) => {
 <style scoped>
 .cursor-pointer {
   cursor: pointer;
+}
+.filebrowser-actions {
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+.actions-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  .actions-wrapper {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .filebrowser-actions {
+    padding: 8px 0;
+  }
+  .actions-wrapper .v-btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 </style>

@@ -183,7 +183,9 @@
                         <v-icon
                           size="16"
                           class="cursor-pointer"
-                          :color="data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                          :style="{
+                            color: data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? '#1976d2' : 'red'
+                          }"
                           @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)"
                         >
                           {{ getDiskIcon(data_device.diskType.type) }}
@@ -254,7 +256,9 @@
                           <v-icon
                             size="16"
                             class="cursor-pointer"
-                            :color="parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? 'blue' : 'red'"
+                            :style="{
+                              color: parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? '#1976d2' : 'red'
+                            }"
                             @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)"
                           >
                             {{ getDiskIcon(parity_device.diskType.type) }}
@@ -320,7 +324,9 @@
                           v-bind="props"
                           size="16"
                           class="cursor-pointer"
-                          :color="unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? 'blue' : 'red'"
+                          :style="{
+                            color: unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? '#1976d2' : 'red'
+                          }"
                           @dblclick="unassignedDisk.powerStatus === 'active' ? sleepDisk(unassignedDisk) : wakeDisk(unassignedDisk)"
                         >
                           {{ getDiskIcon(unassignedDisk.type) }}

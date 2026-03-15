@@ -14,7 +14,7 @@
             {{ $t('no disks found') }}
           </v-card-text>
         </v-card>
-        <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px;" class="pa-0">
+        <v-card v-else-if="disksLoaded && disks.length > 0" fluid style="margin-bottom: 80px" class="pa-0">
           <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
@@ -33,7 +33,13 @@
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon v-bind="props" class="cursor-pointer" :color="disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? 'blue' : 'red'">
+                      <v-icon
+                        v-bind="props"
+                        class="cursor-pointer"
+                        :style="{
+                          color: disk.powerStatus === 'active' ? 'green' : disk.powerStatus === 'standby' ? '#1976d2' : 'red',
+                        }"
+                      >
                         {{ getDiskIcon(disk.type) }}
                       </v-icon>
                     </template>
@@ -307,7 +313,7 @@ const formatDisk = async (disk) => {
           readCheck: formatDialog.preClear.readCheck,
           log: formatDialog.preClear.log,
         }
-      : null
+      : null,
   };
 
   try {

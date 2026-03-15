@@ -33,7 +33,7 @@
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon v-bind="props" class="cursor-pointer" :color="cronJob.enabled ? 'green' : 'blue'">mdi-calendar-clock</v-icon>
+                      <v-icon v-bind="props" class="cursor-pointer" :style="{ color: cronJob.enabled ? 'green' : 'blue' }">mdi-calendar-clock</v-icon>
                     </template>
                     <v-list>
                       <v-list-item v-if="!cronJob.enabled" @click="changeCronJob(cronJob.id, undefined, undefined, undefined, true)">

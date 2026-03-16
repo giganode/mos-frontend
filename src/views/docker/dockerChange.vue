@@ -8,7 +8,7 @@
           </v-col>
           <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('change docker containers') }}</h2>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('change docker containers') }}</h2>
           </div>
         </v-row>
       </v-container>
@@ -55,9 +55,8 @@
                 <v-btn
                   variant="text"
                   size="small"
-                  color="green"
                   class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
+                  style="min-width: 0; color: green;"
                   @click="form.paths.push({ name: '', mode: '', host: '', container: '' })"
                   title="Add path"
                   aria-label="add path"
@@ -92,19 +91,18 @@
                 <v-col cols="11">
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field :label="$t('name')" v-model="path.name" density="compact" hide-details="auto"></v-text-field>
+                      <v-text-field :label="$t('name')" v-model="path.name" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('mode')" v-model="path.mode" density="compact" hide-details="auto"></v-text-field>
+                      <v-text-field :label="$t('mode')" v-model="path.mode" density="compact"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="6">
                       <v-text-field
                         :label="$t('host')"
                         v-model="path.host"
                         density="compact"
-                        hide-details="auto"
                         append-inner-icon="mdi-folder"
                         @click:append-inner="
                           openFsDialog((item) => {
@@ -114,10 +112,10 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('container')" v-model="path.container" density="compact" hide-details="auto"></v-text-field>
+                      <v-text-field :label="$t('container')" v-model="path.container" density="compact"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
                       <v-text-field :label="$t('description')" v-model="path.description" density="compact" hide-details></v-text-field>
                     </v-col>
@@ -132,9 +130,8 @@
                 <v-btn
                   variant="text"
                   size="small"
-                  color="green"
                   class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
+                  style="min-width: 0; color: green;"
                   @click="form.ports.push({ name: '', protocol: '', host: '', container: '' })"
                   title="Add port"
                   aria-label="add port"
@@ -169,20 +166,19 @@
                 <v-col cols="11">
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field :label="$t('name')" v-model="port.name" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('name')" v-model="port.name" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('protocol')" v-model="port.protocol" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('protocol')" v-model="port.protocol" density="compact"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="6">
                       <v-text-field
                         :label="$t('host')"
                         type="text"
                         v-model="port.host"
                         density="compact"
-                        hide-details="auto"
                         :rules="[(v) => /^[0-9-]+$/.test(v) || 'Only a single port or a port range allowed']"
                       ></v-text-field>
                     </v-col>
@@ -192,12 +188,11 @@
                         type="text"
                         v-model="port.container"
                         density="compact"
-                        hide-details="auto"
                         :rules="[(v) => /^[0-9-]+$/.test(v) || 'Only a single port or a port range allowed']"
                       ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
                       <v-text-field :label="$t('description')" v-model="port.description" density="compact" hide-details></v-text-field>
                     </v-col>
@@ -212,9 +207,8 @@
                 <v-btn
                   variant="text"
                   size="small"
-                  color="green"
                   class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
+                  style="min-width: 0; color: green;"
                   @click="form.devices.push({ name: '', host: '', container: '' })"
                   title="Add device"
                   aria-label="add device"
@@ -249,18 +243,18 @@
                 <v-col cols="11">
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field :label="$t('name')" v-model="device.name" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('name')" v-model="device.name" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('host')" v-model="device.host" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('host')" v-model="device.host" density="compact"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
-                      <v-text-field :label="$t('container')" v-model="device.container" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('container')" v-model="device.container" density="compact"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
                       <v-text-field :label="$t('description')" v-model="device.description" density="compact" hide-details></v-text-field>
                     </v-col>
@@ -275,9 +269,8 @@
                 <v-btn
                   variant="text"
                   size="small"
-                  color="green"
                   class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
+                  style="min-width: 0; color: green;"
                   @click="form.variables.push({ name: '', key: '', value: '', mask: false })"
                   title="Add variable"
                   aria-label="add variable"
@@ -321,21 +314,21 @@
                 <v-col cols="11">
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field :label="$t('name')" v-model="variable.name" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('name')" v-model="variable.name" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-switch :label="$t('masked')" v-model="variable.mask" inset color="green" density="compact" hide-details></v-switch>
+                      <v-switch :label="$t('masked')" v-model="variable.mask" inset color="green" density="compact"></v-switch>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="6">
-                      <v-text-field :label="$t('key')" v-model="variable.key" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('key')" v-model="variable.key" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('value')" v-model="variable.value" density="compact" :type="variable.mask ? 'password' : 'text'" hide-details></v-text-field>
+                      <v-text-field :label="$t('value')" v-model="variable.value" density="compact" :type="variable.mask ? 'password' : 'text'"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
                       <v-text-field :label="$t('description')" v-model="variable.description" density="compact" hide-details></v-text-field>
                     </v-col>
@@ -350,9 +343,8 @@
                 <v-btn
                   variant="text"
                   size="small"
-                  color="green"
                   class="ma-1 pa-0 float-right"
-                  style="min-width: 0"
+                  style="min-width: 0; color: green;"
                   @click="form.labels.push({ name: '', key: '', value: '', mask: false })"
                   title="Add label"
                   aria-label="add label"
@@ -387,21 +379,21 @@
                 <v-col cols="11">
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field :label="$t('name')" v-model="label.name" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('name')" v-model="label.name" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-switch :label="$t('masked')" v-model="label.mask" inset color="green" density="compact" hide-details></v-switch>
+                      <v-switch :label="$t('masked')" v-model="label.mask" inset color="green" density="compact"></v-switch>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="6">
-                      <v-text-field :label="$t('key')" v-model="label.key" density="compact" hide-details></v-text-field>
+                      <v-text-field :label="$t('key')" v-model="label.key" density="compact"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field :label="$t('value')" v-model="label.value" density="compact" :type="label.mask ? 'password' : 'text'" hide-details></v-text-field>
+                      <v-text-field :label="$t('value')" v-model="label.value" density="compact" :type="label.mask ? 'password' : 'text'"></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row class="mt-n4">
+                  <v-row class="mt-n2">
                     <v-col cols="12">
                       <v-text-field :label="$t('description')" v-model="label.description" density="compact" hide-details></v-text-field>
                     </v-col>

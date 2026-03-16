@@ -8,11 +8,10 @@
           </v-col>
           <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('pci devices') }}</h2>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('pci devices') }}</h2>
           </div>
         </v-row>
       </v-container>
-
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
         <v-expansion-panels multiple variant="accordion">
           <v-expansion-panel v-for="d in pciDevices" :key="`${d.slot}-${d.vendor_id}-${d.device_id}`">

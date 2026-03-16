@@ -8,12 +8,13 @@
           </v-col>
           <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('usb devices') }}</h2>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('usb devices') }}</h2>
           </div>
         </v-row>
       </v-container>
       <v-container col="12" fluid class="pt-0 pr-0 pl-0 pb-4">
-            <v-expansion-panels multiple variant="accordion">
+            <v-skeleton-loader v-if="usbDevicesLoading" type="card" class="mb-4" />
+            <v-expansion-panels v-else multiple variant="accordion">
               <v-expansion-panel v-for="d in usbDevices" :key="`${d.bus}-${d.device}-${d.vendor_id}-${d.product_id}`">
                 <v-expansion-panel-title>
                   <div class="d-flex flex-column">
@@ -67,6 +68,7 @@ import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const usbDevices = ref([]);
+const usbDevicesLoading = ref(true);
 
 onMounted(() => {
   getUsbDevices();
@@ -89,6 +91,8 @@ const getUsbDevices = async () => {
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    usbDevicesLoading.value = false;
   }
 };
 </script>

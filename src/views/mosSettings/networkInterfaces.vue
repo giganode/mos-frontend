@@ -8,7 +8,7 @@
           </v-col>
           <div class="d-flex align-center ga-3 mb-4" style="height: 40px;">
             <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('network interfaces') }}</h2>
+            <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ $t('network interfaces') }}</h2>
           </div>
         </v-row>
       </v-container>

@@ -1,23 +1,26 @@
 <template>
-  <div :class="$vuetify.display.mdAndUp ? 'login-wrap' : 'login-wrap-mobile'">
-    <v-container class="py-10 fill-height" max-width="1000">
-      <v-row align="center" justify="center" no-gutters :class="$vuetify.display.mdAndUp ? 'fill-height' : ''">
+  <div :class="$vuetify.display.mdAndUp ? 'login-wrap' : 'login-wrap-mobile'" class="d-flex">
+    <v-container class="py-10" max-width="1200">
+        <v-row align="center" justify="center" no-gutters class="w-100" :style="$vuetify.display.mdAndUp ? 'min-height: 600px;' : ''">
         <!-- Left side -->
-        <v-col cols="12" md="6" class="pa-6 d-flex flex-column justify-center align-center text-center">
+        <v-col cols="12" sm="5" class="pa-5 d-flex flex-column justify-center align-center text-center left-col">
           <div class="brand centered">
-            <v-img :src="logoColorThemed" alt="MOS Logo" max-width="140" class="mx-auto mb-6" contain />
-            <h1 class="brand__title">MOS Portal</h1>
+            <v-img :src="logoColorThemed" alt="MOS Logo" width="200" class="mx-auto mb-6" contain />
+            <h1 class="brand__title">{{ t('mos portal') }}</h1>
             <p class="brand__copy">{{ t('mos slogan') }}</p>
           </div>
         </v-col>
 
-        <v-divider vertical class="d-none d-md-flex" style="height: auto; border-left: 1px solid color-mix(in oklab, var(--v-theme-on-surface) 10%, transparent)"></v-divider>
+        <!-- Vertical Divider -->
+        <v-col cols="auto" class="d-none d-sm-flex align-self-stretch px-0">
+          <v-divider vertical />
+        </v-col>
 
         <!-- Right side -->
-        <v-col cols="12" md="6" class="pa-6 d-flex align-center">
+        <v-col cols="12" sm="5" class="pa-5 d-flex align-center">
           <v-card class="elevated" elevation="8" style="width: 100%">
             <v-card-text class="pa-6">
-              <h2 class="mb-1">{{ t('login') }}</h2>
+              <h2>{{ t('login') }}</h2>
               <p class="text-medium-emphasis mb-6 text-body-2">{{ t('welcome back') }}</p>
               <v-form ref="formRef" v-model="isValid" @submit.prevent="onSubmit">
                 <v-text-field v-model.trim="username" :label="t('username') || 'Username'" autocomplete="username" variant="outlined" density="comfortable" :rules="[rules.required]" class="mb-3" />
@@ -121,19 +124,21 @@ const login = async () => {
 </script>
 
 <style scoped>
-/* Subtle surface background */
 .login-wrap {
   min-height: 100vh;
+  display: flex;
+  align-items: center;
   background: linear-gradient(180deg, color-mix(in oklab, var(--v-theme-primary) 6%, transparent) 0%, transparent 30%),
     linear-gradient(90deg, color-mix(in oklab, var(--v-theme-secondary) 5%, transparent) 0%, transparent 40%);
 }
 .login-wrap-mobile {
-  min-height: auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   background: linear-gradient(180deg, color-mix(in oklab, var(--v-theme-primary) 6%, transparent) 0%, transparent 30%),
     linear-gradient(90deg, color-mix(in oklab, var(--v-theme-secondary) 5%, transparent) 0%, transparent 40%);  
 }
 
-/* Card with gentle elevation & soft border */
 .elevated {
   border-radius: 16px;
   background: var(--v-theme-surface);
@@ -143,10 +148,16 @@ const login = async () => {
 .brand__title {
   font-weight: 700;
   font-size: clamp(24px, 3vw, 36px);
-  line-height: 1.15;
+  line-height: 1.10;
 }
 .brand__copy {
   opacity: 0.8;
   max-width: 40ch;
+}
+
+@media (min-width: 800px) {
+  .left-col {
+    border-right: 1px solid color-mix(in oklab, var(--v-theme-on-surface) 10%, transparent);
+  }
 }
 </style>

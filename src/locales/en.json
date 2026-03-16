@@ -1311,5 +1311,6 @@
   "up": "Up",
   "down": "Down",
   "network interfaces could not be loaded": "Network interfaces could not be loaded",
-  "mos tools": "MOS Tools"  
+  "mos tools": "MOS Tools",
+  "mos portal": "MOS Portal"
 }

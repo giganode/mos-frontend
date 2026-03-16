@@ -323,7 +323,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" @click="updateAPI()" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" @click="updateAPI()" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-api" class="mr-3"></v-icon>
                     </template>

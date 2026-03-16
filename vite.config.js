@@ -17,30 +17,30 @@ export default defineConfig({
     port: 80,
     proxy: {
       '^/api/(?!v1/socket\\.io)': {
-        target: 'http://mos-test.home',
+        target: 'http://mos.home',
         changeOrigin: true,
       },
       '/api/v1/socket.io': {
-        target: 'http://mos-test.home:998',
+        target: 'http://mos.home:998',
         changeOrigin: true,
         ws: true,
       },
       '/ws': {
-        target: 'ws://mos-test.home:998',
+        target: 'ws://mos.home:998',
         ws: true,
       },
       '/api/v1/notify': {
-        target: 'http://mos-test.home',
+        target: 'http://mos.home',
         changeOrigin: true,
         ws: true,
       },
       '/api/v1/vm/vnc/ws': {
-        target: 'ws://mos-test.home:998',
+        target: 'ws://mos.home:998',
         changeOrigin: true,
         ws: true,
       },
       '/_plugins': {
-        target: 'http://mos-test.home',
+        target: 'http://mos.home',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/_plugins/, '/plugins'),
       },

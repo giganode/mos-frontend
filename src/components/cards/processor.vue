@@ -3,7 +3,7 @@
     <p class="text-body-2">{{ $t('no os data available') }}</p>
   </template>
   <template v-else-if="osInfo && Object.keys(osInfo).length">
-    <v-row density="comfortable">
+    <v-row density="compact">
       <v-col cols="6" sm="6" md="6" xl="6" v-if="osInfo && osInfo.cpu">
         <div class="text-caption text-medium-emphasis">
           <strong>{{ $t('brand') }}</strong>
@@ -47,7 +47,7 @@
         <div v-if="cpu.cores && cpu.cores.length">
           <details>
             <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('cores') }}</summary>
-            <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" density="comfortable">
+            <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" density="compact">
               <v-col>
                 <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
                   <div class="core-label text-body-2">
@@ -71,7 +71,7 @@
                   </div>
                 </div>
               </v-col>
-              <v-col v-for="(thread, ti) in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti">
+              <v-col v-for="(thread, ti) in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti" density="compact">
                 <div class="core-row" style="min-width: 0">
                   <div class="core-label text-body-2">
                     <small>

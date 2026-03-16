@@ -1,7 +1,7 @@
 <template>
-    <v-row density="comfortable" v-if="groupedFans.length > 0">
+    <v-row density="compact" v-if="groupedFans.length > 0">
         <v-col cols="12">
-            <v-row density="comfortable">
+            <v-row density="compact">
                 <v-col :cols="hasPercentageData ? 4 : 6">
                     <div class="text-caption text-medium-emphasis">
                         <v-icon size="small" class="mr-1">mdi-fan</v-icon>
@@ -23,7 +23,7 @@
             </v-row>
         </v-col>
         <v-col cols="12" v-for="fan in groupedFans" :key="fan.name">
-            <v-row density="comfortable" align="center">
+            <v-row density="compact" align="center">
                 <v-col :cols="hasPercentageData ? 4 : 6">
                     <div class="text-body-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                         {{ fan.name }}

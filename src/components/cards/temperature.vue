@@ -1,7 +1,7 @@
 <template>
-    <v-row density="comfortable" v-if="temperatureSensors.length > 0">
+    <v-row density="compact" v-if="temperatureSensors.length > 0">
         <v-col cols="12">
-            <v-row density="comfortable">
+            <v-row density="compact">
                 <v-col cols="6">
                     <div class="text-caption text-medium-emphasis">
                         <v-icon size="small" class="mr-1">mdi-thermometer</v-icon>
@@ -16,7 +16,7 @@
             </v-row>
         </v-col>
         <v-col cols="12" v-for="sensor in sortedSensors" :key="sensor.id">
-            <v-row density="comfortable" align="center">
+            <v-row density="compact" align="center">
                 <v-col cols="6">
                     <div class="text-body-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                         {{ sensor.name }}
@@ -54,6 +54,7 @@
             if (aIndex !== bIndex) {
                 return aIndex - bIndex
             }
+            return 0;
         })
     })
 

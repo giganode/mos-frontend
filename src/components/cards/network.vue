@@ -3,7 +3,7 @@
     <p class="text-body-2">{{ $t('no network interface found') }}</p>
   </template>
   <template v-else-if="network && network.interfaces && network.interfaces.length > 0">
-    <v-row density="comfortable">
+    <v-row density="compact">
       <template v-if="nic">
         <v-col cols="6" sm="6" md="3" v-if="getInterfaceName(nic)">
           <div class="text-caption text-medium-emphasis">

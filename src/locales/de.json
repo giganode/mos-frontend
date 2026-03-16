@@ -1310,5 +1310,6 @@
   "orphan": "Verwaist",
   "up": "Aktiv",
   "down": "Inaktiv",
-  "network interfaces could not be loaded": "Netzwerkschnittstellen konnten nicht geladen werden"
+  "network interfaces could not be loaded": "Netzwerkschnittstellen konnten nicht geladen werden",
+  "mos tools": "MOS Werkzeuge"
 }

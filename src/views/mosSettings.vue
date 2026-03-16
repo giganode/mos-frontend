@@ -4,23 +4,23 @@
       <v-container fluid class="pt-2 pr-0 pl-0 pb-2">
         <div class="d-flex align-center ga-3 mb-4">
           <div style="width: 4px; height: 32px; border-radius: 2px; background: rgb(var(--v-theme-primary))"></div>
-          <h2 class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('settings') }}</h2>
+          <h2 @click="showSpecialActions++" class="font-weight-medium ma-0" style="font-weight: 600; line-height: 1.1">{{ t('settings') }}</h2>
         </div>
       </v-container>
       <v-container class="pa-0" fluid>
         <v-row>
-          <!-- System Updates Card -->
+          <!-- System Card -->
           <v-col cols="12" md="6" lg="4" xl="3">
             <div class="card h-100">
               <div class="card-head">
                 <v-avatar color="primary" variant="tonal" rounded size="40">
                   <v-icon>mdi-update</v-icon>
                 </v-avatar>
-                <span class="text-h6 font-weight-bold">{{ $t('system updates') }}</span>
+                <span class="text-h6 font-weight-bold">{{ $t('system') }}</span>
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" @click="openUpdateOsDialog()" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" @click="openUpdateOsDialog()" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-package-up" class="mr-3"></v-icon>
                     </template>
@@ -29,7 +29,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" @click="openUpdateKernelDialog()" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" @click="openUpdateKernelDialog()" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-engine" class="mr-3"></v-icon>
                     </template>
@@ -47,6 +47,24 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
+                  <v-list-item rounded="lg" @click="rebootDialog = true" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-restart" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('reboot') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="shutdownDialog = true" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-power" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('shutdown') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>                  
                 </v-list>
               </div>
             </div>
@@ -63,7 +81,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" to="/mosSettings/users" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/users" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-account" class="mr-3"></v-icon>
                     </template>
@@ -72,7 +90,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/system" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/system" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-desktop-classic" class="mr-3"></v-icon>
                     </template>
@@ -81,7 +99,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/cron" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/cron" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-clock-outline" class="mr-3"></v-icon>
                     </template>
@@ -90,7 +108,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/logs" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/logs" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-text-box-outline" class="mr-3"></v-icon>
                     </template>
@@ -124,16 +142,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <!--<v-list-item rounded="lg" to="/mosSettings/drivers" class="mb-1" color="primary">
-                    <template v-slot:prepend>
-                      <v-icon icon="mdi-expansion-card" class="mr-3"></v-icon>
-                    </template>
-                    <v-list-item-title class="font-weight-medium">{{ $t('drivers') }}</v-list-item-title>
-                    <template v-slot:append>
-                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
-                    </template>
-                  </v-list-item>-->
-                  <v-list-item rounded="lg" to="/mosSettings/boot" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/boot" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-usb-flash-drive" class="mr-3"></v-icon>
                     </template>
@@ -142,7 +151,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/usbDevices" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/usbDevices" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-usb" class="mr-3"></v-icon>
                     </template>
@@ -151,7 +160,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/pciDevices" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/pciDevices" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-chip" class="mr-3"></v-icon>
                     </template>
@@ -160,7 +169,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/sensors" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/sensors" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-thermometer" class="mr-3"></v-icon>
                     </template>
@@ -194,7 +203,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" to="/mosSettings/docker" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/docker" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-docker" class="mr-3"></v-icon>
                     </template>
@@ -203,7 +212,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/lxc" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/lxc" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-package-variant" class="mr-3"></v-icon>
                     </template>
@@ -237,7 +246,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" to="/mosSettings/networkInterfaces" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/networkInterfaces" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-ethernet" class="mr-3"></v-icon>
                     </template>
@@ -246,7 +255,7 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
-                  <v-list-item rounded="lg" to="/mosSettings/networkServices" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" to="/mosSettings/networkServices" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-network-outline" class="mr-3"></v-icon>
                     </template>
@@ -280,7 +289,7 @@
               </div>
               <div>
                 <v-list bg-color="transparent" density="compact">
-                  <v-list-item rounded="lg" @click="thanksDialog = true" class="mb-1" color="primary">
+                  <v-list-item rounded="lg" @click="thanksDialog = true" color="primary">
                     <template v-slot:prepend>
                       <v-icon icon="mdi-handshake" class="mr-3"></v-icon>
                     </template>
@@ -302,6 +311,41 @@
               </div>
             </div>
           </v-col>
+
+          <!-- Special Actions Card -->
+          <v-col v-if="showSpecialActions >= 3" cols="12" md="6" lg="4" xl="3">
+            <div class="card h-100">
+              <div class="card-head">
+                <v-avatar color="primary" variant="tonal" rounded size="40">
+                  <v-icon>mdi-star-face</v-icon>
+                </v-avatar>
+                <span class="text-h6 font-weight-bold">{{ $t('special') }}</span>
+              </div>
+              <div>
+                <v-list bg-color="transparent" density="compact">
+                  <v-list-item rounded="lg" @click="updateAPI()" class="mb-1" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-api" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update api') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                  <v-list-item rounded="lg" @click="updateUI()" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-monitor" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('update ui') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
+          </v-col>
+
         </v-row>
       </v-container>
     </v-container>
@@ -493,6 +537,28 @@
     </v-card>
   </v-dialog>
 
+  <!-- Reboot Dialog -->
+  <v-dialog v-model="rebootDialog" max-width="600">
+    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to reboot your system?')" :title="t('reboot')" class="pa-0">
+      <v-divider />
+      <v-card-actions>
+        <v-btn color="onPrimary" :text="t('cancel')" @click="rebootDialog = false"></v-btn>
+        <v-btn color="onPrimary" :text="t('ok')" @click="rebootOS"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Shutdown Dialog -->
+  <v-dialog v-model="shutdownDialog" max-width="600">
+    <v-card max-width="400" prepend-icon="mdi-update" :text="t('do you want to shutdown your system?')" :title="t('shutdown')" class="pa-0">
+      <v-divider />
+      <v-card-actions>
+        <v-btn color="onPrimary" :text="t('cancel')" @click="shutdownDialog = false"></v-btn>
+        <v-btn color="onPrimary" :text="t('ok')" @click="shutdownOS"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
   </v-overlay>
@@ -511,7 +577,10 @@ const aboutDialog = ref(false);
 const rollbackKernelDialog = ref(false);
 const osInfo = ref({});
 const overlay = ref(false);
+const rebootDialog = ref(false);
+const shutdownDialog = ref(false);
 const { t } = useI18n();
+const showSpecialActions = ref(0);
 const updateOsDialog = reactive({
   value: false,
   channel: null,
@@ -688,6 +757,109 @@ const rollbackKernel = async () => {
 
     showSnackbarSuccess(t('kernel rollback initiated successfully'));
     rollbackKernelDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const rebootOS = async () => {
+  rebootDialog.value = false;
+
+  try {
+    overlay.value = true;
+
+    const res = await fetch('/api/v1/system/power/reboot', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('reboot could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('reboot initiated successfully'));
+    window.location.href = '/reboot.html';
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const shutdownOS = async () => {
+  shutdownDialog.value = false;
+
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/system/power/shutdown', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('shutdown could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('shutdown initiated successfully'));
+    window.location.href = '/shutdown.html';
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateAPI = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/update_api', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update api could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('update api initiated successfully'));
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const updateUI = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch('/api/v1/mos/update_ui', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('update ui could not be initiated')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('update ui initiated successfully'));
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

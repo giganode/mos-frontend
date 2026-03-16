@@ -1310,5 +1310,6 @@
   "orphan": "Orphan",
   "up": "Up",
   "down": "Down",
-  "network interfaces could not be loaded": "Network interfaces could not be loaded"
+  "network interfaces could not be loaded": "Network interfaces could not be loaded",
+  "mos tools": "MOS Tools"  
 }

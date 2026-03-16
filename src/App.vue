@@ -23,9 +23,7 @@
           </v-btn>
         </v-badge>
         <v-btn icon variant="text" to="/profile">
-          <v-icon>
-            mdi-account-circle
-          </v-icon>
+          <v-icon>mdi-account-circle</v-icon>
         </v-btn>
       </v-app-bar>
       <v-navigation-drawer v-if="!$route.meta.hideAppBar" v-model="drawer" :temporary="!display.mdAndUp.value">
@@ -60,9 +58,17 @@
           <v-list-item to="/plugins" prepend-icon="mdi-puzzle">
             <v-list-item-title>{{ $t('plugins') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/mosTools" prepend-icon="mdi-tools">
-            <v-list-item-title>{{ $t('tools') }}</v-list-item-title>
-          </v-list-item>
+          <v-list-group>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-tools" :title="$t('mos tools')"></v-list-item>
+            </template>
+            <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console">
+              <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder">
+              <v-list-item-title>{{ $t('filebrowser') }}</v-list-item-title>
+            </v-list-item>
+          </v-list-group>
           <v-list-item to="/mosSettings" prepend-icon="mdi-cog">
             <v-list-item-title>{{ $t('settings') }}</v-list-item-title>
           </v-list-item>
@@ -78,24 +84,10 @@
       </v-main>
     </template>
     <!-- Top Toaster -->
-    <Toaster id="top-toaster"
-      position="top-center"
-      :richColors="true"
-      :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'"
-      :expand="true"
-      :visibleToasts="3"
-      :offset="16"
-    />
+    <Toaster id="top-toaster" position="top-center" :richColors="true" :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'" :expand="true" :visibleToasts="3" :offset="16" />
 
     <!-- Bottom Toaster -->
-    <Toaster id="bottom-toaster"
-      position="bottom-center"
-      :richColors="true"
-      :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'"
-      :expand="true"
-      :visibleToasts="3"
-      :offset="16"
-    />
+    <Toaster id="bottom-toaster" position="bottom-center" :richColors="true" :theme="theme.global.name.value === 'dark' ? 'dark' : 'light'" :expand="true" :visibleToasts="3" :offset="16" />
   </v-app>
 
   <v-dialog v-model="logoutDialog" width="auto" min-width="400">
@@ -122,13 +114,13 @@ import mosWhite from '/mos_white.png';
 import { useDisplay } from 'vuetify';
 import { useRoute } from 'vue-router';
 
-const display = useDisplay()
+const display = useDisplay();
 const theme = useTheme();
 const route = useRoute();
 const { locale, t } = useI18n();
 const tab = ref('');
 const drawer = ref(false);
-const isWideScreen = computed(() => display.mdAndUp.value)
+const isWideScreen = computed(() => display.mdAndUp.value);
 const loggedIn = ref(false);
 const token = ref('');
 const logoutDialog = ref(false);
@@ -145,8 +137,8 @@ let reconnectTimer = null;
 let reconnectAttempts = 0;
 
 watch(drawer, (val) => {
-  localStorage.setItem('drawer', String(val))
-})
+  localStorage.setItem('drawer', String(val));
+});
 
 watch(
   () => [hostname.value, route.path],
@@ -154,7 +146,7 @@ watch(
     const title = route.meta?.title || 'MOS';
     document.title = hostname.value ? `${title} - ${hostname.value}` : title;
   },
-)
+);
 
 onMounted(async () => {
   if (tab.value === '') {
@@ -232,7 +224,7 @@ const getUserProfile = async () => {
 
     const result = await res.json();
 
-    if(result.darkmode) {
+    if (result.darkmode) {
       theme.change('dark');
     } else {
       theme.change('light');
@@ -265,37 +257,6 @@ function doLogout() {
   drawer.value = false;
   logoutDialog.value = false;
 }
-
-const changeDarkMode = async () => {
-  const currentTheme = theme.global.name.value;
-  let targetTheme;
-  if (currentTheme === 'dark') {
-    targetTheme = 'light';
-  } else {
-    targetTheme = 'dark';
-  }
-
-  try {
-    const res = await fetch(`/api/v1/auth/users/${localStorage.getItem('userid')}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ darkmode: targetTheme === 'dark' ? true : false }),
-    });
-
-    if (!res.ok) throw new Error('API-Error');
-
-    const result = await res.json();
-
-    theme.global.name.value = result.darkmode ? 'dark' : 'light';
-    locale.value = result.language || 'en';
-    theme.themes.value[theme.global.name.value].colors.primary = result.primary_color || '#1976D2';
-  } catch (e) {
-    showSnackbarError(e.message);
-  }
-};
 
 const getMosServices = async () => {
   try {
@@ -363,8 +324,8 @@ const getNotificationsBadge = async () => {
 };
 
 const toggleDrawer = () => {
-  drawer.value = !drawer.value
-}
+  drawer.value = !drawer.value;
+};
 
 const getDrawerState = () => {
   if (localStorage.getItem('drawer')) {

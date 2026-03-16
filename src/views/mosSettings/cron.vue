@@ -244,15 +244,18 @@ const getCron = async () => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('cron jobs could not be loaded'));
+      throw new Error(`${t('cron jobs could not be loaded')}|$| ${error.error || t('unknown error')}`);
     }
+
     cronJobs.value = await res.json();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   }
 };
 
 const createCronJob = async () => {
+  overlay.value = true;
   const newCronJob = {
     name: createCronJobDialog.name,
     schedule: createCronJobDialog.schedule,
@@ -270,16 +273,24 @@ const createCronJob = async () => {
       body: JSON.stringify(newCronJob),
     });
 
-    if (!res.ok) throw new Error(t('cron job could not be created'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('cron job could not be created')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('cron job created successfully'));
     createCronJobDialog.value = false;
     getCron();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
 const changeCronJob = async (id, name, schedule, command, enabled) => {
+  overlay.value = true;
   const changeCronJob = {};
   if (name !== undefined) changeCronJob.name = name;
   if (schedule !== undefined) changeCronJob.schedule = schedule;
@@ -295,16 +306,24 @@ const changeCronJob = async (id, name, schedule, command, enabled) => {
       body: JSON.stringify(changeCronJob),
     });
 
-    if (!res.ok) throw new Error(t('cron job could not be changed'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('cron job could not be changed')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('cron job changed successfully'));
     changeCronJobDialog.value = false;
     getCron();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
 const deleteCronJob = async () => {
+  overlay.value = true;
   try {
     const res = await fetch('/api/v1/cron/' + deleteCronJobDialog.id, {
       method: 'DELETE',
@@ -313,12 +332,19 @@ const deleteCronJob = async () => {
       },
     });
 
-    if (!res.ok) throw new Error(t('cron jobs could not be deleted'));
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('cron jobs could not be deleted')}|$| ${error.error || t('unknown error')}`);
+    }
+
     showSnackbarSuccess(t('cron job deleted successfully'));
     deleteCronJobDialog.value = false;
     getCron();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
   }
 };
 
@@ -330,16 +356,19 @@ const getScript = async (cronId) => {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
       },
     });
-    overlay.value = false;
+
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('script could not be loaded'));
+      throw new Error(`${t('script could not be loaded')}|$| ${error.error || t('unknown error')}`);
     }
+
     const data = await res.json();
     return data.script;
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -354,16 +383,17 @@ const changeScript = async (cronId) => {
       },
       body: JSON.stringify({ content: changeScriptDialog.content }),
     });
-    overlay.value = false;
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('script could not be changed'));
+      throw new Error(`${t('script could not be changed')}|$| ${error.error || t('unknown error')}`);
     }
     showSnackbarSuccess(t('script changed successfully'));
     changeScriptDialog.value = false;
   } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
     overlay.value = false;
-    showSnackbarError(e.message);
   }
 };
 
@@ -379,12 +409,13 @@ const startScript = async (cronId) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('script could not be started'));
+      throw new Error(`${t('script could not be started')}|$| ${error.error || t('unknown error')}`);
     }
     showSnackbarSuccess(t('script started successfully'));
     getCron();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }
@@ -402,12 +433,13 @@ const stopScript = async (cronId) => {
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.error || t('script could not be stopped'));
+      throw new Error(`${t('script could not be stopped')}|$| ${error.error || t('unknown error')}`);
     }
     showSnackbarSuccess(t('script stopped successfully'));
     getCron();
   } catch (e) {
-    showSnackbarError(e.message);
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
   } finally {
     overlay.value = false;
   }

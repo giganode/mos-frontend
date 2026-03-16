@@ -170,6 +170,7 @@ import fsNavigatorDialog from '@/components/fsNavigatorDialog.vue';
 const fsDialog = ref(false);
 const fsDialogCallback = ref(null);
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
+const settingsSystemOriginal = ref(null);
 const settingsSystem = ref({
   hostname: '',
   keymap: '',
@@ -315,7 +316,7 @@ const getSystemSettings = async () => {
       throw new Error(`${t('system settings could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
     }
 
-    settingsSystem.value = await res.json();
+    settingsSystemOriginal.value = settingsSystem.value = await res.json();
 
     if (!settingsSystem.value.ntp.enabled) {
       await getTimeDate();
@@ -393,16 +394,8 @@ const setTimeDate = async () => {
 };
 
 const setSystemSettings = async () => {
+  overlay.value = true;
   try {
-    overlay.value = true;
-    const res = await fetch('/api/v1/mos/settings/system', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(settingsSystem.value),
-    });
     const resProxy = await fetch('/api/v1/system/proxy', {
       method: 'PUT',
       headers: {
@@ -410,6 +403,14 @@ const setSystemSettings = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(proxies.value),
+    });
+    const res = await fetch('/api/v1/mos/settings/system', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(settingsSystem.value),
     });
 
     if (!res.ok) {

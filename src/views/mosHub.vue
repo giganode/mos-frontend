@@ -56,10 +56,10 @@
               </v-list>
             </v-menu>
             <v-divider class="mt-2" />
-            <v-container class="pa-4" v-if="!hubLoading">
-              <v-row class="ma-n2" style="gap: 0">
-                <v-col v-if="mosHub.length > 0" cols="12" sm="6" md="4" lg="4" xl="3" v-for="(tpl, i) in mosHub" :key="tpl.name || i" class="pa-2" style="padding-bottom: 16px; padding-top: 16px">
-                  <v-card style="height: 250px; display: flex; flex-direction: column" class="pa-0">
+            <v-container fluid class="pa-4" v-if="!hubLoading">
+              <template v-if="mosHub.length > 0">
+                <div class="hub-grid">
+                  <v-card v-for="(tpl, i) in mosHub" :key="tpl.name || i" style="height: 250px; display: flex; flex-direction: column" class="pa-0">
                     <v-card-text class="pa-0 pt-4">
                       <div class="d-flex justify-center">
                         <v-img v-if="tpl.icon" :src="tpl.icon" height="60" contain style="max-width: 100%"></v-img>
@@ -140,9 +140,10 @@
                       </v-btn>
                     </v-card-actions>
                   </v-card>
-                </v-col>
+                </div>
+
                 <!-- Pagination -->
-                <v-col v-if="mosHubCount > 0" cols="12" class="pt-4 d-flex justify-center">
+                <div v-if="mosHubCount > 0" class="pt-4 d-flex justify-center">
                   <v-pagination
                     v-model="currentPage"
                     :length="Math.ceil(mosHubCount / pageLimit)"
@@ -154,23 +155,21 @@
                       }
                     "
                   />
-                </v-col>
-                <v-col v-else cols="12">
-                  <div v-if="errorMsg === ''" class="text-center grey--text text--darken-1">
-                    {{ $t('no templates found matching your search') }}
-                  </div>
-                  <div v-else class="text-center grey--text text--darken-1">
-                    {{ errorMsg }}
-                  </div>
-                </v-col>
-              </v-row>
+                </div>
+              </template>
+              <div v-else>
+                <div v-if="errorMsg === ''" class="text-center grey--text text--darken-1">
+                  {{ $t('no templates found matching your search') }}
+                </div>
+                <div v-else class="text-center grey--text text--darken-1">
+                  {{ errorMsg }}
+                </div>
+              </div>
             </v-container>
             <v-container v-else fluid class="pa-4 d-flex justify-center">
-              <v-row class="ma-n2" style="width: 100%">
-                <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="4" xl="3" class="pa-2">
-                  <v-skeleton-loader type="card" class="pa-0" />
-                </v-col>
-              </v-row>
+              <div class="hub-grid" style="width: 100%">
+                <v-skeleton-loader v-for="n in 8" :key="n" type="card" class="pa-0" />
+              </div>
             </v-container>
           </v-card-text>
         </v-card>
@@ -656,14 +655,28 @@ const openPluginInstallDialog = (tpl) => {
 </script>
 
 <style scoped>
-.v-row.ma-n2 {
-  margin-left: -8px;
-  margin-right: -8px;
+.hub-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
 }
-.v-col.pa-2 {
-  padding-left: 8px !important;
-  padding-right: 8px !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
+
+@media (min-width: 760px) {
+  .hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .hub-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1440px) {
+  .hub-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 </style>

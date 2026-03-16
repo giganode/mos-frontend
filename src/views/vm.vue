@@ -77,6 +77,12 @@
                           <v-list-item-title>{{ $t('reset') }}</v-list-item-title>
                         </v-list-item>
                         <v-divider />
+                        <v-list-item v-if="vm.state !== 'running'" @click="openEditVmDialog(vm.name)">
+                          <template #prepend>
+                            <v-icon>mdi-pencil</v-icon>
+                          </template>
+                          <v-list-item-title>{{ $t('edit vm') }}</v-list-item-title>
+                        </v-list-item>
                         <v-list-item v-if="vm.state !== 'running'" @click="openEditXmlDialog(vm.name)">
                           <template #prepend>
                             <v-icon>mdi-text-box-edit</v-icon>
@@ -692,6 +698,559 @@
     </v-card>
   </v-dialog> 
 
+  <!-- Edit VM Dialog -->
+  <v-dialog v-model="editVmDialog" max-width="800">
+    <v-card class="pa-0">
+      <v-card-title>{{ $t('edit vm') }}</v-card-title>
+      <v-card-text>
+        <v-alert type="warning" variant="tonal" density="compact" class="mb-4">
+          {{ $t('Custom XML changes will be overwritten by this dialog') }}
+        </v-alert>
+        <v-text-field
+          v-model="editedVm.name"
+          :label="$t('name')"
+          variant="outlined"
+          hide-details
+          class="mb-3"
+          readonly
+        >
+          <template #append-inner>
+            <v-menu :close-on-content-click="true" location="bottom end">
+              <template #activator="{ props }">
+                <div v-bind="props" class="icon-picker">
+                  <v-img
+                    v-if="editedVm.icon"
+                    :src="`/os_icons/${editedVm.icon}.png`"
+                    width="24"
+                    height="24"
+                  >
+                    <template #error>
+                      <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                    </template>
+                  </v-img>
+                  <v-icon v-else color="grey-darken-1">mdi-image-plus</v-icon>
+                </div>
+              </template>
+              <v-card max-width="350" max-height="400" style="overflow-x: hidden; overflow-y: auto;">
+                <v-card-text class="pa-2">
+                  <div class="icon-grid">
+                    <div
+                      v-for="iconItem in vmCapabilities.icons || []"
+                      :key="iconItem.icon"
+                      class="icon-tile"
+                      :class="{ 'icon-tile-selected': editedVm.icon === iconItem.icon }"
+                      @click="editedVm.icon = iconItem.icon"
+                    >
+                      <v-img
+                        :src="`/os_icons/${iconItem.icon}.png`"
+                        width="32"
+                        height="32"
+                      >
+                        <template #error>
+                          <v-icon color="grey-darken-1">mdi-image-off</v-icon>
+                        </template>
+                      </v-img>
+                      <span class="icon-tile-label">{{ iconItem.namePretty }}</span>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-menu>
+          </template>
+        </v-text-field>
+        <v-slider style="margin-top: 12px;"
+          v-model="editedVm.memorySize"
+          :label="$t('Memory Size (GB)')"
+          step="1"
+          min="1"
+          :max="availableSystemMemory - 4"
+          thumb-label="always"
+          variant="outlined"
+          class="mb-3 thumb-bottom"
+        />
+        <details>
+          <summary style="cursor: pointer; color: var(--v-theme-primary); text-decoration: underline" class="text-body-2 mb-1">{{ $t('core pinning') }}</summary>
+        <v-row v-for="(core, i) in (cpu.cores || []).filter((c) => c.isPhysical)" :key="i" density="comfortable">
+              <v-col>
+                <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
+                  <v-checkbox
+                    v-model="editedVm.selectedCores"
+                    :name="`core-${core.number}`"
+                    :value="core.number"
+                    hide-details
+                    density="compact"
+                  />
+                  <div class="core-label text-body-2">
+                    <small>
+                      <b>Core-{{ core.number }}</b>
+                    </small>
+                  </div>
+                </div>
+              </v-col>
+              <v-col v-for="(thread, ti) in (cpu.cores || []).filter((c) => c.isHyperThreaded && c.physicalCoreNumber === core.number)" :key="ti">
+                <div class="core-row" style="min-width: 0; display: flex; align-items: center; gap: 6px">
+                  <v-checkbox
+                    v-model="editedVm.selectedCores"
+                    :name="`thread-${thread.number}`"
+                    :value="thread.number"
+                    hide-details
+                    density="compact"
+                  />
+                  <div class="core-label text-body-2">
+                    <small>
+                      <b>Ht-{{ thread.number }}</b>
+                    </small>
+                  </div>
+                </div>
+              </v-col>
+        </v-row>
+        </details>
+        <v-select
+          v-model="editedVm.machineTypeArchitecture"
+          :items="availableMachineTypeArchitectures"
+          :label="$t('machine type')"
+          variant="outlined"
+          class="mt-8 mb-3"
+        />
+        <v-select
+          v-if="editedVm.machineTypeArchitecture"
+          v-model="editedVm.machineType"
+          :items="selectedMachineTypeVersions"
+          item-title="title"
+          item-value="value"
+          :label="$t('version')"
+          variant="outlined"
+          class="mb-3"
+        />
+        <v-select
+          v-model="editedVm.biosType"
+          :items="vmCapabilities.biosTypes"
+          :label="$t('BIOS Type')"
+          variant="outlined"
+          class="mb-4"
+        />
+        <v-divider class="my-4" />
+        <!-- Disks Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('disks') }}</h3>
+            <v-spacer />
+            <v-btn
+              size="small"
+              color="primary"
+              prepend-icon="mdi-plus"
+              @click="addDiskEdit"
+            >
+              {{ $t('Add Disk') }}
+            </v-btn>
+          </div>
+          <v-card
+            v-for="(disk, index) in editedVm.disks"
+            :key="index"
+            class="mb-3 pa-3"
+            variant="outlined"
+          >
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-subtitle-2">{{ $t('disk') }} {{ index + 1 }}</span>
+              <v-spacer />
+              <v-btn
+                size="x-small"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                @click="removeDiskEdit(index)"
+              />
+            </div>
+            <v-row density="comfortable">
+              <v-col cols="12" md="12">
+                <v-text-field
+                  v-model="disk.source"
+                  :label="$t('source')"
+                  append-inner-icon="mdi-folder"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="/path/to/disk.qcow2"
+                  @click:append-inner="
+                    fsDialogDisk = true;
+                    fsDialogInitialPath = vmCapabilities.vdisk_directory || '/';
+                    fsDialogCallback = (item) => {
+                      disk.source = item.path;
+                    };
+                  "
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-text-field
+                  v-model="disk.size"
+                  :label="$t('size')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="20G"
+                />
+              </v-col>
+              
+              <v-col cols="12" md="3">
+                <v-select
+                  v-model="disk.bus"
+                  :items="vmCapabilities.diskBuses"
+                  :label="$t('bus')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-select
+                  v-model="disk.format"
+                  :items="vmCapabilities.diskFormats"
+                  :label="$t('format')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-text-field
+                  v-model="disk.boot_order"
+                  :label="$t('boot order')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  type="number"
+                  placeholder="1"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+        <!-- CD-ROM Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('CD-ROM') }}</h3>
+            <v-spacer />
+            <v-btn
+              size="small"
+              color="primary"
+              prepend-icon="mdi-plus"
+              @click="addCdromEdit"
+            >
+              {{ $t('Add CD-ROM') }}
+            </v-btn>
+          </div>
+          <v-card
+            v-for="(cdrom, index) in editedVm.cdroms"
+            :key="index"
+            class="mb-3 pa-3"
+            variant="outlined"
+          >
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-subtitle-2">{{ $t('CD-ROM') }} {{ index + 1 }}</span>
+              <v-spacer />
+              <v-btn
+                size="x-small"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                @click="removeCdromEdit(index)"
+              />
+            </div>
+            <v-row density="comfortable">
+              <v-col cols="12" md="12">
+                <v-text-field
+                  v-model="cdrom.source"
+                  :label="$t('source')"
+                  append-inner-icon="mdi-folder"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="/path/to/image.iso"
+                  @click:append-inner="
+                    fsDialogCdRom = true;
+                    fsDialogInitialPath = '/';
+                    fsDialogCallback = (item) => {
+                      cdrom.source = item.path;
+                    };
+                  "
+                />
+              </v-col>
+              <v-col cols="12" md="8">
+                <v-select
+                  v-model="cdrom.bus"
+                  :items="vmCapabilities.diskBuses"
+                  :label="$t('bus')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="cdrom.boot_order"
+                  :label="$t('boot order')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  type="number"
+                  placeholder="2"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+
+        <!-- VirtIO ISO Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('VirtIO Drivers') }}</h3>
+          </div>
+          <v-select
+            v-model="editedVm.virtioIso"
+            :items="virtioIsoOptions"
+            item-title="title"
+            item-value="value"
+            :label="$t('VirtIO ISO')"
+            variant="outlined"
+            density="compact"
+            clearable
+            hide-details
+          />
+        </div>
+        <v-divider class="my-4" />
+
+        <!-- Networks Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('network adapter') }}</h3>
+            <v-spacer />
+            <v-btn
+              size="small"
+              color="primary"
+              prepend-icon="mdi-plus"
+              @click="addNetworkEdit"
+            >
+              {{ $t('Add adapter') }}
+            </v-btn>
+          </div>
+          <v-card
+            v-for="(network, index) in editedVm.networks"
+            :key="index"
+            class="mb-3 pa-3"
+            variant="outlined"
+          >
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-subtitle-2">{{ $t('network') }} {{ index + 1 }}</span>
+              <v-spacer />
+              <v-btn
+                size="x-small"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                @click="removeNetworkEdit(index)"
+              />
+            </div>
+            <v-row density="comfortable">
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="network.type"
+                  :items="vmCapabilities.networkTypes"
+                  :label="$t('type')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="network.source"
+                  :items="vmCapabilities.networks.bridges"
+                  :label="$t('source')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="network.model"
+                  :items="vmCapabilities.networkModels"
+                  :label="$t('model')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="network.mac"
+                  :label="$t('MAC Address')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="XX:XX:XX:XX:XX:XX"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+
+        <!-- Graphics Configuration -->
+        <div class="mb-4">
+          <h3 class="text-h6 mb-2">{{ $t('graphics') }}</h3>
+          <v-card class="pa-3" variant="outlined">
+            <v-row density="comfortable">
+              <v-col cols="12" md="3">
+                <v-select
+                  v-model="editedVm.graphics.type"
+                  :items="vmCapabilities.graphicsTypes"
+                  :label="$t('type')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-select
+                  v-model="editedVm.graphics.keymap"
+                  :items="vmCapabilities.vncKeymaps"
+                  :label="$t('keymap')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-text-field
+                  v-model="editedVm.graphics.port"
+                  :label="$t('port')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="auto if empty"
+                />
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-text-field
+                  v-model="editedVm.graphics.listen"
+                  :label="$t('listen')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="0.0.0.0"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+
+        <!-- Host Devices Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('Host Devices') }}</h3>
+            <v-spacer />
+            <v-btn
+              size="small"
+              color="primary"
+              prepend-icon="mdi-plus"
+              @click="addHostDeviceEdit"
+            >
+              {{ $t('Add Host Device') }}
+            </v-btn>
+          </div>
+          <v-card
+            v-for="(hostdevice, index) in editedVm.hostdevices"
+            :key="index"
+            class="mb-3 pa-3"
+            variant="outlined"
+          >
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-subtitle-2">{{ $t('Host Device') }} {{ index + 1 }}</span>
+              <v-spacer />
+              <v-btn
+                size="x-small"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                @click="removeHostDeviceEdit(index)"
+              />
+            </div>
+            <v-row density="comfortable">
+              <v-col cols="12">
+                <v-select
+                  v-model="hostdevice.address"
+                  :items="Object.entries(pcieDevices).map(([value, text]) => ({ value, title: `${value} - ${text}` }))"
+                  :label="$t('PCI Address')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="0000:01:00.0"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+
+        <!-- USB Devices Configuration -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="text-h6">{{ $t('USB Devices') }}</h3>
+            <v-spacer />
+            <v-btn
+              size="small"
+              color="primary"
+              prepend-icon="mdi-plus"
+              @click="addUsbDeviceEdit"
+            >
+              {{ $t('Add USB Device') }}
+            </v-btn>
+          </div>
+          <v-card
+            v-for="(usbdevice, index) in editedVm.usbdevices"
+            :key="index"
+            class="mb-3 pa-3"
+            variant="outlined"
+          >
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-subtitle-2">{{ $t('USB Device') }} {{ index + 1 }}</span>
+              <v-spacer />
+              <v-btn
+                size="x-small"
+                icon="mdi-delete"
+                variant="text"
+                color="error"
+                @click="removeUsbDeviceEdit(index)"
+              />
+            </div>
+            <v-row density="comfortable">
+              <v-col cols="12">
+                <v-select
+                  v-model="usbdevice.device"
+                  :items="Object.entries(usbDevices).map(([value, text]) => ({ value, title: `${value} - ${text}` }))"
+                  :label="$t('USB Device')"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  placeholder="1234:5678"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+        <v-divider class="my-4" />
+      </v-card-text>
+      <v-card-actions style="position: sticky; bottom: 0; background-color: var(--v-theme-surface, #fff);">
+        <v-btn @click="editVmDialog = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="editVM()">{{ $t('save changes') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog> 
+
   <!-- Edit XML Dialog -->
   <v-dialog v-model="editXmlDialog" max-width="1500">
     <v-card class="pa-0">
@@ -957,6 +1516,7 @@ const vmCapabilities = ref({
   virtioIsos: []
 });
 const createVmDialog = ref(false);
+const editVmDialog = ref(false);
 const editXmlDialog = ref(false);
 const editXmlVmData = ref({
   name: '',
@@ -994,6 +1554,27 @@ const newVm = ref({
   },
   hostdevices: [],
   usbdevices: []
+});
+const editedVm = ref({
+  name: '',
+  icon: '',
+  memorySize: 1,
+  machineTypeArchitecture: 'q35',
+  machineType: 'q35',
+  biosType: 'ovmf',
+  selectedCores: [],
+  disks: [],
+  cdroms: [],
+  networks: [],
+  graphics: {
+    type: 'vnc',
+    port: null,
+    listen: '0.0.0.0',
+    keymap: 'en-us'
+  },
+  hostdevices: [],
+  usbdevices: [],
+  virtioIso: null
 });
 const systemInfo = ref({
     "os": {},
@@ -1312,9 +1893,6 @@ const openEditXmlDialog = async (name) => {
 };
 
 const changeXml = async () => {
-  
-  
-
   try {
     overlay.value = true;
     const res = await fetch(`/api/v1/vm/xml/validate`, {
@@ -1366,8 +1944,6 @@ const changeXml = async () => {
     }
   }
 };
-
-  
 
 const openInfoDialog = async (name) => {
   infoDialogData.value = { name };
@@ -1626,6 +2202,13 @@ watch(() => newVm.value.machineTypeArchitecture, () => {
   }
 });
 
+watch(() => editedVm.value.machineTypeArchitecture, () => {
+  const versions = selectedMachineTypeVersions.value;
+  if (versions.length) {
+    editedVm.value.machineType = versions[0].value;
+  }
+});
+
 const virtioIsoOptions = computed(() => {
   if (!vmCapabilities.value?.virtioIsos) return [];
   return vmCapabilities.value.virtioIsos.map(iso => ({
@@ -1657,6 +2240,71 @@ const openCreateVmDialog = async () => {
   };
 
   createVmDialog.value = true;
+};
+
+const openEditVmDialog = async (name) => {
+  try {
+    const res = await fetch(`/api/v1/vm/machines/${name}/config`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+    const data = await res.json();
+
+    let memorySize = 1;
+    if (data.memoryHuman) {
+      const match = data.memoryHuman.match(/^(\d+)/);
+      if (match) memorySize = parseInt(match[1]);
+    }
+
+    const platform = data.platform || 'q35';
+    let machineTypeArchitecture = 'q35';
+    if (platform.includes('i440fx')) machineTypeArchitecture = 'i440fx';
+
+    editedVm.value = {
+      name: data.name,
+      icon: data.icon || '',
+      memorySize,
+      machineTypeArchitecture,
+      machineType: platform,
+      biosType: data.bios || 'ovmf',
+      selectedCores: data.cpuPins || [],
+      disks: (data.disks || []).map(d => ({
+        type: 'file',
+        source: d.source || '',
+        size: d.size || '',
+        format: d.format || 'qcow2',
+        bus: d.bus || 'virtio',
+        boot_order: d.boot_order || 0
+      })),
+      cdroms: (data.cdroms || []).map(c => ({
+        source: c.source || '',
+        bus: c.bus || 'sata',
+        boot_order: c.boot_order || 0
+      })),
+      networks: (data.networks || []).map(n => ({
+        type: n.type || 'bridge',
+        source: n.source || '',
+        model: n.model || 'virtio',
+        mac: n.mac || ''
+      })),
+      graphics: {
+        type: data.graphics?.type || 'vnc',
+        port: data.graphics?.port || null,
+        listen: data.graphics?.listen || '0.0.0.0',
+        keymap: data.graphics?.keymap || 'en-us'
+      },
+      hostdevices: (data.pciDevices || []).map(p => ({ address: p.address })),
+      usbdevices: (data.usbDevices || []).map(u => ({ device: `${u.vendor}:${u.product}` })),
+      virtioIso: null
+    };
+
+    editVmDialog.value = true;
+  } catch (e) {
+    showSnackbarError(t('Could not fetch VM config'));
+  }
 };
 
 const recalculateBootOrder = () => {
@@ -1757,6 +2405,90 @@ const removeUsbDevice = (index) => {
   newVm.value.usbdevices.splice(index, 1);
 };
 
+const recalculateBootOrderEdit = () => {
+  const allBootableDevices = [
+    ...editedVm.value.disks.map(d => ({ item: d, type: 'disk' })),
+    ...editedVm.value.cdroms.map(c => ({ item: c, type: 'cdrom' }))
+  ];
+
+  allBootableDevices
+    .sort((a, b) => (a.item.boot_order || 999) - (b.item.boot_order || 999))
+    .forEach((device, index) => {
+      device.item.boot_order = index + 1;
+    });
+};
+
+const addDiskEdit = () => {
+  const totalDevices = editedVm.value.disks.length + editedVm.value.cdroms.length;
+  const diskIndex = editedVm.value.disks.length;
+  const format = 'qcow2';
+  const vdiskDir = vmCapabilities.value.vdisk_directory || '/';
+  const vmName = editedVm.value.name || 'unnamed';
+  const source = `${vdiskDir}/${vmName}/vdisk${diskIndex+1}.${format}`;
+
+  editedVm.value.disks.push({
+    type: 'file',
+    source: source,
+    size: '',
+    format: format,
+    boot_order: totalDevices + 1
+  });
+};
+
+const removeDiskEdit = (index) => {
+  editedVm.value.disks.splice(index, 1);
+  recalculateBootOrderEdit();
+};
+
+const addCdromEdit = () => {
+  const totalDevices = editedVm.value.disks.length + editedVm.value.cdroms.length;
+  editedVm.value.cdroms.push({
+    bus: 'sata',
+    source: '',
+    size: '',
+    format: 'raw',
+    boot_order: totalDevices + 1
+  });
+};
+
+const removeCdromEdit = (index) => {
+  editedVm.value.cdroms.splice(index, 1);
+  recalculateBootOrderEdit();
+};
+
+const addNetworkEdit = () => {
+  editedVm.value.networks.push({
+    type: 'bridge',
+    source: '',
+    model: 'virtio',
+    mac: ''
+  });
+};
+
+const removeNetworkEdit = (index) => {
+  editedVm.value.networks.splice(index, 1);
+};
+
+const addHostDeviceEdit = () => {
+  editedVm.value.hostdevices.push({
+    address: ''
+  });
+};
+
+const removeHostDeviceEdit = (index) => {
+  editedVm.value.hostdevices.splice(index, 1);
+};
+
+const addUsbDeviceEdit = () => {
+  editedVm.value.usbdevices.push({
+    device: ''
+  });
+};
+
+const removeUsbDeviceEdit = (index) => {
+  editedVm.value.usbdevices.splice(index, 1);
+};
+
 const createVM = async () => {
   if (!newVm.value.name) {
     showSnackbarError(t('name is required'));
@@ -1830,6 +2562,88 @@ const createVM = async () => {
 
     showSnackbarSuccess(t('VM created successfully'));
     createVmDialog.value = false;
+    await getVMs();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
+const editVM = async () => {
+  if (!editedVm.value.name) {
+    showSnackbarError(t('name is required'));
+    return;
+  }
+
+  if (!editedVm.value.machineType) {
+    showSnackbarError(t('machine type is required'));
+    return;
+  }
+
+  if (!editedVm.value.biosType) {
+    showSnackbarError(t('BIOS type is required'));
+    return;
+  }
+
+  const payload = {
+    name: editedVm.value.name,
+    icon: editedVm.value.icon,
+    memory: `${editedVm.value.memorySize}G`,
+    cpus: editedVm.value.selectedCores.length || 1,
+    cpuPins: editedVm.value.selectedCores,
+    platform: editedVm.value.machineType,
+    bios: editedVm.value.biosType,
+    disks: editedVm.value.disks.map(disk => ({
+      type: disk.bus,
+      source: disk.source,
+      size: disk.size,
+      format: disk.format,
+      boot_order: parseInt(disk.boot_order) || 0
+    })),
+    cdroms: [
+      ...editedVm.value.cdroms.map(cdrom => ({
+        source: cdrom.source,
+        bus: cdrom.bus,
+        boot_order: parseInt(cdrom.boot_order) || 0
+      })),
+      ...(editedVm.value.virtioIso ? [{
+        source: editedVm.value.virtioIso,
+        bus: 'sata',
+        boot_order: 99
+      }] : [])
+    ],
+    networks: editedVm.value.networks,
+    graphics: editedVm.value.graphics,
+    hostdevices: editedVm.value.hostdevices,
+    usbdevices: editedVm.value.usbdevices.map(usb => {
+      const [vendor, product] = usb.device.split(':');
+      return {
+        vendor: `0x${vendor}`,
+        product: `0x${product}`
+      };
+    })
+  };
+
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/vm/machines/${editedVm.value.name}/config`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('VM could not be edited')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('VM edited successfully'));
+    editVmDialog.value = false;
     await getVMs();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');

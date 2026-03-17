@@ -45,6 +45,12 @@
                           </template>
                           <v-list-item-title>{{ $t('start') }}</v-list-item-title>
                         </v-list-item>
+                        <v-list-item v-if="vm.state !== 'running'" @click="startVM(vm.name).then(() => openVnc(vm.name))">
+                          <template #prepend>
+                            <v-icon>mdi-play-circle</v-icon>
+                          </template>
+                          <v-list-item-title>{{ $t('start & vnc') }}</v-list-item-title>
+                        </v-list-item>
                         <v-list-item v-if="vm.state === 'running' && vm.vncPort" @click="openVnc(vm.name)">
                           <template #prepend>
                             <v-icon>mdi-monitor</v-icon>
@@ -76,7 +82,7 @@
                           </template>
                           <v-list-item-title>{{ $t('reset') }}</v-list-item-title>
                         </v-list-item>
-                        <v-divider />
+                        <v-divider v-if="vm.state !== 'running'"/>
                         <v-list-item v-if="vm.state !== 'running'" @click="openEditVmDialog(vm.name)">
                           <template #prepend>
                             <v-icon>mdi-pencil</v-icon>

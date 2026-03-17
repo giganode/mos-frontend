@@ -168,8 +168,8 @@
                     </td>
 
                     <td>
-                      <v-icon v-if="group.update_available" color="red" @click.stop="updateDockerGroupContainers(group)">mdi-autorenew</v-icon>
-                      <v-icon v-else color="green">mdi-check</v-icon>
+                      <v-icon v-if="group.update_available" style="color: red" @click.stop="updateDockerGroupContainers(group)">mdi-autorenew</v-icon>
+                      <v-icon v-else style="color: green">mdi-check</v-icon>
                     </td>
 
                     <td>&nbsp;</td>
@@ -303,10 +303,10 @@
 
                     <td>
                       <template v-if="!group.compose">
-                        <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === containerName && item.update_available)" color="red" @click="updateDocker(containerName)">
+                        <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === containerName && item.update_available)" style="color: red" @click="updateDocker(containerName)">
                           mdi-autorenew
                         </v-icon>
-                        <v-icon v-else color="green">mdi-check</v-icon>
+                        <v-icon v-else style="color: green">mdi-check</v-icon>
                       </template>
                     </td>
 
@@ -538,10 +538,10 @@
                       </div>
                     </td>
                     <td>
-                      <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)" color="red" @click="updateDocker(docker.Names[0])">
+                      <v-icon v-if="mosDockers && mosDockers.find((item) => item.name === docker.Names[0] && item.update_available)" style="color: red" @click="updateDocker(docker.Names[0])">
                         mdi-autorenew
                       </v-icon>
-                      <v-icon v-else color="green">mdi-check</v-icon>
+                      <v-icon v-else style="color: green">mdi-check</v-icon>
                     </td>
                     <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ docker.Image }}</td>
                     <td>

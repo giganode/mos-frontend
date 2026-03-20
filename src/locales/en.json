@@ -1058,6 +1058,7 @@
   "plugin update started successfully": "Plugin update started successfully",
   "could not check for plugin updates": "Could not check for plugin updates",
   "plugin update check completed": "Plugin update check completed",
+  "start & vnc": "Start & VNC",
   "vnc console": "VNC Console",
   "vnc connection failed": "VNC Connection failed!",
   "client token could not be validated": "Client Token could not be validated",

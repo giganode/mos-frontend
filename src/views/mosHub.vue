@@ -37,9 +37,13 @@
                 <v-list-item
                   @click="
                     currentPage = 1;
-                    hubTypeSel = '';
+                    hubTypeSel = 'all';
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
                   "
                 >
+                  <template #append-icon>
+                    <v-icon v-if="hubTypeSel === 'all'">mdi-check</v-icon>
+                  </template>
                   <v-list-item-title>{{ $t('all') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item
@@ -48,10 +52,49 @@
                   @click="
                     currentPage = 1;
                     hubTypeSel = type;
-                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel);
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
                   "
                 >
                   <v-list-item-title>{{ $t(type) }}</v-list-item-title>
+                  <template #append>
+                    <v-icon v-if="hubTypeSel === type">mdi-check</v-icon>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-menu offset-y>
+              <template #activator="{ props }">
+                <v-btn v-bind="props" color="secondary" density="comfortable" variant="outlined" class="ma-2" style="min-width: 150px">
+                  {{ $t('category') }}
+                  <v-icon right size="18">mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list density="comfortable">
+                <v-list-item
+                  @click="
+                    currentPage = 1;
+                    hubCategoriesSel = 'all';
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                  "
+                >
+                  <v-list-item-title>{{ $t('all') }}</v-list-item-title>
+                  <template #append>
+                    <v-icon v-if="hubCategoriesSel === 'all'">mdi-check</v-icon>
+                  </template>
+                </v-list-item>
+                <v-list-item
+                  v-for="category in hubCategories"
+                  :key="category"
+                  @click="
+                    currentPage = 1;
+                    hubCategoriesSel = category;
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                  "
+                >
+                  <v-list-item-title>{{ $t(category) }}</v-list-item-title>
+                  <template #append>
+                    <v-icon v-if="hubCategoriesSel === category">mdi-check</v-icon>
+                  </template>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -366,6 +409,8 @@ const hubLoading = ref(true);
 const releasesLoading = ref(false);
 const hubTypeSel = ref('');
 const hubTypes = ref([]);
+const hubCategoriesSel = ref('');
+const hubCategories = ref([]);
 const installDialog = reactive({
   value: false,
   tpl: null,
@@ -394,9 +439,10 @@ onMounted(() => {
   getMosHub();
   getMosServices();
   getHubTypes();
+  getHubCategories();
 });
 
-const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name', type = hubTypeSel.value, category = '') => {
+const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'name', type = hubTypeSel.value, category = hubCategoriesSel.value) => {
   hubLoading.value = true;
   try {
     const url = new URL('/api/v1/mos/hub/index', window.location.origin);
@@ -405,12 +451,11 @@ const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'na
     url.searchParams.append('sort', sort);
     url.searchParams.append('limit', limit);
     url.searchParams.append('skip', skip);
-    if (category) url.searchParams.append('category', category);
-    if (type) url.searchParams.append('type', type);
+    if (category && category !== '' && category !== 'all') url.searchParams.append('category', category);
+    if (type && type !== '' && type !== 'all') url.searchParams.append('type', type);
 
     const res = await fetch(url.toString(), {
       search: order,
-
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('authToken'),
@@ -576,6 +621,29 @@ const getHubTypes = async () => {
     }
 
     hubTypes.value = await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return [];
+  }
+};
+
+const getHubCategories = async () => {
+  try {
+    const res = await fetch('/api/v1/mos/hub/categories?all=true', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${t('hub categories could not be loaded')}|$| ${error.error || t('unknown error')}`);
+    }
+
+    hubCategories.value = await res.json();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);

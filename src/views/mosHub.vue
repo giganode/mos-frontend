@@ -41,7 +41,7 @@
                     getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
                   "
                 >
-                  <template #append-icon>
+                  <template #append>
                     <v-icon v-if="hubTypeSel === 'all'">mdi-check</v-icon>
                   </template>
                   <v-list-item-title>{{ $t('all') }}</v-list-item-title>
@@ -407,9 +407,9 @@ const mosServices = ref({});
 const searchOnlineTemplate = ref('');
 const hubLoading = ref(true);
 const releasesLoading = ref(false);
-const hubTypeSel = ref('');
+const hubTypeSel = ref('all');
 const hubTypes = ref([]);
-const hubCategoriesSel = ref('');
+const hubCategoriesSel = ref('all');
 const hubCategories = ref([]);
 const installDialog = reactive({
   value: false,
@@ -451,8 +451,8 @@ const getMosHub = async (search, limit = 24, skip = 0, order = 'asc', sort = 'na
     url.searchParams.append('sort', sort);
     url.searchParams.append('limit', limit);
     url.searchParams.append('skip', skip);
-    if (category && category !== '' && category !== 'all') url.searchParams.append('category', category);
-    if (type && type !== '' && type !== 'all') url.searchParams.append('type', type);
+    if (category && category !== 'all') url.searchParams.append('category', category);
+    if (type && type !== 'all') url.searchParams.append('type', type);
 
     const res = await fetch(url.toString(), {
       search: order,

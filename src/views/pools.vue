@@ -207,8 +207,8 @@
                             class="flex-grow-1"
                             style="min-width: 40px"
                           />
-                          <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.7rem !important">
-                            <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.7rem !important">{{ Math.round(data_device.storage.usagePercent) }}%</span>
+                          <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.8rem !important">
+                            <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.8rem !important">{{ Math.round(data_device.storage.usagePercent) }}%</span>
                             <span v-if="data_device.storage.usagePercent != null" class="ml-1">{{ data_device.storage.usedSpace_human }} / {{ data_device.storage.totalSpace_human }}</span>
                           </div>
                         </div>
@@ -271,9 +271,9 @@
                         <td class="pa-1" style="vertical-align: bottom">
                           <div v-if="parity_device.storage">
                             <v-progress-linear :model-value="parity_device.storage.usagePercent" height="6" color="grey darken-1" rounded class="flex-grow-1" style="min-width: 40px" />
-                            <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.7rem !important">
-                              <span class="text-caption text-medium-emphasis">{{ Math.round(parity_device.storage.usagePercent) }}%</span>
-                              <span class="text-caption text-medium-emphasis text-right" v-if="parity_device.storage.usagePercent != null">
+                            <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.8rem !important">
+                              <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.8rem !important">{{ Math.round(parity_device.storage.usagePercent) }}%</span>
+                              <span v-if="parity_device.storage.usagePercent != null">
                                 {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
                               </span>
                             </div>

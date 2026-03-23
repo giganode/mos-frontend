@@ -46,7 +46,7 @@ onMounted(() => {
     }
   });
 
-  socket = io(window.location.hostname + '/terminal', { path: '/api/v1/socket.io/' });
+  socket = io('/terminal', { path: '/api/v1/socket.io/' });
 
   socket.on('connect', () => {
     term.write(t('connection to mos terminal established') + '\r\n');

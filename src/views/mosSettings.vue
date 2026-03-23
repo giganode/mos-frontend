@@ -307,6 +307,15 @@
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
                   </v-list-item>
+                  <v-list-item rounded="lg" href="https://github.com/ich777/mos-docs/" target="_blank" rel="noopener" color="primary">
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-help-circle" class="mr-3"></v-icon>
+                    </template>
+                    <v-list-item-title class="font-weight-medium">{{ $t('help') }}</v-list-item-title>
+                    <template v-slot:append>
+                      <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
+                    </template>
+                  </v-list-item>
                 </v-list>
               </div>
             </div>

@@ -16,9 +16,9 @@
     "@codemirror/view": "^6.39.16",
     "@mdi/font": "^7.4.47",
     "@uiw/codemirror-theme-duotone": "^4.25.4",
+    "@xterm/addon-clipboard": "^0.2.0",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
-    "@xterm/addon-clipboard": "^0.2.0",
     "chart.js": "^4.5.1",
     "codemirror": "^6.0.2",
     "material-design-icons-iconfont": "^6.7.0",
@@ -36,7 +36,11 @@
   "devDependencies": {
     "@originjs/vite-plugin-federation": "^1.4.1",
     "@vitejs/plugin-vue": "^6.0.4",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vite-plugin-pwa": "^1.2.0"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.4"
   },
   "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }

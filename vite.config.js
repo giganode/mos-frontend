@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import federation from '@originjs/vite-plugin-federation';
-  
+import { VitePWA } from 'vite-plugin-pwa';
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -10,6 +11,30 @@ export default defineConfig({
       name: 'mos-host',
       remotes: {},
       shared: ['vue', 'vue-router', 'vuetify'],
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB
+      },
+      manifest: {
+        name: 'Meine App',
+        short_name: 'App',
+        description: 'Meine Vue PWA',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: 'icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
     }),
   ],
   server: {
@@ -54,7 +79,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     rollupOptions: {
-      input: ['./reboot.html', './index.html', './shutdown.html']
-    }
-  }  
+      input: ['./reboot.html', './index.html', './shutdown.html'],
+    },
+  },
 });

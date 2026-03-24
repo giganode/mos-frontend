@@ -18,20 +18,34 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB
       },
       manifest: {
-        name: 'Meine App',
-        short_name: 'App',
-        description: 'Meine Vue PWA',
+        name: 'MOS',
+        short_name: 'MOS',
+        description: 'MOS - Modular Operation System',
         theme_color: '#ffffff',
         icons: [
           {
-            src: 'icon-192x192.png',
+            src: '/icons/icon_light_small.png',
             sizes: '192x192',
             type: 'image/png',
+            media: '(prefers-color-scheme: light)',
           },
           {
-            src: 'icon-512x512.png',
+            src: '/icons/icon_dark_small.png',
+            sizes: '192x192',
+            type: 'image/png',
+            media: '(prefers-color-scheme: dark)',
+          },
+          {
+            src: '/icons/icon_light_large.png',
             sizes: '512x512',
             type: 'image/png',
+            media: '(prefers-color-scheme: light)',
+          },
+          {
+            src: '/icons/icon_dark_large.png',
+            sizes: '512x512',
+            type: 'image/png',
+            media: '(prefers-color-scheme: dark)',
           },
         ],
       },

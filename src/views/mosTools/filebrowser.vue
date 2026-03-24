@@ -13,10 +13,10 @@
         <v-card class="pa-0">
           <v-card-title class="pb-0">
             <div class="d-flex align-center ga-2">
-              <v-btn size="small" variant="text" icon="mdi-home" @click="goRoot()" color="primary" :disabled="loading" />
-              <v-btn size="small" variant="text" icon="mdi-arrow-up" @click="goUp()" color="primary" :disabled="!canGoUp || loading" />
-              <v-btn size="small" variant="text" icon="mdi-refresh" @click="reload()" color="primary" :disabled="loading" />
-              <v-chip size="small" class="ml-2" variant="tonal">
+              <v-btn variant="text" icon="mdi-home" @click="goRoot()" color="primary" :disabled="loading" />
+              <v-btn variant="text" icon="mdi-arrow-up" @click="goUp()" color="primary" :disabled="!canGoUp || loading" />
+              <v-btn variant="text" icon="mdi-refresh" @click="reload()" color="primary" :disabled="loading" />
+              <v-chip class="ml-2" variant="tonal">
                 {{ currentPath || '/' }}
               </v-chip>
               <v-spacer />
@@ -69,34 +69,34 @@
             </v-table>
           </v-card-text>
           <v-divider />
-          <v-card-actions class="d-flex filebrowser-actions">
+            <v-card-actions class="d-flex flex-wrap ga-2">
             <div class="actions-wrapper">
-              <v-btn rounded variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">
-                <v-icon size="20" class="mr-2">mdi-folder-plus</v-icon>
-                <span>{{ $t('create folder') }}</span>
+              <v-btn size="small" variant="tonal" color="primary" text-color="white" @click="openCreateFolderDialog(currentPath)">
+              <v-icon size="18" class="mr-2">mdi-folder-plus</v-icon>
+              <span>{{ $t('create folder') }}</span>
               </v-btn>
-              <v-btn rounded variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">
-                <v-icon size="20" class="mr-2">mdi-file-plus</v-icon>
-                <span>{{ $t('create file') }}</span>
+              <v-btn size="small" variant="tonal" color="primary" text-color="white" @click="openCreateFileDialog(currentPath)">
+              <v-icon size="18" class="mr-2">mdi-file-plus</v-icon>
+              <span>{{ $t('create file') }}</span>
               </v-btn>
-              <v-btn rounded variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">
-                <v-icon size="20" class="mr-2">mdi-pencil</v-icon>
-                <span>{{ $t('edit') }}</span>
+              <v-btn size="small" variant="tonal" color="primary" text-color="white" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">
+              <v-icon size="18" class="mr-2">mdi-pencil</v-icon>
+              <span>{{ $t('edit') }}</span>
               </v-btn>
-              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openDeleteFileDialog(activeItem)">
-                <v-icon size="20" class="mr-2">mdi-delete</v-icon>
-                <span>{{ $t('delete') }}</span>
+              <v-btn size="small" variant="tonal" text-color="white" :disabled="!activeItem" color="primary" @click="openDeleteFileDialog(activeItem)">
+              <v-icon size="18" class="mr-2">mdi-delete</v-icon>
+              <span>{{ $t('delete') }}</span>
               </v-btn>
-              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChModDialog(activeItem)">
-                <v-icon size="20" class="mr-2">mdi-shield-key-outline</v-icon>
-                <span>{{ $t('adjust permissions') }}</span>
+              <v-btn size="small" variant="tonal" text-color="white" :disabled="!activeItem" color="primary" @click="openChModDialog(activeItem)">
+              <v-icon size="18" class="mr-2">mdi-shield-key-outline</v-icon>
+              <span>{{ $t('adjust permissions') }}</span>
               </v-btn>
-              <v-btn rounded variant="flat" :disabled="!activeItem" color="primary" @click="openChOwnDialog(activeItem)">
-                <v-icon size="20" class="mr-2">mdi-account-key</v-icon>
-                <span>{{ $t('adjust ownership') }}</span>
+              <v-btn size="small" variant="tonal" text-color="white" :disabled="!activeItem" color="primary" @click="openChOwnDialog(activeItem)">
+              <v-icon size="18" class="mr-2">mdi-account-key</v-icon>
+              <span>{{ $t('adjust ownership') }}</span>
               </v-btn>
             </div>
-          </v-card-actions>
+            </v-card-actions>
         </v-card>
       </v-container>
     </v-container>
@@ -663,11 +663,6 @@ const openChOwnDialog = (item) => {
 <style scoped>
 .cursor-pointer {
   cursor: pointer;
-}
-.filebrowser-actions {
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin-top: 12px;
 }
 .actions-wrapper {
   display: flex;

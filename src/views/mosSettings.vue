@@ -425,19 +425,20 @@
   <!-- Thanks Dialog -->
   <v-dialog v-model="thanksDialog" max-width="500">
     <v-card max-width="600" class="pa-0" style="max-height: 80vh; display: flex; flex-direction: column" :title="t('thanks')" prepend-icon="mdi-handshake">
-      <v-card-text style="padding-right: 16px; padding-bottom: 0">
-        <p>{{ t('the mos team') }},</p>
-        <p>{{ t('thanks you for your use and feedback') }}!</p>
+      <v-card-text style="padding-bottom: 0" class="pa-0 pl-4 pr-4 ma-0">
+        <p class="ma-0 mb-2">{{ t('the mos team') }},<br /></p>
+        <p class="ma-0 mb-4">{{ t('thanks you for your use and feedback') }}!</p>
       </v-card-text>
-      <v-card-text class="font-weight-bold py-0 pt-2 pb-2">{{ t('used software and packages') }}:</v-card-text>
-      <div style="overflow-y: auto; flex: 1 1 auto; padding-right: 16px; padding-left: 16px">
+      <v-divider />
+      <v-card-text class="font-weight-medium pl-4 pt-2 pb-2">{{ t('used software and packages') }}:</v-card-text>
+      <div style="overflow-y: auto; flex: 1 1 auto;">
         <v-container v-if="osInfo && osInfo.base && osInfo.base.length" class="pa-0">
           <div v-for="(baseItem, i) in osInfo.base" :key="i" class="pa-0 mb-4">
-            <div class="text-subtitle-1 font-weight-medium">
-              {{ baseItem.os_name }}
-              <span v-if="baseItem.os_version">({{ baseItem.os_version }})</span>
-            </div>
             <v-list class="pa-0">
+              <v-list-item v-if="baseItem.os_name">
+                  <v-list-item-title class="text-body-1">{{ baseItem.os_name }}</v-list-item-title>
+                  <v-list-item-subtitle class="text--secondary">{{ baseItem.os_version }}</v-list-item-subtitle>
+              </v-list-item>
               <v-list-item v-for="pkg in baseItem.packages" :key="pkg.name">
                 <div class="v-list-item-content">
                   <v-list-item-title class="text-body-1">{{ pkg.name }}</v-list-item-title>
@@ -450,6 +451,8 @@
       </div>
       <v-divider />
       <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff)">
+        <v-btn color="primary" href="https://paypal.me/chips777" target="_blank" rel="noopener">{{ t('donate') }}</v-btn>
+        <v-spacer />
         <v-btn color="onPrimary" :text="t('close')" @click="thanksDialog = false"></v-btn>
       </v-card-actions>
     </v-card>
@@ -471,7 +474,7 @@
               </div>
             </v-col>
             <v-col cols="auto" class="pl-2">
-              <v-chip color="green" variant="tonal" size="small">
+              <v-chip color="green" variant="tonal" size="small" :title="$t('forever and ever')">
                 {{ $t('open source') }}
               </v-chip>
             </v-col>

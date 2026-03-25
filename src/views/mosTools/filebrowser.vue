@@ -12,14 +12,19 @@
       <v-container fluid class="pa-0">
         <v-card class="pa-0">
           <v-card-title class="pa-0 pl-2 pr-2">
-            <v-btn variant="text" icon="mdi-home" @click="goRoot()" color="primary" :disabled="loading" />
-            <v-btn variant="text" icon="mdi-arrow-up" @click="goUp()" color="primary" :disabled="!canGoUp || loading" />
-            <v-btn variant="text" icon="mdi-refresh" @click="reload()" color="primary" :disabled="loading" />
-            <v-chip class="ml-2" variant="tonal">
+            <div class="d-flex align-center ga-2" style="width: 100%">
+              <v-btn variant="text" icon="mdi-home" @click="goRoot()" color="primary" :disabled="loading" />
+              <v-btn variant="text" icon="mdi-arrow-up" @click="goUp()" color="primary" :disabled="!canGoUp || loading" />
+              <v-btn variant="text" icon="mdi-refresh" @click="reload()" color="primary" :disabled="loading" />
+              <v-chip class="ml-2" variant="tonal">
               {{ currentPath || '/' }}
-            </v-chip>
-            <v-spacer />
-            <v-progress-circular v-if="loading" indeterminate size="20" color="primary" />
+              </v-chip>
+              <v-spacer />
+              <v-progress-circular v-if="loading" indeterminate size="20" color="primary" />
+                <v-btn variant="flat" @click="getRunningOperations()" color="primary" :disabled="loading" size="small">
+                  <span class="text-caption">{{ runningProcesses }} {{ $t('operations') }}</span>
+                </v-btn>
+            </div>
           </v-card-title>
           <v-divider />
           <v-card-text class="pa-0" style="min-height: 300px; max-height: 75vh; overflow-y: auto">
@@ -84,6 +89,18 @@
               <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openDeleteFileDialog(activeItem)">
                 <v-icon size="18" class="mr-2">mdi-delete</v-icon>
                 <span>{{ $t('delete') }}</span>
+              </v-btn>
+              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openRenameFileDialog(activeItem)">
+                <v-icon size="18" class="mr-2">mdi-pencil</v-icon>
+                <span>{{ $t('rename') }}</span>
+              </v-btn>
+              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openOperationDialog(activeItem, 'copy')">
+                <v-icon size="18" class="mr-2">mdi-content-copy</v-icon>
+                <span>{{ $t('copy') }}</span>
+              </v-btn>
+              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openOperationDialog(activeItem, 'move')">
+                <v-icon size="18" class="mr-2">mdi-arrow-right-bold</v-icon>
+                <span>{{ $t('move') }}</span>
               </v-btn>
               <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openChModDialog(activeItem)">
                 <v-icon size="18" class="mr-2">mdi-shield-key-outline</v-icon>
@@ -247,6 +264,26 @@
     </v-card>
   </v-dialog>
 
+  <!-- Operation Dialog -->
+  <v-dialog v-model="operationDialog.value" max-width="500">
+    <v-card class="pa-0" :title="operationDialog.operation === 'copy' ? $t('copy') : $t('move')" :prepend-icon="operationDialog.operation === 'copy' ? 'mdi-content-copy' : 'mdi-arrow-right-bold'">
+      <v-card-text class="py-0">
+        <v-container class="px-0">
+          <v-text-field v-model="operationDialog.source" :label="$t('source path')" readonly />
+          <v-text-field v-model="operationDialog.destination" :label="$t('destination path')" />
+        </v-container>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="onPrimary" @click="operationDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="startFileOperation(operationDialog.operation, operationDialog.source, operationDialog.destination, operationDialog.conflict)">
+          {{ operationDialog.operation === 'copy' ? $t('copy') : $t('move') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('edit file')" @saved="onFileSaved" />
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
@@ -274,6 +311,7 @@ const activeItem = ref(null);
 const overlay = ref(false);
 const editFileDialogVisible = ref(false);
 const selectedFilePath = ref('');
+const runningProcesses = ref(0);
 const deleteFileDialog = reactive({
   value: false,
   path: null,
@@ -317,6 +355,13 @@ const setChownDialog = reactive({
   group: '500',
   recursive: false,
 });
+const operationDialog = reactive({
+  value: false,
+  operation: '',
+  source: '',
+  destination: '',
+  conflict: 'fail',
+});
 
 const internalVisible = computed({
   get: () => modelValue.value,
@@ -325,6 +370,7 @@ const internalVisible = computed({
 
 onMounted(() => {
   loadPath(currentPath.value);
+  getRunningOperations();
 });
 
 const loadPath = async (path = '/') => {
@@ -533,6 +579,87 @@ const setChown = async (path, user = '500', group = '500', recursive = false) =>
   }
 };
 
+const startFileOperation = async (operation, source, destination, onConflict = 'fail') => {
+  if (!source || source.trim() === '') {
+    showSnackbarError(t('source path cannot be empty'));
+    return;
+  }
+  if (!destination || destination.trim() === '') {
+    showSnackbarError(t('destination path cannot be empty'));
+    return;
+  }
+
+  const payload = {
+    operation: operation,
+    source: source,
+    destination: destination,
+    onConflict: onConflict,
+  };
+
+  try {
+    const res = await fetch(`/api/v1/mos/fileoperations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('process could not be started')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(`${t('process successfully started')}. ${t('it may take a while to complete')}`);
+    reload();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    operationDialog.value = false;
+  }
+};
+
+const getFileOperations = async () => {
+  try {
+    const res = await fetch(`/api/v1/mos/fileoperations`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('could not fetch operations')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return [];
+  }
+};
+
+const getRunningOperations = async () => {
+  try {
+    const res = await fetch(`/api/v1/mos/runningfsoperations`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('could not fetch running operations')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const data = await res.json();
+    runningProcesses.value = data.count;
+
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return [];
+  }
+};
+
 const isSelectable = (item) => {
   if (!item) return false;
   if (selectType.value === 'directory') return item.type === 'directory';
@@ -656,6 +783,14 @@ const openChOwnDialog = (item) => {
   setChownDialog.group = item.permissions.owner == 'mos' ? '500' : item.permissions.owner == 'root' ? '0' : '';
   setChownDialog.recursive = false;
 };
+const openOperationDialog = (item, operation) => {
+  operationDialog.value = true;
+  operationDialog.source = item.path;
+  operationDialog.destination = '';
+  operationDialog.operation = operation;
+  operationDialog.conflict = 'fail';
+};
+
 </script>
 
 <style scoped>

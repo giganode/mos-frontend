@@ -1320,5 +1320,15 @@
   "mos portal": "MOS Portal",
   "categories": "Kategorien",
   "category": "Kategorie",
-  "forever and ever": "Für immer und ewig"
+  "forever and ever": "Für immer und ewig",
+  "process could not be started": "Vorgang konnte nicht gestartet werden",
+  "process successfully started": "Vorgang erfolgreich gestartet",
+  "could not fetch running operations": "Laufende Vorgänge konnten nicht abgerufen werden",
+  "operations": "Vorgänge",
+  "could not fetch operations": "Vorgänge konnten nicht abgerufen werden",
+  "move": "Verschieben",
+  "source path": "Quellpfad",
+  "destination path": "Zielpfad",
+  "it may take a while": "Es kann eine Weile dauern",
+  "rename": "Umbenennen"
 }

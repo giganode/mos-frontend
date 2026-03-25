@@ -1330,5 +1330,6 @@
   "source path": "Quellpfad",
   "destination path": "Zielpfad",
   "it may take a while": "Es kann eine Weile dauern",
-  "rename": "Umbenennen"
+  "rename": "Umbenennen",
+  "overwrite": "Überschreiben"
 }

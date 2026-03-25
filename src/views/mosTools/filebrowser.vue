@@ -271,13 +271,20 @@
         <v-container class="px-0">
           <v-text-field v-model="operationDialog.source" :label="$t('source path')" readonly />
           <v-text-field v-model="operationDialog.destination" :label="$t('destination path')" />
+            <v-checkbox v-if="operationDialog.operation == 'copy'"
+            :model-value="operationDialog.onConflict === 'overwrite'" 
+            @update:model-value="(val) => operationDialog.onConflict = val ? 'overwrite' : 'fail'"
+            :label="$t('overwrite')" 
+            hide-details="auto" 
+            density="compact" 
+            />
         </v-container>
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-spacer />
         <v-btn color="onPrimary" @click="operationDialog.value = false">{{ $t('cancel') }}</v-btn>
-        <v-btn color="primary" @click="startFileOperation(operationDialog.operation, operationDialog.source, operationDialog.destination, operationDialog.conflict)">
+        <v-btn color="primary" @click="startFileOperation(operationDialog.operation, operationDialog.source, operationDialog.destination, operationDialog.onConflict)">
           {{ operationDialog.operation === 'copy' ? $t('copy') : $t('move') }}
         </v-btn>
       </v-card-actions>
@@ -360,7 +367,7 @@ const operationDialog = reactive({
   operation: '',
   source: '',
   destination: '',
-  conflict: 'fail',
+  onConflict: 'fail',
 });
 
 const internalVisible = computed({
@@ -788,7 +795,7 @@ const openOperationDialog = (item, operation) => {
   operationDialog.source = item.path;
   operationDialog.destination = '';
   operationDialog.operation = operation;
-  operationDialog.conflict = 'fail';
+  operationDialog.onConflict = 'fail';
 };
 
 </script>

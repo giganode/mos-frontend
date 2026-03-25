@@ -1330,5 +1330,6 @@
   "source path": "Source path",
   "destination path": "Destination path",
   "it may take a while": "It may take a while",
-  "rename": "Rename"
+  "rename": "Rename",
+  "overwrite": "Overwrite"
 }

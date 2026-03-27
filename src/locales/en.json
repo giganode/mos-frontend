@@ -1331,5 +1331,7 @@
   "destination path": "Destination path",
   "it may take a while": "It may take a while",
   "rename": "Rename",
-  "overwrite": "Overwrite"
+  "overwrite": "Overwrite",
+  "new name": "New name",
+  "successfully renamed": "Successfully renamed"
 }

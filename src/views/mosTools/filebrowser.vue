@@ -17,13 +17,13 @@
               <v-btn variant="text" icon="mdi-arrow-up" @click="goUp()" color="primary" :disabled="!canGoUp || loading" />
               <v-btn variant="text" icon="mdi-refresh" @click="reload()" color="primary" :disabled="loading" />
               <v-chip class="ml-2" variant="tonal">
-              {{ currentPath || '/' }}
+                {{ currentPath || '/' }}
               </v-chip>
               <v-spacer />
               <v-progress-circular v-if="loading" indeterminate size="20" color="primary" />
-                <v-btn variant="flat" @click="getRunningOperations()" color="primary" :disabled="loading" size="small">
-                  <span class="text-caption">{{ runningProcesses }} {{ $t('operations') }}</span>
-                </v-btn>
+              <v-btn variant="flat" @click="getRunningOperations()" color="primary" :disabled="loading" size="small">
+                <span class="text-caption">{{ runningProcesses }} {{ $t('operations') }}</span>
+              </v-btn>
             </div>
           </v-card-title>
           <v-divider />
@@ -305,13 +305,14 @@
         <v-container class="px-0">
           <v-text-field v-model="operationDialog.source" :label="$t('source path')" readonly />
           <v-text-field v-model="operationDialog.destination" :label="$t('destination path')" />
-            <v-checkbox v-if="operationDialog.operation == 'copy'"
-            :model-value="operationDialog.onConflict === 'overwrite'" 
-            @update:model-value="(val) => operationDialog.onConflict = val ? 'overwrite' : 'fail'"
-            :label="$t('overwrite')" 
-            hide-details="auto" 
-            density="compact" 
-            />
+          <v-checkbox
+            v-if="operationDialog.operation == 'copy'"
+            :model-value="operationDialog.onConflict === 'overwrite'"
+            @update:model-value="(val) => (operationDialog.onConflict = val ? 'overwrite' : 'fail')"
+            :label="$t('overwrite')"
+            hide-details="auto"
+            density="compact"
+          />
         </v-container>
       </v-card-text>
       <v-divider />
@@ -320,6 +321,25 @@
         <v-btn color="onPrimary" @click="operationDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="primary" @click="startFileOperation(operationDialog.operation, operationDialog.source, operationDialog.destination, operationDialog.onConflict)">
           {{ operationDialog.operation === 'copy' ? $t('copy') : $t('move') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Rename File Dialog -->
+  <v-dialog v-model="renameFileDialog.value" max-width="500">
+    <v-card class="pa-0" :title="$t('rename')" prepend-icon="mdi-rename">
+      <v-card-text class="py-0">
+        <v-container class="px-0">
+          <v-text-field v-model="renameFileDialog.new_name" :label="$t('new name')" :disabled="loading" />
+        </v-container>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="onPrimary" @click="renameFileDialog.value = false">{{ $t('cancel') }}</v-btn>
+        <v-btn color="primary" @click="renameFile({ path: renameFileDialog.destination }, renameFileDialog.new_name)">
+          {{ $t('rename') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -338,7 +358,7 @@ import { useI18n } from 'vue-i18n';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import FileEditDialog from '@/components/fileEditDialog.vue';
 
-const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge', 'update:modelValue', 'selected', 'cancel']);
+const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const modelValue = ref(true);
 const selectType = ref('all');
 const roots = ref('');
@@ -358,7 +378,7 @@ const deleteFileDialog = reactive({
   path: null,
   pathType: '',
   recursive: false,
-  force: true,
+  force: false,
 });
 const createFolderDialog = reactive({
   value: false,
@@ -403,10 +423,10 @@ const operationDialog = reactive({
   destination: '',
   onConflict: 'fail',
 });
-
-const internalVisible = computed({
-  get: () => modelValue.value,
-  set: (val) => emit('update:modelValue', val),
+const renameFileDialog = reactive({
+  value: false,
+  destination: '',
+  new_name: '',
 });
 
 onMounted(() => {
@@ -455,7 +475,7 @@ const loadPath = async (path = '/') => {
   }
 };
 
-const deleteFile = async (path, force = true, recursive = false) => {
+const deleteFile = async (path, force = false, recursive = false) => {
   const payload = { path: path, force: force, recursive: recursive };
   try {
     overlay.value = true;
@@ -650,7 +670,7 @@ const startFileOperation = async (operation, source, destination, onConflict = '
       const errorDetails = await res.json();
       throw new Error(`${t('process could not be started')}|$| ${errorDetails.error || t('unknown error')}`);
     }
-    showSnackbarSuccess(`${t('process successfully started')}. ${t('it may take a while to complete')}`);
+    showSnackbarSuccess(`${t('process successfully started')}. ${t('it may take a while')}`);
     reload();
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
@@ -693,11 +713,43 @@ const getRunningOperations = async () => {
     }
     const data = await res.json();
     runningProcesses.value = data.count;
-
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
     return [];
+  }
+};
+
+const renameFile = async (item, newName) => {
+  if (!item || !newName || newName.trim() === '') {
+    showSnackbarError(t('new name cannot be empty'));
+    return;
+  }
+  const payload = { destination: item.path, new_name: newName };
+
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/mos/rename`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('file could not be renamed')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    showSnackbarSuccess(t('successfully renamed'));
+    reload();
+    renameFileDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    editFileDialogVisible.value = false;
+    overlay.value = false;
   }
 };
 
@@ -744,27 +796,13 @@ const onFileSaved = () => {
   loadPath(currentPath.value || '/');
 };
 
-const onCancel = () => {
-  internalVisible.value = false;
-  emit('cancel');
-};
-
 const confirmSelect = (explicitItem) => {
   const item = explicitItem || activeItem.value;
   if (!item || !isSelectable(item)) return;
-
-  emit('selected', {
-    name: item.name,
-    path: item.path,
-    type: item.type,
-    displayPath: item.displayPath ?? item.path,
-  });
-
-  internalVisible.value = false;
 };
 
 watch(
-  () => internalVisible.value,
+  () => modelValue.value,
   (visible) => {
     if (visible) {
       const startPath = initialPath.value || '/';
@@ -784,7 +822,7 @@ const clearDeleteDialog = () => {
   deleteFileDialog.path = null;
   deleteFileDialog.pathType = '';
   deleteFileDialog.recursive = false;
-  deleteFileDialog.force = true;
+  deleteFileDialog.force = false;
 };
 const openEditFileDialog = (item) => {
   if (!item || item.type === 'directory') return;
@@ -831,7 +869,11 @@ const openOperationDialog = (item, operation) => {
   operationDialog.operation = operation;
   operationDialog.onConflict = 'fail';
 };
-
+const openRenameFileDialog = (item) => {
+  renameFileDialog.value = true;
+  renameFileDialog.destination = item.path;
+  renameFileDialog.new_name = '';
+};
 </script>
 
 <style scoped>

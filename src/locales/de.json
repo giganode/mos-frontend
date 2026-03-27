@@ -1331,5 +1331,7 @@
   "destination path": "Zielpfad",
   "it may take a while": "Es kann eine Weile dauern",
   "rename": "Umbenennen",
-  "overwrite": "Überschreiben"
+  "overwrite": "Überschreiben",
+  "new name": "Neuer Name",
+  "successfully renamed": "Erfolgreich umbenannt"
 }

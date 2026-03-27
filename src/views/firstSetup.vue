@@ -82,13 +82,18 @@
           </v-card-text>
         </v-card>
       </template>
-      <v-stepper-actions :disabled="false" :next-text="step > 1 ? 'finish' : 'next'" :prev-text="step > 1 ? 'back' : ''" @click:next="nextStep()" @click:prev="step = step - 1"></v-stepper-actions>
+      <v-stepper-actions :disabled="false" :next-text="step > 1 ? t('finish') : t('next')" :prev-text="t('back')" @click:next="nextStep()" @click:prev="step = step - 1">
+        <template v-slot:prev>
+          <v-btn v-if="step > 1" variant="text" @click="step = step - 1">{{ t('back') }}</v-btn>
+          <span v-else></span>
+        </template>
+      </v-stepper-actions>
     </v-stepper>
   </v-container>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTheme } from 'vuetify';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
@@ -122,12 +127,17 @@ let step = ref(1);
 const step1Error = ref(false);
 const step2Error = ref(false);
 
+onMounted(() => {
+  if (!props.token || props.token === '') {
+    router.push('/');
+  }
+});
+
 const setDarkMode = async () => {
   theme.change(darkMode.value);
 };
 
 const changePrimaryColor = async (newColor) => {
-  
     color.value = newColor;
     theme.themes.value[theme.global.name.value].colors.primary = newColor;
 };

@@ -451,7 +451,7 @@
       </div>
       <v-divider />
       <v-card-actions style="position: sticky; bottom: 0; z-index: 2; background: var(--v-theme-surface, #fff)">
-        <v-btn color="primary" href="https://paypal.me/chips777" target="_blank" rel="noopener">{{ t('donate') }}</v-btn>
+        <v-btn prepend-icon="mdi-gift" color="primary" href="https://paypal.me/chips777" target="_blank" rel="noopener">{{ t('donate') }}</v-btn>
         <v-spacer />
         <v-btn color="onPrimary" :text="t('close')" @click="thanksDialog = false"></v-btn>
       </v-card-actions>

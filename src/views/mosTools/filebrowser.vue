@@ -72,45 +72,79 @@
             </v-table>
           </v-card-text>
           <v-divider />
-          <v-card-actions class="d-flex flex-wrap ga-2">
-            <div class="actions-wrapper">
-              <v-btn size="small" variant="flat" color="primary" @click="openCreateFolderDialog(currentPath)">
-                <v-icon size="18" class="mr-2">mdi-folder-plus</v-icon>
-                <span>{{ $t('create folder') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" @click="openCreateFileDialog(currentPath)">
-                <v-icon size="18" class="mr-2">mdi-file-plus</v-icon>
-                <span>{{ $t('create file') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" @click="openEditFileDialog(activeItem)" :disabled="!activeItem || activeItem.type === 'directory'">
-                <v-icon size="18" class="mr-2">mdi-pencil</v-icon>
-                <span>{{ $t('edit') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openDeleteFileDialog(activeItem)">
-                <v-icon size="18" class="mr-2">mdi-delete</v-icon>
-                <span>{{ $t('delete') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openRenameFileDialog(activeItem)">
-                <v-icon size="18" class="mr-2">mdi-pencil</v-icon>
-                <span>{{ $t('rename') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openOperationDialog(activeItem, 'copy')">
-                <v-icon size="18" class="mr-2">mdi-content-copy</v-icon>
-                <span>{{ $t('copy') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openOperationDialog(activeItem, 'move')">
-                <v-icon size="18" class="mr-2">mdi-arrow-right-bold</v-icon>
-                <span>{{ $t('move') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openChModDialog(activeItem)">
-                <v-icon size="18" class="mr-2">mdi-shield-key-outline</v-icon>
-                <span>{{ $t('adjust permissions') }}</span>
-              </v-btn>
-              <v-btn size="small" variant="flat" color="primary" :disabled="!activeItem" @click="openChOwnDialog(activeItem)">
-                <v-icon size="18" class="mr-2">mdi-account-key</v-icon>
-                <span>{{ $t('adjust ownership') }}</span>
-              </v-btn>
-            </div>
+          <v-card-actions class="actions-toolbar pa-2">
+            <v-tooltip :text="$t('create folder')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon @click="openCreateFolderDialog(currentPath)">
+                  <v-icon size="20">mdi-folder-plus</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('create file')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon @click="openCreateFileDialog(currentPath)">
+                  <v-icon size="20">mdi-file-plus</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+
+            <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
+
+            <v-tooltip :text="$t('edit')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem || activeItem.type === 'directory'" @click="openEditFileDialog(activeItem)">
+                  <v-icon size="20">mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('rename')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openRenameFileDialog(activeItem)">
+                  <v-icon size="20">mdi-rename</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('delete')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openDeleteFileDialog(activeItem)">
+                  <v-icon size="20">mdi-delete</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+
+            <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
+
+            <v-tooltip :text="$t('copy')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openOperationDialog(activeItem, 'copy')">
+                  <v-icon size="20">mdi-content-copy</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('move')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openOperationDialog(activeItem, 'move')">
+                  <v-icon size="20">mdi-arrow-right-bold</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+
+            <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
+
+            <v-tooltip :text="$t('adjust permissions')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openChModDialog(activeItem)">
+                  <v-icon size="20">mdi-shield-key-outline</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip :text="$t('adjust ownership')" location="top">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openChOwnDialog(activeItem)">
+                  <v-icon size="20">mdi-account-key</v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
           </v-card-actions>
         </v-card>
       </v-container>
@@ -804,24 +838,10 @@ const openOperationDialog = (item, operation) => {
 .cursor-pointer {
   cursor: pointer;
 }
-.actions-wrapper {
+.actions-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  width: 100%;
-}
-@media (max-width: 600px) {
-  .actions-wrapper {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-  .filebrowser-actions {
-    padding: 8px 0;
-  }
-  .actions-wrapper .v-btn {
-    width: 100%;
-    justify-content: flex-start;
-  }
+  align-items: center;
+  gap: 4px;
 }
 </style>

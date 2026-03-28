@@ -1333,5 +1333,13 @@
   "rename": "Rename",
   "overwrite": "Overwrite",
   "new name": "New name",
-  "successfully renamed": "Successfully renamed"
+  "successfully renamed": "Successfully renamed",
+  "all operations": "All operations",
+  "to": "to",
+  "from": "from",
+  "completed": "Completed",
+  "failed": "Failed",
+  "pending": "Pending",
+  "no running operations": "No running operations",
+  "file operation completed successfully": "File operation completed successfully"
 }

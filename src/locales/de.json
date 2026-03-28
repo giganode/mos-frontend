@@ -1333,5 +1333,13 @@
   "rename": "Umbenennen",
   "overwrite": "Überschreiben",
   "new name": "Neuer Name",
-  "successfully renamed": "Erfolgreich umbenannt"
+  "successfully renamed": "Erfolgreich umbenannt",
+  "all operations": "Alle Vorgänge",
+  "to": "nach",
+  "from": "von",
+  "completed": "Abgeschlossen",
+  "failed": "Fehlgeschlagen",
+  "pending": "Ausstehend",
+  "no running operations": "Keine laufenden Vorgänge",
+  "file operation completed successfully": "Dateioperation erfolgreich abgeschlossen"
 }

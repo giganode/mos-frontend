@@ -2,7 +2,7 @@
   <v-dialog v-model="internalVisible" max-width="800" persistent>
     <v-card class="pa-0" :title="$t('all operations')" prepend-icon="mdi-progress-clock">
       <v-card-text class="pa-0">
-        <div v-if="!dataReceived" class="d-flex justify-center align-center pa-8">
+        <div v-if="dataReceived && !dataOpsReceived" class="d-flex justify-center align-center pa-8">
           <v-progress-circular indeterminate size="64" color="primary" />
         </div>
         <v-list v-else>
@@ -55,7 +55,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
-
+const dataOpsReceived = ref(false);
 const operations = ref([]);
 const dataReceived = ref(false);
 let socket = null;
@@ -76,8 +76,10 @@ const cleanupSocket = () => {
 const apply = (data) => {
   dataReceived.value = true;
   if (data && data.operations) {
+    dataOpsReceived.value = true;
     operations.value = [...data.operations];
   } else if (data && data.id) {
+    dataOpsReceived.value = true;
     const index = operations.value.findIndex((op) => op.id === data.id);
     if (index !== -1) {
       operations.value.splice(index, 1, { ...operations.value[index], ...data });

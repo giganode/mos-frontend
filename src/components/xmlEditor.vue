@@ -14,8 +14,8 @@ import { duotoneLight } from '@uiw/codemirror-theme-duotone';
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -38,7 +38,7 @@ const createEditor = () => {
         emit('update:modelValue', value);
       }
     }),
-    EditorView.lineWrapping
+    EditorView.lineWrapping,
   ];
 
   if (isDark) {
@@ -49,12 +49,12 @@ const createEditor = () => {
 
   const state = EditorState.create({
     doc: props.modelValue || '',
-    extensions
+    extensions,
   });
 
   editorView = new EditorView({
     state,
-    parent: editorContainer.value
+    parent: editorContainer.value,
   });
 };
 
@@ -65,25 +65,31 @@ const destroyEditor = () => {
   }
 };
 
-watch(() => props.modelValue, (newValue) => {
-  if (editorView) {
-    const currentValue = editorView.state.doc.toString();
-    if (newValue !== currentValue) {
-      editorView.dispatch({
-        changes: {
-          from: 0,
-          to: currentValue.length,
-          insert: newValue || ''
-        }
-      });
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (editorView) {
+      const currentValue = editorView.state.doc.toString();
+      if (newValue !== currentValue) {
+        editorView.dispatch({
+          changes: {
+            from: 0,
+            to: currentValue.length,
+            insert: newValue || '',
+          },
+        });
+      }
     }
-  }
-});
+  },
+);
 
-watch(() => theme.global.current.value.dark, () => {
-  destroyEditor();
-  createEditor();
-});
+watch(
+  () => theme.global.current.value.dark,
+  () => {
+    destroyEditor();
+    createEditor();
+  },
+);
 
 onMounted(() => {
   createEditor();

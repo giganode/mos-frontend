@@ -152,7 +152,7 @@
   </v-container>
 
   <!-- Delete File Dialog -->
-  <v-dialog v-model="deleteFileDialog.value" max-width="500">
+  <v-dialog v-model="deleteFileDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="`${$t('delete')} - ${deleteFileDialog.path}`" prepend-icon="mdi-delete">
       <v-card-text>
         <v-container class="pb-4 pt-0 px-0">{{ $t('are you sure you want to delete this file') }}?</v-container>
@@ -171,7 +171,7 @@
   </v-dialog>
 
   <!-- Create Folder Dialog -->
-  <v-dialog v-model="createFolderDialog.value" max-width="500">
+  <v-dialog v-model="createFolderDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="$t('create folder')" prepend-icon="mdi-folder-plus">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -206,7 +206,7 @@
   </v-dialog>
 
   <!-- Create File Dialog -->
-  <v-dialog v-model="createFileDialog.value" max-width="600">
+  <v-dialog v-model="createFileDialog.value" max-width="600" persistent>
     <v-card class="pa-0" :title="$t('create file')" prepend-icon="mdi-file-plus">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -245,7 +245,7 @@
   </v-dialog>
 
   <!-- Chmod Dialog -->
-  <v-dialog v-model="setChmodDialog.value" max-width="500">
+  <v-dialog v-model="setChmodDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="$t('adjust permissions')" prepend-icon="mdi-lock">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -265,7 +265,7 @@
   </v-dialog>
 
   <!-- Chown Dialog -->
-  <v-dialog v-model="setChownDialog.value" max-width="500">
+  <v-dialog v-model="setChownDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="$t('adjust ownership')" prepend-icon="mdi-account-lock">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -299,7 +299,7 @@
   </v-dialog>
 
   <!-- Operation Dialog -->
-  <v-dialog v-model="operationDialog.value" max-width="500">
+  <v-dialog v-model="operationDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="operationDialog.operation === 'copy' ? $t('copy') : $t('move')" :prepend-icon="operationDialog.operation === 'copy' ? 'mdi-content-copy' : 'mdi-arrow-right-bold'">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -337,7 +337,7 @@
   </v-dialog>
 
   <!-- Rename File Dialog -->
-  <v-dialog v-model="renameFileDialog.value" max-width="500">
+  <v-dialog v-model="renameFileDialog.value" max-width="500" persistent>
     <v-card class="pa-0" :title="$t('rename')" prepend-icon="mdi-rename">
       <v-card-text class="py-0">
         <v-container class="px-0">
@@ -356,13 +356,13 @@
   </v-dialog>
 
   <!-- All Operations Dialog -->
-  <fsOperationsDialog v-model="allOperationsDialogVisible" />
+  <fsOperationsDialog v-model="allOperationsDialogVisible" persistent />
 
   <!-- Edit File Dialog -->
-  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('edit file')" @saved="onFileSaved" />
+  <FileEditDialog v-model="editFileDialogVisible" :path="selectedFilePath" :createBackup="true" :title="$t('edit file')" persistent @saved="onFileSaved" />
 
   <!-- File System Navigator Dialog -->
-  <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" @selected="handleFsSelected" />
+  <fsNavigatorDialog v-model="fsDialog" :initial-path="'/'" select-type="directory" :title="$t('select directory')" persistent @selected="handleFsSelected" />
 
   <v-overlay :model-value="overlay" class="align-center justify-center">
     <v-progress-circular indeterminate size="64" color="primary" />

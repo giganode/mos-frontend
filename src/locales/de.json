@@ -1341,5 +1341,6 @@
   "failed": "Fehlgeschlagen",
   "pending": "Ausstehend",
   "no running operations": "Keine laufenden Vorgänge",
-  "file operation completed successfully": "Dateioperation erfolgreich abgeschlossen"
+  "file operation completed successfully": "Dateioperation erfolgreich abgeschlossen",
+  "drives": "Laufwerke"
 }

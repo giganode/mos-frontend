@@ -42,13 +42,13 @@ import Plugins from '../views/plugins.vue';
 import PluginView from '../views/pluginView.vue';
 
 const routes = [
-  { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
-  { path: '/login', component: Login, meta: { hideAppBar: false, title: 'MOS Login', description: 'Login to your account' } },
-  { path: '/firstSetup', component: FirstSetup, props: true, meta: { hideAppBar: false, title: 'MOS First Setup', description: 'Set up your account for the first time' } },
-  { path: '/dashboard', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Overview of your account' } },
+  { path: '', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Dashboard for your server' } },
+  { path: '/login', component: Login, meta: { hideAppBar: false, title: 'MOS Login', description: 'Login to your server' } },
+  { path: '/firstSetup', component: FirstSetup, props: true, meta: { hideAppBar: false, title: 'MOS First Setup', description: 'Set up your server for the first time' } },
+  { path: '/dashboard', component: Dashboard, meta: { hideAppBar: false, title: 'Dashboard', description: 'Dashboard for your server' } },
   { path: '/pools', component: Pools, meta: { hideAppBar: false, title: 'Pools', description: 'Manage storage pools' } },
-  { path: '/disks', component: Disks, meta: { hideAppBar: false, title: 'Disks', description: 'Manage disks in your account' } },
-  { path: '/shares', component: Shares, meta: { hideAppBar: false, title: 'Shares', description: 'Manage shares in your account' } },
+  { path: '/disks', component: Disks, meta: { hideAppBar: false, title: 'Disks', description: 'Manage disks in your server' } },
+  { path: '/shares', component: Shares, meta: { hideAppBar: false, title: 'Shares', description: 'Manage shares in your server' } },
   { path: '/remoteMounting', component: RemoteMounting, meta: { hideAppBar: false, title: 'Remote Mounting', description: 'Manage remote mounting' } },
   { path: '/docker', component: Docker, meta: { hideAppBar: false, title: 'Docker', description: 'Manage Docker containers' } },
   {

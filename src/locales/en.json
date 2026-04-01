@@ -1341,5 +1341,6 @@
   "failed": "Failed",
   "pending": "Pending",
   "no running operations": "No running operations",
-  "file operation completed successfully": "File operation completed successfully"
+  "file operation completed successfully": "File operation completed successfully",
+  "drives": "Drives"
 }

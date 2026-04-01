@@ -321,18 +321,7 @@
                         <div>
                           <div
                             class="text-body-2"
-                            v-html="
-                              (function () {
-                                const docker = dockers.find((d) => d.Names && d.Names[0] === containerName) || {};
-                                const mappings = (docker.Ports || [])
-                                  .filter((p) => p.PublicPort)
-                                  .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
-                                  .map((p) => `${p.PublicPort}:${p.PrivatePort}`);
-                                const chunks = [];
-                                for (let i = 0; i < mappings.length; i += 2) chunks.push(mappings.slice(i, i + 2).join(', '));
-                                return (docker._portsExpanded ? chunks.join('<br/>') : chunks[0] || '') || 'none';
-                              })()
-                            "
+                            v-html="getPortMappings(dockers.find((d) => d.Names && d.Names[0] === containerName))"
                             :style="{
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -549,17 +538,7 @@
                         <div>
                           <div
                             class="text-body-2"
-                            v-html="
-                              (function () {
-                                const mappings = (docker.Ports || [])
-                                  .filter((p) => p.PublicPort)
-                                  .filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort))
-                                  .map((p) => `${p.PublicPort}:${p.PrivatePort}`);
-                                const chunks = [];
-                                for (let i = 0; i < mappings.length; i += 2) chunks.push(mappings.slice(i, i + 2).join(', '));
-                                return (docker._portsExpanded ? chunks.join('<br/>') : chunks[0] || '') || 'none';
-                              })()
-                            "
+                            v-html="getPortMappings(docker)"
                             :style="{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: docker._portsExpanded ? 'normal' : 'nowrap' }"
                           />
                           <div v-if="(docker.Ports || []).filter((p) => p.PublicPort).filter((p, i, self) => i === self.findIndex((x) => x.PrivatePort === p.PrivatePort)).length > 2" class="mt-0">
@@ -2025,6 +2004,34 @@ const showComposeWebui = (group) => {
     webui = webui.replace(/\[ADDRESS\]/g, window.location.hostname);
   }
   window.open(webui, '_blank');
+};
+
+const getPortMappings = (docker) => {
+  if (!docker || !Array.isArray(docker.Ports)) return '';
+  const uniquePorts = docker.Ports.filter((port, index, self) => index === self.findIndex((p) => p.PrivatePort === port.PrivatePort));
+  const publicPorts = uniquePorts.filter((port) => port.PublicPort);
+  const displayPorts = docker._portsExpanded ? publicPorts : publicPorts.slice(0, 2);
+  const host = window.location.hostname;
+
+  const portLink = (port) => {
+    const label = `${port.PublicPort}:${port.PrivatePort}`;
+    const href = `http://${host}:${port.PublicPort}`;
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline dotted;">${label}</a>`;
+  };
+
+  const lines = [];
+  for (let i = 0; i < displayPorts.length; i += 2) {
+    const port1 = displayPorts[i];
+    const port2 = displayPorts[i + 1];
+
+    let line = portLink(port1);
+    if (port2) {
+      line += ` ${portLink(port2)}`;
+    }
+    lines.push(line);
+  }
+
+  return lines.join('<br/>');
 };
 
 const openInfoDialog = (docker) => {

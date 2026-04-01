@@ -109,7 +109,12 @@
                       </v-chip>
                     </div>
                   </template>
-                  <span v-else>—</span>
+                  <span v-else>
+                    —
+                    <v-chip v-if="disk.powerStatus === 'standby'" size="x-small" color="blue" label class="ml-2">
+                      {{ $t('sleep') }}
+                    </v-chip>                  
+                  </span>
                 </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                   <v-chip size="small" label>{{ disk.type?.toUpperCase() }}</v-chip>

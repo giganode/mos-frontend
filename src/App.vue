@@ -43,29 +43,24 @@
           <v-list-item v-if="mosServices.hub?.enabled" to="/mosHub" prepend-icon="mdi-hub">
             <v-list-item-title>{{ $t('mos hub') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker">
+          <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker">
             <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant">
+          <v-list-item :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant">
             <v-list-item-title>{{ $t('lxc') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account">
+          <v-list-item :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account">
             <v-list-item-title>{{ $t('vm') }}</v-list-item-title>
           </v-list-item>
           <v-list-item to="/plugins" prepend-icon="mdi-puzzle">
             <v-list-item-title>{{ $t('plugins') }}</v-list-item-title>
           </v-list-item>
-          <v-list-group>
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" prepend-icon="mdi-tools" :title="$t('mos tools')"></v-list-item>
-            </template>
-            <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console">
-              <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder">
-              <v-list-item-title>{{ $t('filebrowser') }}</v-list-item-title>
-            </v-list-item>
-          </v-list-group>
+          <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console">
+            <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder">
+            <v-list-item-title>{{ $t('filebrowser') }}</v-list-item-title>
+          </v-list-item>
           <v-list-item to="/mosSettings" prepend-icon="mdi-cog">
             <v-list-item-title>{{ $t('settings') }}</v-list-item-title>
           </v-list-item>

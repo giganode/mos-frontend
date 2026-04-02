@@ -45,12 +45,12 @@
             <v-text-field :label="$t('timeout (min)')" type="number" v-model="settingsSystem.display.timeout" hide-details="auto" class="mb-4"></v-text-field>
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('notification sounds') }}</span>
-            <v-switch :label="$t('sound on reboot')" color="green" inset v-model="settingsSystem.notification_sound.reboot" hide-details="auto"></v-switch>
-            <v-switch :label="$t('sound on shutdown')" color="green" inset v-model="settingsSystem.notification_sound.shutdown" hide-details="auto"></v-switch>
-            <v-switch :label="$t('sound on startup')" color="green" inset v-model="settingsSystem.notification_sound.startup" hide-details="auto"></v-switch>
+            <v-switch class="pt-2" :label="$t('sound on reboot')" color="green" inset v-model="settingsSystem.notification_sound.reboot" hide-details="auto" density="compact"></v-switch>
+            <v-switch :label="$t('sound on shutdown')" color="green" inset v-model="settingsSystem.notification_sound.shutdown" hide-details="auto" density="compact"></v-switch>
+            <v-switch :label="$t('sound on startup')" color="green" inset v-model="settingsSystem.notification_sound.startup" hide-details="auto" density="compact"></v-switch>
             <v-divider class="my-2"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('swapfile') }}</span>
-            <v-switch :label="$t('enable swapfile')" color="green" inset v-model="settingsSystem.swapfile.enabled" hide-details="auto"></v-switch>
+            <v-switch class="pt-2" :label="$t('enable swapfile')" color="green" inset v-model="settingsSystem.swapfile.enabled" hide-details="auto" density="compact"></v-switch>
             <v-text-field
               :label="$t('swapfile path')"
               v-model="settingsSystem.swapfile.path"
@@ -64,8 +64,8 @@
             ></v-text-field>
             <v-text-field :label="$t('swapfile size')" v-model="settingsSystem.swapfile.size" :disabled="!settingsSystem.swapfile.enabled"></v-text-field>
             <v-text-field :label="$t('swapfile priority')" type="number" v-model="settingsSystem.swapfile.priority" :disabled="!settingsSystem.swapfile.enabled" hide-details="auto"></v-text-field>
-            <v-switch :label="$t('zswap enabled')" color="green" inset v-model="settingsSystem.swapfile.config.zswap" :disabled="!settingsSystem.swapfile.enabled" hide-details="auto"></v-switch>
-            <v-switch :label="$t('shrinker enabled')" color="green" inset v-model="settingsSystem.swapfile.config.shrinker" :disabled="!settingsSystem.swapfile.enabled" hide-details="auto"></v-switch>
+            <v-switch class="pt-2" :label="$t('zswap enabled')" color="green" inset v-model="settingsSystem.swapfile.config.zswap" :disabled="!settingsSystem.swapfile.enabled" hide-details="auto" density="compact"></v-switch>
+            <v-switch class="pb-2" :label="$t('shrinker enabled')" color="green" inset v-model="settingsSystem.swapfile.config.shrinker" :disabled="!settingsSystem.swapfile.enabled" hide-details="auto" density="compact"></v-switch>
             <v-text-field :label="$t('zswap max pool percent')" type="number" v-model="settingsSystem.swapfile.config.max_pool_percent" :disabled="!settingsSystem.swapfile.enabled"></v-text-field>
             <v-select
               :items="zswapAlgorithms"
@@ -84,7 +84,7 @@
             ></v-text-field>
             <v-divider class="my-4"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('binfmt') }}</span>
-            <v-switch :label="$t('enable binfmt')" color="green" inset v-model="settingsSystem.binfmt.enabled" hide-details="auto" class="mb-2"></v-switch>
+            <v-switch :label="$t('enable binfmt')" color="green" inset v-model="settingsSystem.binfmt.enabled" hide-details="auto" class="mb-2 mt-2" density="compact"></v-switch>
             <v-select multiple chips :items="architectures" :label="$t('binfmt architectures')" v-model="settingsSystem.binfmt.architectures" :disabled="!settingsSystem.binfmt.enabled" hide-details="auto"></v-select>
             <v-divider class="my-4"></v-divider>
             <span class="text-subtitle-1 font-weight-medium">{{ $t('date & time') }}</span>

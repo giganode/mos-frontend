@@ -14,7 +14,7 @@
       </v-container>
       <v-container fluid class="pa-0">
         <v-card fluid style="margin-bottom: 80px" class="pa-0">
-          <v-card-text>
+          <v-card-text class="pb-0">
             <v-switch :label="$t('zram enabled')" color="green" inset v-model="zram.enabled" hide-details="auto" @update:model-value="setZram()" density="compact"></v-switch>
           </v-card-text>
           <v-card-text class="pa-0">

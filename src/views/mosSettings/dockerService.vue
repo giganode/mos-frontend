@@ -65,7 +65,7 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <v-row class="align-center">
+              <v-row class="align-center mt-4">
                 <v-col cols="12" md="2">
                   <v-switch
                     v-model="settingsDocker.update_check.auto_update.enabled"

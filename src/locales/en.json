@@ -1342,5 +1342,6 @@
   "pending": "Pending",
   "no running operations": "No running operations",
   "file operation completed successfully": "File operation completed successfully",
-  "drives": "Drives"
+  "drives": "Drives",
+  "hidden files": "Hidden files"
 }

@@ -53,11 +53,10 @@
 
   <!-- Notification Detail Dialog -->
   <v-dialog v-model="notificationDialog.value" max-width="600px">
-    <v-card class="pa-0">
-      <v-card-title>{{ notificationDialog.notification.title }}</v-card-title>
-      <v-card-text>
-        <p>{{ notificationDialog.notification.message }}</p>
-        <p class="text-caption text-grey">{{ new Date(notificationDialog.notification.timestamp).toLocaleString() }}</p>
+    <v-card class="pa-0" :title="notificationDialog.notification.title" :prepend-icon="notificationDialog.notification.priority === 'normal' || notificationDialog.notification.priority === 'info' ? 'mdi-information-outline' : notificationDialog.notification.priority === 'warning' ? 'mdi-alert-outline' : notificationDialog.notification.priority === 'alert' || notificationDialog.notification.priority === 'error' ? 'mdi-alert-circle-outline' : notificationDialog.notification.priority === 'success' ? 'mdi-check-circle-outline' : 'mdi-bell-outline'">
+      <v-card-text class="pa-0 pb-4 px-4">
+        <p class="ma-0">{{ notificationDialog.notification.message }}</p>
+        <p class="ma-0 text-caption text-grey">{{ new Date(notificationDialog.notification.timestamp).toLocaleString() }}</p>
       </v-card-text>
       <v-divider />
       <v-card-actions>

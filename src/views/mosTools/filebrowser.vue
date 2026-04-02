@@ -87,9 +87,7 @@
                 </v-btn>
               </template>
             </v-tooltip>
-
             <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
-
             <v-tooltip :text="$t('edit')" location="top">
               <template #activator="{ props }">
                 <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem || activeItem.type === 'directory'" @click="openEditFileDialog(activeItem)">
@@ -111,9 +109,7 @@
                 </v-btn>
               </template>
             </v-tooltip>
-
             <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
-
             <v-tooltip :text="$t('copy')" location="top">
               <template #activator="{ props }">
                 <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openOperationDialog(activeItem, 'copy')">
@@ -128,9 +124,7 @@
                 </v-btn>
               </template>
             </v-tooltip>
-
             <v-divider vertical class="mx-1 align-self-center" style="height: 24px" />
-
             <v-tooltip :text="$t('adjust permissions')" location="top">
               <template #activator="{ props }">
                 <v-btn v-bind="props" variant="text" color="primary" icon :disabled="!activeItem" @click="openChModDialog(activeItem)">
@@ -145,6 +139,8 @@
                 </v-btn>
               </template>
             </v-tooltip>
+            <v-spacer />
+              <v-checkbox v-model="includeHiddenFiles" :label="$t('hidden files')" :disabled="loading" hide-details="auto" density="compact" @update:modelValue="loadPath(currentPath)" />
           </v-card-actions>
         </v-card>
       </v-container>
@@ -395,6 +391,7 @@ const fsDialogCallback = ref(null);
 const selectedFilePath = ref('');
 const runningProcesses = ref(0);
 const allOperationsDialogVisible = ref(false);
+const includeHiddenFiles = ref(false);
 const deleteFileDialog = reactive({
   value: false,
   path: null,
@@ -482,6 +479,9 @@ const loadPath = async (path = '/') => {
     const url = new URL('/api/v1/mos/fsnavigator', window.location.origin);
     if (path && path !== '/') {
       url.searchParams.set('path', path);
+    }
+    if (includeHiddenFiles.value) {
+      url.searchParams.set('includeHidden', 'true');
     }
 
     const typeParam = selectType.value === 'directory' ? 'directories' : 'all';

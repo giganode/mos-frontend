@@ -315,6 +315,14 @@
               <v-list-item v-if="installDialog.tpl?.type === 'plugin'">
                 <v-select v-model="installDialog.release" :items="releasesItems" density="compact" :loading="releasesLoading" label="Release" class="mt-2" clearable></v-select>
               </v-list-item>
+              <v-list-item v-if="installDialog.tpl?.readme_url" :href="installDialog.tpl?.readme_url" target="_blank" rel="noopener noreferrer" class="text-truncate" style="text-transform: none">
+                <template #prepend>
+                  <v-icon>mdi-file-document-outline</v-icon>
+                </template>
+                <v-list-item-title class="text-truncate">
+                  {{ $t('readme') }}
+                </v-list-item-title>
+              </v-list-item>
             </v-list>
           </v-col>
           <v-col cols="12" md="4">

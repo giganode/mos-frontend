@@ -184,7 +184,7 @@
                           size="16"
                           class="cursor-pointer"
                           :style="{
-                            color: data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? '#1976d2' : 'red'
+                            color: data_device.powerStatus === 'active' ? 'green' : data_device.powerStatus === 'standby' ? '#1976d2' : 'red',
                           }"
                           @dblclick="data_device.powerStatus === 'active' ? sleepDisk(data_device) : wakeDisk(data_device)"
                         >
@@ -257,7 +257,7 @@
                             size="16"
                             class="cursor-pointer"
                             :style="{
-                              color: parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? '#1976d2' : 'red'
+                              color: parity_device.powerStatus === 'active' ? 'green' : parity_device.powerStatus === 'standby' ? '#1976d2' : 'red',
                             }"
                             @dblclick="parity_device.powerStatus === 'active' ? sleepDisk(parity_device) : wakeDisk(parity_device)"
                           >
@@ -273,9 +273,7 @@
                             <v-progress-linear :model-value="parity_device.storage.usagePercent" height="6" color="grey darken-1" rounded class="flex-grow-1" style="min-width: 40px" />
                             <div class="d-flex justify-space-between align-center" style="white-space: nowrap; font-size: 0.8rem !important">
                               <span class="text-caption text-medium-emphasis" style="white-space: nowrap; font-size: 0.8rem !important">{{ Math.round(parity_device.storage.usagePercent) }}%</span>
-                              <span v-if="parity_device.storage.usagePercent != null">
-                                {{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}
-                              </span>
+                              <span v-if="parity_device.storage.usagePercent != null">{{ parity_device.storage.usedSpace_human }} / {{ parity_device.storage.totalSpace_human }}</span>
                             </div>
                           </div>
                         </td>
@@ -325,7 +323,7 @@
                           size="16"
                           class="cursor-pointer"
                           :style="{
-                            color: unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? '#1976d2' : 'red'
+                            color: unassignedDisk.powerStatus === 'active' ? 'green' : unassignedDisk.powerStatus === 'standby' ? '#1976d2' : 'red',
                           }"
                           @dblclick="unassignedDisk.powerStatus === 'active' ? sleepDisk(unassignedDisk) : wakeDisk(unassignedDisk)"
                         >
@@ -381,7 +379,14 @@
     <v-card class="pa-0" :title="t('confirm format')" prepend-icon="mdi-broom" style="max-height: 60vh; display: flex; flex-direction: column">
       <v-card-text style="overflow: auto">
         {{ $t('are you sure you want to format this disk?') }}
-        <v-select v-model="formatDialog.filesystem" :items="formatDialog.filesystems" :label="$t('filesystem')" density="comfortable" :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
+        <v-select
+          v-model="formatDialog.filesystem"
+          :items="formatDialog.filesystems"
+          :label="$t('filesystem')"
+          density="comfortable"
+          :rules="[(v) => !!v || $t('filesystem is required')]"
+          class="pt-4"
+        />
         <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
         <v-switch v-model="formatDialog.wipeExisting" :label="$t('wipe existing data')" inset hide-details density="compact" color="red" />
       </v-card-text>
@@ -576,17 +581,20 @@
   <!-- Replace Mergerfs Device Dialog -->
   <v-dialog v-model="replaceMergerfsDeviceDialog.value" max-width="600">
     <v-card class="pa-0" :title="t('replace device')" prepend-icon="mdi-file-replace" style="max-height: 60vh; display: flex; flex-direction: column">
-      <v-card-text style="overflow: auto">
-        <v-form>
-          <v-select
-            v-model="replaceMergerfsDeviceDialog.oldDevice"
-            :items="replaceMergerfsDeviceDialog.pool ? replaceMergerfsDeviceDialog.pool.data_devices.map((device) => device.device) : []"
-            :label="$t('old device')"
-            density="comfortable"
-          />
-          <v-select v-model="replaceMergerfsDeviceDialog.newDevice" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('new device')" density="comfortable" />
-          <v-switch v-model="replaceMergerfsDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
-        </v-form>
+      <v-card-text style="overflow: auto" class="pt-2">
+        <v-select
+          v-model="replaceMergerfsDeviceDialog.oldDevice"
+          :items="replaceMergerfsDeviceDialog.pool ? replaceMergerfsDeviceDialog.pool.data_devices.map((device) => device.device) : []"
+          :label="$t('old device')"
+          density="comfortable"
+        />
+        <v-select
+          v-model="replaceMergerfsDeviceDialog.newDevice"
+          :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+          :label="$t('new device')"
+          density="comfortable"
+        />
+        <v-switch v-model="replaceMergerfsDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
       </v-card-text>
       <v-divider />
       <v-card-actions style="flex-shrink: 0">
@@ -607,7 +615,13 @@
       <v-card-text style="overflow: auto">
         <p class="mb-4">{{ $t('select devices to add as parity') }}</p>
         <v-form>
-          <v-select v-model="addParityDevicesDialog.devices" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('devices')" :multiple="true" density="comfortable" />
+          <v-select
+            v-model="addParityDevicesDialog.devices"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('devices')"
+            :multiple="true"
+            density="comfortable"
+          />
           <v-switch v-model="addParityDevicesDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
@@ -658,7 +672,12 @@
             :label="$t('old device')"
             density="comfortable"
           />
-          <v-select v-model="replaceParityDeviceDialog.newDevice" :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []" :label="$t('new device')" density="comfortable" />
+          <v-select
+            v-model="replaceParityDeviceDialog.newDevice"
+            :items="Array.isArray(unassignedDisks) ? unassignedDisks.map((disk) => disk.device) : []"
+            :label="$t('new device')"
+            density="comfortable"
+          />
           <v-switch v-model="replaceParityDeviceDialog.format" :label="$t('format')" hide-details density="compact" color="red" inset />
         </v-form>
       </v-card-text>
@@ -2268,7 +2287,7 @@ const getDiskIcon = (type) => {
     case 'ramdisk':
       return 'mdi-memory';
     case 'emmc':
-      return 'mdi-micro-sd'; 
+      return 'mdi-micro-sd';
     default:
       return 'mdi-help-circle';
   }

@@ -1343,5 +1343,7 @@
   "no running operations": "No running operations",
   "file operation completed successfully": "File operation completed successfully",
   "drives": "Drives",
-  "hidden files": "Hidden files"
+  "hidden files": "Hidden files",
+  "revision": "Revision",
+  "vendor": "Vendor"  
 }

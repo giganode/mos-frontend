@@ -32,9 +32,7 @@
                 <td style="white-space: nowrap">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" style="cursor: pointer">
-                        mdi-share
-                      </v-icon>
+                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" style="cursor: pointer">mdi-share</v-icon>
                     </template>
                     <v-list>
                       <v-list-item @click="openEditSmbDialog(share)">
@@ -128,59 +126,56 @@
               </tr>
             </tbody>
           </v-table>
-        </v-card>     
+        </v-card>
       </v-container>
     </v-container>
   </v-container>
 
   <!-- Create Smb Dialog -->
   <v-dialog v-model="createSmbDialog.value" max-width="500">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('create share') }}</v-card-title>
-      <v-card-text>
-        <v-form>
-          <v-text-field v-model="createSmbDialog.shareName" :label="$t('share name')" required autofocus />
-          <v-select v-model="createSmbDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
-          <v-text-field
-            v-model="createSmbDialog.subPath"
-            :label="$t('select directory')"
-            append-inner-icon="mdi-folder"
-            required
-            @click:append-inner="
-              openFsDialog(
-                (item) => {
-                  createSmbDialog.subPath = item.path;
-                },
-                pools.find((p) => p.name === createSmbDialog.poolName)?.mountPoint || '/',
-              )
-            "
-          />
-          <v-select v-model="createSmbDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
-          <v-select v-model="createSmbDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
-          <v-text-field v-model="createSmbDialog.comment" :label="$t('comment')" clearable />
-          <v-divider></v-divider>
-          <v-btn variant="text" @click="createSmbDialog.showAdvanced = !createSmbDialog.showAdvanced" class="mb-4">
-            {{ createSmbDialog.showAdvanced ? $t('hide advanced options') : $t('show advanced options') }}
-          </v-btn>
-          <v-slide-y-transition>
-            <div v-if="createSmbDialog.showAdvanced">
-              <v-text-field v-model="createSmbDialog.create_mask" :label="$t('create mask')" required />
-              <v-text-field v-model="createSmbDialog.directory_mask" :label="$t('directory mask')" required />
-              <v-switch v-model="createSmbDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
-              <v-switch v-model="createSmbDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
-              <v-switch v-model="createSmbDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
-              <v-switch v-model="createSmbDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
-              <v-switch v-model="createSmbDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
-            </div>
-          </v-slide-y-transition>
-          <v-switch v-model="createSmbDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="createSmbDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="createSmbDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="createSmbDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
-        </v-form>
+    <v-card class="pa-0" :title="$t('create share')" prepend-icon="mdi-plus">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
+        <v-text-field v-model="createSmbDialog.shareName" :label="$t('share name')" required autofocus />
+        <v-select v-model="createSmbDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
+        <v-text-field
+          v-model="createSmbDialog.subPath"
+          :label="$t('select directory')"
+          append-inner-icon="mdi-folder"
+          required
+          @click:append-inner="
+            openFsDialog(
+              (item) => {
+                createSmbDialog.subPath = item.path;
+              },
+              pools.find((p) => p.name === createSmbDialog.poolName)?.mountPoint || '/',
+            )
+          "
+        />
+        <v-select v-model="createSmbDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
+        <v-select v-model="createSmbDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
+        <v-text-field v-model="createSmbDialog.comment" :label="$t('comment')" clearable />
+        <v-divider></v-divider>
+        <v-btn variant="text" @click="createSmbDialog.showAdvanced = !createSmbDialog.showAdvanced" class="mb-4">
+          {{ createSmbDialog.showAdvanced ? $t('hide advanced options') : $t('show advanced options') }}
+        </v-btn>
+        <v-slide-y-transition>
+          <div v-if="createSmbDialog.showAdvanced">
+            <v-text-field v-model="createSmbDialog.create_mask" :label="$t('create mask')" required />
+            <v-text-field v-model="createSmbDialog.directory_mask" :label="$t('directory mask')" required />
+            <v-switch v-model="createSmbDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
+            <v-switch v-model="createSmbDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
+            <v-switch v-model="createSmbDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
+            <v-switch v-model="createSmbDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
+            <v-switch v-model="createSmbDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
+          </div>
+        </v-slide-y-transition>
+        <v-switch v-model="createSmbDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="createSmbDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="createSmbDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="createSmbDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-btn color="onPrimary" @click="createSmbDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="createShareSmb()">
           {{ $t('create') }}
@@ -191,37 +186,34 @@
 
   <!-- Create Nfs Dialog -->
   <v-dialog v-model="createNfsDialog.value" max-width="500">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('add nfs share') }}</v-card-title>
-      <v-card-text>
-        <v-form>
-          <v-text-field v-model="createNfsDialog.shareName" :label="$t('share name')" required autofocus />
-          <v-select v-model="createNfsDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
-          <v-text-field
-            v-model="createNfsDialog.subPath"
-            :label="$t('select directory')"
-            append-inner-icon="mdi-folder"
-            required
-            @click:append-inner="
-              openFsDialog(
-                (item) => {
-                  createNfsDialog.subPath = item.path;
-                },
-                pools.find((p) => p.name === createNfsDialog.poolName)?.mountPoint || '/',
-              )
-            "
-          />
-          <v-text-field v-model="createNfsDialog.source" :label="$t('source')" required />
-          <v-text-field v-model="createNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
-          <v-text-field v-model="createNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
-          <v-text-field v-model="createNfsDialog.write_operations" :label="$t('write operations')" />
-          <v-text-field v-model="createNfsDialog.mapping" :label="$t('mapping')" />
-          <v-switch v-model="createNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="createNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
-        </v-form>
+    <v-card class="pa-0" :title="$t('add nfs share')" prepend-icon="mdi-plus">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
+        <v-text-field v-model="createNfsDialog.shareName" :label="$t('share name')" required autofocus />
+        <v-select v-model="createNfsDialog.poolName" :items="pools" item-title="name" item-value="name" :label="$t('pool')" required />
+        <v-text-field
+          v-model="createNfsDialog.subPath"
+          :label="$t('select directory')"
+          append-inner-icon="mdi-folder"
+          required
+          @click:append-inner="
+            openFsDialog(
+              (item) => {
+                createNfsDialog.subPath = item.path;
+              },
+              pools.find((p) => p.name === createNfsDialog.poolName)?.mountPoint || '/',
+            )
+          "
+        />
+        <v-text-field v-model="createNfsDialog.source" :label="$t('source')" required />
+        <v-text-field v-model="createNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
+        <v-text-field v-model="createNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
+        <v-text-field v-model="createNfsDialog.write_operations" :label="$t('write operations')" />
+        <v-text-field v-model="createNfsDialog.mapping" :label="$t('mapping')" />
+        <v-switch v-model="createNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="createNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-btn color="onPrimary" @click="createNfsDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="createShareNfs()">
           {{ $t('create') }}
@@ -232,15 +224,14 @@
 
   <!-- Delete Smb Dialog -->
   <v-dialog v-model="deleteSmbDialog.value" max-width="400">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="$t('confirm delete')" prepend-icon="mdi-alert">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto">
         {{ $t('are you sure you want to delete this share?') }}
         <v-checkbox v-model="deleteSmbDialog.deleteDirectory" :label="$t('delete directory')" class="mt-4" density="compact" hide-details="" />
         <v-checkbox v-model="deleteSmbDialog.removePathRule" :label="$t('remove path rule')" density="compact" hide-details="" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-btn color="onPrimary" @click="deleteSmbDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deleteShareSmb(deleteSmbDialog.share, deleteSmbDialog.deleteDirectory)">
           {{ $t('delete') }}
@@ -251,15 +242,14 @@
 
   <!-- Delete Nfs Dialog -->
   <v-dialog v-model="deleteNfsDialog.value" max-width="400">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('confirm delete') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="$t('confirm delete')" prepend-icon="mdi-alert">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto">
         {{ $t('are you sure you want to delete this nfs share?') }}
         <v-checkbox v-model="deleteNfsDialog.deleteDirectory" :label="$t('delete directory')" class="mt-4" density="compact" hide-details="" />
         <v-checkbox v-model="deleteNfsDialog.removePathRule" :label="$t('remove path rule')" density="compact" hide-details="" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-btn color="onPrimary" @click="deleteNfsDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="red" @click="deleteShareNfs(deleteNfsDialog.share)">
           {{ $t('delete') }}
@@ -270,28 +260,25 @@
 
   <!-- Edit Smb Dialog -->
   <v-dialog v-model="editSmbDialog.value" max-width="500">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('edit share') }}</v-card-title>
-      <v-card-text>
-        <v-form>
-          <v-text-field v-model="editSmbDialog.name" :label="$t('share name')" readonly />
-          <v-text-field v-model="editSmbDialog.path" :label="$t('path')" readonly />
-          <v-text-field v-model="editSmbDialog.comment" :label="$t('comment')" clearable />
-          <v-select v-model="editSmbDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
-          <v-select v-model="editSmbDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
-          <v-switch v-model="editSmbDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editSmbDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
-        </v-form>
+    <v-card class="pa-0" :title="$t('edit share')" prepend-icon="mdi-pencil">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
+        <v-text-field v-model="editSmbDialog.name" :label="$t('share name')" readonly />
+        <v-text-field v-model="editSmbDialog.path" :label="$t('path')" readonly />
+        <v-text-field v-model="editSmbDialog.comment" :label="$t('comment')" clearable />
+        <v-select v-model="editSmbDialog.valid_users" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('read rights')" multiple />
+        <v-select v-model="editSmbDialog.write_list" :items="Array.isArray(smbUsers) ? smbUsers.map((user) => user.username) : []" :label="$t('write rights')" multiple />
+        <v-switch v-model="editSmbDialog.enabled" :label="$t('enabled')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.browseable" :label="$t('browseable')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.guest_ok" :label="$t('guest ok')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.force_root" :label="$t('force root')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.inherit_permissions" :label="$t('inherit permissions')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.hide_dot_files" :label="$t('hide dot files')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.preserve_case" :label="$t('preserve case')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editSmbDialog.case_sensitive" :label="$t('case sensitive')" inset hide-details density="compact" class="ml-4" color="green" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-spacer />
         <v-btn color="onPrimary" @click="editSmbDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="updateShareSmb(editSmbDialog)">
@@ -303,23 +290,20 @@
 
   <!-- Edit Nfs Dialog -->
   <v-dialog v-model="editNfsDialog.value" max-width="500">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('edit nfs share') }}</v-card-title>
-      <v-card-text>
-        <v-form>
-          <v-text-field v-model="editNfsDialog.name" :label="$t('share name')" readonly />
-          <v-text-field v-model="editNfsDialog.path" :label="$t('path')" readonly />
-          <v-text-field v-model="editNfsDialog.source" :label="$t('source')" required />
-          <v-text-field v-model="editNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
-          <v-text-field v-model="editNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
-          <v-text-field v-model="editNfsDialog.write_operations" :label="$t('write operations')" />
-          <v-text-field v-model="editNfsDialog.mapping" :label="$t('mapping')" />
-          <v-switch v-model="editNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
-          <v-switch v-model="editNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
-        </v-form>
+    <v-card class="pa-0" :title="$t('edit nfs share')" prepend-icon="mdi-pencil">
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto" class="pt-2">
+        <v-text-field v-model="editNfsDialog.name" :label="$t('share name')" readonly />
+        <v-text-field v-model="editNfsDialog.path" :label="$t('path')" readonly />
+        <v-text-field v-model="editNfsDialog.source" :label="$t('source')" required />
+        <v-text-field v-model="editNfsDialog.anonuid" :label="$t('anonymous uid')" type="number" />
+        <v-text-field v-model="editNfsDialog.anongid" :label="$t('anonymous gid')" type="number" />
+        <v-text-field v-model="editNfsDialog.write_operations" :label="$t('write operations')" />
+        <v-text-field v-model="editNfsDialog.mapping" :label="$t('mapping')" />
+        <v-switch v-model="editNfsDialog.read_only" :label="$t('read only')" inset hide-details density="compact" class="ml-4" color="green" />
+        <v-switch v-model="editNfsDialog.secure" :label="$t('secure')" inset hide-details density="compact" class="ml-4" color="green" />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-spacer />
         <v-btn color="onPrimary" @click="editNfsDialog.value = false">{{ $t('cancel') }}</v-btn>
         <v-btn color="onPrimary" @click="updateShareNfs(editNfsDialog)">
@@ -333,7 +317,7 @@
   <v-dialog v-model="targetDevicesDialog.value" max-width="500">
     <v-card class="pa-0">
       <v-card-title>{{ $t('target devices') }}</v-card-title>
-      <v-card-text>
+      <v-card-text style="max-height: 60vh; display: flex; flex-direction: column; overflow: auto">
         <v-select
           v-model="targetDevicesDialog.selectedDevices"
           :items="targetDevicesDialog.targetDevices"
@@ -347,7 +331,7 @@
         />
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-spacer />
         <v-btn color="onPrimary" @click="targetDevicesDialog.value = false">{{ $t('close') }}</v-btn>
         <v-btn color="onPrimary" @click="setTargetDevicesSmb(targetDevicesDialog.share, targetDevicesDialog.selectedDevices)">

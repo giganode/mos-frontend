@@ -1343,5 +1343,7 @@
   "no running operations": "Keine laufenden Vorgänge",
   "file operation completed successfully": "Dateioperation erfolgreich abgeschlossen",
   "drives": "Laufwerke",
-  "hidden files": "Versteckte Dateien"
+  "hidden files": "Versteckte Dateien",
+  "revision": "Revision",
+  "vendor": "Hersteller"
 }

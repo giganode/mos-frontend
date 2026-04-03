@@ -1345,5 +1345,6 @@
   "drives": "Drives",
   "hidden files": "Hidden files",
   "revision": "Revision",
-  "vendor": "Vendor"  
+  "vendor": "Vendor",
+  "readme": "Readme"
 }

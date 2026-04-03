@@ -2,7 +2,7 @@
   <v-dialog v-model="internalVisible" max-width="800" persistent>
     <v-card class="pa-0" :title="$t('all operations')" prepend-icon="mdi-progress-clock">
       <v-card-text class="pa-0">
-        <div v-if="dataReceived && !dataOpsReceived" class="d-flex justify-center align-center pa-8">
+        <div v-if="!runningOperationsLoaded || (runningOperationsLoaded && runningOperations > 0 && operations.length === 0)" class="d-flex justify-center align-center pa-8">
           <v-progress-circular indeterminate size="64" color="primary" />
         </div>
         <v-list v-else>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { io } from 'socket.io-client';
 
 const props = defineProps({
@@ -55,10 +55,15 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
-const dataOpsReceived = ref(false);
+const runningOperations = ref(0);
+const runningOperationsLoaded = ref(false);
 const operations = ref([]);
 const dataReceived = ref(false);
 let socket = null;
+
+onMounted(() => {
+  getRunningOperations();
+});
 
 const internalVisible = computed({
   get: () => props.modelValue,
@@ -74,12 +79,8 @@ const cleanupSocket = () => {
 };
 
 const apply = (data) => {
-  dataReceived.value = true;
-  if (data && data.operations) {
-    dataOpsReceived.value = true;
-    operations.value = [...data.operations];
-  } else if (data && data.id) {
-    dataOpsReceived.value = true;
+  if (data && data.id) {
+    dataReceived.value = true;
     const index = operations.value.findIndex((op) => op.id === data.id);
     if (index !== -1) {
       operations.value.splice(index, 1, { ...operations.value[index], ...data });
@@ -108,15 +109,43 @@ const connect = () => {
   socket.on('preferences-updated', apply);
 };
 
-watch(internalVisible, (visible) => {
+watch(internalVisible, async (visible) => {
   if (visible) {
-    operations.value = [];
+    runningOperationsLoaded.value = false;
     dataReceived.value = false;
+    operations.value = [];
+    await getRunningOperations();
     connect();
   } else {
     cleanupSocket();
+    operations.value = [];
+    dataReceived.value = false;
+    runningOperations.value = 0;
+    runningOperationsLoaded.value = false;
   }
 });
 
-defineExpose({ cleanupSocket });
+const getRunningOperations = async () => {
+  try {
+    const res = await fetch(`/api/v1/mos/runningfsoperations`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('could not fetch running operations')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+    const data = await res.json();
+    runningOperations.value = data.count || 0;
+    runningOperationsLoaded.value = true;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    runningOperationsLoaded.value = true;
+    return [];
+  }
+};
+
+defineExpose({ cleanupSocket, getRunningOperations });
 </script>

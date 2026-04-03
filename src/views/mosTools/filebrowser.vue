@@ -31,15 +31,16 @@
             <v-table density="compact">
               <thead>
                 <tr style="cursor: pointer; background-color: rgba(0, 0, 0, 0.04)">
-                  <th style="width: 30%">{{ t('name') }}</th>
+                  <th style="width: 20%">{{ t('name') }}</th>
                   <th style="width: 20%">{{ t('path') }}</th>
-                  <th style="min-width: 100px">{{ t('owner') }}</th>
-                  <th style="min-width: 50px">{{ t('permissions') }}</th>
+                  <th style="width: 10%; min-width: 100px">{{ t('size') }}</th>
+                  <th style="width: 10%; min-width: 100px">{{ t('owner') }}</th>
+                  <th style="min-width: 30px">{{ t('permissions') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="!loading && items.length === 0">
-                  <td colspan="4" class="text-center text-medium-emphasis">
+                  <td colspan="5" class="text-center text-medium-emphasis">
                     {{ t('no entries') }}
                   </td>
                 </tr>
@@ -60,6 +61,9 @@
                   </td>
                   <td>
                     <span class="text-caption">{{ item.displayPath || item.path }}</span>
+                  </td>
+                  <td>
+                    <span class="text-caption">{{ item.type === 'directory' ? '-' : item.size_human}}</span>
                   </td>
                   <td>
                     <span class="text-caption">{{ item.permissions.owner }}:{{ item.permissions.group }}</span>

@@ -101,6 +101,8 @@ const login = async () => {
     localStorage.setItem('userid', result.user.id);
     localStorage.setItem('byte_format', result.user.byte_format || 'binary');
     localStorage.setItem('username', username.value);
+    localStorage.setItem('hideInactiveMenus', result.user.hide_inactive_menus ? 'true' : 'false');
+    localStorage.setItem('groupMenus', result.user.group_menus ? 'true' : 'false');
 
     if(result.user.darkmode) {
       theme.change('dark');

@@ -35,6 +35,7 @@ import mosSettingsToken from '../views/mosSettings/token.vue';
 import mosSettingsUsers from '../views/mosSettings/users.vue';
 import mosSettingsUsbDevices from '../views/mosSettings/usbDevices.vue';
 import mosSettingsPciDevices from '../views/mosSettings/pciDevices.vue';
+import mosSettingsSmart from '../views/mosSettings/smart.vue';
 import webterminalPopup from '../views/webterminalPopup.vue';
 import Notifications from '../views/notifications.vue';
 import RemoteMounting from '../views/remoteMounting.vue';
@@ -99,6 +100,7 @@ const routes = [
   { path: '/mosSettings/users', component: mosSettingsUsers, meta: { hideAppBar: false, title: 'MOS Settings - Users', description: 'Manage users' } },
   { path: '/mosSettings/usbDevices', component: mosSettingsUsbDevices, meta: { hideAppBar: false, title: 'MOS Settings - USB Devices', description: 'Manage USB devices' } },
   { path: '/mosSettings/pciDevices', component: mosSettingsPciDevices, meta: { hideAppBar: false, title: 'MOS Settings - PCI Devices', description: 'Manage PCI devices' } },
+  { path: '/mosSettings/smart', component: mosSettingsSmart, meta: { hideAppBar: false, title: 'MOS Settings - SMART', description: 'Manage SMART settings' } },
   { path: '/profile', component: profile, meta: { hideAppBar: false, title: 'Profile', description: 'Manage your profile' } },
   {
     path: '/webTerminalPopup',

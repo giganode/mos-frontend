@@ -18,6 +18,7 @@
               @update:modelValue="setDarkMode( $event )"
               inset
               density="compact"
+              color="green"
             />
             <v-select
               v-model="selectedLanguage"
@@ -38,8 +39,31 @@
               @update:modelValue="changeByteUnit()"
             />
             <v-text-field v-model="expiryDays" :label="$t('ui session expiry time (days)')" append-icon="mdi-content-save" type="number" min="1" max="365" @click:append="changeUiSessionExpiry()" />
-            <span class="text-subtitle-1 font-weight-medium">{{ $t('uicolor') }}</span>
-            <v-color-picker v-model="color" show-swatches hide-canvas hide-sliders hide-inputs @update:modelValue="changePrimaryColor" />
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('ui') }}</span>
+            <v-switch
+              v-model="hideInactiveMenus"
+              :label="$t('hide inactive menus')"
+              :true-value="true"
+              :false-value="false"
+              @update:modelValue="setHideInactiveMenus( $event )"
+              inset
+              density="compact"
+              hide-details="auto"
+              class="pt-2"
+              color="green"
+            />
+            <v-switch
+              v-model="groupMenus"
+              :label="$t('group menus')"
+              :true-value="true"
+              :false-value="false"
+              @update:modelValue="setGroupMenus( $event )"
+              inset
+              density="compact"
+              color="green"
+            />
+            <span class="text-subtitle-1 font-weight-medium">{{ $t('color scheme') }}</span>
+            <v-color-picker v-model="color" show-swatches hide-canvas hide-sliders hide-inputs @update:modelValue="changePrimaryColor"/>
           </v-card-text>
         </v-card>
       </v-container>
@@ -71,7 +95,8 @@ const expiryDays = ref(1);
 const theme = useTheme();
 const color = ref(theme.themes.value[theme.global.name.value].colors.primary || '#1976D2');
 const darkMode = ref(false);
-
+const hideInactiveMenus = ref(false);
+const groupMenus = ref(false);
 onMounted(() => {
   getUser();
   getUiSessionExpiry();
@@ -93,6 +118,8 @@ const getUser = async () => {
     const user = await res.json();
     selectedByteFormat.value = user.byte_format || 'binary';
     darkMode.value = user.darkmode ? 'dark' : 'light';
+    hideInactiveMenus.value = user.hide_inactive_menus;
+    groupMenus.value = user.group_menus;
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
@@ -230,6 +257,52 @@ const setDarkMode = async (targetTheme) => {
     darkMode.value = theme.global.name.value;
     theme.themes.value[theme.global.name.value].colors.primary = result.primary_color || '#1976D2';    
 
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
+};
+
+const setHideInactiveMenus = async (hide) => {
+  const payload = { hide_inactive_menus: hide };
+
+  try {
+    const res = await fetch(`/api/v1/auth/users/${localStorage.getItem('userid')}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+
+    hideInactiveMenus.value = hide;
+    localStorage.setItem('hideInactiveMenus', hide ? 'true' : 'false');
+    emit('refresh-drawer');
+  } catch (e) {
+    showSnackbarError(e.message);
+  }
+};
+
+const setGroupMenus = async (group) => {
+  const payload = { group_menus: group };
+
+  try {
+    const res = await fetch(`/api/v1/auth/users/${localStorage.getItem('userid')}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+
+    groupMenus.value = group;
+    localStorage.setItem('groupMenus', group ? 'true' : 'false');
+    emit('refresh-drawer');
   } catch (e) {
     showSnackbarError(e.message);
   }

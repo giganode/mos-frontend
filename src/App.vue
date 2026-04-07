@@ -28,50 +28,61 @@
           <v-list-item to="/dashboard" prepend-icon="mdi-view-dashboard">
             <v-list-item-title>{{ $t('dashboard') }}</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/disks" prepend-icon="mdi-harddisk">
-            <v-list-item-title>{{ $t('disks') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/pools" prepend-icon="mdi-view-array">
-            <v-list-item-title>{{ $t('pools') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/shares" prepend-icon="mdi-share">
-            <v-list-item-title>{{ $t('shares') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item v-if="mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync">
-            <v-list-item-title>{{ $t('remote mounting') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item v-if="mosServices.hub?.enabled" to="/mosHub" prepend-icon="mdi-hub">
-            <v-list-item-title>{{ $t('mos hub') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker">
-            <v-list-item-title>{{ $t('docker') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant">
-            <v-list-item-title>{{ $t('lxc') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account">
-            <v-list-item-title>{{ $t('vm') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/plugins" prepend-icon="mdi-puzzle">
-            <v-list-item-title>{{ $t('plugins') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console">
-            <v-list-item-title>{{ $t('terminal') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder">
-            <v-list-item-title>{{ $t('filebrowser') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/mosSettings" prepend-icon="mdi-cog">
-            <v-list-item-title>{{ $t('settings') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item v-on:click="logoutDialog = true" prepend-icon="mdi-logout">
-            <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
-          </v-list-item>
+          <v-list-group v-if="groupMenus">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-database" :title="$t('storage')" />
+            </template>
+            <v-list-item to="/disks" prepend-icon="mdi-harddisk" :title="$t('disks')" />
+            <v-list-item to="/pools" prepend-icon="mdi-view-array" :title="$t('pools')" />
+          </v-list-group>
+          <template v-else>
+            <v-list-item to="/disks" prepend-icon="mdi-harddisk" :title="$t('disks')" />
+            <v-list-item to="/pools" prepend-icon="mdi-view-array" :title="$t('pools')" />
+          </template>
+          <v-list-group v-if="groupMenus">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-server" :title="$t('network access')" />
+            </template>
+            <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+          </v-list-group>
+          <template v-else>
+            <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+          </template>
+          <v-list-item v-if="mosServices.hub?.enabled" to="/mosHub" prepend-icon="mdi-hub" :title="$t('mos hub')" />
+          <v-list-group v-if="groupMenus">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-server" :title="$t('virtualization')" />
+            </template>
+            <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
+          </v-list-group>
+          <template v-else>
+            <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
+            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
+          </template>
+          <v-list-item to="/plugins" prepend-icon="mdi-puzzle" :title="$t('plugins')" />
+          <v-list-group v-if="groupMenus">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="mdi-tools" :title="$t('mos tools')" />
+            </template>
+            <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console" :title="$t('terminal')" />
+            <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder" :title="$t('filebrowser')" />
+          </v-list-group>
+          <template v-else>
+            <v-list-item to="/mosTools/webterminal" prepend-icon="mdi-console" :title="$t('terminal')" />
+            <v-list-item to="/mosTools/filebrowser" prepend-icon="mdi-folder" :title="$t('filebrowser')" />
+          </template>
+          <v-list-item to="/mosSettings" prepend-icon="mdi-cog" :title="$t('settings')" />
+          <v-list-item v-on:click="logoutDialog = true" prepend-icon="mdi-logout" :title="$t('logout')" />
         </v-list>
       </v-navigation-drawer>
       <v-main>
         <router-view v-slot="{ Component }">
-          <component :is="Component" @refresh-drawer="getMosServices()" @refresh-notifications-badge="getNotificationsBadge()" />
+          <component :is="Component" @refresh-drawer="refreshDrawer()" @refresh-notifications-badge="getNotificationsBadge()" />
         </router-view>
       </v-main>
     </template>
@@ -121,6 +132,8 @@ const mosServices = ref({});
 const appBarColor = 'primary';
 const notificationsBadge = ref(false);
 const hostname = ref('');
+const hideInactiveMenus = ref(localStorage.getItem('hideInactiveMenus') === 'false');
+const groupMenus = ref(localStorage.getItem('groupMenus') === 'true');
 const RECONNECT_MAX_DELAY = 15000;
 const RECONNECT_BASE_DELAY = 1000;
 
@@ -249,6 +262,12 @@ function doLogout() {
   drawer.value = false;
   logoutDialog.value = false;
 }
+
+const refreshDrawer = async () => {
+  hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'false';
+  groupMenus.value = localStorage.getItem('groupMenus') === 'true';
+  await getMosServices();
+};
 
 const getMosServices = async () => {
   try {

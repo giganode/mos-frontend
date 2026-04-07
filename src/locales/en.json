@@ -1351,7 +1351,7 @@
   "temperature limits": "Temperature Limits",
   "hdd": "HDD",
   "ssd": "SSD",
-  "nvme": "NVMe",
+  "nvme": "NVME",
   "monitored attributes": "Monitored Attributes",
   "boot check": "Boot Check",
   "smartd options": "smartd Options",
@@ -1365,5 +1365,14 @@
   "group menus": "Group Menus",
   "network access": "Network Access",
   "smart settings could not be saved": "SMART settings could not be saved",
-  "smart settings saved successfully": "SMART settings saved successfully"  
+  "smart settings saved successfully": "SMART settings saved successfully",
+  "smart infos could not be loaded": "SMART infos could not be loaded",
+  "smart infos": "SMART infos",
+  "power on hours": "Power On Hours",
+  "power cycle count": "Power Cycle Count",
+  "error count": "Error Count",
+  "attributes": "Attributes",
+  "worst": "Worst",
+  "threshold": "Threshold",
+  "id": "ID"
 }

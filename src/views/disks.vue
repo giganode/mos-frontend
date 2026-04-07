@@ -74,6 +74,12 @@
                         </template>
                         <v-list-item-title>{{ $t('format') }}</v-list-item-title>
                       </v-list-item>
+                      <v-list-item @click="openSmartInfosDialog(disk)">
+                        <template #prepend>
+                          <v-icon>mdi-chart-timeline-variant-shimmer</v-icon>
+                        </template>
+                        <v-list-item-title>{{ $t('smart infos') }}</v-list-item-title>
+                      </v-list-item>
                     </v-list>
                   </v-menu>
                 </td>
@@ -113,7 +119,7 @@
                     —
                     <v-chip v-if="disk.powerStatus === 'standby'" size="x-small" color="blue" label class="ml-2">
                       {{ $t('sleep') }}
-                    </v-chip>                  
+                    </v-chip>
                   </span>
                 </td>
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
@@ -141,10 +147,10 @@
     </v-container>
   </v-container>
 
+  <!-- Confirm Format Dialog -->
   <v-dialog v-model="formatDialog.value" max-width="400">
-    <v-card class="pa-0">
-      <v-card-title>{{ $t('confirm format') }}</v-card-title>
-      <v-card-text>
+    <v-card class="pa-0" :title="$t('confirm format')" prepend-icon="mdi-broom">
+      <v-card-text style="overflow: auto">
         {{ $t('are you sure you want to format this disk?') }}
         <v-select v-model="formatDialog.filesystem" :items="filesystems" :label="$t('filesystem')" density="comfortable" :rules="[(v) => !!v || $t('filesystem is required')]" class="pt-4" />
         <v-switch v-model="formatDialog.partition" :label="$t('create partition')" inset hide-details density="compact" color="green" />
@@ -158,13 +164,108 @@
         </template>
       </v-card-text>
       <v-divider />
-      <v-card-actions>
+      <v-card-actions style="flex-shrink: 0">
         <v-spacer />
         <v-btn color="onPrimary" @click="formatDialog.value = false">
           {{ $t('cancel') }}
         </v-btn>
         <v-btn color="red" :disabled="!formatDialog.filesystem" @click="formatDisk(formatDialog.disk)">
           {{ $t('format') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Confirm S.M.A.R.T. Dialog -->
+  <v-dialog v-model="smartDialog.value" max-width="800">
+    <v-card class="pa-0" :title="$t('smart infos')" prepend-icon="mdi-chart-timeline-variant-shimmer">
+      <v-card-text style="overflow: auto">
+        <div v-if="smartDialog.loading">
+          <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
+        </div>
+        <div v-else>
+          <div class="mb-0">
+            {{ $t('device') }}:
+            {{ smartDialog.smartInfos.device }}
+          </div>
+          <div class="mb-0">
+            {{ $t('model') }}:
+            {{ smartDialog.smartInfos.model }}
+          </div>
+          <div class="mb-0">
+            {{ $t('serial') }}:
+            {{ smartDialog.smartInfos.serial }}
+          </div>
+          <div class="mb-0">{{ $t('type') }}: {{ smartDialog.smartInfos.diskType }}</div>
+          <div class="mb-0">
+            {{ $t('status') }}:
+            <v-chip
+              v-if="smartDialog.smartInfos.smartStatus && smartDialog.smartInfos.smartStatus !== '' && smartDialog.smartInfos.smartStatus !== null"
+              :color="smartDialog.smartInfos.smartStatus === 'PASSED' ? 'green' : 'red'"
+              size="small"
+            >
+              {{ smartDialog.smartInfos.smartStatus }}
+            </v-chip>
+            <v-chip v-else-if="smartDialog.smartInfos.sleeping" color="blue" size="small" class="ml-2">
+              {{ $t('sleep') }}
+            </v-chip>
+          </div>
+          <div v-if="smartDialog.smartInfos.temperature" class="mb-0">
+            {{ $t('temperature') }}: {{ smartDialog.smartInfos.temperature.current }}°C
+            <span v-if="smartDialog.smartInfos.temperature.min">(Min: {{ smartDialog.smartInfos.temperature.min }}°C)</span>
+            <span v-if="smartDialog.smartInfos.temperature.max">(Max: {{ smartDialog.smartInfos.temperature.max }}°C)</span>
+          </div>
+          <div class="mb-0">
+            {{ $t('power on hours') }}:
+            {{ smartDialog.smartInfos.powerOnHours }}
+          </div>
+          <div class="mb-0">
+            {{ $t('power cycle count') }}:
+            {{ smartDialog.smartInfos.powerCycleCount }}
+          </div>
+          <div class="mb-0">
+            {{ $t('error count') }}:
+            {{ smartDialog.smartInfos.errorCount }}
+          </div>
+          <div v-if="smartDialog.smartInfos.warning" class="mb-0">
+            <v-chip color="orange" size="small">{{ $t('warning') }}</v-chip>
+          </div>
+          <div v-if="smartDialog.smartInfos.attributes?.length" class="mt-4">
+            <strong>{{ $t('attributes') }}:</strong>
+            <v-table density="compact" class="mt-2">
+              <thead>
+                <tr>
+                  <th>{{ $t('id') }}</th>
+                  <th>{{ $t('name') }}</th>
+                  <th>{{ $t('status') }}</th>
+                  <th>{{ $t('value') }}</th>
+                  <th>{{ $t('worst') }}</th>
+                  <th>{{ $t('threshold') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="attr in smartDialog.smartInfos.attributes" :key="attr.id">
+                  <td>{{ attr.id }}</td>
+                  <td>{{ attr.name }}</td>
+                  <td>
+                    <v-chip v-if="attr.status && attr.status !== '' && attr.status !== null" :color="attr.status === 'ok' ? 'green' : 'red'" size="x-small">
+                      {{ attr.status }}
+                    </v-chip>
+                  </td>
+                  <td>{{ attr.value }}</td>
+                  <td>{{ attr.worst }}</td>
+                  <td>{{ attr.threshold }}</td>
+                </tr>
+              </tbody>
+            </v-table>
+          </div>
+        </div>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions style="flex-shrink: 0">
+        <v-spacer />
+        <v-btn color="onPrimary" @click="smartDialog.value = false">
+          {{ $t('close') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -201,6 +302,35 @@ const formatDialog = reactive({
   },
 });
 const filesystems = ref([]);
+const smartDialog = reactive({
+  value: false,
+  disk: null,
+  smartInfos: {
+    device: '',
+    deviceName: '',
+    serial: '',
+    model: '',
+    diskType: 'hdd',
+    sleeping: false,
+    warning: false,
+    smartStatus: 'PASSED',
+    temperature: {
+      current: null,
+      min: null,
+      max: null,
+    },
+    powerOnHours: null,
+    powerCycleCount: null,
+    errorCount: null,
+    attributes: [],
+    source: 'smartctl_live',
+    monitoringConfig: {
+      temperatureWarning: 0,
+      temperatureCritical: 0,
+    },
+  },
+  loading: false,
+});
 
 onMounted(() => {
   getDisks();
@@ -419,11 +549,41 @@ const unmountDisk = async (disk) => {
   }
 };
 
+const getSmartInfos = async (disk, wakeUp) => {
+  overlay.value = true;
+  try {
+    const res = await fetch(`/api/v1/disks/${disk.name}/smart?wakeUp=${wakeUp}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('smart infos could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
+    return await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return null;
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const clearFormatDialog = () => {
   formatDialog.value = false;
   formatDialog.disk = null;
   formatDialog.filesystem = '';
   formatDialog.partition = true;
   formatDialog.wipeExisting = true;
+};
+const openSmartInfosDialog = async (disk) => {
+  smartDialog.value = true;
+  smartDialog.disk = disk;
+  smartDialog.smartInfos = {};
+  smartDialog.smartInfos = await getSmartInfos(disk, true);
 };
 </script>

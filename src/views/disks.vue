@@ -18,7 +18,7 @@
           <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
-                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 32px"></th>
                 <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('device') }}</th>
                 <th style="white-space: nowrap">{{ $t('size') }}</th>
                 <th style="white-space: nowrap">{{ $t('usage') }}</th>

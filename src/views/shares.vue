@@ -18,7 +18,7 @@
           <v-table density="comfortable" style="overflow-x: auto; table-layout: fixed">
             <thead>
               <tr style="background-color: rgba(0, 0, 0, 0.04)">
-                <th style="white-space: nowrap; width: 32px">{{ $t('status') }}</th>
+                <th style="white-space: nowrap; width: 32px"></th>
                 <th style="white-space: nowrap; width: 200px; overflow: hidden; text-overflow: ellipsis">{{ $t('name') }}</th>
                 <th style="white-space: nowrap">{{ $t('pool') }}</th>
                 <th style="white-space: nowrap">{{ $t('path') }}</th>
@@ -84,9 +84,7 @@
                 <td style="white-space: nowrap">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" size="small" style="cursor: pointer">
-                        {{ share.enabled ? 'mdi-check-circle' : 'mdi-close-circle' }}
-                      </v-icon>
+                      <v-icon v-bind="props" :color="share.enabled ? 'green' : 'red'" style="cursor: pointer">mdi-share</v-icon>
                     </template>
                     <v-list>
                       <v-list-item @click="openEditNfsDialog(share)">

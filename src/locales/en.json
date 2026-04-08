@@ -1353,6 +1353,7 @@
   "ssd": "SSD",
   "nvme": "NVME",
   "monitored attributes": "Monitored Attributes",
+  "default monitored attributes": "Default Monitored Attributes",
   "boot check": "Boot Check",
   "smartd options": "smartd Options",
   "critical": "Critical",

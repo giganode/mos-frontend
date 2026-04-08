@@ -77,7 +77,7 @@
                 </v-col>
               </v-row>
               <v-divider class="my-4"></v-divider>
-              <span class="text-subtitle-1 font-weight-medium">{{ $t('monitored attributes') }}</span>
+              <span class="text-subtitle-1 font-weight-medium">{{ $t('default monitored attributes') }}</span>
               <v-row class="pt-2 ga-2">
                 <v-col cols="12" sm="6">
                   <v-checkbox v-model="smartConfig.defaults.monitoredAttributes" :value="5" label="5 - Reallocated Sectors" density="compact" hide-details></v-checkbox>

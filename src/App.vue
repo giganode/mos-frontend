@@ -44,25 +44,25 @@
               <v-list-item v-bind="props" prepend-icon="mdi-server" :title="$t('network access')" />
             </template>
             <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
           </v-list-group>
           <template v-else>
             <v-list-item to="/shares" prepend-icon="mdi-share" :title="$t('shares')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.remote_mounting?.enabled" :disabled="!mosServices.remote_mounting?.enabled" to="/remoteMounting" prepend-icon="mdi-cloud-sync" :title="$t('remote mounting')" />
           </template>
           <v-list-item v-if="mosServices.hub?.enabled" to="/mosHub" prepend-icon="mdi-hub" :title="$t('mos hub')" />
           <v-list-group v-if="groupMenus">
             <template #activator="{ props }">
               <v-list-item v-bind="props" prepend-icon="mdi-server" :title="$t('virtualization')" />
             </template>
-            <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.docker?.running" :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.lxc?.enabled" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.vm?.running" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
           </v-list-group>
           <template v-else>
-            <v-list-item :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
-            <v-list-item v-if="hideInactiveMenus" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.docker?.running" :disabled="!mosServices.docker?.running" to="/docker" prepend-icon="mdi-docker" :title="$t('docker')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.lxc?.enabled" :disabled="!mosServices.lxc?.enabled" to="/lxc" prepend-icon="mdi-package-variant" :title="$t('lxc')" />
+            <v-list-item v-if="!hideInactiveMenus || mosServices.vm?.running" :disabled="!mosServices.vm?.running" to="/vm" prepend-icon="mdi-monitor-account" :title="$t('vm')" />
           </template>
           <v-list-item to="/plugins" prepend-icon="mdi-puzzle" :title="$t('plugins')" />
           <v-list-group v-if="groupMenus">
@@ -132,7 +132,7 @@ const mosServices = ref({});
 const appBarColor = 'primary';
 const notificationsBadge = ref(false);
 const hostname = ref('');
-const hideInactiveMenus = ref(localStorage.getItem('hideInactiveMenus') === 'false');
+const hideInactiveMenus = ref(localStorage.getItem('hideInactiveMenus') === 'true');
 const groupMenus = ref(localStorage.getItem('groupMenus') === 'true');
 const RECONNECT_MAX_DELAY = 15000;
 const RECONNECT_BASE_DELAY = 1000;
@@ -264,7 +264,7 @@ function doLogout() {
 }
 
 const refreshDrawer = async () => {
-  hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'false';
+  hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'true';
   groupMenus.value = localStorage.getItem('groupMenus') === 'true';
   await getMosServices();
 };

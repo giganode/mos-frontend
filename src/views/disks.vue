@@ -230,6 +230,53 @@
           <div v-if="smartDialog.smartInfos.warning" class="mb-0">
             <v-chip color="orange" size="small">{{ $t('warning') }}</v-chip>
           </div>
+          <v-divider class="my-4" />
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('monitoring config') }}</span>
+          <v-row class="pt-4">
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model.number="smartDialog.smartDiskConfig.temperatureWarning"
+                :label="$t('temperature warning')"
+                type="number"
+                density="compact"
+                hide-details="auto"
+                suffix="°C"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model.number="smartDialog.smartDiskConfig.temperatureCritical"
+                :label="$t('temperature critical')"
+                type="number"
+                density="compact"
+                hide-details="auto"
+                suffix="°C"
+              />
+            </v-col>
+          </v-row>
+          <v-row class="pt-0 mt-4 ga-1">
+            <v-col cols="12" sm="6">
+              <v-checkbox v-model="smartDialog.smartDiskConfig.monitoredAttributes" :value="5" label="5 - Reallocated Sectors" density="compact" hide-details />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-checkbox v-model="smartDialog.smartDiskConfig.monitoredAttributes" :value="187" label="187 - Reported Uncorrectable Errors" density="compact" hide-details />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-checkbox v-model="smartDialog.smartDiskConfig.monitoredAttributes" :value="198" label="198 - Offline Uncorrectable Sectors" density="compact" hide-details />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-checkbox v-model="smartDialog.smartDiskConfig.monitoredAttributes" :value="199" label="199 - UDMA CRC Errors" density="compact" hide-details />
+            </v-col>
+          </v-row>
+          <v-text-field
+            v-model.number="smartDialog.smartDiskConfig.attributeNotificationCooldown"
+            :label="$t('attribute notification cooldown')"
+            type="number"
+            min="0"
+            density="compact"
+            hide-details="auto"
+            class="mt-4"
+          />
           <div v-if="smartDialog.smartInfos.attributes?.length" class="mt-4">
             <strong>{{ $t('attributes') }}:</strong>
             <v-table density="compact" class="mt-2">
@@ -266,6 +313,9 @@
         <v-spacer />
         <v-btn color="onPrimary" @click="smartDialog.value = false">
           {{ $t('close') }}
+        </v-btn>
+        <v-btn color="onPrimary" :disabled="smartDialog.loading" @click="saveSmartDiskConfig()">
+          {{ $t('save') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -328,6 +378,16 @@ const smartDialog = reactive({
       temperatureWarning: 0,
       temperatureCritical: 0,
     },
+  },
+  smartDiskConfig: {
+    temperatureWarning: 0,
+    temperatureCritical: 0,
+    monitoredAttributes: [5, 187, 198, 199],
+    attributeNotificationCooldown: 0,
+    lastSeen: '2026-04-08T12:14:07.437Z',
+    model: 'WDC WD40EFRX-68N32N0',
+    diskType: 'hdd',
+    warning: false,
   },
   loading: false,
 });
@@ -550,7 +610,6 @@ const unmountDisk = async (disk) => {
 };
 
 const getSmartInfos = async (disk, wakeUp) => {
-  overlay.value = true;
   try {
     const res = await fetch(`/api/v1/disks/${disk.name}/smart?wakeUp=${wakeUp}`, {
       headers: {
@@ -568,8 +627,27 @@ const getSmartInfos = async (disk, wakeUp) => {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');
     showSnackbarError(userMessage, apiErrorMessage);
     return null;
-  } finally {
-    overlay.value = false;
+  }
+};
+
+const getSmartDiskConfig = async (disk) => {
+  try {
+    const res = await fetch(`/api/v1/disks/smart/config/disks/${disk.name}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('smart disk config could not be loaded')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
+    return await res.json();
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+    return null;
   }
 };
 
@@ -580,10 +658,41 @@ const clearFormatDialog = () => {
   formatDialog.partition = true;
   formatDialog.wipeExisting = true;
 };
+const saveSmartDiskConfig = async () => {
+  try {
+    overlay.value = true;
+    const res = await fetch(`/api/v1/disks/smart/config/disks/${smartDialog.disk.name}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(smartDialog.smartDiskConfig),
+    });
+
+    if (!res.ok) {
+      const errorDetails = await res.json();
+      throw new Error(`${t('smart disk config could not be saved')}|$| ${errorDetails.error || t('unknown error')}`);
+    }
+
+    showSnackbarSuccess(t('smart disk config saved successfully'));
+    smartDialog.value = false;
+  } catch (e) {
+    const [userMessage, apiErrorMessage] = e.message.split('|$|');
+    showSnackbarError(userMessage, apiErrorMessage);
+  } finally {
+    overlay.value = false;
+  }
+};
+
 const openSmartInfosDialog = async (disk) => {
   smartDialog.value = true;
   smartDialog.disk = disk;
   smartDialog.smartInfos = {};
+  smartDialog.smartDiskConfig = {};
+  smartDialog.loading = true;
   smartDialog.smartInfos = await getSmartInfos(disk, true);
+  smartDialog.smartDiskConfig = await getSmartDiskConfig(disk);
+  smartDialog.loading = false;
 };
 </script>

@@ -1375,5 +1375,10 @@
   "attributes": "Attributes",
   "worst": "Worst",
   "threshold": "Threshold",
-  "id": "ID"
+  "id": "ID",
+  "smart disk config saved successfully": "SMART disk configuration saved successfully",
+  "smart disk config could not be saved": "SMART disk configuration could not be saved",
+  "monitoring config": "Monitoring Configuration",
+  "temperature warning": "Temperature Warning",
+  "temperature critical": "Temperature Critical"  
 }

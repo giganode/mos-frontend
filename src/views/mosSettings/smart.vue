@@ -27,6 +27,7 @@
                     density="compact"
                     hide-details="auto"
                     class="pt-2"
+                    suffix="°C"
                   ></v-text-field>
                   <v-text-field
                     v-model.number="smartConfig.defaults.temperatureLimits.hdd.critical"
@@ -35,6 +36,7 @@
                     density="compact"
                     hide-details="auto"
                     class="mt-2"
+                    suffix="°C"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
@@ -46,6 +48,7 @@
                     density="compact"
                     hide-details="auto"
                     class="pt-2"
+                    suffix="°C"
                   ></v-text-field>
                   <v-text-field
                     v-model.number="smartConfig.defaults.temperatureLimits.ssd.critical"
@@ -54,6 +57,7 @@
                     density="compact"
                     hide-details="auto"
                     class="mt-2"
+                    suffix="°C"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
@@ -65,6 +69,7 @@
                     density="compact"
                     hide-details="auto"
                     class="pt-2"
+                    suffix="°C"
                   ></v-text-field>
                   <v-text-field
                     v-model.number="smartConfig.defaults.temperatureLimits.nvme.critical"
@@ -73,6 +78,7 @@
                     density="compact"
                     hide-details="auto"
                     class="mt-2"
+                    suffix="°C"
                   ></v-text-field>
                 </v-col>
               </v-row>

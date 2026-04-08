@@ -1375,5 +1375,10 @@
   "attributes": "Attribute",
   "worst": "Schlechtestes",
   "threshold": "Schwellenwert",
-  "id": "ID"
+  "id": "ID",
+  "smart disk config saved successfully": "SMART Festplattenkonfiguration erfolgreich gespeichert",
+  "smart disk config could not be saved": "SMART Festplattenkonfiguration konnte nicht gespeichert werden",
+  "monitoring config": "Überwachungskonfiguration",
+  "temperature warning": "Temperaturwarnung",
+  "temperature critical": "Temperatur kritisch"
 }

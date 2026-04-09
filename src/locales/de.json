@@ -1380,5 +1380,7 @@
   "smart disk config could not be saved": "SMART Festplattenkonfiguration konnte nicht gespeichert werden",
   "monitoring config": "Überwachungskonfiguration",
   "temperature warning": "Temperaturwarnung",
-  "temperature critical": "Temperatur kritisch"
+  "temperature critical": "Temperatur kritisch",
+  "updated": "Aktualisiert",
+  "sort": "Sortieren"
 }

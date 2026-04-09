@@ -38,7 +38,7 @@
                   @click="
                     currentPage = 1;
                     hubTypeSel = 'all';
-                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', hubSortingSel, hubTypeSel, hubCategoriesSel);
                   "
                 >
                   <template #append>
@@ -52,7 +52,7 @@
                   @click="
                     currentPage = 1;
                     hubTypeSel = type;
-                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', hubSortingSel, hubTypeSel, hubCategoriesSel);
                   "
                 >
                   <v-list-item-title>{{ $t(type) }}</v-list-item-title>
@@ -74,7 +74,7 @@
                   @click="
                     currentPage = 1;
                     hubCategoriesSel = 'all';
-                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', hubSortingSel, hubTypeSel, hubCategoriesSel);
                   "
                 >
                   <v-list-item-title>{{ $t('all') }}</v-list-item-title>
@@ -88,12 +88,36 @@
                   @click="
                     currentPage = 1;
                     hubCategoriesSel = category;
-                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', 'name', hubTypeSel, hubCategoriesSel);
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', hubSortingSel, hubTypeSel, hubCategoriesSel);
                   "
                 >
                   <v-list-item-title>{{ $t(category) }}</v-list-item-title>
                   <template #append>
                     <v-icon v-if="hubCategoriesSel === category">mdi-check</v-icon>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-menu offset-y>
+              <template #activator="{ props }">
+                <v-btn v-bind="props" color="secondary" density="comfortable" variant="outlined" class="ma-2 ml-4 ml-sm-2" style="min-width: 150px">
+                  {{ $t('sort') }}
+                  <v-icon right size="18">mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list density="comfortable">
+                <v-list-item
+                  v-for="sorting in hubSortings"
+                  :key="sorting"
+                  @click="
+                    currentPage = 1;
+                    hubSortingSel = sorting;
+                    getMosHub(searchOnlineTemplate, pageLimit, 0, 'asc', hubSortingSel, hubTypeSel, hubCategoriesSel);
+                  "
+                >
+                  <v-list-item-title>{{ $t(sorting) }}</v-list-item-title>
+                  <template #append>
+                    <v-icon v-if="hubSortingSel === sorting">mdi-check</v-icon>
                   </template>
                 </v-list-item>
               </v-list>
@@ -419,6 +443,8 @@ const hubTypeSel = ref('all');
 const hubTypes = ref([]);
 const hubCategoriesSel = ref('all');
 const hubCategories = ref([]);
+const hubSortings = ref(['name', 'created', 'updated']);
+const hubSortingSel = ref('name');
 const installDialog = reactive({
   value: false,
   tpl: null,

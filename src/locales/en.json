@@ -206,7 +206,7 @@
   "remote mounting": "Remote Mounting",
   "tailscale": "Tailscale",
   "tailscale update check": "Tailscale update check",
-  "tailscale params": "Tailscale params",
+  "tailscale params": "Tailscale Daemon Parameters (tailscaled)",
   "netbird": "Netbird",
   "netbird update check": "Netbird update check",
   "netbird service params": "Netbird service params",

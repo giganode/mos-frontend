@@ -1382,5 +1382,7 @@
   "temperature warning": "Temperaturwarnung",
   "temperature critical": "Temperatur kritisch",
   "updated": "Aktualisiert",
-  "sort": "Sortieren"
+  "sort": "Sortieren",
+  "diagnostics": "Diagnose",
+  "download diagnostics could not be initiated": "Download der Diagnosedaten konnte nicht gestartet werden"
 }

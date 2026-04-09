@@ -398,7 +398,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useRouter } from 'vue-router';
@@ -717,8 +717,9 @@ const doDialogInstall = () => {
 };
 
 const openHubRepositoriesDialog = async () => {
-  mosHubRepositoriesDialog.value = true;
   mosHubRepositoriesDialog.repositories = await getHubRepositories();
+  await nextTick();
+  mosHubRepositoriesDialog.value = true;
 };
 const openPluginInstallDialog = (tpl) => {
   installDialog.tpl = tpl;

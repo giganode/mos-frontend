@@ -240,6 +240,8 @@ const getUserProfile = async () => {
     locale.value = result.language || 'en';
     theme.themes.value[theme.global.name.value].colors.primary = result.primary_color || '#1976D2';
     localStorage.setItem('userid', result.id);
+    localStorage.setItem('hideInactiveMenus', String(result.hide_inactive_menus));
+    localStorage.setItem('groupMenus', String(result.group_menus));
 
     loggedIn.value = true;
   } catch (e) {

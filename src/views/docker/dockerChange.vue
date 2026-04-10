@@ -57,7 +57,7 @@
                   size="small"
                   class="ma-1 pa-0 float-right"
                   style="min-width: 0; color: green;"
-                  @click="form.paths.push({ name: '', mode: '', host: '', container: '' })"
+                  @click="form.paths.push({ _uid: uid(), name: '', mode: '', host: '', container: '' })"
                   title="Add path"
                   aria-label="add path"
                 >
@@ -66,7 +66,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <div v-for="(path, i) in form.paths" :key="i">
+            <div v-for="(path, i) in form.paths" :key="path._uid">
               <v-divider v-if="i > 0" class="my-2"></v-divider>
               <v-row>
                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
@@ -77,7 +77,7 @@
                       color="green"
                       class="pa-0"
                       style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
-                      @click="form.paths.splice(i + 1, 0, { name: '', mode: '', host: '', container: '' })"
+                      @click="form.paths.splice(i + 1, 0, { _uid: uid(), name: '', mode: '', host: '', container: '' })"
                       title="Add path"
                       aria-label="add path"
                     >
@@ -132,7 +132,7 @@
                   size="small"
                   class="ma-1 pa-0 float-right"
                   style="min-width: 0; color: green;"
-                  @click="form.ports.push({ name: '', protocol: '', host: '', container: '' })"
+                  @click="form.ports.push({ _uid: uid(), name: '', protocol: '', host: '', container: '' })"
                   title="Add port"
                   aria-label="add port"
                 >
@@ -141,7 +141,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <div v-for="(port, i) in form.ports" :key="i">
+            <div v-for="(port, i) in form.ports" :key="port._uid">
               <v-divider v-if="i > 0" class="my-2"></v-divider>
               <v-row>
                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
@@ -152,7 +152,7 @@
                       color="green"
                       class="pa-0"
                       style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
-                      @click="form.ports.splice(i + 1, 0, { name: '', protocol: '', host: '', container: '' })"
+                      @click="form.ports.splice(i + 1, 0, { _uid: uid(), name: '', protocol: '', host: '', container: '' })"
                       title="Add port"
                       aria-label="add port"
                     >
@@ -209,7 +209,7 @@
                   size="small"
                   class="ma-1 pa-0 float-right"
                   style="min-width: 0; color: green;"
-                  @click="form.devices.push({ name: '', host: '', container: '' })"
+                  @click="form.devices.push({ _uid: uid(), name: '', host: '', container: '' })"
                   title="Add device"
                   aria-label="add device"
                 >
@@ -218,7 +218,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <div v-for="(device, i) in form.devices" :key="i">
+            <div v-for="(device, i) in form.devices" :key="device._uid">
               <v-divider v-if="i > 0" class="my-2"></v-divider>
               <v-row>
                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
@@ -229,7 +229,7 @@
                       color="green"
                       class="pa-0"
                       style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
-                      @click="form.devices.splice(i + 1, 0, { name: '', host: '', container: '' })"
+                      @click="form.devices.splice(i + 1, 0, { _uid: uid(), name: '', host: '', container: '' })"
                       title="Add device"
                       aria-label="add device"
                     >
@@ -271,7 +271,7 @@
                   size="small"
                   class="ma-1 pa-0 float-right"
                   style="min-width: 0; color: green;"
-                  @click="form.variables.push({ name: '', key: '', value: '', mask: false })"
+                  @click="form.variables.push({ _uid: uid(), name: '', key: '', value: '', mask: false })"
                   title="Add variable"
                   aria-label="add variable"
                 >
@@ -280,7 +280,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <div v-for="(variable, i) in form.variables" :key="i">
+            <div v-for="(variable, i) in form.variables" :key="variable._uid">
               <v-divider v-if="i > 0" class="my-2"></v-divider>
               <v-row>
                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
@@ -291,7 +291,7 @@
                       color="green"
                       class="pa-0"
                       style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
-                      @click="form.variables.splice(i + 1, 0, { name: '', key: '', value: '', mask: false })"
+                      @click="form.variables.splice(i + 1, 0, { _uid: uid(), name: '', key: '', value: '', mask: false })"
                       title="Add variable"
                       aria-label="add variable"
                     >
@@ -345,7 +345,7 @@
                   size="small"
                   class="ma-1 pa-0 float-right"
                   style="min-width: 0; color: green;"
-                  @click="form.labels.push({ name: '', key: '', value: '', mask: false })"
+                  @click="form.labels.push({ _uid: uid(), name: '', key: '', value: '', mask: false })"
                   title="Add label"
                   aria-label="add label"
                 >
@@ -354,7 +354,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <div v-for="(label, i) in form.labels" :key="i">
+            <div v-for="(label, i) in form.labels" :key="label._uid">
               <v-divider v-if="i > 0" class="my-2"></v-divider>
               <v-row>
                 <v-col cols="1" class="d-flex flex-column justify-center align-center">
@@ -365,7 +365,7 @@
                       color="green"
                       class="pa-0"
                       style="width: 24px; height: 24px; min-width: 24px; margin-bottom: 6px"
-                      @click="form.labels.splice(i + 1, 0, { name: '', key: '', value: '', mask: false })"
+                      @click="form.labels.splice(i + 1, 0, { _uid: uid(), name: '', key: '', value: '', mask: false })"
                       title="Add label"
                       aria-label="add label"
                     >
@@ -472,7 +472,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, nextTick } from 'vue';
+
+let _uidCounter = 0;
+const uid = () => ++_uidCounter;
 import { showSnackbarError, showSnackbarSuccess } from '@/composables/snackbar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -517,11 +520,11 @@ const props = defineProps({
   docker: String,
 });
 
-onMounted(() => {
+onMounted(async () => {
   window.scrollTo(0, 0);
+  await getDockerContainers();
   getDockerTemplate();
   getDockerNetworks();
-  getDockerContainers();
   getGPUs();
 });
 const { wsIsConnected, wsError, wsOperationDialog, wsScrollContainer, sendDockerWSCommand, closeWsDialog } = useDockerWebSocket({
@@ -567,9 +570,8 @@ const getDockerTemplate = async () => {
       form.network = getDocker.value.network;
       const containerName = getDocker.value.network.replace('container:', '');
       selectedContainer.value = containerName;
-      setTimeout(() => {
-        validateContainerExists(containerName);
-      }, 1000);
+      await nextTick();
+      validateContainerExists(containerName);
     } else {
       networkMode.value = getDocker.value.network;
       form.network = getDocker.value.network;
@@ -585,6 +587,7 @@ const getDockerTemplate = async () => {
     form.icon = getDocker.value.icon;
     form.paths = Array.isArray(getDocker.value.paths)
       ? getDocker.value.paths.map((path) => ({
+          _uid: uid(),
           name: path.name,
           mode: path.mode,
           host: path.host,
@@ -594,6 +597,7 @@ const getDockerTemplate = async () => {
       : [];
     form.ports = Array.isArray(getDocker.value.ports)
       ? getDocker.value.ports.map((port) => ({
+          _uid: uid(),
           name: port.name,
           protocol: port.protocol,
           host: port.host,
@@ -603,6 +607,7 @@ const getDockerTemplate = async () => {
       : [];
     form.variables = Array.isArray(getDocker.value.variables)
       ? getDocker.value.variables.map((variable) => ({
+          _uid: uid(),
           name: variable.name,
           key: variable.key,
           value: variable.value,
@@ -612,6 +617,7 @@ const getDockerTemplate = async () => {
       : [];
     form.devices = Array.isArray(getDocker.value.devices)
       ? getDocker.value.devices.map((device) => ({
+          _uid: uid(),
           name: device.name,
           host: device.host,
           container: device.container,
@@ -620,6 +626,7 @@ const getDockerTemplate = async () => {
       : [];
     form.labels = Array.isArray(getDocker.value.labels)
       ? getDocker.value.labels.map((label) => ({
+          _uid: uid(),
           name: label.name,
           key: label.key,
           value: label.value,
@@ -627,6 +634,7 @@ const getDockerTemplate = async () => {
           description: label.description || '',
         }))
       : [];
+    await nextTick();
     form.gpus = Array.isArray(getDocker.value.gpus) ? getDocker.value.gpus : [];
   } catch (e) {
     const [userMessage, apiErrorMessage] = e.message.split('|$|');

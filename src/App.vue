@@ -161,6 +161,7 @@ onMounted(async () => {
   if (loggedIn.value) {
     getNotificationsBadge();
     connectNotificationWS();
+    subscribePush();
     await getMosServices();
     await getHostname();
     getDrawerState();
@@ -247,6 +248,7 @@ const getUserProfile = async () => {
 function handleLoginSuccess() {
   loggedIn.value = true;
   getMosServices();
+  subscribePush();
 }
 
 function handleSetupComplete() {
@@ -255,6 +257,7 @@ function handleSetupComplete() {
 }
 
 function doLogout() {
+  unsubscribePush();
   localStorage.removeItem('authToken');
   localStorage.removeItem('userid');
   tab.value = 'dashboard';
@@ -347,6 +350,87 @@ const getDrawerState = () => {
     }
   } else {
     drawer.value = true;
+  }
+};
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
+
+const getVapidKey = async () => {
+  try {
+    const res = await fetch('/api/v1/notifications/push/vapid-key', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+    });
+
+    if (!res.ok) throw new Error('API-Error');
+    const result = await res.json();
+    return result.publicKey;
+  } catch (e) {
+    showSnackbarError(e.message);
+    return null;
+  }
+};
+
+const subscribePush = async () => {
+  if (!('serviceWorker' in navigator)) {
+    showSnackbarError('Service workers are not supported by this browser.');
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const vapidKey = await getVapidKey();
+    if (!vapidKey) return;
+
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) return;
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey),
+    });
+
+    await fetch('/api/v1/notifications/push/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+      },
+      body: JSON.stringify(subscription),
+    });
+  } catch (e) {
+    showSnackbarError('Failed to subscribe for push notifications: ' + e.message);
+  }
+};
+
+const unsubscribePush = async () => {
+  if (!('serviceWorker' in navigator)) {
+    showSnackbarError('Service workers are not supported by this browser.');
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      await subscription.unsubscribe();
+      await fetch('/api/v1/notifications/push/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+        },
+        body: JSON.stringify(subscription),
+      });
+    }
+  } catch (e) {
+    showSnackbarError('Failed to unsubscribe from push notifications: ' + e.message);
   }
 };
 

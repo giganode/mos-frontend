@@ -14,7 +14,10 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      workbox: {
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      injectManifest: {
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB
       },
       manifest: {

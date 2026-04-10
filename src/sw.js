@@ -4,7 +4,6 @@ precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
 self.addEventListener('push', (event) => {
-  console.log('[SW] push event received', event);
 
   let data = {};
   if (event.data) {
@@ -14,8 +13,6 @@ self.addEventListener('push', (event) => {
       data = { message: event.data.text() };
     }
   }
-
-  console.log('[SW] push data:', data);
 
   const title = data.title || 'MOS';
   const options = {
@@ -44,8 +41,9 @@ self.addEventListener('notificationclick', (event) => {
       .then((clientList) => {
         for (const client of clientList) {
           if ('focus' in client) {
-            client.navigate('/notifications');
-            return client.focus();
+            client.focus();
+            if ('navigate' in client) client.navigate('/notifications');
+            return;
           }
         }
         return clients.openWindow('/notifications');

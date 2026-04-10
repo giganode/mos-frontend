@@ -256,8 +256,8 @@ function handleSetupComplete() {
   token.value = '';
 }
 
-function doLogout() {
-  unsubscribePush();
+async function doLogout() {
+  await unsubscribePush();
   localStorage.removeItem('authToken');
   localStorage.removeItem('userid');
   tab.value = 'dashboard';
@@ -361,20 +361,15 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 const getVapidKey = async () => {
-  try {
-    const res = await fetch('/api/v1/notifications/push/vapid-key', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('authToken'),
-      },
-    });
+  const res = await fetch('/api/v1/notifications/push/vapid-key', {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('authToken'),
+    },
+  });
 
-    if (!res.ok) throw new Error('API-Error');
-    const result = await res.json();
-    return result.publicKey;
-  } catch (e) {
-    showSnackbarError(e.message);
-    return null;
-  }
+  if (!res.ok) throw new Error('API-Error');
+  const result = await res.json();
+  return result.publicKey;
 };
 
 const subscribePush = async () => {
@@ -383,10 +378,12 @@ const subscribePush = async () => {
   }
 
   try {
-    const registration = await navigator.serviceWorker.ready;
-    const vapidKey = await getVapidKey();
-    if (!vapidKey) return;
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
 
+    const registration = await navigator.serviceWorker.ready;
+    const vapidKey = await getVapidKey(); // wirft jetzt bei Fehler
+    
     const existing = await registration.pushManager.getSubscription();
     if (existing) return;
 

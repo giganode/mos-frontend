@@ -159,6 +159,8 @@ onMounted(async () => {
   }
   await checkLoggedIn();
   if (loggedIn.value) {
+    hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'true';
+    groupMenus.value = localStorage.getItem('groupMenus') === 'true';
     getNotificationsBadge();
     connectNotificationWS();
     subscribePush();
@@ -246,6 +248,8 @@ const getUserProfile = async () => {
 };
 
 function handleLoginSuccess() {
+  hideInactiveMenus.value = localStorage.getItem('hideInactiveMenus') === 'true';
+  groupMenus.value = localStorage.getItem('groupMenus') === 'true';
   loggedIn.value = true;
   getMosServices();
   subscribePush();
@@ -256,8 +260,8 @@ function handleSetupComplete() {
   token.value = '';
 }
 
-async function doLogout() {
-  await unsubscribePush();
+function doLogout() {
+  unsubscribePush().catch(() => {});
   localStorage.removeItem('authToken');
   localStorage.removeItem('userid');
   tab.value = 'dashboard';

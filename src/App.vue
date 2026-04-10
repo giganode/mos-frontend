@@ -378,8 +378,7 @@ const getVapidKey = async () => {
 };
 
 const subscribePush = async () => {
-  if (!('serviceWorker' in navigator)) {
-    showSnackbarError('Service workers are not supported by this browser.');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     return;
   }
 
@@ -410,8 +409,7 @@ const subscribePush = async () => {
 };
 
 const unsubscribePush = async () => {
-  if (!('serviceWorker' in navigator)) {
-    showSnackbarError('Service workers are not supported by this browser.');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     return;
   }
 

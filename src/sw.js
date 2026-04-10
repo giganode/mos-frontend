@@ -4,14 +4,18 @@ precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
 self.addEventListener('push', (event) => {
-  if (!event.data) return;
+  console.log('[SW] push event received', event);
 
   let data = {};
-  try {
-    data = event.data.json();
-  } catch {
-    data = { message: event.data.text() };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch {
+      data = { message: event.data.text() };
+    }
   }
+
+  console.log('[SW] push data:', data);
 
   const title = data.title || 'MOS';
   const options = {
@@ -23,7 +27,13 @@ self.addEventListener('push', (event) => {
     data: data,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    self.registration.showNotification(title, options).then(() => {
+      console.log('[SW] showNotification called successfully');
+    }).catch((err) => {
+      console.error('[SW] showNotification failed:', err);
+    })
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {

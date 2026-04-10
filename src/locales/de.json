@@ -1384,5 +1384,8 @@
   "updated": "Aktualisiert",
   "sort": "Sortieren",
   "diagnostics": "Diagnose",
-  "download diagnostics could not be initiated": "Download der Diagnosedaten konnte nicht gestartet werden"
+  "download diagnostics could not be initiated": "Download der Diagnosedaten konnte nicht gestartet werden",
+  "order": "Reihenfolge",
+  "asc": "Aufsteigend",
+  "desc": "Absteigend"
 }

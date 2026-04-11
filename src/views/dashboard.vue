@@ -85,10 +85,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, shallowRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { io } from 'socket.io-client';
 import draggable from 'vuedraggable';
+import { usePlugins } from '@/composables/usePlugins';
 import Processor from '../components/cards/processor.vue';
 import Memory from '../components/cards/memory.vue';
 import OS from '../components/cards/os.vue';
@@ -103,8 +104,10 @@ import PSU from '../components/cards/psu.vue';
 import Other from '../components/cards/other.vue';
 
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
-const { t } = useI18n();
-const components = {
+const i18n = useI18n();
+const { t } = i18n;
+const { getPlugins, loadPluginWidget, loadPluginLocales } = usePlugins();
+const components = shallowRef({
   os: OS,
   processor: Processor,
   pools: Pools,
@@ -117,7 +120,8 @@ const components = {
   voltage: Voltage,
   psu: PSU,
   other: Other,
-};
+});
+const pluginLabels = ref({});
 
 const cpu = ref(null);
 const network = ref(null);
@@ -131,7 +135,8 @@ const isConnected = ref({});
 const error = ref(null);
 const left = ref([]);
 const right = ref([]);
-const ALL_WIDGETS = ['os', 'processor', 'pools', 'network', 'memory', 'disks', 'fan', 'temperature', 'power', 'voltage', 'psu', 'other'];
+const BUILTIN_WIDGETS = ['os', 'processor', 'pools', 'network', 'memory', 'disks', 'fan', 'temperature', 'power', 'voltage', 'psu', 'other'];
+const ALL_WIDGETS = ref([...BUILTIN_WIDGETS]);
 const DEFAULT_LEFT = [{ id: 'os' }, { id: 'processor' }, { id: 'pools' }, { id: 'fan' }, { id: 'voltage' }, { id: 'psu' }];
 const DEFAULT_RIGHT = [{ id: 'network' }, { id: 'memory' }, { id: 'disks' }, { id: 'temperature' }, { id: 'power' }, { id: 'other' }];
 const DEFAULT_VISIBILITY = {
@@ -167,11 +172,33 @@ const visibility = ref({ ...DEFAULT_VISIBILITY });
 let socket = null;
 
 onMounted(async () => {
+  await loadPluginWidgets();
   await loadLayout();
   watch([left, right, visibility], saveLayout, { deep: true });
   getData();
   getLoadWS();
 });
+
+const loadPluginWidgets = async () => {
+  try {
+    const pluginList = await getPlugins();
+    const widgetPlugins = pluginList.filter((p) => p.widget === true);
+
+    for (const plugin of widgetPlugins) {
+      await loadPluginLocales(plugin, i18n);
+      const widgetComponent = await loadPluginWidget(plugin);
+      if (!widgetComponent) continue;
+
+      const widgetId = `plugin:${plugin.name}`;
+      ALL_WIDGETS.value.push(widgetId);
+      components.value = { ...components.value, [widgetId]: widgetComponent };
+      pluginLabels.value[widgetId] = plugin.displayName || plugin.name;
+      DEFAULT_VISIBILITY[widgetId] = true;
+    }
+  } catch {
+    // Plugin widgets are best-effort, don't break the dashboard
+  }
+};
 
 onUnmounted(() => {
   if (socket) {
@@ -181,6 +208,7 @@ onUnmounted(() => {
 });
 
 const labelFor = (x) => {
+  if (pluginLabels.value[x]) return pluginLabels.value[x];
   const key = nameKeyMap?.[x] || String(x || '').toLowerCase();
   return t(key);
 };
@@ -242,7 +270,7 @@ const loadLayout = async () => {
     if (Array.isArray(arr)) {
       for (const it of arr) {
         const id = toId(it);
-        if (!id || !ALL_WIDGETS.includes(id) || seen.has(id)) continue;
+        if (!id || !ALL_WIDGETS.value.includes(id) || seen.has(id)) continue;
         seen.add(id);
         out.push(makeItem(id));
       }
@@ -253,7 +281,7 @@ const loadLayout = async () => {
   const normalizeVisibility = (v) => {
     const out = { ...DEFAULT_VISIBILITY };
     if (v && typeof v === 'object') {
-      for (const k of ALL_WIDGETS) {
+      for (const k of ALL_WIDGETS.value) {
         if (v[k] !== undefined) out[k] = !!v[k];
       }
       for (const [oldName, id] of Object.entries(nameKeyMap)) {
@@ -273,7 +301,7 @@ const loadLayout = async () => {
     const normLeft = leftRes.out;
     const normRight = rightRes.out;
 
-    for (const id of ALL_WIDGETS.filter((id) => !seenAll.has(id))) {
+    for (const id of ALL_WIDGETS.value.filter((id) => !seenAll.has(id))) {
       if (normLeft.length <= normRight.length) normLeft.push(makeItem(id));
       else normRight.push(makeItem(id));
     }

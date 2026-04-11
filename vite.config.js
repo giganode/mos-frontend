@@ -10,7 +10,7 @@ export default defineConfig({
     federation({
       name: 'mos-host',
       remotes: {},
-      shared: ['vue', 'vue-router', 'vuetify'],
+      shared: ['vue', 'vue-router', 'vuetify', 'vue-i18n'],
     }),
     VitePWA({
       registerType: 'autoUpdate',

@@ -4,6 +4,8 @@ import * as Vue from 'vue';
 const plugins = ref([]);
 const pluginsLoaded = ref(false);
 const loadedComponents = shallowRef({});
+const loadedWidgets = shallowRef({});
+const loadedLocales = new Set();
 const loadedContainers = {};
 
 const initSharedScope = async () => {
@@ -89,6 +91,69 @@ export const loadPluginComponent = async (plugin) => {
   }
 };
 
+export const loadPluginWidget = async (plugin) => {
+  const cacheKey = `widget:${plugin.name}`;
+
+  if (loadedWidgets.value[plugin.name]) {
+    return loadedWidgets.value[plugin.name];
+  }
+
+  try {
+    await initSharedScope();
+
+    const remoteUrl = `/_plugins/${plugin.name}/remoteEntry.js`;
+
+    if (!loadedContainers[plugin.name]) {
+      const container = await import(/* @vite-ignore */ remoteUrl);
+      loadedContainers[plugin.name] = container;
+    }
+
+    const container = loadedContainers[plugin.name];
+    const factory = await container.get('./Widget');
+    const Module = factory();
+
+    loadedWidgets.value = {
+      ...loadedWidgets.value,
+      [plugin.name]: Module.default || Module,
+    };
+
+    return loadedWidgets.value[plugin.name];
+  } catch {
+    return null;
+  }
+};
+
+export const loadPluginLocales = async (plugin, i18n) => {
+  if (loadedLocales.has(plugin.name)) return;
+
+  try {
+    await initSharedScope();
+
+    const remoteUrl = `/_plugins/${plugin.name}/remoteEntry.js`;
+
+    if (!loadedContainers[plugin.name]) {
+      const container = await import(/* @vite-ignore */ remoteUrl);
+      loadedContainers[plugin.name] = container;
+    }
+
+    const container = loadedContainers[plugin.name];
+    const factory = await container.get('./Locales');
+    const locales = factory();
+    const messages = locales.default || locales;
+
+    for (const [locale, translations] of Object.entries(messages)) {
+      if (translations && typeof translations === 'object') {
+        const merge = i18n.global?.mergeLocaleMessage || i18n.mergeLocaleMessage;
+        if (merge) merge.call(i18n.global || i18n, locale, translations);
+      }
+    }
+
+    loadedLocales.add(plugin.name);
+  } catch {
+    // Locales are optional, don't break anything
+  }
+};
+
 export const getPluginIconUrl = (plugin) => {
   if (plugin.icon) {
     if (plugin.icon.startsWith('mdi-')) {
@@ -115,8 +180,11 @@ export const usePlugins = () => {
     plugins,
     pluginsLoaded,
     loadedComponents,
+    loadedWidgets,
     getPlugins,
     loadPluginComponent,
+    loadPluginWidget,
+    loadPluginLocales,
     getPluginIconUrl,
     hasMdiIcon,
     getPluginRoute,

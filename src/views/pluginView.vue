@@ -54,6 +54,7 @@
 
 <script setup>
 import { ref, onMounted, watch, shallowRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { usePlugins } from '@/composables/usePlugins';
 
 const props = defineProps({
@@ -63,7 +64,8 @@ const props = defineProps({
   },
 });
 
-const { plugins, getPlugins, loadPluginComponent, pluginsLoaded } = usePlugins();
+const { plugins, getPlugins, loadPluginComponent, loadPluginLocales, pluginsLoaded } = usePlugins();
+const i18n = useI18n();
 const emit = defineEmits(['refresh-drawer', 'refresh-notifications-badge']);
 const loading = ref(true);
 const error = ref(false);
@@ -88,6 +90,8 @@ const loadPlugin = async () => {
       loading.value = false;
       return;
     }
+
+    await loadPluginLocales(plugin.value, i18n);
 
     const component = await loadPluginComponent(plugin.value);
 

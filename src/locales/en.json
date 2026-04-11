@@ -1387,5 +1387,6 @@
   "download diagnostics could not be initiated": "Download diagnostics could not be initiated",
   "order": "Order",
   "asc": "Ascending",
-  "desc": "Descending"  
+  "desc": "Descending",
+  "update plugins": "Update Plugins"
 }

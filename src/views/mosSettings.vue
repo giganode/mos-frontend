@@ -64,7 +64,7 @@
                     <template v-slot:append>
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
-                  </v-list-item>                  
+                  </v-list-item>
                 </v-list>
               </div>
             </div>
@@ -134,7 +134,7 @@
                     <template v-slot:append>
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
-                  </v-list-item>                  
+                  </v-list-item>
                 </v-list>
               </div>
             </div>
@@ -204,7 +204,7 @@
                     <template v-slot:append>
                       <v-icon size="small" color="medium-emphasis">mdi-chevron-right</v-icon>
                     </template>
-                  </v-list-item>                  
+                  </v-list-item>
                 </v-list>
               </div>
             </div>
@@ -372,7 +372,6 @@
               </div>
             </div>
           </v-col>
-
         </v-row>
       </v-container>
     </v-container>
@@ -383,22 +382,25 @@
     <v-card max-width="600" prepend-icon="mdi-update" :title="t('update system')" class="pa-0">
       <v-card-text class="pa-0">
         <div style="max-height: 60vh; overflow-y: auto; padding: 16px; padding-bottom: 32px">
-          <p class="mb-4">{{ t('please select your target firmware!') }}</p>
-          <p v-if="osInfo && osInfo.mos">
-            <b>{{ $t('mos version') }}:</b>
-            {{ osInfo.mos.version }}
-          </p>
-          <p v-if="osInfo && osInfo.mos">
-            <b>{{ $t('mos channel') }}:</b>
-            {{ osInfo.mos.channel }}
-          </p>
-          <p v-if="osInfo && osInfo.mos" class="mb-4">
-            <b>{{ $t('mos kernel') }}:</b>
-            {{ osInfo.mos.running_kernel }}
-          </p>
+          <div v-if="osInfo?.mos" class="ma-0 mb-4">
+            <p class="ma-0 text-body-2">
+              <b>{{ $t('mos version') }}:</b>
+              {{ osInfo.mos.version }}
+            </p>
+            <p class="ma-0 text-body-2">
+              <b>{{ $t('mos channel') }}:</b>
+              {{ osInfo.mos.channel }}
+            </p>
+            <p class="ma-0 text-body-2">
+              <b>{{ $t('mos kernel') }}:</b>
+              {{ osInfo.mos.running_kernel }}
+            </p>
+          </div>
+          <p class="ma-0 mb-4">{{ t('please select your target firmware!') }}</p>
           <v-select v-model="updateOsDialog.channel" :items="getMosChannels()" :label="t('channel')"></v-select>
           <v-select v-model="updateOsDialog.release" :items="getMosReleasesOfChannel()" :label="t('release')"></v-select>
           <v-switch v-model="updateOsDialog.update_kernel" :label="t('update kernel')" inset density="compact" color="green" hide-details="auto" />
+          <v-switch v-model="updateOsDialog.update_plugins" :label="t('update plugins')" inset density="compact" color="green" hide-details="auto" />
         </div>
       </v-card-text>
       <v-divider />
@@ -444,18 +446,21 @@
   <v-dialog v-model="thanksDialog" max-width="500">
     <v-card max-width="600" class="pa-0" style="max-height: 80vh; display: flex; flex-direction: column" :title="t('thanks')" prepend-icon="mdi-handshake">
       <v-card-text style="padding-bottom: 0" class="pa-0 pl-4 pr-4 ma-0">
-        <p class="ma-0 mb-2">{{ t('the mos team') }},<br /></p>
+        <p class="ma-0 mb-2">
+          {{ t('the mos team') }},
+          <br />
+        </p>
         <p class="ma-0 mb-4">{{ t('thanks you for your use and feedback') }}!</p>
       </v-card-text>
       <v-divider />
       <v-card-text class="font-weight-medium pl-4 pt-2 pb-2">{{ t('used software and packages') }}:</v-card-text>
-      <div style="overflow-y: auto; flex: 1 1 auto;">
+      <div style="overflow-y: auto; flex: 1 1 auto">
         <v-container v-if="osInfo && osInfo.base && osInfo.base.length" class="pa-0">
           <div v-for="(baseItem, i) in osInfo.base" :key="i" class="pa-0 mb-4">
             <v-list class="pa-0">
               <v-list-item v-if="baseItem.os_name">
-                  <v-list-item-title class="text-body-1">{{ baseItem.os_name }}</v-list-item-title>
-                  <v-list-item-subtitle class="text--secondary">{{ baseItem.os_version }}</v-list-item-subtitle>
+                <v-list-item-title class="text-body-1">{{ baseItem.os_name }}</v-list-item-title>
+                <v-list-item-subtitle class="text--secondary">{{ baseItem.os_version }}</v-list-item-subtitle>
               </v-list-item>
               <v-list-item v-for="pkg in baseItem.packages" :key="pkg.name">
                 <div class="v-list-item-content">
@@ -616,6 +621,7 @@ const updateOsDialog = reactive({
   channel: null,
   release: null,
   update_kernel: true,
+  update_plugins: true,
 });
 const updateKernelDialog = reactive({
   value: false,
@@ -711,6 +717,7 @@ const updateOS = async () => {
     version: updateOsDialog.release,
     channel: updateOsDialog.channel,
     update_kernel: updateOsDialog.update_kernel,
+    update_plugins: updateOsDialog.update_plugins,
   };
 
   try {
@@ -926,7 +933,7 @@ const downloadDiagnostics = async () => {
         filename = filenameMatch[1];
       }
     }
-    
+
     a.download = filename;
     document.body.appendChild(a);
     a.click();
@@ -948,6 +955,7 @@ const clearUpdateOsDialog = () => {
   updateOsDialog.release = null;
   updateOsDialog.channel = null;
   updateOsDialog.update_kernel = true;
+  updateOsDialog.update_plugins = true;
 };
 const openUpdateKernelDialog = () => {
   updateKernelDialog.value = true;

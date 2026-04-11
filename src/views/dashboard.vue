@@ -122,7 +122,6 @@ const components = shallowRef({
   other: Other,
 });
 const pluginLabels = ref({});
-
 const cpu = ref(null);
 const network = ref(null);
 const memory = ref(null);

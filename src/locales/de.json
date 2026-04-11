@@ -1387,5 +1387,6 @@
   "download diagnostics could not be initiated": "Download der Diagnosedaten konnte nicht gestartet werden",
   "order": "Reihenfolge",
   "asc": "Aufsteigend",
-  "desc": "Absteigend"
+  "desc": "Absteigend",
+  "update plugins": "Plugins aktualisieren"
 }
